@@ -19,7 +19,7 @@ export default function DemoPage() {
         <div className="flex items-center justify-between">
           <Link href="/" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</Link>
           <div className="flex items-center gap-6">
-            <Link href="/consult/?registry=0xe91934ab1f6a40cc1bb4cd530feff56dfe524963&agentId=1" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Consult (A2A)</Link>
+            <Link href={`/consult/?registry=${DEMO_AGENT.registry}&agentId=${DEMO_AGENT.agentId}`} className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Consult (A2A)</Link>
             <Link href="/verify" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">
               <ShieldCheck className="h-3.5 w-3.5" /> Verify
             </Link>

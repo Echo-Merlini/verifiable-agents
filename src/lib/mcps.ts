@@ -51,11 +51,14 @@ export const MCP_SELECTORS: McpSelector[] = [
   },
 ];
 
-// The demo's featured agent — Trustless Pioneer (Genesis universal-agent mint).
+// The demo's featured agent — Bulla Goblin #16, a Pixel Goblins agent on the
+// community-metered registry (pool-funded → walletless judge clicks just work).
+// Deliberately the SAME agent whose attestation is recomputed on /verify, so the
+// agent you drive here is the agent you verify there — the loop closes.
 export const DEMO_AGENT = {
-  registry: "0xe91934ab1f6a40cc1bb4cd530feff56dfe524963",
-  agentId: "1",
-  name: "Trustless Pioneer",
-  ens: "dinamic.eth",
-  by: "Trustless-ai",
+  registry: "0xe0454dfa17a57a84c3e0e2dbfda5318cbbe91e2c",
+  agentId: "11",
+  name: "Bulla Goblin #16",
+  ens: "pixel-goblins.dinamic.eth",
+  by: "Pixel Goblins",
 };
