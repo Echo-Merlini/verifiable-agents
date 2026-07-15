@@ -586,11 +586,14 @@ function SuggestionGallery({ items, onAccept, disabled }: {
 
 export function AgentChat({
   registry, agentId, ownerAddress, authToken, onCreditError,
-  compact = false,
+  compact = false, onReady,
 }: {
   registry: string; agentId: string; ownerAddress?: string; authToken?: string;
   onCreditError?: () => void;
   compact?: boolean;
+  // Hands the parent a way to send a message programmatically (e.g. an MCP
+  // selector card that auto-sends a prompt). Non-invasive: just exposes sendMessage.
+  onReady?: (send: (payload: string, displayText?: string) => void) => void;
 }) {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput]       = useState("");
@@ -730,6 +733,9 @@ export function AgentChat({
     setInput("");
     sendMessage(msg);
   }, [input, loading, sendMessage]);
+
+  // Expose sendMessage to the parent (MCP selector cards auto-send a prompt).
+  useEffect(() => { onReady?.(sendMessage); }, [onReady, sendMessage]);
 
   // Accept on a suggestion card → ask the agent to buy that listing, which runs the
   // normal opensea_buy_nft → approval-card → wallet-sign flow.
