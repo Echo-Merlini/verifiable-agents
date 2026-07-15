@@ -1,0 +1,52 @@
+/* Font families = next/font CSS variables set in layout.tsx (--font-space-grotesk,
+   --font-newsreader, --font-jetbrains); wired through tailwind.config.ts. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { --radius: 1rem; }
+  body { background: #0C0D11; color: #F6F6F8; -webkit-font-smoothing: antialiased; }
+  ::selection { background: rgba(224, 162, 76, 0.25); }
+}
+
+@layer components {
+  /* ── Vértice flat matte panel ─────────────────────────
+     Replaces the kit's glassmorphism. The class name is kept so every existing
+     .liquid-glass user across the app converts to the Vértice look for free. */
+  .liquid-glass {
+    background: #191B21;
+    border: 1px solid rgba(246, 246, 248, 0.08);
+    box-shadow: inset 0 1px 0 rgba(224, 162, 76, 0.06);
+    position: relative;
+    overflow: hidden;
+  }
+  .liquid-glass-strong {
+    background: #17191F;
+    border: 1px solid rgba(246, 246, 248, 0.10);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(224, 162, 76, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Brass-gradient text for the wordmark / accents */
+  .brass-text {
+    background: linear-gradient(180deg, #E0A24C 0%, #A15E1E 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+}
+
+/* Vertex spin — 7s linear rotation around the apex (brand motion spec) */
+@keyframes vertice-spin { to { transform: rotate(360deg); } }
+.vertice-spin {
+  animation: vertice-spin 7s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vertice-spin { animation: none; }
+}

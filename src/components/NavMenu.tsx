@@ -1,0 +1,121 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { useAccount } from "wagmi";
+import { Menu, X, Bot, Users, Cpu, Wallet, Factory, Rss, FileText, GitBranch, Zap, Home, User, Sparkles } from "lucide-react";
+
+const GW_URL   = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
+const ENS_NAME = process.env.NEXT_PUBLIC_ENS_NAME   || "dinamic.eth";
+
+const LINKS = [
+  { path: "",           label: "Home",            icon: Home,      desc: "dinamic.eth profile" },
+  { path: "mint/",      label: "Mint Agent",      icon: Sparkles,  desc: "Mint a self-sovereign agent — no NFT needed" },
+  { path: "my-agents/", label: "My Agents",       icon: Bot,       desc: "Manage your agent identities" },
+  { path: "agents/",    label: "Browse Agents",   icon: Users,     desc: "Discover on-chain agent identities" },
+  { path: "agent/",     label: "Bridge NFT",      icon: Cpu,       desc: "Mint an agent for your NFT" },
+  { path: "use-agent/", label: "Use Agent",        icon: Wallet,    desc: "Login and access your agent" },
+  { path: "top-up/",    label: "Top Up Credits",  icon: Zap,       desc: "Add AI credits to your wallet" },
+  { path: "claim/",     label: "Claim Subdomain", icon: GitBranch, desc: "Claim a free dinamic.eth subdomain" },
+  { path: "factory/",   label: "Deploy Registry", icon: Factory,   desc: "Launch your own collection registry" },
+  { path: "feed/",      label: "Feed",            icon: Rss,       desc: "Latest activity" },
+  { path: "spec/",      label: "Spec",            icon: FileText,  desc: "ENS-KIT/1 specification" },
+];
+
+export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUrl?: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const { address } = useAccount();
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [open]);
+
+  const href = (path: string) =>
+    baseUrl ? `${baseUrl}/${path}` : `../${path}`;
+
+  const handleMyProfile = async () => {
+    setOpen(false);
+    if (!address) {
+      window.open(href("claim/"), "_blank");
+      return;
+    }
+    try {
+      const res = await fetch(`${GW_URL}/api/claim/mine?address=${address}`);
+      const data = await res.json();
+      if (data.label) {
+        window.open(`https://${data.label}.${ENS_NAME}.limo`, "_blank");
+      } else {
+        window.open(href("claim/"), "_blank");
+      }
+    } catch {
+      window.open(href("claim/"), "_blank");
+    }
+  };
+
+  return (
+    <div ref={ref} className="fixed top-4 right-4 z-[100]">
+      <button
+        onClick={() => setOpen(p => !p)}
+        aria-label="Navigation menu"
+        className="w-9 h-9 rounded-full liquid-glass-strong flex items-center justify-center text-white/70 hover:text-white transition-colors hover:scale-105 active:scale-95"
+      >
+        {open ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+      </button>
+
+      {open && (
+        <div className="absolute top-12 right-0 w-64 liquid-glass-strong rounded-3xl p-3 shadow-2xl flex flex-col gap-0.5">
+          <p className="text-[10px] uppercase tracking-widest text-white/25 px-3 py-1.5">Navigate</p>
+          <button
+            onClick={handleMyProfile}
+            className="flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-colors group text-white/60 hover:bg-white/8 hover:text-white w-full text-left"
+          >
+            <div className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 bg-white/8 group-hover:bg-white/12 transition-colors">
+              <User className="w-3.5 h-3.5 text-white/50 group-hover:text-white/80" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs font-medium leading-none mb-0.5">My Profile</p>
+              <p className="text-[10px] text-white/30 leading-none truncate">View or claim your subdomain</p>
+            </div>
+          </button>
+          {LINKS.map(({ path, label, icon: Icon, desc }) => {
+            const isCurrent = currentPath && path && path.includes(currentPath);
+            return (
+              <a
+                key={path}
+                href={href(path)}
+                onClick={() => setOpen(false)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-colors group ${
+                  isCurrent
+                    ? "bg-white/10 text-white"
+                    : "text-white/60 hover:bg-white/8 hover:text-white"
+                }`}
+              >
+                <div className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                  isCurrent ? "bg-amber-500/30" : "bg-white/8 group-hover:bg-white/12"
+                }`}>
+                  <Icon className={`w-3.5 h-3.5 ${isCurrent ? "text-amber-300" : "text-white/50 group-hover:text-white/80"}`} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium leading-none mb-0.5">{label}</p>
+                  <p className="text-[10px] text-white/30 leading-none truncate">{desc}</p>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

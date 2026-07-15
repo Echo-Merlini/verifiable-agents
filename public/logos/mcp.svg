@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- MCP "plug" mark — two prongs + body, matches MCP spec branding -->
+  <rect x="6" y="22" width="36" height="20" rx="6" fill="currentColor"/>
+  <rect x="42" y="26" width="16" height="5" rx="2.5" fill="currentColor"/>
+  <rect x="42" y="33" width="16" height="5" rx="2.5" fill="currentColor"/>
+  <rect x="18" y="10" width="5" height="12" rx="2" fill="currentColor"/>
+  <rect x="29" y="10" width="5" height="12" rx="2" fill="currentColor"/>
+</svg>

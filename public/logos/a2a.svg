@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- A2A "agent-to-agent" — two nodes connected by arrows -->
+  <circle cx="14" cy="32" r="10" fill="currentColor"/>
+  <circle cx="50" cy="32" r="10" fill="currentColor"/>
+  <!-- arrows between them -->
+  <path d="M26 28 L38 28 L35 24" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M38 36 L26 36 L29 40" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
