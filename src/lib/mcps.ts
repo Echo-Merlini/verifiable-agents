@@ -25,8 +25,8 @@ export const MCP_SELECTORS: McpSelector[] = [
     name: "OpenSea",
     tagline: "NFT market data",
     color: "#2081E2",
-    prompt: "Look up the goblinarinos collection on OpenSea and give me its current floor price and key stats.",
-    display: "Goblinarinos floor + stats (OpenSea)",
+    prompt: "Show me some NFTs currently listed in the goblinarinos721 collection on OpenSea, with their images and prices.",
+    display: "Goblinarinos NFTs + prices (OpenSea)",
   },
   {
     id: "lifi",
