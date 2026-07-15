@@ -63,11 +63,8 @@ function elapsed(ts: number) {
 
 const TIER_BORDER: Record<string, string> = {
   "text-emerald-400": "border-emerald-400/30",
-  "text-amber-400":     "border-amber-400/30",
-  "text-amber-400":  "border-amber-400/30",
-  "text-amber-400":   "border-amber-400/30",
-  "text-pink-400":    "border-pink-400/30",
-  "text-amber-400":  "border-amber-400/30",
+  "text-amber-400": "border-amber-400/30",
+  "text-pink-400": "border-pink-400/30",
 };
 
 function TierBadge({ active, label, color }: { active: boolean; label: string; color: string }) {
