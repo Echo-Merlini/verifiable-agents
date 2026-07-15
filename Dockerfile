@@ -8,7 +8,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm install -g bun@1
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+RUN bun install
 
 COPY . .
 RUN npx next build
