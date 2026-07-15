@@ -824,7 +824,7 @@ export function AgentChat({
                   </div>
                 )}
                 {sug && (
-                  <div className="w-full sm:max-w-[92%]">
+                  <div className="w-full sm:max-w-[92%] mx-auto">
                     <SuggestionGallery items={sug.items} onAccept={acceptSuggestion} disabled={loading} />
                   </div>
                 )}
