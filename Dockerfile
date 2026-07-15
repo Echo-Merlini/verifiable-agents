@@ -1,15 +1,15 @@
 # Verifiable Agents — Next.js (SSR) preview/deploy.
-# bun install runs at IMAGE-BUILD time (works; bun's installer only fails on the
-# NAS bind-mount, not in-build — same pattern as the vertice-api gateway).
-FROM oven/bun:1 AS base
+# Built on node (not bun): `bun x next build` hits a require-hook resolution bug,
+# and the kit client already runs on node:20-slim in production.
+FROM node:20-slim AS base
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY package.json bun.lock ./
-RUN bun install
+COPY package.json ./
+RUN npm install --legacy-peer-deps --no-audit --no-fund
 
 COPY . .
-RUN bun x next build
+RUN npx next build
 
 EXPOSE 3000
-CMD ["bun", "x", "next", "start", "-p", "3000", "-H", "0.0.0.0"]
+CMD ["npx", "next", "start", "-p", "3000", "-H", "0.0.0.0"]
