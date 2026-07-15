@@ -1,17 +1,28 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { ShieldCheck, ArrowUpRight } from "lucide-react";
 import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
-import { MCP_SELECTORS, DEMO_AGENT, type McpSelector } from "@/lib/mcps";
+import { buildMcpCards, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
+
+const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
 export default function DemoPage() {
   // AgentChat hands us its sendMessage via onReady; MCP cards call it.
   const sendRef = useRef<((payload: string, display?: string) => void) | null>(null);
+  const [cards, setCards] = useState<McpCard[]>([]);
 
-  const pick = (m: McpSelector) => sendRef.current?.(m.prompt, m.display);
+  // The agent's real toolbox — the same public list the consult page uses.
+  useEffect(() => {
+    fetch(`${GW_URL}/agent/public-mcps`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((mcps: PublicMcp[]) => setCards(buildMcpCards(mcps)))
+      .catch(() => setCards([]));
+  }, []);
+
+  const pick = (c: McpCard) => sendRef.current?.(c.prompt, c.display);
 
   return (
     <main className="min-h-screen bg-deepink text-paper">
@@ -47,27 +58,32 @@ export default function DemoPage() {
 
         {/* MCP selectors */}
         <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">
-          Its tools — click one, watch it run
+          Its tools — hover to learn, click to watch it run
         </p>
         <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {MCP_SELECTORS.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => pick(m)}
-              className="liquid-glass group rounded-2xl p-4 text-left transition-colors hover:border-brassLight/40"
-            >
-              <span
-                className="flex h-9 w-9 items-center justify-center rounded-xl text-paper"
-                style={{ background: m.color }}
+          {cards.map((c) => (
+            <div key={c.id} className="relative group">
+              <button
+                onClick={() => pick(c)}
+                className="liquid-glass w-full h-full group/btn rounded-2xl p-4 text-left transition-colors hover:border-brassLight/40"
               >
-                <McpLogo id={m.id} className="h-5 w-5" />
-              </span>
-              <p className="mt-3 font-display font-medium text-paper flex items-center gap-1">
-                {m.name}
-                <ArrowUpRight className="h-3.5 w-3.5 text-gb-faint transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </p>
-              <p className="mt-0.5 text-[11px] text-gb-faint">{m.tagline}</p>
-            </button>
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10">
+                  <McpLogo card={c} className="h-6 w-6" />
+                </span>
+                <p className="mt-3 font-display font-medium text-paper flex items-center gap-1">
+                  {c.label}
+                  <ArrowUpRight className="h-3.5 w-3.5 text-gb-faint transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                </p>
+                <p className="mt-0.5 text-[11px] text-gb-faint">{c.tagline}</p>
+              </button>
+
+              {/* Hover tooltip — brief italic description of the MCP */}
+              <div className="pointer-events-none absolute left-1/2 top-full z-30 mt-2 w-64 -translate-x-1/2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                <div className="rounded-xl border border-white/10 bg-deepink/95 px-3 py-2.5 text-[11px] italic leading-relaxed text-gb-muted shadow-xl backdrop-blur">
+                  {c.blurb}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
 
