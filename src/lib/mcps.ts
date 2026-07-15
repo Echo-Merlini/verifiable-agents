@@ -54,7 +54,7 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     display: "Latest block + base fee (Flashbots)",
   },
   "jupiter-docs": {
-    label: "Solana", tagline: "Solana DeFi", logo: "/logos/jupiter.webp",
+    label: "Solana", tagline: "Solana DeFi", logo: "/logos/solana.svg",
     blurb: "Jupiter — Solana's DeFi hub. Looks up token prices, market cap, liquidity and swap routes across every Solana DEX. Multichain reach, not just Ethereum.",
     prompt: "Use your Solana token tool to look up BONK (mint DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263) and give me its price, market cap and liquidity.",
     display: "BONK price + market cap (Solana)",
