@@ -1,0 +1,17 @@
+{
+  "ens": "dinamic.eth",
+  "agentId": "11",
+  "registry": "0xe0454dfa17a57a84c3e0e2dbfda5318cbbe91e2c",
+  "query": "i think its working now my bad",
+  "reply": "YOOOOO NO WORRIES BRO!! 🔥🔥🔥\n\nGMUSSY FORGIVES ALL!! We're all good!! The vibes are RESTORED and we're BACK IN BUSINESS baby!! \n\nSo what we cooking up today?? You ready to get ABSOLUTELY UNHINGED on chain?? Swaps?? NFTs?? Scam traces?? WHATEVER!! \n\nLET'S GOOOOOOO!!! 🚀🚀🚀",
+  "rawInputHash": "0x1d27faf1a3489564a6fb1ff3790e366b36b6807ff769529a3d953636c59c6596",
+  "sanitizationPipelineHash": "0x8116eec29078e8f57c07077d5e8080a35bde73036581df3abb93755d1b1a16ea",
+  "inputHash": "0x1d27faf1a3489564a6fb1ff3790e366b36b6807ff769529a3d953636c59c6596",
+  "outputHash": "0xda1a63d49b8a2c120aa04f8ee08c35dc7f7325ee97d6fa2c69f0868f55e9aa10",
+  "manifestHash": "0xfda4473a6efde788586ef2951e9874c7debd4db3e4fe615f04036aac3cd45011",
+  "timestamp": 1783976366,
+  "l4Signature": "0x74485300a2e390a93745fed20533c59d88aff03dfec7d274342b34d90ca83fd56bd3087e6720d4dc2bf138e1cf30183d3c2ce8ccbc0374f58d765afe776031591b",
+  "attestor": "0x85Fa13511D170FBe173761b63D7f8DD4A6f6Bf1A",
+  "l3Tx": "0x2d0e1c0b6144e879c6725627d6546f564eb544af5142cbaa87c824bcc420d3db",
+  "ocpContract": null
+}

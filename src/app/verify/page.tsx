@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { Check as CheckIcon, X as XIcon, Loader2, ShieldCheck, ArrowRight } from "lucide-react";
 import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
 
-const GATEWAY = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
+// Self-contained: a real mainnet attestation baked to /showcase.json. The recompute
+// still runs live in the browser + reads mainnet — only the record fetch is frozen,
+// so the demo works offline / without the gateway. (Swap for a fresh run anytime.)
+const SHOWCASE_URL = process.env.NEXT_PUBLIC_SHOWCASE_URL || "/showcase.json";
 const short = (h?: string) => (h ? h.slice(0, 10) + "…" + h.slice(-6) : "—");
 
 export default function VerifyPage() {
@@ -16,7 +19,7 @@ export default function VerifyPage() {
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${GATEWAY}/attestations/showcase`)
+    fetch(SHOWCASE_URL)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((d: Showcase) => { setSc(d); setQuery(d.query); })
       .catch(() => setErr("Couldn't load the showcase attestation."));
