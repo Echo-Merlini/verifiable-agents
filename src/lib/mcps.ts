@@ -16,14 +16,17 @@ export type McpSelector = {
   display: string;     // shown in the chat as the user's turn
 };
 
+// Every card is a READ-ONLY tool call — no wallet signature, no approval gate —
+// so it runs straight off the community pool for a walletless visitor. Each prompt
+// is validated end-to-end against the live agent (returns real data in ~15s).
 export const MCP_SELECTORS: McpSelector[] = [
   {
     id: "opensea",
     name: "OpenSea",
     tagline: "NFT market data",
     color: "#2081E2",
-    prompt: "Use your OpenSea tool to show me a few trending NFT collections right now, with floor prices.",
-    display: "Show trending NFT collections (OpenSea)",
+    prompt: "Look up the pudgypenguins collection on OpenSea and give me its current floor price and key stats.",
+    display: "Pudgy Penguins floor + stats (OpenSea)",
   },
   {
     id: "lifi",
@@ -34,20 +37,20 @@ export const MCP_SELECTORS: McpSelector[] = [
     display: "Best route to bridge 0.1 ETH → Base (LI.FI)",
   },
   {
-    id: "alchemy",
-    name: "Alchemy",
-    tagline: "Chain data",
-    color: "#4E5BF2",
-    prompt: "Use your Alchemy tool to fetch the current Ethereum block number and gas price.",
-    display: "Current ETH block + gas (Alchemy)",
-  },
-  {
     id: "flashbots",
     name: "Flashbots",
-    tagline: "MEV / private txs",
+    tagline: "MEV / blocks",
     color: "#FF5C34",
-    prompt: "Use your Flashbots tool to check the latest block and explain how a private bundle would be submitted.",
-    display: "Check latest block + private bundles (Flashbots)",
+    prompt: "Use your Flashbots tool to check the latest Ethereum block and its base fee.",
+    display: "Latest block + base fee (Flashbots)",
+  },
+  {
+    id: "solana",
+    name: "Solana",
+    tagline: "Token market data",
+    color: "#14F195",
+    prompt: "Use your Solana token tool to look up BONK (mint DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263) and give me its price, market cap and liquidity.",
+    display: "BONK price + market cap (Solana)",
   },
 ];
 
