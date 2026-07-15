@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { ShieldCheck, ArrowUpRight } from "lucide-react";
 import { AgentChat } from "@/components/AgentChat";
+import { McpLogo } from "@/components/McpLogo";
 import { MCP_SELECTORS, DEMO_AGENT, type McpSelector } from "@/lib/mcps";
 
 export default function DemoPage() {
@@ -26,13 +27,22 @@ export default function DemoPage() {
           </div>
         </div>
 
-        {/* Agent header */}
-        <div className="mt-8">
-          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">Live agent · {DEMO_AGENT.by}</p>
-          <h1 className="mt-2 font-display font-medium tracking-tightest text-4xl sm:text-5xl">{DEMO_AGENT.name}</h1>
-          <p className="mt-2 font-mono text-[11px] text-gb-faint">
-            {DEMO_AGENT.ens} · #{DEMO_AGENT.agentId} · {DEMO_AGENT.registry.slice(0, 6)}…{DEMO_AGENT.registry.slice(-4)}
-          </p>
+        {/* Agent header — avatar left of the title */}
+        <div className="mt-8 flex items-center gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={DEMO_AGENT.image}
+            alt={DEMO_AGENT.name}
+            className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl border border-white/10 object-cover shrink-0"
+            style={{ imageRendering: "pixelated" }}
+          />
+          <div className="min-w-0">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">Live agent · {DEMO_AGENT.by}</p>
+            <h1 className="mt-1 font-display font-medium tracking-tightest text-4xl sm:text-5xl">{DEMO_AGENT.name}</h1>
+            <p className="mt-1.5 font-mono text-[11px] text-gb-faint truncate">
+              {DEMO_AGENT.ens} · #{DEMO_AGENT.agentId} · {DEMO_AGENT.registry.slice(0, 6)}…{DEMO_AGENT.registry.slice(-4)}
+            </p>
+          </div>
         </div>
 
         {/* MCP selectors */}
@@ -47,10 +57,10 @@ export default function DemoPage() {
               className="liquid-glass group rounded-2xl p-4 text-left transition-colors hover:border-brassLight/40"
             >
               <span
-                className="flex h-9 w-9 items-center justify-center rounded-xl font-display font-semibold text-sm text-paper"
+                className="flex h-9 w-9 items-center justify-center rounded-xl text-paper"
                 style={{ background: m.color }}
               >
-                {m.name[0]}
+                <McpLogo id={m.id} className="h-5 w-5" />
               </span>
               <p className="mt-3 font-display font-medium text-paper flex items-center gap-1">
                 {m.name}

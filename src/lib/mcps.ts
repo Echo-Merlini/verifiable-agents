@@ -64,4 +64,5 @@ export const DEMO_AGENT = {
   name: "Bulla Goblin #16",
   ens: "pixel-goblins.dinamic.eth",
   by: "Pixel Goblins",
+  image: "https://i2c.seadn.io/ethereum/0x6559807ffd23965d3af54ee454bc69f113ed06ef/427c13585e375e61c0b73302f11802/5e427c13585e375e61c0b73302f11802.png",
 };
