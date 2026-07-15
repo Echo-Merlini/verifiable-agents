@@ -1,12 +1,14 @@
 # Verifiable Agents — Next.js (SSR) preview/deploy.
-# Built on node (not bun): `bun x next build` hits a require-hook resolution bug,
-# and the kit client already runs on node:20-slim in production.
+# Install with bun (respects bun.lock → the exact pinned versions the kit builds
+# against; npm re-resolves and drifts @wagmi/core). Build with node (bun x next
+# build hits a require-hook bug). Best of both.
 FROM node:20-slim AS base
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY package.json ./
-RUN npm install --legacy-peer-deps --no-audit --no-fund
+RUN npm install -g bun@1
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 COPY . .
 RUN npx next build
