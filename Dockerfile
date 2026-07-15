@@ -5,6 +5,10 @@
 FROM node:20-slim AS base
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
+# NEXT_PUBLIC_* are baked at build time. Point the client at the real dinamic
+# gateway (kit default is localhost:8787 → ERR_CONNECTION_REFUSED in a container).
+ARG NEXT_PUBLIC_GATEWAY_URL=https://gateway.ensub.org
+ENV NEXT_PUBLIC_GATEWAY_URL=$NEXT_PUBLIC_GATEWAY_URL
 
 RUN npm install -g bun@1
 COPY package.json bun.lock ./
