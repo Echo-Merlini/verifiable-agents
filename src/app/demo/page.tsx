@@ -2,10 +2,10 @@
 
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
-import { ShieldCheck, ArrowUpRight, Wallet, ChevronLeft, ChevronRight, LogIn } from "lucide-react";
+import { ShieldCheck, ArrowUpRight, Wallet, ChevronLeft, ChevronRight, LogIn, LogOut } from "lucide-react";
 import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
 import { buildMcpCards, buildCardsFromIds, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
@@ -40,8 +40,11 @@ async function fetchAgentMcps(agentId: string): Promise<string[]> {
 export default function DemoPage() {
   const sendRef = useRef<((payload: string, display?: string) => void) | null>(null);
   const { address } = useAccount();
+  const { disconnect } = useDisconnect();
   const { open: openWallet } = useWalletModal();
-  const { token, login } = useAuth();
+  const { token, login, logout } = useAuth();
+
+  const disconnectWallet = () => { logout(); disconnect(); setMyAgents([]); setAi(0); };
 
   const [fallbackCards, setFallbackCards] = useState<McpCard[]>([]); // Bulla Goblin (public toolbox)
   const [myAgents, setMyAgents] = useState<OwnedAgent[]>([]);
@@ -92,12 +95,18 @@ export default function DemoPage() {
               <button onClick={openWallet} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">
                 <Wallet className="h-3.5 w-3.5" /> Connect
               </button>
-            ) : isRkb && !token ? (
-              <button onClick={() => login()} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">
-                <LogIn className="h-3.5 w-3.5" /> Sign in
-              </button>
             ) : (
-              <span className="font-mono text-[11px] text-gb-faint">{address.slice(0, 6)}…{address.slice(-4)}</span>
+              <div className="flex items-center gap-3">
+                {isRkb && !token && (
+                  <button onClick={() => login()} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">
+                    <LogIn className="h-3.5 w-3.5" /> Sign in
+                  </button>
+                )}
+                <span className="font-mono text-[11px] text-gb-faint">{address.slice(0, 6)}…{address.slice(-4)}</span>
+                <button onClick={disconnectWallet} title="Disconnect" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-red-400 transition-colors">
+                  <LogOut className="h-3.5 w-3.5" /> Disconnect
+                </button>
+              </div>
             )}
             <Link href={`/consult/?registry=${featured.registry}&agentId=${featured.agentId}`} className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Consult</Link>
             <Link href="/verify" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">
