@@ -86,12 +86,19 @@ export function checkOutput(sc: Showcase): Check {
 }
 
 export function checkInputProvenance(sc: Showcase): Check {
-  // Identity-sentinel path: no sanitization ⇒ input the model received === raw input.
-  return { id: "input", label: "Input provenance", recipe: "wyriwe · rawInputHash === inputHash",
-    status: pf(eq(sc.rawInputHash, sc.inputHash)), expected: sc.rawInputHash, got: sc.inputHash };
+  // Identity-sentinel path: no sanitization ⇒ the input the model received IS the raw
+  // input, so it must be keccak256(utf8(query)). Recomputed from the query, so a tamper
+  // cascades into this link too (not just the raw-input check).
+  const got = keccakUtf8(sc.query);
+  return { id: "input", label: "Input provenance", recipe: "wyriwe · keccak256(utf8(query)) === inputHash",
+    status: pf(eq(got, sc.inputHash)), expected: sc.inputHash, got };
 }
 
 export async function checkL4Signature(sc: Showcase): Promise<Check> {
+  // Recover from a message whose raw_input_hash is RE-DERIVED from the (maybe edited)
+  // query — so a tamper changes the signed digest and the recovered signer drifts off
+  // the attestor. Pristine query → recomputed hash == committed → recovers cleanly.
+  const recomputedRaw = keccakUtf8(sc.query);
   let recovered = "";
   try {
     recovered = await recoverTypedDataAddress({
@@ -110,7 +117,7 @@ export async function checkL4Signature(sc: Showcase): Promise<Check> {
       },
       primaryType: "InferenceAttestation",
       message: {
-        raw_input_hash: sc.rawInputHash,
+        raw_input_hash: recomputedRaw,
         sanitization_pipeline_hash: sc.sanitizationPipelineHash,
         input_hash: sc.inputHash,
         output_hash: sc.outputHash,
