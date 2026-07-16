@@ -2,16 +2,37 @@
 
 import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useAccount, useWriteContract, useSwitchChain, useChainId, useSendTransaction, usePublicClient } from "wagmi";
-import { formatEther, keccak256, toHex } from "viem";
-import { Bot, Wallet, Loader2, Coins, ShieldCheck, Clock, Check, AlertTriangle, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import { useAccount, useWriteContract, useSwitchChain, useChainId, useSendTransaction, usePublicClient, useDisconnect } from "wagmi";
+import { formatEther, keccak256, toHex, createPublicClient, http } from "viem";
+import { mainnet } from "viem/chains";
+import { Bot, Wallet, Loader2, Coins, ShieldCheck, Clock, Check, AlertTriangle, ExternalLink, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { GATEWAY_URL } from "@/lib/erc8004";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { AgentChat } from "@/components/AgentChat";
 import { DEMO_AGENT } from "@/lib/mcps";
 
 const RKB = (process.env.NEXT_PUBLIC_GENESIS_REGISTRY_ADDRESS || "0x8b5AF3A59f81c7e16617E8Eb824BC6FfB792A2C3").toLowerCase();
+const RPC = process.env.NEXT_PUBLIC_MAINNET_RPC || "https://ethereum-rpc.publicnode.com";
 type OwnedAgent = { registry: string; agent_id: string; name: string; image: string };
+
+const pub = createPublicClient({ chain: mainnet, transport: http(RPC) });
+const TOKENURI_ABI = [{
+  type: "function", name: "tokenURI", stateMutability: "view",
+  inputs: [{ name: "id", type: "uint256" }], outputs: [{ type: "string" }],
+}] as const;
+
+// An RKB agent's minted toolset lives in its on-chain tokenURI metadata (mcps[]).
+async function fetchAgentMcps(agentId: string): Promise<string[]> {
+  try {
+    let uri = (await pub.readContract({
+      address: RKB as `0x${string}`, abi: TOKENURI_ABI, functionName: "tokenURI", args: [BigInt(agentId)],
+    })) as string;
+    if (uri.startsWith("ipfs://")) uri = "https://ipfs.io/ipfs/" + uri.slice(7);
+    const r = await fetch(uri, { signal: AbortSignal.timeout(6000) });
+    const j = await r.json();
+    return Array.isArray(j.mcps) ? j.mcps : [];
+  } catch { return []; }
+}
 
 // ConsultEscrow.open(bytes32 jobId, address provider, address attestor, uint256 deadline) payable
 const ESCROW_ABI = [{
@@ -46,6 +67,7 @@ function ConsultInner() {
   const urlRegistry = (sp.get("registry") || "").toLowerCase();
   const urlAgentId  = sp.get("agentId") || sp.get("agent_id") || "";
   const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
   const { open: openWallet } = useWalletModal();
   const { writeContractAsync } = useWriteContract();
   const { sendTransactionAsync } = useSendTransaction();
@@ -96,10 +118,18 @@ function ConsultInner() {
         const r = await fetch(`${GATEWAY_URL}/.well-known/agent/${registry}/${agentId}.json`);
         if (!r.ok) throw new Error(r.status === 404 ? "Agent not found." : `HTTP ${r.status}`);
         setCard(await r.json());
+        // Full platform catalog (id → name/description).
         const m = await fetch(`${GATEWAY_URL}/agent/public-mcps`).then(x => x.ok ? x.json() : []).catch(() => []);
-        const list: Mcp[] = Array.isArray(m) ? m : [];
+        const catalog: Mcp[] = Array.isArray(m) ? m : [];
+        // Scope to THIS agent's minted toolset for RKB agents; the community default keeps the full catalog.
+        let list = catalog;
+        if (registry === RKB) {
+          const ids = await fetchAgentMcps(agentId);
+          const set = new Set(ids);
+          list = catalog.filter(x => set.has(x.id));
+        }
         setMcps(list);
-        setAuthorized(Object.fromEntries(list.map(x => [x.id, true]))); // default: authorize all offered, deselect to scope down
+        setAuthorized(Object.fromEntries(list.map(x => [x.id, true]))); // default: authorize the agent's tools, deselect to scope down
       } catch (e: any) { setError(e?.message ?? String(e)); }
       finally { setLoading(false); }
     })();
@@ -191,6 +221,18 @@ function ConsultInner() {
         <div className="flex items-center justify-between pb-2">
           <a href="/" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</a>
           <div className="flex items-center gap-5">
+            {!address ? (
+              <button onClick={openWallet} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">
+                <Wallet className="h-3.5 w-3.5" /> Connect
+              </button>
+            ) : (
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-[11px] text-gb-faint">{address.slice(0, 6)}…{address.slice(-4)}</span>
+                <button onClick={() => { disconnect(); setMyAgents([]); setAi(0); }} title="Disconnect" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-red-400 transition-colors">
+                  <LogOut className="h-3.5 w-3.5" /> Disconnect
+                </button>
+              </div>
+            )}
             <a href="/demo" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Demo</a>
             <a href="/verify" className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">Verify</a>
           </div>
