@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check as CheckIcon, X as XIcon, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw } from "lucide-react";
+import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw } from "lucide-react";
 import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
 
 // Self-contained: a real mainnet attestation baked to /showcase.json. The recompute
@@ -49,8 +49,11 @@ export default function VerifyPage() {
   function tamper() { if (!sc) return; const q = tamperOneChar(query || sc.query); setQuery(q); run(q); }
   function restore() { if (!sc) return; setQuery(sc.query); run(sc.query); }
 
-  const allOk = ran && checks.length > 0 && checks.every((c) => c.ok);
-  const failed = ran && !allOk;
+  const allOk = ran && checks.length > 0 && checks.every((c) => c.status === "pass");
+  const anyFail = ran && checks.some((c) => c.status === "fail");
+  const anyAmber = ran && checks.some((c) => c.status === "unverifiable");
+  const failed = anyFail;                    // a real mismatch
+  const amber = !anyFail && anyAmber;        // couldn't fully check, but nothing mismatched
 
   return (
     <main className="min-h-screen bg-deepink text-paper px-6 md:px-10 py-10">
@@ -168,27 +171,51 @@ export default function VerifyPage() {
             {/* Checks */}
             {ran && (
               <div className="mt-6 space-y-2">
-                {checks.map((c) => (
-                  <div key={c.id} className={`liquid-glass rounded-xl p-4 flex items-start gap-3 ${c.ok ? "" : "border-red-500/40"}`}>
-                    <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${c.ok ? "bg-emerald-400/15 text-emerald-300" : "bg-red-500/15 text-red-300"}`}>
-                      {c.ok ? <CheckIcon className="h-3.5 w-3.5" /> : <XIcon className="h-3.5 w-3.5" />}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-display font-medium">{c.label} <span className="ml-1 font-mono text-[10px] text-brassLight/70">{c.recipe}</span></p>
-                      <p className="mt-1 font-mono text-[11px] break-all">
-                        <span className="text-gb-faint">recomputed </span>
-                        {/* On a red, show the FULL mismatch (not shortened) so the exact differing bytes are visible. */}
-                        <span className={c.ok ? "text-gb-faint" : "text-red-300"}>{c.ok ? short(c.got) : c.got}</span>
-                        <span className="text-gb-faint"> {c.ok ? "=" : "≠"} committed </span>
-                        <span className={c.ok ? "text-gb-faint" : "text-emerald-300/80"}>{c.ok ? short(c.expected) : c.expected}</span>
-                      </p>
+                {checks.map((c) => {
+                  const pass = c.status === "pass";
+                  const unver = c.status === "unverifiable";
+                  return (
+                    <div key={c.id} className={`liquid-glass rounded-xl p-4 flex items-start gap-3 ${pass ? "" : unver ? "border-amber-400/40" : "border-red-500/40"}`}>
+                      <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${pass ? "bg-emerald-400/15 text-emerald-300" : unver ? "bg-amber-400/15 text-amber-300" : "bg-red-500/15 text-red-300"}`}>
+                        {pass ? <CheckIcon className="h-3.5 w-3.5" /> : unver ? <HelpCircle className="h-3.5 w-3.5" /> : <XIcon className="h-3.5 w-3.5" />}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-display font-medium">{c.label} <span className="ml-1 font-mono text-[10px] text-brassLight/70">{c.recipe}</span></p>
+                        {unver ? (
+                          // Amber: could not recompute (network). Never rendered as a mismatch.
+                          <p className="mt-1 font-mono text-[11px] break-all text-amber-300/90">could not check · <span className="text-amber-200/70">{c.got}</span></p>
+                        ) : (
+                          <p className="mt-1 font-mono text-[11px] break-all">
+                            <span className="text-gb-faint">recomputed </span>
+                            {/* On a red, show the FULL mismatch (not shortened) so the exact differing bytes are visible. */}
+                            <span className={pass ? "text-gb-faint" : "text-red-300"}>{pass ? short(c.got) : c.got}</span>
+                            <span className="text-gb-faint"> {pass ? "=" : "≠"} committed </span>
+                            <span className={pass ? "text-gb-faint" : "text-emerald-300/80"}>{pass ? short(c.expected) : c.expected}</span>
+                          </p>
+                        )}
+                        {unver && (
+                          <button onClick={() => run()} disabled={running}
+                            className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-amber-400/30 px-3 py-1 text-[11px] text-amber-300/90 hover:border-amber-400/50 disabled:opacity-50">
+                            <RefreshCw className={`h-3 w-3 ${running ? "animate-spin" : ""}`} /> Retry
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
-                <div className={`mt-4 rounded-2xl p-5 text-center ${allOk ? "border border-brassLight/30 bg-emerald-400/5" : "border border-red-500/30 bg-red-500/5"}`}>
+                <div className={`mt-4 rounded-2xl p-5 text-center ${allOk ? "border border-brassLight/30 bg-emerald-400/5" : amber ? "border border-amber-400/30 bg-amber-400/5" : "border border-red-500/30 bg-red-500/5"}`}>
                   {allOk ? (
                     <p className="font-display text-lg text-paper">Recomputed from public data — <span className="brass-text">verified.</span> No trust required.</p>
+                  ) : amber ? (
+                    <>
+                      <p className="font-display text-lg text-amber-300">Couldn&apos;t fully verify — the chain was unreachable.</p>
+                      <p className="mt-1.5 text-[12px] text-gb-muted">Every other row recomputed in your browser; the on-chain anchor just couldn&apos;t be read right now. That&apos;s <span className="text-amber-300">could not check</span>, not <span className="text-red-300">did not match</span> — the checker won&apos;t hand you a green it didn&apos;t earn.</p>
+                      <button onClick={() => run()} disabled={running}
+                        className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-400/15 border border-amber-400/30 px-4 py-2 text-[12px] text-amber-200 hover:bg-amber-400/25 disabled:opacity-50">
+                        <RefreshCw className={`h-3.5 w-3.5 ${running ? "animate-spin" : ""}`} /> Retry the anchor
+                      </button>
+                    </>
                   ) : (
                     <>
                       <p className="font-display text-lg text-red-300">Recompute failed — your edited input no longer matches what was committed on-chain.</p>

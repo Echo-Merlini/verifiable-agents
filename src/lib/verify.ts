@@ -42,17 +42,31 @@ export type Showcase = {
   ocpContract?: Address;     // ERC-8281 OCP anchor contract
 };
 
+// A check has three honest outcomes — never conflate the last two:
+//   pass          = recomputed and matched
+//   fail          = recomputed and did NOT match (a real mismatch)
+//   unverifiable  = could not recompute (network/RPC) — NOT a failure, retryable
+export type CheckStatus = "pass" | "fail" | "unverifiable";
 export type Check = {
   id: string;
   label: string;
   recipe: string;
-  ok: boolean;
+  status: CheckStatus;
   expected: string;
   got: string;
 };
 
-const RPC = process.env.NEXT_PUBLIC_MAINNET_RPC || "https://eth.llamarpc.com";
+// Multiple mainnet RPCs so a single dead provider ambers instead of the record.
+// (llamarpc flaked in testing — publicnode/cloudflare/ankr lead.) Env override wins.
+const RPCS: string[] = [
+  process.env.NEXT_PUBLIC_MAINNET_RPC,
+  "https://ethereum-rpc.publicnode.com",
+  "https://cloudflare-eth.com",
+  "https://rpc.ankr.com/eth",
+  "https://eth.llamarpc.com",
+].filter((x): x is string => !!x);
 const eq = (a?: string, b?: string) => !!a && !!b && a.toLowerCase() === b.toLowerCase();
+const pf = (b: boolean): CheckStatus => (b ? "pass" : "fail");
 
 /** keccak256 of a string's UTF-8 bytes — the wyriwe/raw + spine recipe. */
 export function keccakUtf8(s: string): Hex {
@@ -62,19 +76,19 @@ export function keccakUtf8(s: string): Hex {
 export function checkRawInput(sc: Showcase): Check {
   const got = keccakUtf8(sc.query);
   return { id: "raw", label: "Raw input", recipe: "wyriwe/raw · keccak256(utf8(query))",
-    ok: eq(got, sc.rawInputHash), expected: sc.rawInputHash, got };
+    status: pf(eq(got, sc.rawInputHash)), expected: sc.rawInputHash, got };
 }
 
 export function checkOutput(sc: Showcase): Check {
   const got = keccakUtf8(sc.reply);
   return { id: "out", label: "Output", recipe: "spine · keccak256(utf8(reply))",
-    ok: eq(got, sc.outputHash), expected: sc.outputHash, got };
+    status: pf(eq(got, sc.outputHash)), expected: sc.outputHash, got };
 }
 
 export function checkInputProvenance(sc: Showcase): Check {
   // Identity-sentinel path: no sanitization ⇒ input the model received === raw input.
   return { id: "input", label: "Input provenance", recipe: "wyriwe · rawInputHash === inputHash",
-    ok: eq(sc.rawInputHash, sc.inputHash), expected: sc.rawInputHash, got: sc.inputHash };
+    status: pf(eq(sc.rawInputHash, sc.inputHash)), expected: sc.rawInputHash, got: sc.inputHash };
 }
 
 export async function checkL4Signature(sc: Showcase): Promise<Check> {
@@ -107,26 +121,36 @@ export async function checkL4Signature(sc: Showcase): Promise<Check> {
       },
       signature: sc.l4Signature,
     });
-  } catch { /* recovered stays "" → fails */ }
+  } catch { /* recovered stays "" → fails (this is local crypto, never a network amber) */ }
   return { id: "l4", label: "L4 attestation (EIP-712)", recipe: "KYA-L4 · recover(signer) == attestor",
-    ok: eq(recovered, sc.attestor), expected: sc.attestor, got: recovered || "recover failed" };
+    status: pf(eq(recovered, sc.attestor)), expected: sc.attestor, got: recovered || "recover failed" };
 }
 
-/** Confirm the L3 anchor really happened on-chain (OCP record() tx succeeded on mainnet). */
+/** Confirm the L3 anchor really happened on-chain (OCP record() tx succeeded on mainnet).
+ *  This is the one network-dependent check: a mismatch is a FAIL, but an unreachable
+ *  chain is UNVERIFIABLE (amber), never a fail — "could not check" ≠ "did not match". */
 export async function checkL3Onchain(sc: Showcase): Promise<Check> {
   const base = { id: "l3", label: "L3 anchor (on-chain)", recipe: "OCP record(inputHash) · mainnet" };
-  if (!sc.l3Tx) return { ...base, ok: false, expected: "an OCP record() tx", got: "none" };
-  try {
-    const client = createPublicClient({ chain: mainnet, transport: http(RPC) });
-    const receipt = await client.getTransactionReceipt({ hash: sc.l3Tx });
-    const okStatus = receipt.status === "success";
-    const okTarget = !sc.ocpContract || eq(receipt.to ?? undefined, sc.ocpContract);
-    return { ...base, ok: okStatus && okTarget,
-      expected: sc.ocpContract ? `success → ${sc.ocpContract}` : "tx success",
-      got: `${receipt.status} → ${receipt.to ?? "—"}` };
-  } catch (e: any) {
-    return { ...base, ok: false, expected: "on-chain OCP record()", got: e?.message ?? "read failed" };
+  if (!sc.l3Tx) return { ...base, status: "fail" as const, expected: "an OCP record() tx", got: "none" };
+  let lastErr = "";
+  for (const rpc of RPCS) {
+    try {
+      const client = createPublicClient({ chain: mainnet, transport: http(rpc) });
+      const receipt = await client.getTransactionReceipt({ hash: sc.l3Tx });
+      // A successful read is a definitive verdict — match → pass, else fail. Stop here.
+      const okStatus = receipt.status === "success";
+      const okTarget = !sc.ocpContract || eq(receipt.to ?? undefined, sc.ocpContract);
+      return { ...base, status: pf(okStatus && okTarget),
+        expected: sc.ocpContract ? `success → ${sc.ocpContract}` : "tx success",
+        got: `${receipt.status} → ${receipt.to ?? "—"}` };
+    } catch (e: any) {
+      // Network error / tx not yet indexed on this provider → try the next RPC.
+      lastErr = e?.shortMessage || e?.message || "read failed";
+    }
   }
+  // Every provider was unreachable — could not recompute. Amber, retryable, NOT a fail.
+  return { ...base, status: "unverifiable" as const, expected: "on-chain OCP record()",
+    got: "could not reach the chain — RPC unavailable" + (lastErr ? ` (${lastErr})` : "") };
 }
 
 /** Run every check. `tamper` lets the UI flip a byte of the query to prove it's real. */
