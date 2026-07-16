@@ -2,15 +2,17 @@
 
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
-import { ShieldCheck, ArrowUpRight, Wallet, ChevronLeft, ChevronRight, LogIn, LogOut } from "lucide-react";
+import { ShieldCheck, ArrowUpRight, Wallet, ChevronLeft, ChevronRight, LogIn, LogOut, Loader2 } from "lucide-react";
 import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
 import { buildMcpCards, buildCardsFromIds, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
 import { useWalletModal } from "@/hooks/useWalletModal";
-import { useAuth } from "@/hooks/useAuth";
+import { getNonce, verifySiwe } from "@/lib/api";
+
+const TOKEN_KEY = "ens-kit-admin-token";
 
 const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 const RKB = (process.env.NEXT_PUBLIC_GENESIS_REGISTRY_ADDRESS || "0x8b5AF3A59f81c7e16617E8Eb824BC6FfB792A2C3").toLowerCase();
@@ -42,9 +44,42 @@ export default function DemoPage() {
   const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const { open: openWallet } = useWalletModal();
-  const { token, login, logout } = useAuth();
+  const { signMessageAsync } = useSignMessage();
+  const [token, setToken] = useState<string | null>(null);
+  const [signingIn, setSigningIn] = useState(false);
 
-  const disconnectWallet = () => { logout(); disconnect(); setMyAgents([]); setAi(0); };
+  // Restore a non-expired sign-in token.
+  useEffect(() => {
+    try {
+      const t = localStorage.getItem(TOKEN_KEY);
+      if (!t) return;
+      const p = JSON.parse(atob(t.split(".")[1]));
+      if (!p.exp || p.exp > Date.now() / 1000) setToken(t); else localStorage.removeItem(TOKEN_KEY);
+    } catch { localStorage.removeItem(TOKEN_KEY); }
+  }, []);
+
+  // Sign in with the WAGMI-connected wallet (not raw window.ethereum) so the token's
+  // address always matches the connected account that owns the agents + credits.
+  const signIn = async () => {
+    if (!address) return;
+    setSigningIn(true);
+    try {
+      const nonce = await getNonce();
+      const message = [
+        `${window.location.host} wants you to sign in with your Ethereum account:`,
+        address, "", "Sign in to ENS Offchain Kit Admin", "",
+        `URI: ${window.location.origin}`, "Version: 1", "Chain ID: 1",
+        `Nonce: ${nonce}`, `Issued At: ${new Date().toISOString()}`,
+      ].join("\n");
+      const signature = await signMessageAsync({ message });
+      const { token: jwt } = await verifySiwe(message, signature);
+      localStorage.setItem(TOKEN_KEY, jwt);
+      setToken(jwt);
+    } catch (e) { console.error("sign-in failed", e); }
+    finally { setSigningIn(false); }
+  };
+
+  const disconnectWallet = () => { localStorage.removeItem(TOKEN_KEY); setToken(null); disconnect(); setMyAgents([]); setAi(0); };
 
   const [fallbackCards, setFallbackCards] = useState<McpCard[]>([]); // Bulla Goblin (public toolbox)
   const [myAgents, setMyAgents] = useState<OwnedAgent[]>([]);
@@ -98,8 +133,8 @@ export default function DemoPage() {
             ) : (
               <div className="flex items-center gap-3">
                 {isRkb && !token && (
-                  <button onClick={() => login()} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">
-                    <LogIn className="h-3.5 w-3.5" /> Sign in
+                  <button onClick={signIn} disabled={signingIn} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight disabled:opacity-50">
+                    {signingIn ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogIn className="h-3.5 w-3.5" />} Sign in
                   </button>
                 )}
                 <span className="font-mono text-[11px] text-gb-faint">{address.slice(0, 6)}…{address.slice(-4)}</span>
