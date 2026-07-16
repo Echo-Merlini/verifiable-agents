@@ -21,19 +21,20 @@ import { buildMcpCards, type McpCard, type PublicMcp } from "@/lib/mcps";
 
 const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
-// Bot variants — sponsor-themed Recompute Kit Bots (nano-banana art in public/bots).
-// Swap `image` for the pinned ipfs:// CID per variant once pinned.
-type BotVariant = { id: string; name: string; accent: string; image: string };
+// Bot variants — sponsor-themed Recompute Kit Bots (nano-banana art). `image` is the
+// optimized webp for fast slider display; `ipfs` is the pinned 1024px PNG that becomes
+// the NFT's on-chain image at mint.
+type BotVariant = { id: string; name: string; accent: string; image: string; ipfs: string };
 const BOT_VARIANTS: BotVariant[] = [
-  { id: "ens",       name: "ENS",        accent: "#4A90E2", image: "/bots/ens.png" },
-  { id: "ethglobal", name: "ETH Global", accent: "#F2B705", image: "/bots/ethglobal.png" },
-  { id: "uniswap",   name: "Uniswap",    accent: "#FF2E9A", image: "/bots/uniswap.png" },
-  { id: "1inch",     name: "1inch",      accent: "#8BC34A", image: "/bots/1inch.png" },
-  { id: "sui",       name: "Sui",        accent: "#4DA2FF", image: "/bots/sui.png" },
-  { id: "thegraph",  name: "The Graph",  accent: "#E0A24C", image: "/bots/thegraph.png" },
-  { id: "worldcoin", name: "Worldcoin",  accent: "#E53935", image: "/bots/worldcoin.png" },
-  { id: "hedera",    name: "Hedera",     accent: "#AEB4BE", image: "/bots/hedera.png" },
-  { id: "0g",        name: "0G",         accent: "#A45BF0", image: "/bots/0g.png" },
+  { id: "ens",       name: "ENS",        accent: "#4A90E2", image: "/bots/ens.webp",       ipfs: "ipfs://bafybeicqk6coonbtrokczf43zaqzjavfw4w4ifoec2w6au25k5bk5j6twq" },
+  { id: "ethglobal", name: "ETH Global", accent: "#F2B705", image: "/bots/ethglobal.webp", ipfs: "ipfs://bafybeiebta24o2srwhlrpb2cxfw4tg3k7htfdmi75ro6npvmaoqh46kmlm" },
+  { id: "uniswap",   name: "Uniswap",    accent: "#FF2E9A", image: "/bots/uniswap.webp",   ipfs: "ipfs://bafybeih72ysonmwyvzcs7czr4bchk3x6g2ayg3qfhzsuercqjvptkcekeq" },
+  { id: "1inch",     name: "1inch",      accent: "#8BC34A", image: "/bots/1inch.webp",     ipfs: "ipfs://bafybeihiq4zajesunsie4zfnw7xr4poqp2a37wqhdgwokguo6nnqlanlza" },
+  { id: "sui",       name: "Sui",        accent: "#4DA2FF", image: "/bots/sui.webp",       ipfs: "ipfs://bafybeif35qqjud7ftacyk36cjhyqjpv2azr2h7w6wrpreozwbxrc6eyrxu" },
+  { id: "thegraph",  name: "The Graph",  accent: "#E0A24C", image: "/bots/thegraph.webp",  ipfs: "ipfs://bafybeia7myhceipzrxnxftkgp2ccvb5rewnihoorsm3emdlzi3itpwja2a" },
+  { id: "worldcoin", name: "Worldcoin",  accent: "#E53935", image: "/bots/worldcoin.webp", ipfs: "ipfs://bafybeiebqyhtsdn4ttlm75k4w2u3jjpat5y33cdblmwetw5kjwqftv7wpe" },
+  { id: "hedera",    name: "Hedera",     accent: "#AEB4BE", image: "/bots/hedera.webp",    ipfs: "ipfs://bafybeiaoslgie4ne3prn3pjkk6lyeerwe25m2gpnrc2jua7r4by4rcar4m" },
+  { id: "0g",        name: "0G",         accent: "#A45BF0", image: "/bots/0g.webp",        ipfs: "ipfs://bafybeieu6x6mxkfeepphr4zpio2hwnsu226cmt5lbkw5ggprsbs6ngrmfu" },
 ];
 
 // Auto-assigned personalities. Tiago to add the on-brand hackathon one; keep this
@@ -138,14 +139,13 @@ export default function MintAgentPage() {
       // 1. pin metadata (variant image + chosen personality + selected tools)
       setStep("pinning-meta");
       const p = PERSONALITIES[persona];
-      const imageAbs = typeof window !== "undefined" ? window.location.origin + variant.image : variant.image;
       const chosen = cards.filter((c) => tools.has(c.id));
       const metaRes = await fetch(`${GW_URL}/api/genesis/pin-metadata`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
           description: `${p.name} — ${p.blurb}`,
-          image: imageAbs,
+          image: variant.ipfs,
           attributes: [
             { trait_type: "Collection", value: "Recompute Kit Bots" },
             { trait_type: "Variant", value: variant.name },
