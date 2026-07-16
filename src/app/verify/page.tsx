@@ -110,8 +110,12 @@ export default function VerifyPage() {
                     </span>
                     <div className="min-w-0">
                       <p className="font-display font-medium">{c.label} <span className="ml-1 font-mono text-[10px] text-brassLight/70">{c.recipe}</span></p>
-                      <p className="mt-1 font-mono text-[11px] text-gb-faint break-all">
-                        recomputed {short(c.got)} {c.ok ? "= " : "≠ "} committed {short(c.expected)}
+                      <p className="mt-1 font-mono text-[11px] break-all">
+                        <span className="text-gb-faint">recomputed </span>
+                        {/* On a red, show the FULL mismatch (not shortened) so the exact differing bytes are visible. */}
+                        <span className={c.ok ? "text-gb-faint" : "text-red-300"}>{c.ok ? short(c.got) : c.got}</span>
+                        <span className="text-gb-faint"> {c.ok ? "=" : "≠"} committed </span>
+                        <span className={c.ok ? "text-gb-faint" : "text-emerald-300/80"}>{c.ok ? short(c.expected) : c.expected}</span>
                       </p>
                     </div>
                   </div>
