@@ -73,7 +73,7 @@ export default function DemoPage() {
 
   const featured = active
     ? { registry: RKB, agentId: active.agent_id, name: active.name || `Bot #${active.agent_id}`, image: active.image, by: "Recompute Kit Bots", sub: `#${active.agent_id} · RKB` }
-    : { registry: DEMO_AGENT.registry, agentId: DEMO_AGENT.agentId, name: DEMO_AGENT.name, image: DEMO_AGENT.image, by: DEMO_AGENT.by, sub: `${DEMO_AGENT.ens} · #${DEMO_AGENT.agentId}` };
+    : { registry: DEMO_AGENT.registry, agentId: DEMO_AGENT.agentId, name: DEMO_AGENT.name, image: DEMO_AGENT.image, by: DEMO_AGENT.by, sub: DEMO_AGENT.ens };
 
   // Featured agent's tools: per-agent (from metadata) for RKB, else the public toolbox.
   useEffect(() => {

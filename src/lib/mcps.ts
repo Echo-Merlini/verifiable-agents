@@ -8,16 +8,18 @@
  * a brand logo onto each known MCP; anything unconfigured falls back gracefully.
  */
 
-// The demo's featured agent — Bulla Goblin #16, a Pixel Goblins agent on the
-// community-metered registry (pool-funded → walletless clicks just work). It's
-// deliberately the SAME agent whose attestation is recomputed on /verify.
+// The walletless demo showcase. It DRIVES a community-metered agent (registry/agentId
+// below → pool-funded, so a judge with no wallet can click a tool and watch it run,
+// same agent recomputed on /verify). The name/image are the Recompute Kit Bots hero
+// "Eth Global LX Agent '26" (RKB #5) — a cosmetic identity for the demo front door;
+// once a visitor connects, /demo swaps to their REAL RKB agents + collection.
 export const DEMO_AGENT = {
   registry: "0xe0454dfa17a57a84c3e0e2dbfda5318cbbe91e2c",
   agentId: "11",
-  name: "Bulla Goblin #16",
-  ens: "pixel-goblins.dinamic.eth",
-  by: "Pixel Goblins",
-  image: "https://i2c.seadn.io/ethereum/0x6559807ffd23965d3af54ee454bc69f113ed06ef/427c13585e375e61c0b73302f11802/5e427c13585e375e61c0b73302f11802.png",
+  name: "Eth Global LX Agent '26",
+  ens: "ETH Global 2026 · Recompute Kit Bots",
+  by: "Recompute Kit Bots",
+  image: "https://gateway.pinata.cloud/ipfs/bafybeiebta24o2srwhlrpb2cxfw4tg3k7htfdmi75ro6npvmaoqh46kmlm",
 };
 
 export type PublicMcp = { id: string; name: string; description?: string };
