@@ -8,7 +8,7 @@ import {
 import { formatEther, type Hex } from "viem";
 import {
   Wallet, Loader2, CheckCircle2, AlertCircle, ChevronLeft, ChevronRight,
-  Dices, ExternalLink, ShieldCheck,
+  Dices, ExternalLink, ShieldCheck, Check, Plus,
 } from "lucide-react";
 import {
   GENESIS_REGISTRY_ABI, GENESIS_REGISTRY_ADDRESS, GENESIS_CHAIN_ID,
@@ -65,6 +65,7 @@ export default function MintAgentPage() {
   const [persona, setPersona] = useState(0);       // personality index
   const [tools, setTools] = useState<Set<string>>(new Set());
   const [cards, setCards] = useState<McpCard[]>([]);
+  const [mi, setMi] = useState(0);                 // MCP carousel index
 
   // ── flow state ──
   const [step, setStep] = useState<Step>("idle");
@@ -170,6 +171,7 @@ export default function MintAgentPage() {
   }
 
   const cycle = (d: number) => setVi((i) => (i + d + BOT_VARIANTS.length) % BOT_VARIANTS.length);
+  const cycleMcp = (d: number) => { if (cards.length) setMi((i) => (i + d + cards.length) % cards.length); };
 
   return (
     <main className="min-h-screen bg-deepink text-paper">
@@ -244,21 +246,52 @@ export default function MintAgentPage() {
               </div>
             </div>
 
-            {/* 4 — MCP selector */}
+            {/* 4 — MCP selector: browse each tool (logo + description), add the ones you want */}
             <div className="mt-5">
               <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Tools · {tools.size} selected</span>
-              <div className="mt-1.5 flex flex-wrap gap-2">
-                {cards.map((c) => {
-                  const on = tools.has(c.id);
-                  return (
-                    <button key={c.id} onClick={() => toggleTool(c.id)} disabled={busy}
-                      className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors disabled:opacity-50 ${on ? "border-brassLight/50 bg-brassLight/10 text-paper" : "border-white/10 bg-white/5 text-gb-muted hover:text-paper"}`}>
-                      <span className="flex h-5 w-5 items-center justify-center"><McpLogo card={c} className="h-4 w-4" /></span>
-                      {c.label}
-                    </button>
-                  );
-                })}
-              </div>
+              {cards.length > 0 && (() => {
+                const c = cards[mi];
+                const on = tools.has(c.id);
+                return (
+                  <>
+                    <div className="mt-1.5 liquid-glass rounded-2xl p-4">
+                      <div className="flex items-start gap-4">
+                        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/10">
+                          <McpLogo card={c} className="h-8 w-8" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="font-display font-medium text-paper">{c.label}</p>
+                            <button onClick={() => toggleTool(c.id)} disabled={busy}
+                              className={`shrink-0 inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[11px] transition-colors disabled:opacity-50 ${on ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300" : "border-white/10 bg-white/5 text-gb-muted hover:text-paper"}`}>
+                              {on ? <><Check className="h-3 w-3" /> Added</> : <><Plus className="h-3 w-3" /> Add</>}
+                            </button>
+                          </div>
+                          <p className="mt-1 text-[12px] leading-relaxed text-gb-muted">{c.blurb}</p>
+                        </div>
+                      </div>
+                    </div>
+                    {/* arrows + position dots (brass dot = selected) */}
+                    <div className="mt-2 flex items-center justify-center gap-3">
+                      <button onClick={() => cycleMcp(-1)} aria-label="Previous tool"
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                      <div className="flex items-center gap-1.5">
+                        {cards.map((cc, i) => (
+                          <button key={cc.id} onClick={() => setMi(i)} aria-label={cc.label}
+                            className="h-1.5 rounded-full transition-all"
+                            style={{ width: i === mi ? 16 : 6, background: tools.has(cc.id) ? "#E0A24C" : i === mi ? "#8A909C" : "#3a3f4b" }} />
+                        ))}
+                      </div>
+                      <button onClick={() => cycleMcp(1)} aria-label="Next tool"
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
 
             {/* 5 — price + mint */}
