@@ -21,7 +21,7 @@ import {
   type Address,
   type Hex,
 } from "viem";
-import { mainnet } from "viem/chains";
+import { baseSepolia } from "viem/chains";
 
 /** The public showcase record served by the gateway (`GET /attestations/showcase`). */
 export type Showcase = {
@@ -56,14 +56,13 @@ export type Check = {
   got: string;
 };
 
-// Multiple mainnet RPCs so a single dead provider ambers instead of the record.
-// (llamarpc flaked in testing — publicnode/cloudflare/ankr lead.) Env override wins.
-const RPCS: string[] = [
-  process.env.NEXT_PUBLIC_MAINNET_RPC,
-  "https://ethereum-rpc.publicnode.com",
-  "https://cloudflare-eth.com",
-  "https://rpc.ankr.com/eth",
-  "https://eth.llamarpc.com",
+// The OCP record() anchor is written to Base Sepolia (ERC-8281 · 0x0963Fd33…) — cheap,
+// high-frequency per-action anchoring. Several RPCs so one dead provider ambers, not fails.
+const BASE_RPCS: string[] = [
+  process.env.NEXT_PUBLIC_L3_RPC,
+  "https://sepolia.base.org",
+  "https://base-sepolia-rpc.publicnode.com",
+  "https://base-sepolia.drpc.org",
 ].filter((x): x is string => !!x);
 const eq = (a?: string, b?: string) => !!a && !!b && a.toLowerCase() === b.toLowerCase();
 const pf = (b: boolean): CheckStatus => (b ? "pass" : "fail");
@@ -133,31 +132,38 @@ export async function checkL4Signature(sc: Showcase): Promise<Check> {
     status: pf(eq(recovered, sc.attestor)), expected: sc.attestor, got: recovered || "recover failed" };
 }
 
-/** Confirm the L3 anchor really happened on-chain (OCP record() tx succeeded on mainnet).
- *  This is the one network-dependent check: a mismatch is a FAIL, but an unreachable
- *  chain is UNVERIFIABLE (amber), never a fail — "could not check" ≠ "did not match". */
+/** Confirm the L3 anchor on-chain: the OCP record() tx succeeded, hit the OCP contract,
+ *  AND the digest it wrote equals the input hash recomputed from the (maybe edited) query.
+ *  So a tamper breaks this link too. A digest mismatch / reverted tx is a FAIL; an
+ *  unreachable chain is UNVERIFIABLE (amber) — "could not check" ≠ "did not match". */
 export async function checkL3Onchain(sc: Showcase): Promise<Check> {
-  const base = { id: "l3", label: "L3 anchor (on-chain)", recipe: "OCP record(inputHash) · mainnet" };
+  const base = { id: "l3", label: "L3 anchor (on-chain)", recipe: "OCP record(digest) · Base Sepolia" };
   if (!sc.l3Tx) return { ...base, status: "fail" as const, expected: "an OCP record() tx", got: "none" };
+  const recomputed = keccakUtf8(sc.query);   // the digest the tx SHOULD have anchored
   let lastErr = "";
-  for (const rpc of RPCS) {
+  for (const rpc of BASE_RPCS) {
     try {
-      const client = createPublicClient({ chain: mainnet, transport: http(rpc) });
-      const receipt = await client.getTransactionReceipt({ hash: sc.l3Tx });
-      // A successful read is a definitive verdict — match → pass, else fail. Stop here.
-      const okStatus = receipt.status === "success";
-      const okTarget = !sc.ocpContract || eq(receipt.to ?? undefined, sc.ocpContract);
-      return { ...base, status: pf(okStatus && okTarget),
-        expected: sc.ocpContract ? `success → ${sc.ocpContract}` : "tx success",
-        got: `${receipt.status} → ${receipt.to ?? "—"}` };
+      const client = createPublicClient({ chain: baseSepolia, transport: http(rpc) });
+      const [receipt, tx] = await Promise.all([
+        client.getTransactionReceipt({ hash: sc.l3Tx }),
+        client.getTransaction({ hash: sc.l3Tx }),
+      ]);
+      // A successful read is a definitive verdict — stop here (don't try more RPCs).
+      if (receipt.status !== "success")
+        return { ...base, status: "fail" as const, expected: "tx success", got: receipt.status };
+      if (sc.ocpContract && !eq(receipt.to ?? undefined, sc.ocpContract))
+        return { ...base, status: "fail" as const, expected: `record() at ${sc.ocpContract}`, got: receipt.to ?? "—" };
+      // record(bytes32 digest): selector (4 bytes) + the anchored digest (32 bytes).
+      const anchored = ("0x" + tx.input.slice(10, 74)) as Hex;
+      return { ...base, status: pf(eq(anchored, recomputed)), expected: anchored, got: recomputed };
     } catch (e: any) {
-      // Network error / tx not yet indexed on this provider → try the next RPC.
+      // Network error / tx not indexed on this provider → try the next RPC.
       lastErr = e?.shortMessage || e?.message || "read failed";
     }
   }
   // Every provider was unreachable — could not recompute. Amber, retryable, NOT a fail.
   return { ...base, status: "unverifiable" as const, expected: "on-chain OCP record()",
-    got: "could not reach the chain — RPC unavailable" + (lastErr ? ` (${lastErr})` : "") };
+    got: "could not reach Base Sepolia — RPC unavailable" + (lastErr ? ` (${lastErr})` : "") };
 }
 
 /** Run every check. `tamper` lets the UI flip a byte of the query to prove it's real. */
