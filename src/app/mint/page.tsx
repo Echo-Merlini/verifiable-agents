@@ -26,8 +26,8 @@ const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org
 // the NFT's on-chain image at mint.
 type BotVariant = { id: string; name: string; accent: string; image: string; ipfs: string };
 const BOT_VARIANTS: BotVariant[] = [
-  { id: "ens",       name: "ENS",        accent: "#4A90E2", image: "/bots/ens.webp",       ipfs: "ipfs://bafybeicqk6coonbtrokczf43zaqzjavfw4w4ifoec2w6au25k5bk5j6twq" },
   { id: "ethglobal", name: "ETH Global", accent: "#F2B705", image: "/bots/ethglobal.webp", ipfs: "ipfs://bafybeiebta24o2srwhlrpb2cxfw4tg3k7htfdmi75ro6npvmaoqh46kmlm" },
+  { id: "ens",       name: "ENS",        accent: "#4A90E2", image: "/bots/ens.webp",       ipfs: "ipfs://bafybeicqk6coonbtrokczf43zaqzjavfw4w4ifoec2w6au25k5bk5j6twq" },
   { id: "uniswap",   name: "Uniswap",    accent: "#FF2E9A", image: "/bots/uniswap.webp",   ipfs: "ipfs://bafybeih72ysonmwyvzcs7czr4bchk3x6g2ayg3qfhzsuercqjvptkcekeq" },
   { id: "1inch",     name: "1inch",      accent: "#8BC34A", image: "/bots/1inch.webp",     ipfs: "ipfs://bafybeihiq4zajesunsie4zfnw7xr4poqp2a37wqhdgwokguo6nnqlanlza" },
   { id: "sui",       name: "Sui",        accent: "#4DA2FF", image: "/bots/sui.webp",       ipfs: "ipfs://bafybeif35qqjud7ftacyk36cjhyqjpv2azr2h7w6wrpreozwbxrc6eyrxu" },
@@ -251,6 +251,17 @@ export default function MintAgentPage() {
             {/* 4 — MCP selector: browse each tool (logo + description), add the ones you want */}
             <div className="mt-5">
               <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Tools · {tools.size} selected</span>
+              {/* selected tools — small logo squares appear as you Add; tap to remove */}
+              {tools.size > 0 && (
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {cards.filter((c) => tools.has(c.id)).map((c) => (
+                    <button key={c.id} onClick={() => toggleTool(c.id)} disabled={busy} title={`Remove ${c.label}`}
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 border border-brassLight/40 hover:border-red-400/50 transition-colors disabled:opacity-50">
+                      <McpLogo card={c} className="h-5 w-5" />
+                    </button>
+                  ))}
+                </div>
+              )}
               {cards.length > 0 && (() => {
                 const c = cards[mi];
                 const on = tools.has(c.id);
