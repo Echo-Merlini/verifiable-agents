@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="Recompute Kit Bot">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       VARIANT PALETTE — recolour a bot by editing the hexes below.
+       For a new version, the two you'll usually change:
+         .shell0/.shell1  → the bot's body
+         .eye0/.eye1 + .accent/.accentS → the glow/trim (must match)
+       Everything else can stay. Keep .ink / .inkS black for the outlines.
+       ═══════════════════════════════════════════════════════════════ */
+    .bg0    { stop-color:#1b1e26; }  /* backdrop top     */
+    .bg1    { stop-color:#0C0D11; }  /* backdrop bottom  */
+    .shell0 { stop-color:#F6F6F8; }  /* body highlight   */
+    .shell1 { stop-color:#C9CCD4; }  /* body shade       */
+    .eye0   { stop-color:#F0349E; }  /* eye / beacon core*/
+    .eye1   { stop-color:#9D174D; }  /* eye shade        */
+    .accent { fill:#F0349E; }        /* emblem · wordmark*/
+    .accentS{ stroke:#F0349E; }      /* trim strokes     */
+    .shade  { fill:#C9CCD4; }        /* bolts            */
+    .shadeS { stroke:#C9CCD4; }      /* antenna neck     */
+    .panel  { fill:#15171d; }        /* visor · discs    */
+    .paper  { fill:#F6F6F8; }        /* eye glints       */
+    .muted  { fill:#5C616D; }        /* tagline          */
+    .inkS   { stroke:#0C0D11; }      /* outlines (keep)  */
+  </style>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" class="bg0"/><stop offset="1" class="bg1"/>
+    </linearGradient>
+    <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" class="shell0"/><stop offset="1" class="shell1"/>
+    </linearGradient>
+    <radialGradient id="eye" cx="0.5" cy="0.4" r="0.7">
+      <stop offset="0" class="eye0"/><stop offset="1" class="eye1"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="4" cy="4" r="2" class="accent" opacity="0.06"/>
+    </pattern>
+  </defs>
+
+  <!-- backdrop -->
+  <rect width="800" height="800" rx="72" fill="url(#bg)"/>
+  <rect width="800" height="800" rx="72" fill="url(#grid)"/>
+  <rect x="10" y="10" width="780" height="780" rx="64" fill="none" class="accentS" stroke-opacity="0.25" stroke-width="2"/>
+
+  <!-- antenna + beacon -->
+  <line x1="400" y1="150" x2="400" y2="212" class="shadeS" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="400" cy="138" r="16" fill="url(#eye)"/>
+  <circle cx="400" cy="138" r="28" fill="none" class="accentS" stroke-width="3" opacity="0.5"/>
+
+  <!-- head shell -->
+  <rect x="250" y="212" width="300" height="298" rx="58" fill="url(#shell)" class="inkS" stroke-width="6"/>
+  <!-- ear bolts -->
+  <rect x="226" y="322" width="28" height="80" rx="12" class="shade inkS" stroke-width="5"/>
+  <rect x="546" y="322" width="28" height="80" rx="12" class="shade inkS" stroke-width="5"/>
+
+  <!-- visor -->
+  <rect x="288" y="256" width="224" height="132" rx="34" class="panel inkS" stroke-width="5"/>
+  <!-- eyes -->
+  <circle cx="350" cy="322" r="27" fill="url(#eye)"/>
+  <circle cx="450" cy="322" r="27" fill="url(#eye)"/>
+  <circle cx="342" cy="314" r="7" class="paper" opacity="0.85"/>
+  <circle cx="442" cy="314" r="7" class="paper" opacity="0.85"/>
+
+  <!-- speaker mouth -->
+  <g class="accentS" stroke-width="6" stroke-linecap="round" opacity="0.85">
+    <line x1="356" y1="430" x2="444" y2="430"/>
+    <line x1="374" y1="452" x2="426" y2="452"/>
+  </g>
+
+  <!-- recompute emblem (refresh glyph) -->
+  <g transform="translate(400,602)">
+    <circle r="72" class="panel inkS" stroke-width="5"/>
+    <g transform="translate(-41.25,-41.25) scale(3.4375)">
+      <path class="accent" d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+    </g>
+  </g>
+
+  <!-- wordmark -->
+  <text x="400" y="726" text-anchor="middle" font-family="'JetBrains Mono','Courier New',monospace" font-size="22" letter-spacing="6" class="accent">RECOMPUTE KIT</text>
+  <text x="400" y="754" text-anchor="middle" font-family="'JetBrains Mono','Courier New',monospace" font-size="12" letter-spacing="4" class="muted">DON'T TRUST · RECOMPUTE</text>
+</svg>

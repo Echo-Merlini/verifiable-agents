@@ -5,35 +5,48 @@ import {
   useAccount, useReadContract, useWriteContract,
   useWaitForTransactionReceipt, useSwitchChain, useChainId,
 } from "wagmi";
-import { formatEther, type Address, type Hex } from "viem";
+import { formatEther, type Hex } from "viem";
 import {
-  Sparkles, Wallet, Loader2, CheckCircle2, AlertCircle, Upload,
-  Coins, Wrench, ExternalLink,
+  Wallet, Loader2, CheckCircle2, AlertCircle, ChevronLeft, ChevronRight,
+  Dices, ExternalLink, ShieldCheck,
 } from "lucide-react";
 import {
   GENESIS_REGISTRY_ABI, GENESIS_REGISTRY_ADDRESS, GENESIS_CHAIN_ID,
-  GENESIS_PHASE, GENESIS_PHASE_LABEL, GATEWAY_URL, isZero,
+  GENESIS_PHASE, GENESIS_PHASE_LABEL, isZero,
 } from "@/lib/erc8004";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { NavMenu } from "@/components/NavMenu";
-import { usePageRecords } from "@/hooks/usePageRecords";
+import { McpLogo } from "@/components/McpLogo";
+import { buildMcpCards, type McpCard, type PublicMcp } from "@/lib/mcps";
 
 const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
-const ENS_NAME = process.env.NEXT_PUBLIC_ENS_NAME || "dinamic.eth";
 
-function GradientBg() {
-  return (
-    <div className="fixed inset-0 z-0">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_50%,rgba(99,102,241,0.15),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_20%,rgba(129,140,248,0.1),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_60%_80%,rgba(79,70,229,0.12),transparent_60%)]" />
-      <div className="absolute inset-0 bg-black/60" />
-    </div>
-  );
-}
+// Bot variants — placeholder recolours (public/bots). Swap `image` for the pinned
+// ipfs:// CID per variant when the real art (nano-banana) is pinned.
+type BotVariant = { id: string; name: string; accent: string; image: string };
+const BOT_VARIANTS: BotVariant[] = [
+  { id: "brass",    name: "Brass",    accent: "#E0A24C", image: "/bots/recompute-bot-brass.svg" },
+  { id: "emerald",  name: "Emerald",  accent: "#34D399", image: "/bots/recompute-bot-emerald.svg" },
+  { id: "cyan",     name: "Cyan",     accent: "#22D3EE", image: "/bots/recompute-bot-cyan.svg" },
+  { id: "magenta",  name: "Magenta",  accent: "#F0349E", image: "/bots/recompute-bot-magenta.svg" },
+  { id: "violet",   name: "Violet",   accent: "#A78BFA", image: "/bots/recompute-bot-violet.svg" },
+  { id: "obsidian", name: "Obsidian", accent: "#E0A24C", image: "/bots/recompute-bot-obsidian.svg" },
+  { id: "molten",   name: "Molten",   accent: "#F6F6F8", image: "/bots/recompute-bot-molten.svg" },
+];
+
+// Auto-assigned personalities. Tiago to add the on-brand hackathon one; keep this
+// list as the pool the mint rolls from.
+type Personality = { id: string; name: string; blurb: string };
+const PERSONALITIES: Personality[] = [
+  { id: "recompute", name: "The Recomputer", blurb: "Trust nothing, re-derive everything. Verifies every claim from the primary artifact before it acts." },
+  { id: "auditor",   name: "The Auditor",    blurb: "Methodical and receipts-first. Narrates what it checked and why, and leaves an on-chain trail." },
+  { id: "scout",     name: "The Scout",      blurb: "Fast, market-aware, curious. Surfaces live data and opportunities across chains." },
+  { id: "sentinel",  name: "The Sentinel",   blurb: "Security-minded. Traces flows, flags risk, and refuses to sign what it can't explain." },
+];
+
 const EMPTY_META: readonly { metadataKey: string; metadataValue: Hex }[] = [];
 
-type Step = "idle" | "pinning-image" | "pinning-meta" | "minting" | "confirming" | "claiming" | "done";
+type Step = "idle" | "pinning-meta" | "minting" | "confirming" | "claiming" | "done";
 
 export default function MintAgentPage() {
   const [mounted, setMounted] = useState(false);
@@ -41,21 +54,17 @@ export default function MintAgentPage() {
 
   const { address, isConnected } = useAccount();
   const { open: openWallet } = useWalletModal();
-  // Inherit the site background/styling — mint-agent records merge with the
-  // parent dinamic.eth records, so this picks up the shared `video` background.
-  const tr = usePageRecords(`mint-agent.${ENS_NAME}`);
-  const videoUrl = tr.video;
   const { writeContractAsync } = useWriteContract();
   const { switchChainAsync } = useSwitchChain();
   const chainId = useChainId();
 
-  // ── form ──
+  // ── selections ──
+  const [vi, setVi] = useState(0);                 // variant index
+  const variant = BOT_VARIANTS[vi];
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [skills, setSkills] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [useOwnTools, setUseOwnTools] = useState(false);
+  const [persona, setPersona] = useState(0);       // personality index
+  const [tools, setTools] = useState<Set<string>>(new Set());
+  const [cards, setCards] = useState<McpCard[]>([]);
 
   // ── flow state ──
   const [step, setStep] = useState<Step>("idle");
@@ -65,278 +74,219 @@ export default function MintAgentPage() {
 
   const registry = GENESIS_REGISTRY_ADDRESS;
   const registryReady = !isZero(registry);
-
-  // ── on-chain reads ──
   const readOpts = { address: registry, abi: GENESIS_REGISTRY_ABI, chainId: GENESIS_CHAIN_ID } as const;
   const { data: phase } = useReadContract({ ...readOpts, functionName: "phase", query: { enabled: registryReady } });
   const { data: publicPrice } = useReadContract({ ...readOpts, functionName: "publicPrice", query: { enabled: registryReady } });
-  const { data: allowlistPrice } = useReadContract({ ...readOpts, functionName: "allowlistPrice", query: { enabled: registryReady } });
   const { data: totalSupply } = useReadContract({ ...readOpts, functionName: "totalSupply", query: { enabled: registryReady } });
   const { data: maxSupply } = useReadContract({ ...readOpts, functionName: "maxSupply", query: { enabled: registryReady } });
 
   const phaseNum = Number(phase ?? 0);
-  const isAllowlist = phaseNum === GENESIS_PHASE.Allowlist;
-  const isPublic = phaseNum === GENESIS_PHASE.Public;
-  const open = isAllowlist || isPublic;
-  const price = (isAllowlist ? allowlistPrice : publicPrice) as bigint | undefined;
-  const priceEth = price !== undefined ? formatEther(price) : "…";
-  const supplyLeft =
-    maxSupply !== undefined && (maxSupply as bigint) > 0n
-      ? Number((maxSupply as bigint) - (totalSupply ?? 0n))
-      : null;
+  const isOpen = phaseNum === GENESIS_PHASE.Public || phaseNum === GENESIS_PHASE.Allowlist;
+  const price = publicPrice as bigint | undefined;
+  const isFree = price !== undefined && price === 0n;
+  const priceLabel = price === undefined ? "…" : isFree ? "FREE MINT" : `${formatEther(price)} ETH`;
+  const supplyLeft = maxSupply !== undefined && (maxSupply as bigint) > 0n
+    ? Number((maxSupply as bigint) - (totalSupply ?? 0n)) : null;
 
   const receipt = useWaitForTransactionReceipt({ hash: txHash ?? undefined, chainId: GENESIS_CHAIN_ID });
 
-  // After the mint confirms → claim the free-trial wallet credits.
+  // Load the agent toolbox (same public list the demo uses) and pre-select the four heroes.
+  useEffect(() => {
+    fetch(`${GW_URL}/agent/public-mcps`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((mcps: PublicMcp[]) => {
+        const built = buildMcpCards(mcps);
+        setCards(built);
+        setTools(new Set(built.slice(0, 4).map((c) => c.id)));
+      })
+      .catch(() => setCards([]));
+  }, []);
+
+  // After mint confirms → claim the free-trial credits.
   useEffect(() => {
     if (step !== "confirming" || !receipt.isSuccess || !txHash) return;
     (async () => {
       setStep("claiming");
       try {
         const r = await fetch(`${GW_URL}/api/genesis/claim-trial`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ txHash }),
         });
         const d = await r.json();
         setTrialGranted(typeof d.creditsGranted === "number" ? d.creditsGranted : 0);
-      } catch {
-        setTrialGranted(0);
-      }
+      } catch { setTrialGranted(0); }
       setStep("done");
     })();
   }, [step, receipt.isSuccess, txHash]);
 
-  function onPickImage(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0] ?? null;
-    setImageFile(f);
-    setImagePreview(f ? URL.createObjectURL(f) : null);
-  }
+  const toggleTool = (id: string) =>
+    setTools((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
 
-  const canMint = isConnected && registryReady && open && !!name.trim() && !!imageFile && step === "idle";
+  const busy = step !== "idle" && step !== "done";
+  const canMint = mounted && isConnected && registryReady && isOpen && !!name.trim() && step === "idle";
 
   async function handleMint() {
-    if (!canMint || !imageFile || !address) return;
+    if (!isConnected) { openWallet(); return; }
+    if (!canMint || !address) return;
     setError(null);
     try {
-      if (chainId !== GENESIS_CHAIN_ID) {
-        await switchChainAsync({ chainId: GENESIS_CHAIN_ID });
-      }
+      if (chainId !== GENESIS_CHAIN_ID) await switchChainAsync({ chainId: GENESIS_CHAIN_ID });
 
-      // 1. pin image
-      setStep("pinning-image");
-      const fd = new FormData();
-      fd.append("file", imageFile);
-      const imgRes = await fetch(`${GW_URL}/api/genesis/pin-image`, { method: "POST", body: fd });
-      const imgData = await imgRes.json();
-      if (!imgData.uri) throw new Error(imgData.error || "Image pin failed");
-
-      // 2. pin metadata
+      // 1. pin metadata (variant image + chosen personality + selected tools)
       setStep("pinning-meta");
-      const attributes = skills
-        .split(",").map((s) => s.trim()).filter(Boolean)
-        .map((value) => ({ trait_type: "skill", value }));
+      const p = PERSONALITIES[persona];
+      const imageAbs = typeof window !== "undefined" ? window.location.origin + variant.image : variant.image;
+      const chosen = cards.filter((c) => tools.has(c.id));
       const metaRes = await fetch(`${GW_URL}/api/genesis/pin-metadata`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
-          description: description.trim(),
-          image: imgData.uri,
-          attributes,
-          usesPlatformTools: !useOwnTools,
+          description: `${p.name} — ${p.blurb}`,
+          image: imageAbs,
+          attributes: [
+            { trait_type: "Collection", value: "Recompute Kit Bots" },
+            { trait_type: "Variant", value: variant.name },
+            { trait_type: "Personality", value: p.name },
+            ...chosen.map((c) => ({ trait_type: "Tool", value: c.label })),
+          ],
+          personality: p.id,
+          mcps: chosen.map((c) => c.id),
         }),
       });
       const metaData = await metaRes.json();
       if (!metaData.uri) throw new Error(metaData.error || "Metadata pin failed");
 
-      // 3. mint (allowlist or public)
+      // 2. mint
       setStep("minting");
-      let hash: Hex;
-      if (isAllowlist) {
-        const pr = await fetch(`${GW_URL}/api/genesis/allowlist-proof?address=${address}`);
-        const pd = await pr.json();
-        if (!pd.listed) throw new Error("Your wallet is not on the allowlist for this phase.");
-        hash = await writeContractAsync({
-          address: registry, abi: GENESIS_REGISTRY_ABI, functionName: "mintAllowlist",
-          args: [metaData.uri, EMPTY_META, (pd.proof ?? []) as readonly Hex[]],
-          value: (allowlistPrice as bigint) ?? 0n, chainId: GENESIS_CHAIN_ID,
-        });
-      } else {
-        hash = await writeContractAsync({
-          address: registry, abi: GENESIS_REGISTRY_ABI, functionName: "mint",
-          args: [metaData.uri, EMPTY_META],
-          value: (publicPrice as bigint) ?? 0n, chainId: GENESIS_CHAIN_ID,
-        });
-      }
-      setTxHash(hash);
-      setStep("confirming");
+      const hash = await writeContractAsync({
+        address: registry, abi: GENESIS_REGISTRY_ABI, functionName: "mint",
+        args: [metaData.uri, EMPTY_META], value: price ?? 0n, chainId: GENESIS_CHAIN_ID,
+      });
+      setTxHash(hash); setStep("confirming");
     } catch (e: any) {
       setError(e?.shortMessage || e?.message || "Mint failed");
       setStep("idle");
     }
   }
 
-  if (!mounted) return <div className="min-h-screen bg-black" />;
-
-  const busy = step !== "idle" && step !== "done";
-  const stepLabel: Record<Step, string> = {
-    idle: "", "pinning-image": "Pinning image to IPFS…", "pinning-meta": "Pinning metadata…",
-    minting: "Confirm in your wallet…", confirming: "Waiting for confirmation…",
-    claiming: "Granting your free credits…", done: "",
-  };
+  const cycle = (d: number) => setVi((i) => (i + d + BOT_VARIANTS.length) % BOT_VARIANTS.length);
 
   return (
-    <div className="relative min-h-screen flex flex-col font-display text-white">
-      <NavMenu currentPath="mint" />
+    <main className="min-h-screen bg-deepink text-paper">
+      <NavMenu />
+      <div className="max-w-xl mx-auto px-6 py-10">
+        <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">Mint your agent</p>
+        <h1 className="mt-2 font-display font-medium tracking-tightest text-4xl">Recompute Kit Bot</h1>
+        <p className="mt-2 text-sm text-gb-muted">A verifiable agent you recompute, not trust. Mint binds this bot as your agent — pick a look, name it, choose its tools.</p>
 
-      {videoUrl ? (
-        <>
-          <video src={videoUrl} autoPlay loop muted playsInline className="fixed inset-0 w-full h-full object-cover z-0" />
-          <div className="fixed inset-0 z-0 bg-black/55" />
-        </>
-      ) : <GradientBg />}
-
-      <div className="relative z-10 flex flex-col items-center pt-16 pb-20 px-4 min-h-screen">
-        <div className="w-full max-w-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="w-5 h-5 text-amber-300" />
-            <h1 className="text-2xl font-semibold">Mint your agent</h1>
-          </div>
-          <p className="text-sm text-white/50 mb-6">
-            Create a self-sovereign on-chain agent — no NFT required. It's born on the
-            full stack: verifiable identity, recompute-checked records, and platform tools.
-          </p>
-
-          {/* phase / price banner */}
-          <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 mb-6 text-sm">
-            {!registryReady ? (
-              <span className="text-amber-400">Genesis registry not configured yet.</span>
-            ) : !open ? (
-              <span className="text-amber-400">
-                Minting is currently <b>{GENESIS_PHASE_LABEL[phaseNum]}</b> — not open yet. Check back soon.
-              </span>
-            ) : (
-              <div className="flex items-center justify-between">
-                <span>
-                  Phase: <b className="text-amber-300">{GENESIS_PHASE_LABEL[phaseNum]}</b>
-                  {isAllowlist && <span className="text-white/40"> · allowlist only</span>}
-                </span>
-                <span>
-                  {price === 0n ? "Free" : `${priceEth} ETH`}
-                  {supplyLeft !== null && <span className="text-white/40"> · {supplyLeft} left</span>}
-                </span>
-              </div>
+        {step === "done" ? (
+          <div className="mt-8 liquid-glass rounded-3xl p-8 text-center">
+            <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-400" />
+            <h2 className="mt-3 font-display text-2xl">{name || "Your agent"} is live</h2>
+            {trialGranted != null && trialGranted > 0 && (
+              <p className="mt-1 text-sm text-gb-muted">{trialGranted} free trial credits granted.</p>
+            )}
+            {txHash && (
+              <a href={`${GENESIS_CHAIN_ID === 1 ? "https://etherscan.io" : "https://sepolia.etherscan.io"}/tx/${txHash}`}
+                target="_blank" rel="noreferrer"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm text-brassLight hover:text-brass">
+                View transaction <ExternalLink className="h-3.5 w-3.5" />
+              </a>
             )}
           </div>
+        ) : (
+          <>
+            {/* 1 — variant frame + slider */}
+            <div className="mt-6 relative liquid-glass rounded-3xl p-4">
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl"
+                   style={{ boxShadow: `inset 0 0 0 1px ${variant.accent}22, 0 0 60px -20px ${variant.accent}55` }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={variant.image} alt={variant.name} className="h-full w-full object-contain" />
+              </div>
+              <button onClick={() => cycle(-1)} aria-label="Previous"
+                className="absolute left-6 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-white/10 hover:bg-black/70 transition-colors">
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button onClick={() => cycle(1)} aria-label="Next"
+                className="absolute right-6 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-white/10 hover:bg-black/70 transition-colors">
+                <ChevronRight className="h-5 w-5" />
+              </button>
+              <div className="mt-3 flex items-center justify-center gap-2">
+                {BOT_VARIANTS.map((b, i) => (
+                  <button key={b.id} onClick={() => setVi(i)} aria-label={b.name}
+                    className="h-2.5 w-2.5 rounded-full transition-transform"
+                    style={{ background: i === vi ? b.accent : "#3a3f4b", transform: i === vi ? "scale(1.25)" : "scale(1)" }} />
+                ))}
+              </div>
+              <p className="mt-1 text-center font-mono text-[11px] uppercase tracking-[0.2em]" style={{ color: variant.accent }}>{variant.name}</p>
+            </div>
 
-          {step === "done" ? (
-            <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-5 text-center">
-              <CheckCircle2 className="w-8 h-8 text-emerald-400 mx-auto mb-2" />
-              <p className="font-medium mb-1">Agent minted!</p>
-              {trialGranted && trialGranted > 0 ? (
-                <p className="text-sm text-white/60 mb-3">
-                  {trialGranted.toLocaleString()} free credits added to your wallet — enough to start using it right away.
-                </p>
-              ) : (
-                <p className="text-sm text-white/60 mb-3">Your agent is live.</p>
-              )}
-              <div className="flex gap-2 justify-center text-sm">
-                <a href="../my-agents/" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15">My agents</a>
-                <a href="../top-up/" className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15">Top up credits</a>
-                {txHash && (
-                  <a href={`${GENESIS_CHAIN_ID === 1 ? "https://etherscan.io" : "https://sepolia.etherscan.io"}/tx/${txHash}`} target="_blank" rel="noreferrer"
-                     className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 inline-flex items-center gap-1">
-                    tx <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
+            {/* 2 — name */}
+            <label className="mt-6 block">
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Agent name</span>
+              <input value={name} onChange={(e) => setName(e.target.value)} disabled={busy}
+                placeholder="e.g. Wizgob Advisor"
+                className="mt-1.5 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-paper placeholder:text-gb-faint focus:border-brassLight/50 focus:outline-none disabled:opacity-50" />
+            </label>
+
+            {/* 3 — personality (auto-assigned, re-rollable) */}
+            <div className="mt-5">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Personality · auto-assigned</span>
+                <button onClick={() => setPersona((i) => (i + 1) % PERSONALITIES.length)} disabled={busy}
+                  className="inline-flex items-center gap-1 text-[11px] text-brassLight hover:text-brass disabled:opacity-50">
+                  <Dices className="h-3.5 w-3.5" /> re-roll
+                </button>
+              </div>
+              <div className="mt-1.5 rounded-xl bg-white/5 border border-white/10 px-4 py-3">
+                <p className="font-display font-medium text-paper">{PERSONALITIES[persona].name}</p>
+                <p className="mt-0.5 text-[12px] text-gb-muted">{PERSONALITIES[persona].blurb}</p>
               </div>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {/* image */}
-              <label className="block">
-                <span className="text-xs font-medium text-white/70">Agent image</span>
-                <div className="mt-1 flex items-center gap-3">
-                  <div className="w-20 h-20 rounded-lg border border-white/10 bg-white/[0.03] overflow-hidden flex items-center justify-center">
-                    {imagePreview
-                      ? <img src={imagePreview} alt="" className="w-full h-full object-cover" />
-                      : <Upload className="w-5 h-5 text-white/30" />}
-                  </div>
-                  <input type="file" accept="image/*" onChange={onPickImage} disabled={busy}
-                         className="text-xs text-white/60 file:mr-2 file:px-3 file:py-1.5 file:rounded-lg file:border-0 file:bg-white/10 file:text-white" />
-                </div>
-              </label>
 
-              <Field label="Name" value={name} onChange={setName} placeholder="Wizgob Advisor" disabled={busy} />
-              <Field label="Description" value={description} onChange={setDescription} placeholder="What your agent does…" disabled={busy} area />
-              <Field label="Skills (comma-separated)" value={skills} onChange={setSkills} placeholder="research, trading, forensics" disabled={busy} />
-
-              {/* platform vs BYO tools */}
-              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
-                <ToolPath icon={<Coins className="w-4 h-4" />} active={!useOwnTools} onClick={() => setUseOwnTools(false)}
-                  title="Use the platform stack" desc="Runs on our tools + MCP. Metered by per-wallet credits — minting grants you a free trial to start." />
-                <ToolPath icon={<Wrench className="w-4 h-4" />} active={useOwnTools} onClick={() => setUseOwnTools(true)}
-                  title="Bring your own tools" desc="Point the agent at your own MCP endpoint later (in agent settings). No platform credits consumed." />
+            {/* 4 — MCP selector */}
+            <div className="mt-5">
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Tools · {tools.size} selected</span>
+              <div className="mt-1.5 flex flex-wrap gap-2">
+                {cards.map((c) => {
+                  const on = tools.has(c.id);
+                  return (
+                    <button key={c.id} onClick={() => toggleTool(c.id)} disabled={busy}
+                      className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors disabled:opacity-50 ${on ? "border-brassLight/50 bg-brassLight/10 text-paper" : "border-white/10 bg-white/5 text-gb-muted hover:text-paper"}`}>
+                      <span className="flex h-5 w-5 items-center justify-center"><McpLogo card={c} className="h-4 w-4" /></span>
+                      {c.label}
+                    </button>
+                  );
+                })}
               </div>
-
-              {error && (
-                <div className="flex items-start gap-2 text-sm text-red-400">
-                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" /> <span>{error}</span>
-                </div>
-              )}
-
-              {!isConnected ? (
-                <button onClick={openWallet}
-                        className="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 font-medium inline-flex items-center justify-center gap-2">
-                  <Wallet className="w-4 h-4" /> Connect wallet
-                </button>
-              ) : (
-                <button onClick={handleMint} disabled={!canMint}
-                        className="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-40 disabled:cursor-not-allowed font-medium inline-flex items-center justify-center gap-2">
-                  {busy
-                    ? <><Loader2 className="w-4 h-4 animate-spin" />{stepLabel[step]}</>
-                    : <><Sparkles className="w-4 h-4" />Mint agent{price && price > 0n ? ` · ${priceEth} ETH` : ""}</>}
-                </button>
-              )}
             </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
-function Field({ label, value, onChange, placeholder, disabled, area }: {
-  label: string; value: string; onChange: (v: string) => void;
-  placeholder?: string; disabled?: boolean; area?: boolean;
-}) {
-  return (
-    <label className="block">
-      <span className="text-xs font-medium text-white/70">{label}</span>
-      {area ? (
-        <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} disabled={disabled} rows={3}
-          className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm outline-none focus:border-amber-400/50 disabled:opacity-50" />
-      ) : (
-        <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} disabled={disabled}
-          className="mt-1 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm outline-none focus:border-amber-400/50 disabled:opacity-50" />
-      )}
-    </label>
-  );
-}
+            {/* 5 — price + mint */}
+            <div className="mt-7 flex items-center justify-between">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Price</p>
+                <p className="font-display text-2xl" style={{ color: isFree ? "#34D399" : undefined }}>{priceLabel}</p>
+                {supplyLeft != null && <p className="text-[11px] text-gb-faint">{supplyLeft} left</p>}
+              </div>
+              <button onClick={handleMint} disabled={busy || (isConnected && !canMint)}
+                className="inline-flex items-center gap-2 rounded-2xl bg-brass px-6 py-3.5 font-display font-medium text-deepink hover:bg-brassLight transition-colors disabled:opacity-40">
+                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : isConnected ? <ShieldCheck className="h-4 w-4" /> : <Wallet className="h-4 w-4" />}
+                {busy ? "Minting…" : isConnected ? "Mint agent" : "Connect wallet"}
+              </button>
+            </div>
 
-function ToolPath({ icon, title, desc, active, onClick }: {
-  icon: React.ReactNode; title: string; desc: string; active: boolean; onClick: () => void;
-}) {
-  return (
-    <button type="button" onClick={onClick}
-      className={`w-full text-left flex gap-3 p-2 rounded-lg border transition-colors ${
-        active ? "border-amber-400/50 bg-amber-500/10" : "border-transparent hover:bg-white/5"}`}>
-      <div className={`mt-0.5 ${active ? "text-amber-300" : "text-white/40"}`}>{icon}</div>
-      <div>
-        <div className="text-sm font-medium">{title}</div>
-        <div className="text-xs text-white/50">{desc}</div>
+            {mounted && isConnected && registryReady && !isOpen && (
+              <p className="mt-3 text-[12px] text-amber-300/90">Minting is {GENESIS_PHASE_LABEL[phaseNum]} — opens when the collection goes public.</p>
+            )}
+            {mounted && !registryReady && (
+              <p className="mt-3 text-[12px] text-amber-300/90">Collection deploys shortly — the mint activates once its registry is live.</p>
+            )}
+            {error && (
+              <p className="mt-3 flex items-center gap-1.5 text-[12px] text-red-400"><AlertCircle className="h-3.5 w-3.5" />{error}</p>
+            )}
+          </>
+        )}
       </div>
-    </button>
+    </main>
   );
 }
