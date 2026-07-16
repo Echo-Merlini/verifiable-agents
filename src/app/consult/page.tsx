@@ -4,10 +4,14 @@ import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAccount, useWriteContract, useSwitchChain, useChainId, useSendTransaction, usePublicClient } from "wagmi";
 import { formatEther, keccak256, toHex } from "viem";
-import { Bot, Wallet, Loader2, Coins, ShieldCheck, Clock, Check, AlertTriangle, ExternalLink } from "lucide-react";
+import { Bot, Wallet, Loader2, Coins, ShieldCheck, Clock, Check, AlertTriangle, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import { GATEWAY_URL } from "@/lib/erc8004";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { AgentChat } from "@/components/AgentChat";
+import { DEMO_AGENT } from "@/lib/mcps";
+
+const RKB = (process.env.NEXT_PUBLIC_GENESIS_REGISTRY_ADDRESS || "0x8b5AF3A59f81c7e16617E8Eb824BC6FfB792A2C3").toLowerCase();
+type OwnedAgent = { registry: string; agent_id: string; name: string; image: string };
 
 // ConsultEscrow.open(bytes32 jobId, address provider, address attestor, uint256 deadline) payable
 const ESCROW_ABI = [{
@@ -39,8 +43,8 @@ function fmtHours(s?: number) { if (!s) return "—"; const h = s / 3600; return
 
 function ConsultInner() {
   const sp = useSearchParams();
-  const registry = (sp.get("registry") || "").toLowerCase();
-  const agentId  = sp.get("agentId") || sp.get("agent_id") || "";
+  const urlRegistry = (sp.get("registry") || "").toLowerCase();
+  const urlAgentId  = sp.get("agentId") || sp.get("agent_id") || "";
   const { address, isConnected } = useAccount();
   const { open: openWallet } = useWalletModal();
   const { writeContractAsync } = useWriteContract();
@@ -62,6 +66,27 @@ function ConsultInner() {
   const [jobExpiry, setJobExpiry] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
   const [consultErr, setConsultErr] = useState<string | null>(null);
+  const [myAgents, setMyAgents] = useState<OwnedAgent[]>([]);
+  const [ai, setAi] = useState(0);
+
+  // Keep the wallet's RKB agents in view (the connection persists across /demo → /consult).
+  useEffect(() => {
+    if (!address) { setMyAgents([]); return; }
+    fetch(`${GATEWAY_URL}/agent/owned/${address}`).then((r) => (r.ok ? r.json() : []))
+      .then((all: OwnedAgent[]) => { setMyAgents((all || []).filter((a) => a.registry.toLowerCase() === RKB)); setAi(0); })
+      .catch(() => setMyAgents([]));
+  }, [address]);
+
+  // Active consult target: the selected owned agent when connected, else the URL default.
+  const activeOwned = myAgents.length ? myAgents[ai] : null;
+  const registry = (activeOwned ? activeOwned.registry : urlRegistry).toLowerCase();
+  const agentId  = activeOwned ? activeOwned.agent_id : urlAgentId;
+  const cycle = (d: number) => setAi((i) => (i + d + myAgents.length) % myAgents.length);
+
+  // Mask the default hero identity (Bulla Goblin → Eth Global LX Agent '26) unless on an owned agent.
+  const isDefaultAgent = !activeOwned && registry === DEMO_AGENT.registry.toLowerCase() && agentId === DEMO_AGENT.agentId;
+  const displayName  = isDefaultAgent ? DEMO_AGENT.name : (activeOwned?.name || card?.name || "Agent");
+  const displayImage = isDefaultAgent ? DEMO_AGENT.image : (activeOwned?.image || null);
 
   useEffect(() => {
     if (!registry || !agentId) { setError("Missing ?registry= and ?agentId= in the URL."); setLoading(false); return; }
@@ -182,16 +207,36 @@ function ConsultInner() {
         ) : card && (
           <>
             {/* Header */}
-            <div className="liquid-glass rounded-3xl p-5 flex gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/4 flex items-center justify-center shrink-0">
-                <Bot className="w-7 h-7 text-paper/25" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h1 className="font-semibold text-paper text-lg leading-tight">{card.name || "Agent"}</h1>
-                {card.description && <p className="text-sm text-paper/50 mt-1 line-clamp-3">{card.description}</p>}
-                <div className="flex gap-2 flex-wrap mt-2.5">
-                  <span className="liquid-glass rounded-full px-2.5 py-1 text-[10px] font-mono text-paper/30">#{agentId}</span>
-                  <span className="liquid-glass rounded-full px-2.5 py-1 text-[10px] font-mono text-paper/30">{registry.slice(0, 6)}…{registry.slice(-4)}</span>
+            <div className="liquid-glass rounded-3xl p-5">
+              {myAgents.length > 1 && (
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/8">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-brassLight/80">Your agent · {ai + 1} of {myAgents.length}</span>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => cycle(-1)} aria-label="Previous agent" className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"><ChevronLeft className="w-4 h-4" /></button>
+                    <button onClick={() => cycle(1)} aria-label="Next agent" className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"><ChevronRight className="w-4 h-4" /></button>
+                  </div>
+                </div>
+              )}
+              <div className="flex gap-4">
+                {displayImage ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={displayImage} alt={displayName} className="w-16 h-16 rounded-2xl object-cover border border-white/10 shrink-0" style={{ imageRendering: "pixelated" }} />
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center shrink-0"><Bot className="w-7 h-7 text-paper/25" /></div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h1 className="font-display font-medium text-paper text-lg leading-tight truncate">{displayName}</h1>
+                  {card.description && !isDefaultAgent && <p className="text-sm text-paper/50 mt-1 line-clamp-3">{card.description}</p>}
+                  <div className="flex gap-2 flex-wrap mt-2.5">
+                    {isDefaultAgent ? (
+                      <span className="liquid-glass rounded-full px-2.5 py-1 text-[10px] font-mono text-paper/30">{DEMO_AGENT.ens}</span>
+                    ) : (
+                      <>
+                        <span className="liquid-glass rounded-full px-2.5 py-1 text-[10px] font-mono text-paper/30">#{agentId}</span>
+                        <span className="liquid-glass rounded-full px-2.5 py-1 text-[10px] font-mono text-paper/30">{registry.slice(0, 6)}…{registry.slice(-4)}</span>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -281,7 +326,7 @@ function ConsultInner() {
             {/* Consult chat — full agent UI (nft cards, buy flow, markdown) via the job token */}
             {jobToken && (
               <div className="liquid-glass rounded-2xl p-4">
-                <div className="flex items-center gap-2 mb-2"><Bot className="w-4 h-4 text-paper/40" /><p className="text-[10px] uppercase tracking-widest text-paper/40">Consult {card.name}</p></div>
+                <div className="flex items-center gap-2 mb-2"><Bot className="w-4 h-4 text-paper/40" /><p className="text-[10px] uppercase tracking-widest text-paper/40">Consult {displayName}</p></div>
                 <AgentChat registry={registry} agentId={agentId} ownerAddress={address} authToken={jobToken} compact />
               </div>
             )}
