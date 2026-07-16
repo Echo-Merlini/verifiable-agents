@@ -79,7 +79,8 @@ export default function DemoPage() {
     finally { setSigningIn(false); }
   };
 
-  const disconnectWallet = () => { localStorage.removeItem(TOKEN_KEY); setToken(null); disconnect(); setMyAgents([]); setAi(0); };
+  const autoSignRef = useRef(false);
+  const disconnectWallet = () => { localStorage.removeItem(TOKEN_KEY); setToken(null); disconnect(); setMyAgents([]); setAi(0); autoSignRef.current = false; };
 
   const [fallbackCards, setFallbackCards] = useState<McpCard[]>([]); // Bulla Goblin (public toolbox)
   const [myAgents, setMyAgents] = useState<OwnedAgent[]>([]);
@@ -102,6 +103,17 @@ export default function DemoPage() {
       })
       .catch(() => setMyAgents([]));
   }, [address]);
+
+  // Once you connect and have agents to drive, prompt the one SIWE signature
+  // automatically — so it's a single signature, not connect-then-hunt-for-signin.
+  useEffect(() => {
+    if (address && myAgents.length > 0 && !token && !signingIn && !autoSignRef.current) {
+      autoSignRef.current = true;
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      signIn();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, myAgents.length, token]);
 
   const active = myAgents.length ? myAgents[ai] : null;          // an RKB agent, or null → default
   const isRkb = !!active;
