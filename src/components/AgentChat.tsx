@@ -733,7 +733,7 @@ export function AgentChat({
       setMessages(prev => [...prev, { role: "assistant", text: "Connection error — try again." }]);
       setLoading(false);
     }
-  }, [loading, registry, agentId, ownerAddress, poll]);
+  }, [loading, registry, agentId, ownerAddress, authToken, poll]);
 
   const send = useCallback(() => {
     const msg = input.trim();
