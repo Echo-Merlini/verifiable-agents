@@ -701,20 +701,28 @@ export function AgentChat({
         let reply: string;
         const topupUrl = ownerAddress ? `/top-up/?address=${ownerAddress}` : "/top-up/";
         if (d.error?.code === -32002) {
-          // pool_exhausted — the community pool is empty. Switch this user to their
-          // own wallet credits for subsequent messages (my-agents cards read the same key).
-          if (typeof window !== "undefined") localStorage.setItem(`creditSource:${registry.toLowerCase()}`, "wallet");
+          // pool_exhausted. Only switch a real owner to their own wallet credits — a
+          // walletless visitor must NOT get stuck in "wallet" mode (it would never
+          // flip back after the pool refills), so we leave their source on pool.
           const wc = typeof d.error?.walletCredits === "number" ? d.error.walletCredits : null;
-          reply = wc && wc > 0
-            ? `The community pool is empty — switched to **your credits** (${wc} left). Send your message again to continue.`
-            : `The community pool is empty and you have no personal credits. [Top up here](${topupUrl}) to keep chatting.`;
+          if (ownerAddress && typeof window !== "undefined") {
+            localStorage.setItem(`creditSource:${registry.toLowerCase()}`, "wallet");
+            reply = wc && wc > 0
+              ? `The community pool is empty — switched to **your credits** (${wc} left). Send your message again to continue.`
+              : `The community pool is empty and you have no personal credits. [Top up here](${topupUrl}) to keep chatting.`;
+          } else {
+            reply = `This agent's community pool is momentarily empty — try again in a bit.`;
+          }
           onCreditError?.();
         } else if (d.error?.code === -32001) {
-          // -32001 fires when no wallet credits were charged — either genuinely out,
-          // or the request wasn't authenticated (missing/stale token). Signal the
-          // parent so it can drop a stale token and re-prompt sign-in.
+          // No wallet credits charged — either genuinely out, or unauthenticated. For a
+          // walletless visitor this usually means a stale "wallet" override from a past
+          // pool-exhaustion — self-heal by resetting to pool so the next send retries it.
+          if (!ownerAddress && typeof window !== "undefined") localStorage.removeItem(`creditSource:${registry.toLowerCase()}`);
           onCreditError?.();
-          reply = `Couldn't charge credits. If you have a balance, your session may have expired — **sign in again**. Otherwise [top up here](${topupUrl}).`;
+          reply = ownerAddress
+            ? `Couldn't charge credits. If you have a balance, your session may have expired — **sign in again**. Otherwise [top up here](${topupUrl}).`
+            : `Reset your credit source — **send your message again** and it'll use the community pool.`;
         } else {
           reply = d.result?.content?.[0]?.text ?? d.error?.message ?? "No response";
         }
