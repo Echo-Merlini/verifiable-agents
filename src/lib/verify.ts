@@ -21,7 +21,7 @@ import {
   type Address,
   type Hex,
 } from "viem";
-import { baseSepolia } from "viem/chains";
+import { mainnet } from "viem/chains";
 
 /** The public showcase record served by the gateway (`GET /attestations/showcase`). */
 export type Showcase = {
@@ -56,13 +56,14 @@ export type Check = {
   got: string;
 };
 
-// The OCP record() anchor is written to Base Sepolia (ERC-8281 · 0x0963Fd33…) — cheap,
-// high-frequency per-action anchoring. Several RPCs so one dead provider ambers, not fails.
-const BASE_RPCS: string[] = [
+// The showcase OCP record() anchor is on mainnet (TruthAnchor · 0x1e2A118a). Several
+// RPCs so one dead provider ambers, not fails. Env override wins.
+const L3_RPCS: string[] = [
   process.env.NEXT_PUBLIC_L3_RPC,
-  "https://sepolia.base.org",
-  "https://base-sepolia-rpc.publicnode.com",
-  "https://base-sepolia.drpc.org",
+  "https://ethereum-rpc.publicnode.com",
+  "https://cloudflare-eth.com",
+  "https://eth.drpc.org",
+  "https://eth.llamarpc.com",
 ].filter((x): x is string => !!x);
 const eq = (a?: string, b?: string) => !!a && !!b && a.toLowerCase() === b.toLowerCase();
 const pf = (b: boolean): CheckStatus => (b ? "pass" : "fail");
@@ -137,13 +138,13 @@ export async function checkL4Signature(sc: Showcase): Promise<Check> {
  *  So a tamper breaks this link too. A digest mismatch / reverted tx is a FAIL; an
  *  unreachable chain is UNVERIFIABLE (amber) — "could not check" ≠ "did not match". */
 export async function checkL3Onchain(sc: Showcase): Promise<Check> {
-  const base = { id: "l3", label: "L3 anchor (on-chain)", recipe: "OCP record(digest) · Base Sepolia" };
+  const base = { id: "l3", label: "L3 anchor (on-chain)", recipe: "OCP record(digest) · mainnet" };
   if (!sc.l3Tx) return { ...base, status: "fail" as const, expected: "an OCP record() tx", got: "none" };
   const recomputed = keccakUtf8(sc.query);   // the digest the tx SHOULD have anchored
   let lastErr = "";
-  for (const rpc of BASE_RPCS) {
+  for (const rpc of L3_RPCS) {
     try {
-      const client = createPublicClient({ chain: baseSepolia, transport: http(rpc) });
+      const client = createPublicClient({ chain: mainnet, transport: http(rpc) });
       const [receipt, tx] = await Promise.all([
         client.getTransactionReceipt({ hash: sc.l3Tx }),
         client.getTransaction({ hash: sc.l3Tx }),
@@ -163,7 +164,7 @@ export async function checkL3Onchain(sc: Showcase): Promise<Check> {
   }
   // Every provider was unreachable — could not recompute. Amber, retryable, NOT a fail.
   return { ...base, status: "unverifiable" as const, expected: "on-chain OCP record()",
-    got: "could not reach Base Sepolia — RPC unavailable" + (lastErr ? ` (${lastErr})` : "") };
+    got: "could not reach mainnet — RPC unavailable" + (lastErr ? ` (${lastErr})` : "") };
 }
 
 /** Run every check. `tamper` lets the UI flip a byte of the query to prove it's real. */

@@ -69,7 +69,7 @@ export default function VerifyPage() {
         </h1>
         <p className="mt-4 text-gb-muted max-w-xl">
           A real on-chain agent action, attested in and out. Every hash is re-derived
-          <span className="text-paper"> in your browser</span>, the anchor is read straight from the chain it was written to,
+          <span className="text-paper"> in your browser</span>, the anchor is read straight from mainnet,
           and the attestation signer is recovered. Nothing is trusted — so don&apos;t take our word for it, break it.
         </p>
 
