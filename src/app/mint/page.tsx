@@ -21,17 +21,19 @@ import { buildMcpCards, type McpCard, type PublicMcp } from "@/lib/mcps";
 
 const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
-// Bot variants — placeholder recolours (public/bots). Swap `image` for the pinned
-// ipfs:// CID per variant when the real art (nano-banana) is pinned.
+// Bot variants — sponsor-themed Recompute Kit Bots (nano-banana art in public/bots).
+// Swap `image` for the pinned ipfs:// CID per variant once pinned.
 type BotVariant = { id: string; name: string; accent: string; image: string };
 const BOT_VARIANTS: BotVariant[] = [
-  { id: "brass",    name: "Brass",    accent: "#E0A24C", image: "/bots/recompute-bot-brass.svg" },
-  { id: "emerald",  name: "Emerald",  accent: "#34D399", image: "/bots/recompute-bot-emerald.svg" },
-  { id: "cyan",     name: "Cyan",     accent: "#22D3EE", image: "/bots/recompute-bot-cyan.svg" },
-  { id: "magenta",  name: "Magenta",  accent: "#F0349E", image: "/bots/recompute-bot-magenta.svg" },
-  { id: "violet",   name: "Violet",   accent: "#A78BFA", image: "/bots/recompute-bot-violet.svg" },
-  { id: "obsidian", name: "Obsidian", accent: "#E0A24C", image: "/bots/recompute-bot-obsidian.svg" },
-  { id: "molten",   name: "Molten",   accent: "#F6F6F8", image: "/bots/recompute-bot-molten.svg" },
+  { id: "ens",       name: "ENS",        accent: "#4A90E2", image: "/bots/ens.png" },
+  { id: "ethglobal", name: "ETH Global", accent: "#F2B705", image: "/bots/ethglobal.png" },
+  { id: "uniswap",   name: "Uniswap",    accent: "#FF2E9A", image: "/bots/uniswap.png" },
+  { id: "1inch",     name: "1inch",      accent: "#8BC34A", image: "/bots/1inch.png" },
+  { id: "sui",       name: "Sui",        accent: "#4DA2FF", image: "/bots/sui.png" },
+  { id: "thegraph",  name: "The Graph",  accent: "#E0A24C", image: "/bots/thegraph.png" },
+  { id: "worldcoin", name: "Worldcoin",  accent: "#E53935", image: "/bots/worldcoin.png" },
+  { id: "hedera",    name: "Hedera",     accent: "#AEB4BE", image: "/bots/hedera.png" },
+  { id: "0g",        name: "0G",         accent: "#A45BF0", image: "/bots/0g.png" },
 ];
 
 // Auto-assigned personalities. Tiago to add the on-brand hackathon one; keep this
