@@ -106,20 +106,6 @@ export default function DemoPage() {
           </div>
         </div>
 
-        {/* Owned-agents strip */}
-        {isRkb && (
-          <div className="mt-6 flex items-center justify-between rounded-xl border border-brassLight/20 bg-brassLight/5 px-4 py-2">
-            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90">
-              Your agent{myAgents.length > 1 ? `s · ${ai + 1} of ${myAgents.length}` : ""}
-            </p>
-            {myAgents.length > 1 && (
-              <div className="flex items-center gap-2">
-                <button onClick={() => cycle(-1)} aria-label="Previous agent" className="flex h-7 w-7 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10"><ChevronLeft className="h-4 w-4" /></button>
-                <button onClick={() => cycle(1)} aria-label="Next agent" className="flex h-7 w-7 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10"><ChevronRight className="h-4 w-4" /></button>
-              </div>
-            )}
-          </div>
-        )}
         {address && !isRkb && (
           <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-[12px] text-gb-muted">
             No Recompute Kit Bots in this wallet yet — <Link href="/mint" className="text-brassLight hover:text-brass">mint one</Link> and it appears here.
@@ -132,9 +118,25 @@ export default function DemoPage() {
           <img key={featured.image} src={featured.image} alt={featured.name}
             className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl border border-white/10 object-cover shrink-0"
             style={{ imageRendering: "pixelated" }} />
-          <div className="min-w-0">
-            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">Live agent · {featured.by}</p>
-            <h1 className="mt-1 font-display font-medium tracking-tightest text-4xl sm:text-5xl truncate">{featured.name}</h1>
+          <div className="min-w-0 flex-1">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">
+              Live agent · {featured.by}{isRkb && myAgents.length > 1 ? ` · ${ai + 1} of ${myAgents.length}` : ""}
+            </p>
+            <div className="mt-1 flex items-center gap-3">
+              {isRkb && myAgents.length > 1 && (
+                <button onClick={() => cycle(-1)} aria-label="Previous agent"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+              )}
+              <h1 className="font-display font-medium tracking-tightest text-4xl sm:text-5xl truncate">{featured.name}</h1>
+              {isRkb && myAgents.length > 1 && (
+                <button onClick={() => cycle(1)} aria-label="Next agent"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              )}
+            </div>
             <p className="mt-1.5 font-mono text-[11px] text-gb-faint truncate">{featured.sub}</p>
           </div>
         </div>

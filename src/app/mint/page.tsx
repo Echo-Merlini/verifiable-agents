@@ -153,6 +153,8 @@ export default function MintAgentPage() {
             ...chosen.map((c) => ({ trait_type: "Tool", value: c.label })),
           ],
           personality: p.id,
+          // System prompt applied to the agent at index — gives it its personality.
+          custom_prompt: `You are ${name.trim() || p.name}, an autonomous verifiable agent minted from the Recompute Kit Bots collection. ${p.blurb} You have on-chain tools — use them when a request calls for it. Every action you take is attested on-chain and independently recomputable. Don't trust — recompute.`,
           mcps: chosen.map((c) => c.id),
         }),
       });
