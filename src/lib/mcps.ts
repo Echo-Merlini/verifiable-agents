@@ -101,6 +101,12 @@ export const MCP_ORDER: string[] = [
 
 export type McpCard = McpConfig & { id: string };
 
+// Build cards from a bare list of MCP ids (e.g. an agent's selected tools from its
+// NFT metadata) — reuses the same config overlay + ordering as the public list.
+export function buildCardsFromIds(ids: string[]): McpCard[] {
+  return buildMcpCards(ids.map((id) => ({ id, name: id })));
+}
+
 // Turn the gateway's public MCP list into ordered, display-ready cards.
 export function buildMcpCards(mcps: PublicMcp[]): McpCard[] {
   const cards: McpCard[] = mcps
