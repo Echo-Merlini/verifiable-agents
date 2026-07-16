@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check as CheckIcon, X as XIcon, Loader2, ShieldCheck, ArrowRight } from "lucide-react";
+import { Check as CheckIcon, X as XIcon, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw } from "lucide-react";
 import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
 
 // Self-contained: a real mainnet attestation baked to /showcase.json. The recompute
@@ -9,6 +9,15 @@ import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
 // so the demo works offline / without the gateway. (Swap for a fresh run anytime.)
 const SHOWCASE_URL = process.env.NEXT_PUBLIC_SHOWCASE_URL || "/showcase.json";
 const short = (h?: string) => (h ? h.slice(0, 10) + "…" + h.slice(-6) : "—");
+
+// Flip exactly one byte of the query so a tamper is one click, not a guess.
+function tamperOneChar(s: string): string {
+  const i = s.search(/[a-zA-Z0-9]/);
+  if (i < 0) return s + "!";
+  const c = s[i];
+  const repl = c.toLowerCase() === "a" ? "e" : "a";
+  return s.slice(0, i) + (c === c.toUpperCase() ? repl.toUpperCase() : repl) + s.slice(i + 1);
+}
 
 export default function VerifyPage() {
   const [sc, setSc] = useState<Showcase | null>(null);
@@ -27,15 +36,21 @@ export default function VerifyPage() {
 
   const tampered = !!sc && query !== sc.query;
 
-  async function run() {
+  // Recompute against a specific query value (so tamper/restore can run the new value
+  // immediately, without waiting on a state update).
+  async function run(q: string = query) {
     if (!sc) return;
     setRunning(true); setRan(false);
-    const result = await verifyAll({ ...sc, query });   // recompute against the (maybe edited) query
+    const result = await verifyAll({ ...sc, query: q });   // recompute against the (maybe edited) query
     setChecks(result);
     setRunning(false); setRan(true);
   }
 
+  function tamper() { if (!sc) return; const q = tamperOneChar(query || sc.query); setQuery(q); run(q); }
+  function restore() { if (!sc) return; setQuery(sc.query); run(sc.query); }
+
   const allOk = ran && checks.length > 0 && checks.every((c) => c.ok);
+  const failed = ran && !allOk;
 
   return (
     <main className="min-h-screen bg-deepink text-paper px-6 md:px-10 py-10">
@@ -50,10 +65,27 @@ export default function VerifyPage() {
           Verify it <span className="brass-text">yourself.</span>
         </h1>
         <p className="mt-4 text-gb-muted max-w-xl">
-          A real on-chain agent action, attested in and out. Press verify — every hash is re-derived
+          A real on-chain agent action, attested in and out. Every hash is re-derived
           <span className="text-paper"> in your browser</span>, the anchor is read straight from mainnet,
-          and the attestation signer is recovered. Nothing is trusted.
+          and the attestation signer is recovered. Nothing is trusted — so don&apos;t take our word for it, break it.
         </p>
+
+        {/* Guided steps */}
+        <ol className="mt-6 grid sm:grid-cols-3 gap-2">
+          {[
+            { n: "1", t: "Verify as-is", d: "Every field re-derives green." },
+            { n: "2", t: "Tamper a byte", d: "One char of the input → it goes red." },
+            { n: "3", t: "Restore", d: "Back to green. The check is real." },
+          ].map((s) => (
+            <li key={s.n} className="liquid-glass rounded-xl p-3 flex gap-2.5">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brass/20 text-brassLight font-mono text-[11px]">{s.n}</span>
+              <span className="min-w-0">
+                <span className="block font-display text-sm text-paper">{s.t}</span>
+                <span className="block text-[11px] text-gb-faint">{s.d}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
 
         {err && <div className="mt-8 rounded-xl border border-red-500/30 bg-red-500/5 p-4 text-sm text-red-300">{err}</div>}
 
@@ -73,32 +105,65 @@ export default function VerifyPage() {
                 <span className="font-mono text-[10px] text-gb-faint">registry {short(sc.registry)}</span>
               </div>
 
-              <label className="mt-5 block font-mono text-[11px] uppercase tracking-wide text-gb-muted">Query (public preimage — edit to tamper)</label>
+              <div className="mt-5 flex items-center justify-between gap-3">
+                <label className="block font-mono text-[11px] uppercase tracking-wide text-gb-muted">Query — the public input the agent was given</label>
+                <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full shrink-0 ${tampered ? "bg-red-500/15 text-red-300" : "bg-emerald-400/10 text-emerald-300/80"}`}>
+                  {tampered ? "tampered" : "original"}
+                </span>
+              </div>
               <textarea
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 rows={3}
+                spellCheck={false}
                 className={`mt-2 w-full rounded-xl border bg-black/20 px-4 py-3 text-sm font-mono outline-none transition-colors ${tampered ? "border-red-500/50 text-red-300" : "border-white/10 text-paper focus:border-brassLight/50"}`}
               />
-              <p className="mt-3 font-mono text-[11px] uppercase tracking-wide text-gb-muted">Reply (public preimage)</p>
+              <p className="mt-1.5 text-[11px] text-gb-faint">Type in here to change the input — or use <span className="text-brassLight/80">Tamper a byte</span> below. The committed hash on-chain doesn&apos;t move, so any change must break the match.</p>
+
+              <p className="mt-4 font-mono text-[11px] uppercase tracking-wide text-gb-muted">Reply — what the agent returned</p>
               <p className="mt-1 text-sm text-gb-faint whitespace-pre-wrap line-clamp-4">{sc.reply}</p>
             </div>
 
             {/* Live keccak of the current query */}
             <div className="mt-3 font-mono text-[11px] text-gb-faint">
               keccak256(utf8(query)) = <span className={tampered ? "text-red-300" : "text-brassLight/90"}>{short(keccakUtf8(query))}</span>
-              {tampered && <span className="text-red-400"> · tampered → won&apos;t match the committed hash</span>}
+              {tampered && <span className="text-red-400"> · ≠ the hash committed on-chain</span>}
             </div>
 
-            {/* Verify */}
-            <button
-              onClick={run}
-              disabled={running}
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brassLight disabled:opacity-50"
-            >
-              {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-              {running ? "Recomputing…" : "Verify"}
-            </button>
+            {/* Actions */}
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => run()}
+                disabled={running}
+                className="inline-flex items-center gap-2 rounded-full bg-brass px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-brassLight disabled:opacity-50"
+              >
+                {running ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+                {running ? "Recomputing…" : "Verify"}
+              </button>
+
+              {!tampered ? (
+                <button
+                  onClick={tamper}
+                  disabled={running}
+                  className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm text-paper/80 transition-colors hover:border-red-500/40 hover:text-red-300 disabled:opacity-50"
+                >
+                  <Wand2 className="h-4 w-4" /> Tamper a byte
+                </button>
+              ) : (
+                <button
+                  onClick={restore}
+                  disabled={running}
+                  className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm text-paper/80 transition-colors hover:border-brassLight/40 hover:text-brassLight disabled:opacity-50"
+                >
+                  <RotateCcw className="h-4 w-4" /> Restore original
+                </button>
+              )}
+
+              {/* Contextual nudge toward the next step */}
+              {!ran && !tampered && <span className="text-[12px] text-gb-faint">← start here</span>}
+              {allOk && !tampered && <span className="text-[12px] text-emerald-300/80">Now hit <span className="font-medium">Tamper a byte</span> →</span>}
+              {failed && tampered && <span className="text-[12px] text-brassLight/80"><span className="font-medium">Restore</span> to prove it passes again →</span>}
+            </div>
 
             {/* Checks */}
             {ran && (
@@ -125,7 +190,10 @@ export default function VerifyPage() {
                   {allOk ? (
                     <p className="font-display text-lg text-paper">Recomputed from public data — <span className="brass-text">verified.</span> No trust required.</p>
                   ) : (
-                    <p className="font-display text-lg text-red-300">Recompute failed — the record does not match. (Restore the query to pass.)</p>
+                    <>
+                      <p className="font-display text-lg text-red-300">Recompute failed — your edited input no longer matches what was committed on-chain.</p>
+                      <p className="mt-1.5 text-[12px] text-gb-muted">That red is the point: the check is really re-deriving the hashes, not faking green. Hit <span className="text-brassLight">Restore original</span> to pass again.</p>
+                    </>
                   )}
                   <p className="mt-2 font-mono text-[10px] uppercase tracking-wide text-gb-muted">recipes via recompute-kit · recomputekit-ai.com</p>
                 </div>
