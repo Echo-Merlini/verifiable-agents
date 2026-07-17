@@ -83,6 +83,15 @@ const pf = (b: boolean): CheckStatus => (b ? "pass" : "fail");
 // Recorded(bytes32 indexed digest, address indexed committer) → digest is topic1.
 const RECORDED_TOPIC = keccak256(toHex("Recorded(bytes32,address)"));
 
+// Mirror the gateway's toBytes32(): a null/absent hash was signed as zero-bytes32, and a
+// short one left-padded — so we must recover over the SAME normalized values, or a
+// live action with no sanitization/manifest hash throws instead of recovering.
+const toBytes32 = (h?: string | null): Hex => {
+  if (!h) return ("0x" + "00".repeat(32)) as Hex;
+  const clean = h.startsWith("0x") ? h.slice(2) : h;
+  return ("0x" + clean.padStart(64, "0")) as Hex;
+};
+
 /** keccak256 of a string's UTF-8 bytes — the wyriwe/raw + spine recipe. */
 export function keccakUtf8(s: string): Hex {
   return keccak256(toHex(s));
@@ -132,11 +141,11 @@ export async function checkL4Signature(sc: Showcase): Promise<Check> {
       },
       primaryType: "InferenceAttestation",
       message: {
-        raw_input_hash: recomputedRaw,
-        sanitization_pipeline_hash: sc.sanitizationPipelineHash,
-        input_hash: sc.inputHash,
-        output_hash: sc.outputHash,
-        manifest_hash: sc.manifestHash,
+        raw_input_hash: toBytes32(recomputedRaw),
+        sanitization_pipeline_hash: toBytes32(sc.sanitizationPipelineHash),
+        input_hash: toBytes32(sc.inputHash),
+        output_hash: toBytes32(sc.outputHash),
+        manifest_hash: toBytes32(sc.manifestHash),
         agentId: BigInt(sc.agentId),
         registry: sc.registry,
         timestamp: BigInt(sc.timestamp),
