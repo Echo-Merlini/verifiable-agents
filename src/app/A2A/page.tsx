@@ -135,7 +135,7 @@ export default function A2APage() {
       <div className="max-w-5xl mx-auto px-6 py-8">
         {/* Top bar */}
         <div className="flex items-center justify-between gap-4">
-          <Link href="/" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</Link>
+          <Link href="/demo" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</Link>
           <div className="flex items-center gap-4">
             {!address ? (
               <button onClick={openWallet} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">

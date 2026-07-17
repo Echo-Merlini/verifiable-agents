@@ -60,7 +60,7 @@ export default function VerifyPage() {
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <a href="/" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</a>
+          <a href="/demo" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</a>
           <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80">Don&apos;t trust. Recompute.</span>
         </div>
 

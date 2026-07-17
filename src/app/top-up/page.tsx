@@ -122,7 +122,7 @@ export default function TopupPage() {
       <div className="relative z-10 flex flex-col items-center justify-start pt-16 pb-20 px-4 min-h-screen">
 
         <div className="w-full max-w-lg mb-8">
-          <a href="/" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper transition-colors">← Home</a>
+          <a href="/demo" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper transition-colors">← Demo</a>
         </div>
 
         {/* Hero */}

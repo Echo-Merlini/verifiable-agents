@@ -9,7 +9,7 @@ const GW_URL   = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.o
 const ENS_NAME = process.env.NEXT_PUBLIC_ENS_NAME   || "dinamic.eth";
 
 const LINKS = [
-  { path: "",           label: "Home",            icon: Home,      desc: "dinamic.eth profile" },
+  { path: "demo/",      label: "Home",            icon: Home,      desc: "Verifiable Agents demo" },
   { path: "mint/",      label: "Mint Agent",      icon: Sparkles,  desc: "Mint a self-sovereign agent — no NFT needed" },
   { path: "my-agents/", label: "My Agents",       icon: Bot,       desc: "Manage your agent identities" },
   { path: "agents/",    label: "Browse Agents",   icon: Users,     desc: "Discover on-chain agent identities" },
