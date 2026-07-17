@@ -82,7 +82,7 @@ flowchart TB
 ```
 
 - **Client** (this repo) — Next.js 14 App Router, SSR. Four surfaces: **mint** (get a source-bound agent), **demo** (drive + owner config), **A2A** (pay-to-hire another agent via escrow), **verify** (the recompute hero).
-- **Gateway** — Bun · Hono · `bun:sqlite`. Runs the model, the MCP tools, and the attestation pipeline. *(Backend repo — sanitized public version in progress; see [Running it](#running-it).)*
+- **Gateway** — Bun · Hono · `bun:sqlite`. Runs the model, the MCP tools ([compatible-MCP catalog](https://github.com/Echo-Merlini/agent-mcp-catalog)), and the attestation pipeline. *(Backend repo — sanitized public version in progress; see [Running it](#running-it).)*
 - **On-chain** — `GenesisAgentRegistry` (self-sourced ERC-721 "mint = get an agent"), `ConsultEscrow` (trustless A2A payment), and the ERC-8281 observation anchor.
 - **Identity & storage** — the agent is an **ENS** name; browser resolution via a CCIP-Read offchain resolver + on-chain IPFS contenthash; artifacts pinned to **IPFS**.
 
