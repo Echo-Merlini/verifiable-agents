@@ -227,7 +227,7 @@ export default function DemoPage() {
         )}
 
         {/* Chat — remounts per agent so each has a fresh session */}
-        <div className="mt-6 liquid-glass rounded-2xl overflow-hidden">
+        <div className="mt-6 liquid-glass rounded-2xl overflow-hidden h-[560px] p-4">
           <AgentChat
             key={`${featured.registry}-${featured.agentId}`}
             registry={featured.registry}
