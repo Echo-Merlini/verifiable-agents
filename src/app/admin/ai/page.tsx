@@ -14,7 +14,7 @@ import {
 
 const PROVIDERS = [
   { value: "openai",    label: "OpenAI",    models: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo"] },
-  { value: "anthropic", label: "Anthropic", models: ["claude-sonnet-4-6", "claude-opus-4-7", "claude-haiku-4-5-20251001"] },
+  { value: "anthropic", label: "Anthropic", models: ["claude-sonnet-5", "claude-opus-4-8", "claude-haiku-4-5-20251001"] },
   { value: "groq",      label: "Groq",      models: ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"] },
   { value: "mistral",   label: "Mistral",   models: ["mistral-large-latest", "mistral-small-latest", "open-mixtral-8x7b"] },
 ] as const;
