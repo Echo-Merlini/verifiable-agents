@@ -9,7 +9,7 @@ import { useWalletClient } from "wagmi";
 import { getRecords, upsertRecord, deleteRecord, getGatewayStatus, getIpfsSettings, saveIpfsSettings, pinCidToPinata, setContenthashOnchain } from "@/lib/api";
 import {
   Plus, Trash2, Check, X, ChevronDown, ChevronUp,
-  Copy, Globe, AlertCircle, ExternalLink, RefreshCw, Eye, Upload, Key, Link,
+  Copy, Globe, AlertCircle, ExternalLink, RefreshCw, Eye, Upload, Key, Link, Folder,
 } from "lucide-react";
 
 const RESOLVER_CONTRACT = "0xB300e09e6C4f901409B809e7924CF68A2A429014"; // dinamic.eth's live CCIP-Read resolver (on-chain truth; was a stale 0xa912… address)
@@ -154,6 +154,15 @@ function RecordCard({
       >
         <span className="font-mono text-sm text-gb-accent flex-1 truncate">{record.name}</span>
         <span className="text-xs text-[#444] truncate hidden sm:block">{summary}</span>
+        {/* Which repo folder feeds this record's IPFS page — click to copy the path */}
+        <button
+          onClick={(e) => { e.stopPropagation(); try { navigator.clipboard.writeText(`ens-pages/${record.name}/`); } catch {} }}
+          title={`Static page folder: ens-pages/${record.name}/ — edit here, then Renew CIDs pins it`}
+          aria-label={`Page folder ens-pages/${record.name}/`}
+          className="shrink-0 flex items-center justify-center w-7 h-7 rounded-md border border-gb-border text-gb-muted hover:text-gb-accent hover:border-gb-accent/50 transition-colors"
+        >
+          <Folder className="w-3.5 h-3.5" />
+        </button>
         {open ? <ChevronUp className="w-4 h-4 text-gb-muted shrink-0" /> : <ChevronDown className="w-4 h-4 text-gb-muted shrink-0" />}
       </div>
 
@@ -482,7 +491,11 @@ function IpfsPanel({ token, records, walletClient }: { token: string; records: G
   const renewCids = async () => {
     setRenewing(true); setRenewError(null); setRenewSuccess(null);
     try {
-      const res = await fetch("http://merlinis-mac-mini.local:7078/publish/pages", { method: "POST", signal: AbortSignal.timeout(660000) });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org"}/admin/publish/pages`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        signal: AbortSignal.timeout(660000),
+      });
       const d = await res.json();
       if (!d.ok) throw new Error(d.error || "Build failed");
       const freshCids = d.cids as Record<string, string>;
@@ -500,7 +513,7 @@ function IpfsPanel({ token, records, walletClient }: { token: string; records: G
       setRenewSuccess(`${Object.keys(freshCids).length} CIDs refreshed · ${okCount}/${subs.length} subdomains auto-updated (offchain). Set the root ${ROOT_NAME} contenthash on-chain below.`);
       setTimeout(() => setRenewSuccess(null), 20000);
     } catch (e: any) {
-      setRenewError(e?.message?.includes("fetch") ? "Could not reach publish server (merlinis-mac-mini.local:7078) — is Echo running?" : (e?.message ?? "Unknown error"));
+      setRenewError(e?.message?.includes("fetch") ? "Could not reach the gateway publish endpoint." : (e?.message ?? "Unknown error"));
     } finally {
       setRenewing(false);
     }
