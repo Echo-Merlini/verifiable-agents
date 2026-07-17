@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAccount, useDisconnect } from "wagmi";
-import { Menu, X, Bot, Users, Cpu, Wallet, Factory, Rss, FileText, GitBranch, Zap, Home, User, Sparkles, LogOut } from "lucide-react";
+import { Menu, X, Bot, Users, Wallet, Rss, FileText, Zap, Home, User, Sparkles, LogOut } from "lucide-react";
 import { useWalletModal } from "@/hooks/useWalletModal";
 
 const GW_URL   = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
@@ -13,11 +13,7 @@ const LINKS = [
   { path: "mint/",      label: "Mint Agent",      icon: Sparkles,  desc: "Mint a self-sovereign agent — no NFT needed" },
   { path: "my-agents/", label: "My Agents",       icon: Bot,       desc: "Manage your agent identities" },
   { path: "agents/",    label: "Browse Agents",   icon: Users,     desc: "Discover on-chain agent identities" },
-  { path: "agent/",     label: "Bridge NFT",      icon: Cpu,       desc: "Mint an agent for your NFT" },
-  { path: "use-agent/", label: "Use Agent",        icon: Wallet,    desc: "Login and access your agent" },
   { path: "top-up/",    label: "Top Up Credits",  icon: Zap,       desc: "Add AI credits to your wallet" },
-  { path: "claim/",     label: "Claim Subdomain", icon: GitBranch, desc: "Claim a free ENS subdomain" },
-  { path: "factory/",   label: "Deploy Registry", icon: Factory,   desc: "Launch your own collection registry" },
   { path: "feed/",      label: "Feed",            icon: Rss,       desc: "Latest activity" },
   { path: "spec/",      label: "Spec",            icon: FileText,  desc: "ENS-KIT/1 specification" },
 ];

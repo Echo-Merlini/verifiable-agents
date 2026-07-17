@@ -66,7 +66,7 @@ async function fetchFeed(url: string): Promise<{ title: string; desc: string; li
 }
 
 export default function FeedPage() {
-  const tr       = usePageRecords("feed.dinamic.eth");
+  const tr       = usePageRecords(`feed.${ENS_NAME}`);
   const icon     = tr.icon;
   const avatar   = tr.avatar;
   const cardBg   = tr.card_bg;
@@ -117,10 +117,10 @@ export default function FeedPage() {
         {/* Hero */}
         <div className="mb-12">
           <h1 className="text-6xl lg:text-8xl font-medium tracking-[-0.05em] text-white leading-none mb-5">
-            feed<em className="font-serif not-italic text-white/60">.dinamic.eth</em>
+            feed<em className="font-serif not-italic text-white/60">.{ENS_NAME}</em>
           </h1>
           <p className="text-sm lg:text-base text-white/40 font-light max-w-lg leading-relaxed">
-            RSS feeds on Ethereum — live content from the dinamic.eth network.
+            RSS feeds on Ethereum — live content from the {ENS_NAME} network.
           </p>
         </div>
 

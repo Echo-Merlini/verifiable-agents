@@ -88,7 +88,7 @@ const CONVENTIONS = [
 ];
 
 export default function SpecPage() {
-  const tr       = usePageRecords("spec.dinamic.eth");
+  const tr       = usePageRecords(`spec.${ENS_NAME}`);
   const icon     = tr.icon;
   const avatar   = tr.avatar;
   const cardBg   = tr.card_bg;
