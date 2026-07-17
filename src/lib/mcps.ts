@@ -85,6 +85,12 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     prompt: "Use your forensics tool to fetch the scam-victim recovery playbook and summarise the first steps a victim should take.",
     display: "Scam-victim recovery playbook (Forensics)",
   },
+  "uniswap-mcp": {
+    label: "Uniswap", tagline: "Direct swaps", logo: "/logos/uniswap.webp",
+    blurb: "Uniswap v3, straight from the protocol — no aggregator. Prices swaps via the on-chain QuoterV2 (best fee tier auto-picked) and builds SwapRouter02 calldata your own wallet signs. Every swap is recomputable.",
+    prompt: "Use your Uniswap tool to quote swapping 0.1 ETH into USDC on Uniswap (Ethereum, chainId 1) — price only, don't prepare a transaction.",
+    display: "Quote 0.1 ETH → USDC (Uniswap)",
+  },
   // Present in the public list but the agent has no working Alchemy tool → hide.
   "alchemy-mcp": { hidden: true, label: "Alchemy", tagline: "", blurb: "", prompt: "", display: "" },
 };
@@ -95,6 +101,7 @@ export const MCP_ORDER: string[] = [
   "277e9e1e17733065",                       // LI.FI
   "a3s25u3omqm0tqjl",                       // Flashbots
   "jupiter-docs",                           // Solana
+  "uniswap-mcp",                            // Uniswap (walletless quote — direct v3)
   "5a6c1f48-2850-46f8-9e18-4577197f500d",   // Recompute Kit
   "60651853-eb38-4b85-818f-7203f67ae52c",   // 1inch
   "0ebe0db5-7da0-4b66-a401-f50c976cc72c",   // Symbiosis
