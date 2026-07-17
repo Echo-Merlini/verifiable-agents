@@ -75,7 +75,7 @@ export default function DemoPage() {
       const { token: jwt } = await verifySiwe(message, signature);
       localStorage.setItem(TOKEN_KEY, jwt);
       setToken(jwt);
-    } catch (e) { console.error("sign-in failed", e); }
+    } catch (e) { console.error("sign-in failed", e); autoSignRef.current = false; } // allow a dismissed prompt to be retried
     finally { setSigningIn(false); }
   };
 
@@ -144,11 +144,15 @@ export default function DemoPage() {
               </button>
             ) : (
               <div className="flex items-center gap-3">
-                {isRkb && !token && (
+                {isRkb && (token ? (
+                  <span className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.2em] text-emerald-400/70" title="Signed in — chatting with your agents">
+                    <ShieldCheck className="h-3.5 w-3.5" /> Signed in
+                  </span>
+                ) : (
                   <button onClick={signIn} disabled={signingIn} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight disabled:opacity-50">
-                    {signingIn ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogIn className="h-3.5 w-3.5" />} Sign in
+                    {signingIn ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogIn className="h-3.5 w-3.5" />} {signingIn ? "Signing in…" : "Sign in"}
                   </button>
-                )}
+                ))}
                 <span className="font-mono text-[11px] text-gb-faint">{address.slice(0, 6)}…{address.slice(-4)}</span>
                 <button onClick={disconnectWallet} title="Disconnect" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-red-400 transition-colors">
                   <LogOut className="h-3.5 w-3.5" /> Disconnect

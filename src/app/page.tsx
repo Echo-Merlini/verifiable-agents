@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import { NavMenu } from "../components/NavMenu";
+import { Landing } from "@/components/Landing";
 
 const STATIC = process.env.NEXT_PUBLIC_STATIC_EXPORT === "1";
 const SUB_ROUTES: Record<string, string> = {
@@ -1073,5 +1074,6 @@ export default function RootPage() {
   if (subPage === "factory")   return <FactoryPage />;
   if (subPage === "topup")     return <TopupPage />;
   if (subPage === "mint")      return <MintPage />;
-  return <ProfilePage />;
+  if (subPage === "profile")   return <ProfilePage />; // dinamic profile — kept reachable (static export), dormant in server mode
+  return <Landing />;
 }
