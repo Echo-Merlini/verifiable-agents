@@ -14,20 +14,11 @@ import {
 
 const RESOLVER_CONTRACT = "0xB300e09e6C4f901409B809e7924CF68A2A429014"; // dinamic.eth's live CCIP-Read resolver (on-chain truth; was a stale 0xa912… address)
 
+const ROOT_ENS = (process.env.NEXT_PUBLIC_ENS_NAME || "dinamic.eth").toLowerCase();
 const APP_PAGE_NAMES = new Set([
-  "dinamic.eth",
-  "agents.dinamic.eth",
-  "agent.dinamic.eth",
-  "chat.dinamic.eth",
-  "my-agents.dinamic.eth",
-  "use-agent.dinamic.eth",
-  "spec.dinamic.eth",
-  "feed.dinamic.eth",
-  "claim.dinamic.eth",
-  "factory.dinamic.eth",
-  "top-up.dinamic.eth",
-  "profile-edit.dinamic.eth",
-  "mint-agent.dinamic.eth",
+  ROOT_ENS,
+  ...["agents", "agent", "chat", "my-agents", "use-agent", "spec", "feed", "claim", "factory", "top-up", "profile-edit", "mint-agent"]
+    .map((s) => `${s}.${ROOT_ENS}`),
 ]);
 const COMMON_TEXT_KEYS = [
   // Media
@@ -773,8 +764,11 @@ export default function EnsPage() {
     }
   };
 
-  const pageRecords = records.filter(r => APP_PAGE_NAMES.has(r.name));
-  const profileRecords = records.filter(r => !APP_PAGE_NAMES.has(r.name));
+  // Scope the tab to this build's root ENS so a shared gateway DB (dinamic.eth + vertice.eth)
+  // shows only THIS brand's tree.
+  const scoped = records.filter(r => { const n = r.name.toLowerCase(); return n === ROOT_ENS || n.endsWith("." + ROOT_ENS); });
+  const pageRecords = scoped.filter(r => APP_PAGE_NAMES.has(r.name));
+  const profileRecords = scoped.filter(r => !APP_PAGE_NAMES.has(r.name));
 
   const publicClient = useMemo(
     () => createPublicClient({ chain: { ...mainnet, id: env.chainId as any }, transport: http(env.rpcUrl) }),
