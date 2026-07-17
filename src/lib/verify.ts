@@ -68,6 +68,10 @@ const L3_RPCS: string[] = [
 const eq = (a?: string, b?: string) => !!a && !!b && a.toLowerCase() === b.toLowerCase();
 const pf = (b: boolean): CheckStatus => (b ? "pass" : "fail");
 
+// ERC-8281's canonical read is the event, not calldata — "the log is the ledger".
+// Recorded(bytes32 indexed digest, address indexed committer) → digest is topic1.
+const RECORDED_TOPIC = keccak256(toHex("Recorded(bytes32,address)"));
+
 /** keccak256 of a string's UTF-8 bytes — the wyriwe/raw + spine recipe. */
 export function keccakUtf8(s: string): Hex {
   return keccak256(toHex(s));
@@ -138,24 +142,24 @@ export async function checkL4Signature(sc: Showcase): Promise<Check> {
  *  So a tamper breaks this link too. A digest mismatch / reverted tx is a FAIL; an
  *  unreachable chain is UNVERIFIABLE (amber) — "could not check" ≠ "did not match". */
 export async function checkL3Onchain(sc: Showcase): Promise<Check> {
-  const base = { id: "l3", label: "L3 anchor (on-chain)", recipe: "OCP record(digest) · mainnet" };
+  const base = { id: "l3", label: "L3 anchor (on-chain)", recipe: "8281 · Recorded event topic1 · mainnet" };
   if (!sc.l3Tx) return { ...base, status: "fail" as const, expected: "an OCP record() tx", got: "none" };
-  const recomputed = keccakUtf8(sc.query);   // the digest the tx SHOULD have anchored
+  const recomputed = keccakUtf8(sc.query);   // the digest the anchor SHOULD hold
   let lastErr = "";
   for (const rpc of L3_RPCS) {
     try {
       const client = createPublicClient({ chain: mainnet, transport: http(rpc) });
-      const [receipt, tx] = await Promise.all([
-        client.getTransactionReceipt({ hash: sc.l3Tx }),
-        client.getTransaction({ hash: sc.l3Tx }),
-      ]);
+      const receipt = await client.getTransactionReceipt({ hash: sc.l3Tx });
       // A successful read is a definitive verdict — stop here (don't try more RPCs).
       if (receipt.status !== "success")
         return { ...base, status: "fail" as const, expected: "tx success", got: receipt.status };
-      if (sc.ocpContract && !eq(receipt.to ?? undefined, sc.ocpContract))
-        return { ...base, status: "fail" as const, expected: `record() at ${sc.ocpContract}`, got: receipt.to ?? "—" };
-      // record(bytes32 digest): selector (4 bytes) + the anchored digest (32 bytes).
-      const anchored = ("0x" + tx.input.slice(10, 74)) as Hex;
+      // 8281 canonical read: the digest is topic1 of the Recorded event emitted BY the
+      // OCP contract — verified through the standard's own read path, not calldata.
+      const log = receipt.logs.find((l) =>
+        l.topics[0] === RECORDED_TOPIC && (!sc.ocpContract || eq(l.address, sc.ocpContract)));
+      if (!log || !log.topics[1])
+        return { ...base, status: "fail" as const, expected: `Recorded event from ${sc.ocpContract ?? "the OCP contract"}`, got: "no Recorded log in tx" };
+      const anchored = log.topics[1] as Hex;
       return { ...base, status: pf(eq(anchored, recomputed)), expected: anchored, got: recomputed };
     } catch (e: any) {
       // Network error / tx not indexed on this provider → try the next RPC.
