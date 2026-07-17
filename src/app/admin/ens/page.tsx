@@ -12,7 +12,7 @@ import {
   Copy, Globe, AlertCircle, ExternalLink, RefreshCw, Eye, Upload, Key, Link,
 } from "lucide-react";
 
-const RESOLVER_CONTRACT = "0xa912dF7bb8b0a531800dF47dCD4cfE9bD533d33a";
+const RESOLVER_CONTRACT = "0xB300e09e6C4f901409B809e7924CF68A2A429014"; // dinamic.eth's live CCIP-Read resolver (on-chain truth; was a stale 0xa912… address)
 
 const APP_PAGE_NAMES = new Set([
   "dinamic.eth",
