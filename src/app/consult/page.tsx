@@ -165,6 +165,9 @@ function ConsultInner() {
         <div className="flex items-center justify-between gap-4">
           <Link href="/demo" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</Link>
           <div className="flex items-center gap-4">
+            <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
+            <Link href="/verify" className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">Verify</Link>
+            <span className="w-px h-4 bg-white/12" aria-hidden />
             {!address ? (
               <button onClick={openWallet} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">
                 <Wallet className="h-3.5 w-3.5" /> Connect
@@ -177,9 +180,6 @@ function ConsultInner() {
                 </button>
               </div>
             )}
-            <span className="w-px h-4 bg-white/12" aria-hidden />
-            <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
-            <Link href="/verify" className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">Verify</Link>
           </div>
         </div>
 

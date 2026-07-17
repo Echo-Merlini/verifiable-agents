@@ -138,6 +138,12 @@ export default function DemoPage() {
         <div className="flex items-center justify-between gap-4">
           <Link href="/demo" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</Link>
           <div className="flex items-center gap-5">
+            {isRkb && <Link href="/consult" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Configure</Link>}
+            <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
+            <Link href="/verify" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">
+              <ShieldCheck className="h-3.5 w-3.5" /> Verify
+            </Link>
+            <span className="w-px h-4 bg-white/12" aria-hidden />
             {!address ? (
               <button onClick={openWallet} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">
                 <Wallet className="h-3.5 w-3.5" /> Connect
@@ -159,12 +165,6 @@ export default function DemoPage() {
                 </button>
               </div>
             )}
-            <span className="w-px h-4 bg-white/12" aria-hidden />
-            {isRkb && <Link href="/consult" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Configure</Link>}
-            <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
-            <Link href="/verify" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">
-              <ShieldCheck className="h-3.5 w-3.5" /> Verify
-            </Link>
           </div>
         </div>
 
