@@ -1,4 +1,4 @@
-# Verifiable Agents
+# Recomputable Agents
 
 > **Autonomous agents you verify, not trust** — attested on the way in, attested on the way out, and **recomputable by anyone** from public data.
 >
