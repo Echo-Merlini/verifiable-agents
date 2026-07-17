@@ -609,6 +609,9 @@ export function AgentChat({
   const pollRef    = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
   const abortRef   = useRef<AbortController | null>(null);
+  const pendingQueryRef = useRef<string>("");     // the in-flight query — preimage for a live recompute
+  const onExchangeRef   = useRef(onExchange);      // ref so poll/sendMessage fire it without dep churn
+  onExchangeRef.current = onExchange;
 
   useEffect(() => {
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 50);
@@ -631,6 +634,8 @@ export function AgentChat({
         if (!mountedRef.current) return;
         setMessages(prev => { const n = [...prev]; n[n.length - 1] = { role: "assistant", text: jd.result ?? "Done" }; return n; });
         setLoading(false);
+        // Async agent result — also an attested action; offer the live recompute.
+        if (jd.result) onExchangeRef.current?.(pendingQueryRef.current, jd.result);
         // Check registry credits — warn if running low
         fetch(`${GW_URL}/api/registry/${registry}/credits`).then(r => r.json()).then(d => {
           if (typeof d.credits === "number" && d.credits <= 5) setLowCredits(true);
@@ -679,6 +684,7 @@ export function AgentChat({
   const sendMessage = useCallback(async (payload: string, displayText?: string) => {
     const msg = payload.trim();
     if (!msg || loading) return;
+    pendingQueryRef.current = msg;   // exact hash preimage for a live recompute of this action
     setMessages(prev => [...prev, { role: "user", text: displayText ?? msg }]);
     setLoading(true);
     try {
@@ -732,13 +738,13 @@ export function AgentChat({
         setMessages(prev => [...prev, { role: "assistant", text: reply }]);
         setLoading(false);
         // A real agent result was attested on-chain → let the parent offer a recompute.
-        if (d.result) onExchange?.(msg, reply);
+        if (d.result) onExchangeRef.current?.(msg, reply);
       }
     } catch {
       setMessages(prev => [...prev, { role: "assistant", text: "Connection error — try again." }]);
       setLoading(false);
     }
-  }, [loading, registry, agentId, ownerAddress, authToken, poll, onExchange]);
+  }, [loading, registry, agentId, ownerAddress, authToken, poll]);
 
   const send = useCallback(() => {
     const msg = input.trim();
