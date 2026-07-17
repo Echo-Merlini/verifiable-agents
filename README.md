@@ -4,7 +4,7 @@
 >
 > *Don't trust. Recompute.*
 
-**Live demo:** [demo.ensub.org](https://demo.ensub.org) — open `/verify`, press **Recompute**, watch every check re-derive in your own browser.
+**Live demo:** unveiled at **ETHGlobal Lisbon** — open `/verify`, press **Recompute**, and watch every check re-derive in your own browser.
 **By:** [Vértice Criativo](https://verticecriativo.pt) — a self-hosted, verifiable, full-stack studio.
 
 ---
@@ -42,7 +42,7 @@ A failed on-chain read shows **amber** ("could not check"), never a false green 
 flowchart TB
     Judge(["Judge / User"])
 
-    subgraph client["Client — Next.js · demo.ensub.org"]
+    subgraph client["Client — Next.js"]
         M["/mint<br/>mint an agent (RKB)"]
         D["/demo<br/>drive it live"]
         A["/A2A<br/>hire another agent"]
