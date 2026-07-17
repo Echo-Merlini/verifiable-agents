@@ -147,8 +147,8 @@ export default function A2APage() {
             ) : (
               <div className="flex items-center gap-3">
                 <span className="font-mono text-[11px] text-gb-faint">{address.slice(0, 6)}…{address.slice(-4)}</span>
-                <button onClick={() => disconnect()} title="Disconnect" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-red-400 transition-colors">
-                  <LogOut className="h-3.5 w-3.5" /> Disconnect
+                <button onClick={() => disconnect()} title="Disconnect" aria-label="Disconnect" className="inline-flex items-center text-gb-muted hover:text-red-400 transition-colors">
+                  <LogOut className="h-3.5 w-3.5" />
                 </button>
               </div>
             )}

@@ -138,8 +138,9 @@ export default function DemoPage() {
         <div className="flex items-center justify-between gap-4">
           <Link href="/demo" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</Link>
           <div className="flex items-center gap-5">
-            {isRkb && <Link href="/consult" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Configure</Link>}
+            <Link href="/mint" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Mint</Link>
             <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
+            {isRkb && <Link href="/consult" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Configure</Link>}
             <Link href="/verify" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">
               <ShieldCheck className="h-3.5 w-3.5" /> Verify
             </Link>
@@ -160,8 +161,8 @@ export default function DemoPage() {
                   </button>
                 ))}
                 <span className="font-mono text-[11px] text-gb-faint">{address.slice(0, 6)}…{address.slice(-4)}</span>
-                <button onClick={disconnectWallet} title="Disconnect" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-red-400 transition-colors">
-                  <LogOut className="h-3.5 w-3.5" /> Disconnect
+                <button onClick={disconnectWallet} title="Disconnect" aria-label="Disconnect" className="inline-flex items-center text-gb-muted hover:text-red-400 transition-colors">
+                  <LogOut className="h-3.5 w-3.5" />
                 </button>
               </div>
             )}
