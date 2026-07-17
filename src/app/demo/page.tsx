@@ -10,7 +10,7 @@ import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
 import { buildMcpCards, buildCardsFromIds, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
 import { useWalletModal } from "@/hooks/useWalletModal";
-import { getNonce, verifySiwe } from "@/lib/api";
+import { getAgentAuthNonce, verifyAgentOwner } from "@/lib/api";
 
 const TOKEN_KEY = "ens-kit-admin-token";
 
@@ -64,15 +64,15 @@ export default function DemoPage() {
     if (!address) return;
     setSigningIn(true);
     try {
-      const nonce = await getNonce();
+      const nonce = await getAgentAuthNonce();
       const message = [
         `${window.location.host} wants you to sign in with your Ethereum account:`,
-        address, "", "Sign in to ENS Offchain Kit Admin", "",
+        address, "", "Sign in to drive your agents", "",
         `URI: ${window.location.origin}`, "Version: 1", "Chain ID: 1",
         `Nonce: ${nonce}`, `Issued At: ${new Date().toISOString()}`,
       ].join("\n");
       const signature = await signMessageAsync({ message });
-      const { token: jwt } = await verifySiwe(message, signature);
+      const { token: jwt } = await verifyAgentOwner(message, signature);
       localStorage.setItem(TOKEN_KEY, jwt);
       setToken(jwt);
     } catch (e) { console.error("sign-in failed", e); autoSignRef.current = false; } // allow a dismissed prompt to be retried
