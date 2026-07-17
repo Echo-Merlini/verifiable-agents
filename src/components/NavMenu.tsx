@@ -16,7 +16,7 @@ const LINKS = [
   { path: "agent/",     label: "Bridge NFT",      icon: Cpu,       desc: "Mint an agent for your NFT" },
   { path: "use-agent/", label: "Use Agent",        icon: Wallet,    desc: "Login and access your agent" },
   { path: "top-up/",    label: "Top Up Credits",  icon: Zap,       desc: "Add AI credits to your wallet" },
-  { path: "claim/",     label: "Claim Subdomain", icon: GitBranch, desc: "Claim a free dinamic.eth subdomain" },
+  { path: "claim/",     label: "Claim Subdomain", icon: GitBranch, desc: "Claim a free ENS subdomain" },
   { path: "factory/",   label: "Deploy Registry", icon: Factory,   desc: "Launch your own collection registry" },
   { path: "feed/",      label: "Feed",            icon: Rss,       desc: "Latest activity" },
   { path: "spec/",      label: "Spec",            icon: FileText,  desc: "ENS-KIT/1 specification" },

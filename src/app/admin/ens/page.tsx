@@ -323,7 +323,7 @@ function AddRecordForm({ token, onSaved }: { token: string; onSaved: () => void 
 // ─── Live preview via Enstate ─────────────────────────────────────────────────
 
 function LivePreview() {
-  const [name, setName] = useState("dinamic.eth");
+  const [name, setName] = useState(ROOT_ENS);
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -434,7 +434,7 @@ function ResolverChecker({ publicClient }: { publicClient: any }) {
           value={checkName}
           onChange={(e) => setCheckName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && check()}
-          placeholder="dinamic.eth"
+          placeholder={ROOT_ENS}
           className="flex-1 bg-gb-input border border-gb-border focus:border-gb-accent rounded-lg px-3 py-2 text-sm font-mono text-slate-100 placeholder-zinc-600 outline-none transition-colors"
         />
         <button
