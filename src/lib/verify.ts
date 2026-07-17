@@ -21,7 +21,7 @@ import {
   type Address,
   type Hex,
 } from "viem";
-import { mainnet } from "viem/chains";
+import { mainnet, baseSepolia } from "viem/chains";
 
 /** The public showcase record served by the gateway (`GET /attestations/showcase`). */
 export type Showcase = {
@@ -40,6 +40,8 @@ export type Showcase = {
   attestor: Address;         // expected signer (gateway attestor)
   l3Tx?: Hex;                // OCP record() tx hash
   ocpContract?: Address;     // ERC-8281 OCP anchor contract
+  l3ChainId?: number;        // chain the anchor lives on (1 = mainnet showcase · 84532 = Base Sepolia live actions)
+  live?: boolean;            // true = recomputing a just-happened action, not the baked showcase
 };
 
 // A check has three honest outcomes — never conflate the last two:
@@ -65,6 +67,15 @@ const L3_RPCS: string[] = [
   "https://eth.drpc.org",
   "https://eth.llamarpc.com",
 ].filter((x): x is string => !!x);
+// Live per-action anchors are written to Base Sepolia; the baked showcase is mainnet.
+const BASE_SEPOLIA_RPCS: string[] = [
+  process.env.NEXT_PUBLIC_L3_BASE_RPC,
+  "https://sepolia.base.org",
+  "https://base-sepolia-rpc.publicnode.com",
+  "https://base-sepolia.drpc.org",
+].filter((x): x is string => !!x);
+const l3Chain = (id?: number) => (id === baseSepolia.id ? baseSepolia : mainnet);
+const l3Rpcs  = (id?: number) => (id === baseSepolia.id ? BASE_SEPOLIA_RPCS : L3_RPCS);
 const eq = (a?: string, b?: string) => !!a && !!b && a.toLowerCase() === b.toLowerCase();
 const pf = (b: boolean): CheckStatus => (b ? "pass" : "fail");
 
@@ -142,13 +153,15 @@ export async function checkL4Signature(sc: Showcase): Promise<Check> {
  *  So a tamper breaks this link too. A digest mismatch / reverted tx is a FAIL; an
  *  unreachable chain is UNVERIFIABLE (amber) — "could not check" ≠ "did not match". */
 export async function checkL3Onchain(sc: Showcase): Promise<Check> {
-  const base = { id: "l3", label: "L3 anchor (on-chain)", recipe: "8281 · Recorded event topic1 · mainnet" };
-  if (!sc.l3Tx) return { ...base, status: "fail" as const, expected: "an OCP record() tx", got: "none" };
+  const chainLabel = sc.l3ChainId === baseSepolia.id ? "Base Sepolia" : "mainnet";
+  const base = { id: "l3", label: "L3 anchor (on-chain)", recipe: `8281 · Recorded event topic1 · ${chainLabel}` };
+  if (!sc.l3Tx) return { ...base, status: "unverifiable" as const, expected: "an OCP record() tx",
+    got: "anchor pending — the record() tx hasn't landed yet, retry in a moment" };
   const recomputed = keccakUtf8(sc.query);   // the digest the anchor SHOULD hold
   let lastErr = "";
-  for (const rpc of L3_RPCS) {
+  for (const rpc of l3Rpcs(sc.l3ChainId)) {
     try {
-      const client = createPublicClient({ chain: mainnet, transport: http(rpc) });
+      const client = createPublicClient({ chain: l3Chain(sc.l3ChainId), transport: http(rpc) });
       const receipt = await client.getTransactionReceipt({ hash: sc.l3Tx });
       // A successful read is a definitive verdict — stop here (don't try more RPCs).
       if (receipt.status !== "success")
@@ -168,7 +181,7 @@ export async function checkL3Onchain(sc: Showcase): Promise<Check> {
   }
   // Every provider was unreachable — could not recompute. Amber, retryable, NOT a fail.
   return { ...base, status: "unverifiable" as const, expected: "on-chain OCP record()",
-    got: "could not reach mainnet — RPC unavailable" + (lastErr ? ` (${lastErr})` : "") };
+    got: `could not reach ${chainLabel} — RPC unavailable` + (lastErr ? ` (${lastErr})` : "") };
 }
 
 /** Run every check. `tamper` lets the UI flip a byte of the query to prove it's real. */

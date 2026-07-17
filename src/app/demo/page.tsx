@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
-import { ShieldCheck, ArrowUpRight, Wallet, ChevronLeft, ChevronRight, LogIn, LogOut, Loader2 } from "lucide-react";
+import { ShieldCheck, ArrowUpRight, Wallet, ChevronLeft, ChevronRight, LogIn, LogOut, Loader2, Radio } from "lucide-react";
+import { buildLiveRecord, stashLiveRecord } from "@/lib/liveRecord";
 import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
 import { buildMcpCards, buildCardsFromIds, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
@@ -86,6 +87,9 @@ export default function DemoPage() {
   const [myAgents, setMyAgents] = useState<OwnedAgent[]>([]);
   const [ai, setAi] = useState(0);                                   // active owned-agent index
   const [cards, setCards] = useState<McpCard[]>([]);                 // tools of the featured agent
+  const [lastExchange, setLastExchange] = useState<{ query: string; reply: string } | null>(null);
+  const [recomputing, setRecomputing] = useState(false);
+  const [recomputeErr, setRecomputeErr] = useState<string | null>(null);
 
   // Bulla Goblin's toolbox (the walletless showcase default).
   useEffect(() => {
@@ -130,6 +134,23 @@ export default function DemoPage() {
 
   const pick = (c: McpCard) => sendRef.current?.(c.prompt, c.display);
   const cycle = (d: number) => setAi((i) => (i + d + myAgents.length) % myAgents.length);
+
+  // New agent selected → drop the stale "recompute last action" offer.
+  useEffect(() => { setLastExchange(null); setRecomputeErr(null); }, [featured.registry, featured.agentId]);
+
+  // Recompute the action the agent just took — builds the full record from the live
+  // exchange + on-chain attestation, stashes it, and opens /verify in real-time mode.
+  const recomputeLast = async () => {
+    if (!lastExchange) return;
+    setRecomputing(true); setRecomputeErr(null);
+    const rec = await buildLiveRecord(
+      { ens: featured.name, agentId: featured.agentId, registry: featured.registry },
+      lastExchange.query, lastExchange.reply,
+    );
+    if (rec) { stashLiveRecord(rec); window.location.href = "/verify?live=1"; return; }
+    setRecomputeErr("The attestation is still landing on-chain — give it a couple seconds and retry.");
+    setRecomputing(false);
+  };
 
   return (
     <main className="min-h-screen bg-deepink text-paper">
@@ -240,15 +261,32 @@ export default function DemoPage() {
             agentId={featured.agentId}
             {...(isRkb ? { ownerAddress: address, authToken: token ?? undefined } : {})}
             onReady={(send) => { sendRef.current = send; }}
+            onExchange={(query, reply) => setLastExchange({ query, reply })}
           />
         </div>
 
-        {/* Verify note */}
-        <div className="mt-4 rounded-xl border border-white/8 p-4 text-sm text-gb-muted">
-          Every action this agent takes is attested on-chain. When it runs a tool, you can{" "}
-          <Link href="/verify" className="text-brassLight hover:text-brass">recompute the attestation yourself</Link> —
-          input, output, and the on-chain anchor, all verified in your browser.
-        </div>
+        {/* Recompute the action it JUST took — the real-time proof */}
+        {lastExchange ? (
+          <div className="mt-4 rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.04] p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-paper flex items-center gap-1.5 font-display font-medium">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" /> That action was attested on-chain.
+              </p>
+              <p className="text-[12px] text-gb-muted mt-0.5">Recompute all five checks — input, provenance, output, signature, and the on-chain anchor — for the reply you just got. Not a saved demo; the one you watched.</p>
+              {recomputeErr && <p className="text-[11px] text-brass/80 mt-1.5">{recomputeErr}</p>}
+            </div>
+            <button onClick={recomputeLast} disabled={recomputing}
+              className="shrink-0 inline-flex items-center justify-center gap-2 rounded-2xl bg-brass hover:bg-brassLight text-deepink font-display font-medium text-sm px-5 py-2.5 disabled:opacity-50 transition-colors">
+              {recomputing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Radio className="w-4 h-4" />}
+              {recomputing ? "Building record…" : "Recompute this action (5/5)"}
+            </button>
+          </div>
+        ) : (
+          <div className="mt-4 rounded-xl border border-white/8 p-4 text-sm text-gb-muted">
+            Every action this agent takes is attested on-chain. Send it a message or run a tool — then{" "}
+            <span className="text-brassLight">recompute that exact action yourself</span>, input to on-chain anchor, all in your browser.
+          </div>
+        )}
       </div>
     </main>
   );

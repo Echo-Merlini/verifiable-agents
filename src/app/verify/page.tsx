@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw } from "lucide-react";
+import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio } from "lucide-react";
 import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
+import { readLiveRecord } from "@/lib/liveRecord";
 
 // Self-contained: a real mainnet attestation baked to /showcase.json. The recompute
 // still runs live in the browser + reads mainnet — only the record fetch is frozen,
@@ -26,8 +27,14 @@ export default function VerifyPage() {
   const [running, setRunning] = useState(false);
   const [ran, setRan] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [live, setLive] = useState(false);
 
   useEffect(() => {
+    // ?live=1 → recompute the action the agent JUST took (stashed by /demo), not the baked showcase.
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("live") === "1") {
+      const rec = readLiveRecord();
+      if (rec) { setSc(rec); setQuery(rec.query); setLive(true); return; }
+    }
     fetch(SHOWCASE_URL)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then((d: Showcase) => { setSc(d); setQuery(d.query); })
@@ -69,9 +76,15 @@ export default function VerifyPage() {
         </h1>
         <p className="mt-4 text-gb-muted max-w-xl">
           A real on-chain agent action, attested in and out. Every hash is re-derived
-          <span className="text-paper"> in your browser</span>, the anchor is read straight from mainnet,
+          <span className="text-paper"> in your browser</span>, the anchor is read straight from {sc?.l3ChainId === 84532 ? "Base" : "mainnet"},
           and the attestation signer is recovered. Nothing is trusted — so don&apos;t take our word for it, break it.
         </p>
+
+        {live && sc && (
+          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/5 px-3.5 py-1.5 text-[12px] text-emerald-300">
+            <Radio className="w-3.5 h-3.5" /> Live — recomputing the action <span className="font-medium">{sc.ens}</span> just took. Not a saved demo; the one you watched.
+          </div>
+        )}
 
         {/* Guided steps */}
         <ol className="mt-6 grid sm:grid-cols-3 gap-2">

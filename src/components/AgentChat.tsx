@@ -586,7 +586,7 @@ function SuggestionGallery({ items, onAccept, disabled }: {
 
 export function AgentChat({
   registry, agentId, ownerAddress, authToken, onCreditError,
-  compact = false, onReady,
+  compact = false, onReady, onExchange,
 }: {
   registry: string; agentId: string; ownerAddress?: string; authToken?: string;
   onCreditError?: () => void;
@@ -594,6 +594,9 @@ export function AgentChat({
   // Hands the parent a way to send a message programmatically (e.g. an MCP
   // selector card that auto-sends a prompt). Non-invasive: just exposes sendMessage.
   onReady?: (send: (payload: string, displayText?: string) => void) => void;
+  // Fires after a completed reply with the EXACT text sent (the gateway's hash preimage)
+  // + the reply — so the parent can offer a real-time recompute of that attested action.
+  onExchange?: (query: string, reply: string) => void;
 }) {
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput]       = useState("");
@@ -728,12 +731,14 @@ export function AgentChat({
         }
         setMessages(prev => [...prev, { role: "assistant", text: reply }]);
         setLoading(false);
+        // A real agent result was attested on-chain → let the parent offer a recompute.
+        if (d.result) onExchange?.(msg, reply);
       }
     } catch {
       setMessages(prev => [...prev, { role: "assistant", text: "Connection error — try again." }]);
       setLoading(false);
     }
-  }, [loading, registry, agentId, ownerAddress, authToken, poll]);
+  }, [loading, registry, agentId, ownerAddress, authToken, poll, onExchange]);
 
   const send = useCallback(() => {
     const msg = input.trim();
