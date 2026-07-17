@@ -177,6 +177,7 @@ function ConsultInner() {
                 </button>
               </div>
             )}
+            <span className="w-px h-4 bg-white/12" aria-hidden />
             <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
             <Link href="/verify" className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">Verify</Link>
           </div>
