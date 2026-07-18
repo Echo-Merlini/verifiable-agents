@@ -92,7 +92,7 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     display: "Quote 0.1 ETH → USDC (Uniswap)",
   },
   "zerog-mcp": {
-    label: "0G", tagline: "Decentralized storage", icon: "storage",
+    label: "0G", tagline: "Decentralized storage", logo: "/logos/0g.jpg", icon: "storage",
     blurb: "0G decentralized Storage. Writes an action's recompute artifacts — the raw input, output and manifest anyone re-derives from — to a decentralized data layer instead of a single server. The artifact stays recomputable from 0G.",
     prompt: "Use your 0G tool to store this recompute artifact and return its rootHash: {\"input\":\"can we exchange 0.1 ETH to USDC\",\"output\":\"quoted 183.9 USDC on Uniswap\",\"note\":\"KYA demo artifact\"}",
     display: "Store a recompute artifact on 0G",
