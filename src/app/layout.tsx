@@ -52,12 +52,6 @@ const IS_STATIC = process.env.NEXT_PUBLIC_STATIC_EXPORT === "1";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${newsreader.variable} ${jetbrains.variable}`}>
-      <head>
-        {/* Inline script injects the favicon link so React never creates a hoistable
-            fiber for it — avoids the unmountHoistable null-parent crash in React 18.3.
-            Fonts are self-hosted via next/font (see imports); no manual @font-face. */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(){var h=document.head;[{rel:"icon",href:"/favicon.svg",type:"image/svg+xml"},{rel:"icon",href:"/favicon.svg",sizes:"any"}].forEach(function(a){var l=document.createElement("link");Object.keys(a).forEach(function(k){l.setAttribute(k,a[k]);});h.appendChild(l);});})();` }} />
-      </head>
       <body className="font-display">
         <Providers>
           {IS_STATIC && <SubdomainRouter />}
