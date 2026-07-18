@@ -91,6 +91,12 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     prompt: "Use your Uniswap tool to quote swapping 0.1 ETH into USDC on Uniswap (Ethereum, chainId 1) — price only, don't prepare a transaction.",
     display: "Quote 0.1 ETH → USDC (Uniswap)",
   },
+  "ens-mcp": {
+    label: "ENS", tagline: "Names + records", logo: "/logos/ens.png",
+    blurb: "The first ENS *write* tool. Check a .eth name's availability and price, register it (non-custodially — your own wallet signs the commit + purchase), and manage its records (address, text, primary). Every ENS action is recomputable.",
+    prompt: "Use your ENS tool to check whether 'recompute.eth' is available to register and what it costs.",
+    display: "Is recompute.eth available? (ENS)",
+  },
   "zerog-mcp": {
     label: "0G", tagline: "Decentralized storage", logo: "/logos/0g.jpg", icon: "storage",
     blurb: "0G decentralized Storage. Writes an action's recompute artifacts — the raw input, output and manifest anyone re-derives from — to a decentralized data layer instead of a single server. The artifact stays recomputable from 0G.",
@@ -104,6 +110,7 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
 // Preferred display order — validated walletless read-only tools first.
 export const MCP_ORDER: string[] = [
   "f8ee90057b5b7578",                       // OpenSea
+  "ens-mcp",                                // ENS (walletless check — first ENS write MCP)
   "277e9e1e17733065",                       // LI.FI
   "a3s25u3omqm0tqjl",                       // Flashbots
   "jupiter-docs",                           // Solana
