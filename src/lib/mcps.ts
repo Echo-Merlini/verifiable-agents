@@ -31,7 +31,7 @@ export type McpConfig = {
   prompt: string;      // sent to the agent on click
   display: string;     // the user bubble shown in chat
   logo?: string;       // /logos/*.webp|svg (official brand mark)
-  icon?: "recompute" | "forensics"; // lucide fallback where no logo exists
+  icon?: "recompute" | "forensics" | "storage"; // lucide fallback where no logo exists
   hidden?: boolean;    // in the public list but not worth surfacing
 };
 
@@ -91,6 +91,12 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     prompt: "Use your Uniswap tool to quote swapping 0.1 ETH into USDC on Uniswap (Ethereum, chainId 1) — price only, don't prepare a transaction.",
     display: "Quote 0.1 ETH → USDC (Uniswap)",
   },
+  "zerog-mcp": {
+    label: "0G", tagline: "Decentralized storage", icon: "storage",
+    blurb: "0G decentralized Storage. Writes an action's recompute artifacts — the raw input, output and manifest anyone re-derives from — to a decentralized data layer instead of a single server. The artifact stays recomputable from 0G.",
+    prompt: "Use your 0G tool to store this recompute artifact and return its rootHash: {\"input\":\"can we exchange 0.1 ETH to USDC\",\"output\":\"quoted 183.9 USDC on Uniswap\",\"note\":\"KYA demo artifact\"}",
+    display: "Store a recompute artifact on 0G",
+  },
   // Present in the public list but the agent has no working Alchemy tool → hide.
   "alchemy-mcp": { hidden: true, label: "Alchemy", tagline: "", blurb: "", prompt: "", display: "" },
 };
@@ -103,6 +109,7 @@ export const MCP_ORDER: string[] = [
   "jupiter-docs",                           // Solana
   "uniswap-mcp",                            // Uniswap (walletless quote — direct v3)
   "5a6c1f48-2850-46f8-9e18-4577197f500d",   // Recompute Kit
+  "zerog-mcp",                              // 0G decentralized storage (walletless — gateway-signed)
   "60651853-eb38-4b85-818f-7203f67ae52c",   // 1inch
   "0ebe0db5-7da0-4b66-a401-f50c976cc72c",   // Symbiosis
   "d0041cfe-a5e5-4782-afc3-8dcf7c03edd0",   // Forensics

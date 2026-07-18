@@ -1,4 +1,4 @@
-import { ShieldCheck, Fingerprint } from "lucide-react";
+import { ShieldCheck, Fingerprint, Database } from "lucide-react";
 import type { McpCard } from "@/lib/mcps";
 
 /**
@@ -14,5 +14,6 @@ export function McpLogo({ card, className = "h-6 w-6" }: { card: McpCard; classN
   }
   if (card.icon === "recompute") return <ShieldCheck className={`${className} text-brassLight`} />;
   if (card.icon === "forensics") return <Fingerprint className={`${className} text-gb-faint`} />;
+  if (card.icon === "storage")   return <Database className={`${className} text-brassLight`} />;
   return <span className="font-display font-semibold text-sm text-paper">{card.label[0]?.toUpperCase()}</span>;
 }
