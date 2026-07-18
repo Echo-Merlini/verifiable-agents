@@ -55,6 +55,39 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
+// Shows WHICH repo folder feeds this record's IPFS page. A browser can't open a local
+// OS folder, so it surfaces the path inline + copies it (with an insecure-origin
+// fallback, since the LAN admin runs on plain http where navigator.clipboard is undefined).
+function FolderButton({ name }: { name: string }) {
+  const [copied, setCopied] = useState(false);
+  const path = `ens-pages/${name}/`;
+  const copy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(path);
+      else throw new Error("insecure origin");
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = path; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand("copy"); } catch {}
+      document.body.removeChild(ta);
+    }
+    setCopied(true); setTimeout(() => setCopied(false), 1800);
+  };
+  return (
+    <button
+      onClick={copy}
+      title={`This record's page lives in ${path} — edit the HTML there, then hit "Renew CIDs" to pin it. Click to copy the path.`}
+      aria-label={`Copy folder path ${path}`}
+      className="shrink-0 flex items-center gap-1.5 h-7 px-2 rounded-md border border-gb-border text-gb-muted hover:text-gb-accent hover:border-gb-accent/50 transition-colors"
+    >
+      {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Folder className="w-3.5 h-3.5" />}
+      <span className="text-[10px] font-mono hidden sm:inline">{copied ? "copied ✓" : path}</span>
+    </button>
+  );
+}
+
 function Field({
   label, value, onChange, placeholder, mono = true,
 }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; mono?: boolean }) {
@@ -154,15 +187,8 @@ function RecordCard({
       >
         <span className="font-mono text-sm text-gb-accent flex-1 truncate">{record.name}</span>
         <span className="text-xs text-[#444] truncate hidden sm:block">{summary}</span>
-        {/* Which repo folder feeds this record's IPFS page — click to copy the path */}
-        <button
-          onClick={(e) => { e.stopPropagation(); try { navigator.clipboard.writeText(`ens-pages/${record.name}/`); } catch {} }}
-          title={`Static page folder: ens-pages/${record.name}/ — edit here, then Renew CIDs pins it`}
-          aria-label={`Page folder ens-pages/${record.name}/`}
-          className="shrink-0 flex items-center justify-center w-7 h-7 rounded-md border border-gb-border text-gb-muted hover:text-gb-accent hover:border-gb-accent/50 transition-colors"
-        >
-          <Folder className="w-3.5 h-3.5" />
-        </button>
+        {/* Which repo folder feeds this record's IPFS page — shows the path + copies it */}
+        <FolderButton name={record.name} />
         {open ? <ChevronUp className="w-4 h-4 text-gb-muted shrink-0" /> : <ChevronDown className="w-4 h-4 text-gb-muted shrink-0" />}
       </div>
 

@@ -348,7 +348,7 @@ function UserJourney() {
       title: "Chat with your Agent",
       desc: "Configure AI skills, personality, and MCP tools. Then chat — or let others discover your agent publicly.",
       actions: [
-        { label: "My Agents", href: "/my-agents", primary: true },
+        { label: "Demo", href: "/demo", primary: true },
         { label: "Chat", href: "/use-agent", primary: false },
       ],
     },
@@ -959,7 +959,7 @@ function ProfilePage() {
               A proposed convention for driving frontend UI directly from ENS text records. No custom resolver required — updates are instant, gasless, and require no redeployment.
             </p>
           </div>
-          <a href="./spec/" className="shrink-0 font-mono text-[10px] px-3 py-1.5 rounded-full bg-white/8 text-white/40 hover:text-white/70 hover:bg-white/12 transition-colors">
+          <a href="/verify" className="shrink-0 font-mono text-[10px] px-3 py-1.5 rounded-full bg-white/8 text-white/40 hover:text-white/70 hover:bg-white/12 transition-colors">
             Draft · ENS-KIT/1 →
           </a>
         </div>

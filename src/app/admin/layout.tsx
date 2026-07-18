@@ -79,7 +79,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="w-11 h-11 rounded-full bg-gb-accentD mx-auto flex items-center justify-center">
               <Globe className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-lg font-bold text-slate-100 tracking-tight">Dinamic Kit Admin</h1>
+            <h1 className="text-lg font-bold text-slate-100 tracking-tight">Recomputable Agents · Admin</h1>
             <p className="text-gb-faint text-sm">Sign with your wallet to continue.</p>
           </div>
 
@@ -137,7 +137,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="w-60 bg-gb-bg border-r border-gb-border flex flex-col shrink-0">
         {/* Logo */}
         <div className="px-5 py-6 border-b border-gb-border">
-          <p className="text-base font-bold tracking-tight text-slate-100">Dinamic Kit</p>
+          <p className="text-base font-bold tracking-tight text-slate-100">Recomputable Agents</p>
           <p className="text-[9px] font-bold text-gb-accent uppercase tracking-widest mt-0.5">Admin</p>
           <div className="flex items-center gap-1.5 mt-3">
             <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${env.color}`} />

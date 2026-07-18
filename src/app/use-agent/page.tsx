@@ -184,7 +184,7 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
               )}
             </div>
             <Link
-              href="/my-agents"
+              href="/demo"
               className="liquid-glass rounded-full p-2 text-white/40 hover:text-white/70 transition-colors shrink-0"
               title="Edit in My Agents"
             >
@@ -219,7 +219,7 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
       ) : (
         <div className="liquid-glass rounded-2xl p-4 text-center">
           <p className="text-sm text-white/40">No AI services configured yet.</p>
-          <Link href="/my-agents" className="text-xs text-amber-400 hover:text-amber-300 mt-1 inline-block">
+          <Link href="/demo" className="text-xs text-amber-400 hover:text-amber-300 mt-1 inline-block">
             Add MCP / A2A endpoints in My Agents →
           </Link>
         </div>
