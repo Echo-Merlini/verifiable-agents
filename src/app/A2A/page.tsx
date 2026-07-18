@@ -242,8 +242,10 @@ export default function A2APage() {
                       </button>
                       <button onClick={() => setAuthorized((a) => ({ ...a, [t.id]: !a[t.id] }))} disabled={!!jobToken}
                         title={authorized[t.id] ? "Included — tap to exclude for this job" : "Excluded — tap to include"}
-                        className="flex-1 min-w-0 flex items-center gap-3 text-left rounded-xl border border-white/8 bg-black/20 px-3 py-2.5 hover:bg-white/5 transition-colors disabled:opacity-60">
-                        <McpLogo card={t} className="h-6 w-6 shrink-0" />
+                        className="flex-1 min-w-0 flex items-center gap-3 text-left rounded-xl border border-white/[0.06] bg-black/20 px-3 py-2.5 hover:bg-white/5 transition-colors disabled:opacity-60">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/5 border border-white/10 overflow-hidden">
+                          <McpLogo card={t} className="h-5 w-5" fill />
+                        </span>
                         <span className="min-w-0 flex-1">
                           <span className="text-xs text-paper/80 font-medium">{t.label}</span>
                           <span className="text-[9px] text-paper/30"> · {t.tagline}</span>
