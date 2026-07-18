@@ -108,6 +108,22 @@ const ESCROW_WRITE_ABI = [
   { type: "function", name: "release", stateMutability: "nonpayable", inputs: [{ name: "jobId", type: "bytes32" }, { name: "commitmentHash", type: "bytes32" }, { name: "signature", type: "bytes" }], outputs: [] },
 ] as const;
 
+// Public RPCs cap eth_getLogs at ~50k blocks — scan in chunks from the contract's era.
+const ESCROW_FROM_BLOCK = process.env.NEXT_PUBLIC_ESCROW_FROM_BLOCK ? BigInt(process.env.NEXT_PUBLIC_ESCROW_FROM_BLOCK) : null;
+function eraFromBlock(latest: bigint): bigint {
+  if (ESCROW_FROM_BLOCK !== null) return ESCROW_FROM_BLOCK;
+  return latest > 300000n ? latest - 300000n : 0n; // ~6 weeks of mainnet — covers the current contracts' lifetime
+}
+async function getLogsChunked(client: any, params: { address: `0x${string}`; event: any }, fromBlock: bigint, toBlock: bigint, step = 45000n): Promise<any[]> {
+  const out: any[] = [];
+  for (let start = fromBlock; start <= toBlock; start += step) {
+    const end = start + step - 1n > toBlock ? toBlock : start + step - 1n;
+    try { out.push(...await client.getLogs({ ...params, fromBlock: start, toBlock: end })); }
+    catch { /* skip a bad window rather than fail the whole feed */ }
+  }
+  return out;
+}
+
 function PlatformFeePanel() {
   const { token } = useAuth();
   const [feeEth, setFeeEth]     = useState("");
@@ -225,10 +241,12 @@ function ConsultEscrowPanel() {
       if (!client) throw new Error("no RPC — set NEXT_PUBLIC_ESCROW_RPC");
       const { parseAbiItem } = await import("viem");
       const addr = CONSULT_ESCROW_ADDRESS as `0x${string}`;
+      const latest = await client.getBlockNumber();
+      const from = eraFromBlock(latest);
       const [opened, released, refunded] = await Promise.all([
-        client.getLogs({ address: addr, event: parseAbiItem("event Opened(bytes32 indexed jobId, address indexed consumer, address indexed provider, address attestor, uint256 amount, uint256 deadline)"), fromBlock: 0n, toBlock: "latest" }),
-        client.getLogs({ address: addr, event: parseAbiItem("event Released(bytes32 indexed jobId, bytes32 commitmentHash, address provider, uint256 amount)"), fromBlock: 0n, toBlock: "latest" }),
-        client.getLogs({ address: addr, event: parseAbiItem("event Refunded(bytes32 indexed jobId, address consumer, uint256 amount)"), fromBlock: 0n, toBlock: "latest" }),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event Opened(bytes32 indexed jobId, address indexed consumer, address indexed provider, address attestor, uint256 amount, uint256 deadline)") }, from, latest),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event Released(bytes32 indexed jobId, bytes32 commitmentHash, address provider, uint256 amount)") }, from, latest),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event Refunded(bytes32 indexed jobId, address consumer, uint256 amount)") }, from, latest),
       ]);
       const rel = new Set(released.map((l: any) => l.args.jobId));
       const ref = new Set(refunded.map((l: any) => l.args.jobId));
@@ -407,10 +425,12 @@ function CommitRevealPanel() {
       if (!client) throw new Error("no RPC — set NEXT_PUBLIC_ESCROW_RPC");
       const { parseAbiItem } = await import("viem");
       const addr = COMMIT_REVEAL_ADDRESS as `0x${string}`;
+      const latest = await client.getBlockNumber();
+      const from = eraFromBlock(latest);
       const [committed, revealed, mismatch] = await Promise.all([
-        client.getLogs({ address: addr, event: parseAbiItem("event Committed(uint256 indexed periodId, address indexed nodeAddress, bytes32 commitmentHash)"), fromBlock: 0n, toBlock: "latest" }),
-        client.getLogs({ address: addr, event: parseAbiItem("event Revealed(uint256 indexed periodId, address indexed nodeAddress, bytes32 snapshotRoot, uint256 rowCount)"), fromBlock: 0n, toBlock: "latest" }),
-        client.getLogs({ address: addr, event: parseAbiItem("event RevealMismatch(uint256 indexed periodId, address indexed nodeAddress, bytes32 expected, bytes32 actual)"), fromBlock: 0n, toBlock: "latest" }),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event Committed(uint256 indexed periodId, address indexed nodeAddress, bytes32 commitmentHash)") }, from, latest),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event Revealed(uint256 indexed periodId, address indexed nodeAddress, bytes32 snapshotRoot, uint256 rowCount)") }, from, latest),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event RevealMismatch(uint256 indexed periodId, address indexed nodeAddress, bytes32 expected, bytes32 actual)") }, from, latest),
       ]);
       const key = (p: bigint, n: string) => `${p}:${n.toLowerCase()}`;
       const revMap = new Map<string, any>(revealed.map((l: any) => [key(l.args.periodId, l.args.nodeAddress), l]));
@@ -510,12 +530,14 @@ function EscrowV1Panel() {
       if (!client) throw new Error("no RPC — set NEXT_PUBLIC_ESCROW_RPC");
       const { parseAbiItem } = await import("viem");
       const addr = ESCROW_V1_ADDRESS as `0x${string}`;
+      const latest = await client.getBlockNumber();
+      const from = eraFromBlock(latest);
       const [created, confirmed, disputed, resolved, refunded] = await Promise.all([
-        client.getLogs({ address: addr, event: parseAbiItem("event OrderCreated(bytes32 indexed orderId, bytes32 indexed agentId, address indexed client, uint256 amount)"), fromBlock: 0n, toBlock: "latest" }),
-        client.getLogs({ address: addr, event: parseAbiItem("event OrderConfirmed(bytes32 indexed orderId)"), fromBlock: 0n, toBlock: "latest" }),
-        client.getLogs({ address: addr, event: parseAbiItem("event OrderDisputed(bytes32 indexed orderId, bytes reason)"), fromBlock: 0n, toBlock: "latest" }),
-        client.getLogs({ address: addr, event: parseAbiItem("event OrderResolved(bytes32 indexed orderId, uint8 resolution)"), fromBlock: 0n, toBlock: "latest" }),
-        client.getLogs({ address: addr, event: parseAbiItem("event OrderRefunded(bytes32 indexed orderId)"), fromBlock: 0n, toBlock: "latest" }),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event OrderCreated(bytes32 indexed orderId, bytes32 indexed agentId, address indexed client, uint256 amount)") }, from, latest),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event OrderConfirmed(bytes32 indexed orderId)") }, from, latest),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event OrderDisputed(bytes32 indexed orderId, bytes reason)") }, from, latest),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event OrderResolved(bytes32 indexed orderId, uint8 resolution)") }, from, latest),
+        getLogsChunked(client, { address: addr, event: parseAbiItem("event OrderRefunded(bytes32 indexed orderId)") }, from, latest),
       ]);
       const conf = new Set(confirmed.map((l: any) => l.args.orderId));
       const disp = new Set(disputed.map((l: any) => l.args.orderId));
