@@ -2,20 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAccount, useDisconnect } from "wagmi";
-import { Menu, X, Bot, Users, Wallet, Rss, FileText, Zap, Home, User, Sparkles, LogOut } from "lucide-react";
+import { Menu, X, Wallet, Zap, Home, Sparkles, LogOut, Coins, ShieldCheck } from "lucide-react";
 import { useWalletModal } from "@/hooks/useWalletModal";
 
-const GW_URL   = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
-const ENS_NAME = process.env.NEXT_PUBLIC_ENS_NAME   || "dinamic.eth";
-
 const LINKS = [
-  { path: "demo/",      label: "Home",            icon: Home,      desc: "Verifiable Agents demo" },
-  { path: "mint/",      label: "Mint Agent",      icon: Sparkles,  desc: "Mint a self-sovereign agent — no NFT needed" },
-  { path: "my-agents/", label: "My Agents",       icon: Bot,       desc: "Manage your agent identities" },
-  { path: "agents/",    label: "Browse Agents",   icon: Users,     desc: "Discover on-chain agent identities" },
-  { path: "top-up/",    label: "Top Up Credits",  icon: Zap,       desc: "Add AI credits to your wallet" },
-  { path: "feed/",      label: "Feed",            icon: Rss,       desc: "Latest activity" },
-  { path: "spec/",      label: "Spec",            icon: FileText,  desc: "ENS-KIT/1 specification" },
+  { path: "demo/",   label: "Home",            icon: Home,        desc: "Talk to a live, recomputable agent" },
+  { path: "mint/",   label: "Mint Agent",      icon: Sparkles,    desc: "Mint your own Recompute Kit Bot" },
+  { path: "A2A/",    label: "A2A Marketplace", icon: Coins,       desc: "Consult an agent · escrow · recompute" },
+  { path: "verify/", label: "Verify",          icon: ShieldCheck, desc: "Recompute a real action in your browser" },
+  { path: "top-up/", label: "Top Up Credits",  icon: Zap,         desc: "Add AI credits to your wallet" },
 ];
 
 export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUrl?: string }) {
@@ -51,25 +46,6 @@ export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUr
   const href = (path: string) =>
     baseUrl ? `${baseUrl}/${path}` : `../${path}`;
 
-  const handleMyProfile = async () => {
-    setOpen(false);
-    if (!address) {
-      window.open(href("claim/"), "_blank");
-      return;
-    }
-    try {
-      const res = await fetch(`${GW_URL}/api/claim/mine?address=${address}`);
-      const data = await res.json();
-      if (data.label) {
-        window.open(`https://${data.label}.${ENS_NAME}.limo`, "_blank");
-      } else {
-        window.open(href("claim/"), "_blank");
-      }
-    } catch {
-      window.open(href("claim/"), "_blank");
-    }
-  };
-
   return (
     <div ref={ref} className="fixed top-4 right-4 z-[100]">
       <button
@@ -100,18 +76,6 @@ export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUr
             )}
           </div>
           <p className="text-[10px] uppercase tracking-widest text-white/25 px-3 py-1.5">Navigate</p>
-          <button
-            onClick={handleMyProfile}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-colors group text-white/60 hover:bg-white/8 hover:text-white w-full text-left"
-          >
-            <div className="w-7 h-7 rounded-xl flex items-center justify-center shrink-0 bg-white/8 group-hover:bg-white/12 transition-colors">
-              <User className="w-3.5 h-3.5 text-white/50 group-hover:text-white/80" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-medium leading-none mb-0.5">My Profile</p>
-              <p className="text-[10px] text-white/30 leading-none truncate">View or claim your subdomain</p>
-            </div>
-          </button>
           {LINKS.map(({ path, label, icon: Icon, desc }) => {
             const isCurrent = currentPath && path && path.includes(currentPath);
             return (
