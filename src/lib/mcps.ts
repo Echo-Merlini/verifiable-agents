@@ -103,8 +103,12 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     prompt: "Use your 0G tool to store this recompute artifact and return its rootHash: {\"input\":\"can we exchange 0.1 ETH to USDC\",\"output\":\"quoted 183.9 USDC on Uniswap\",\"note\":\"KYA demo artifact\"}",
     display: "Store a recompute artifact on 0G",
   },
-  // Present in the public list but the agent has no working Alchemy tool → hide.
-  "alchemy-mcp": { hidden: true, label: "Alchemy", tagline: "", blurb: "", prompt: "", display: "" },
+  "alchemy-mcp": {
+    label: "Alchemy", tagline: "Multi-chain data", logo: "/logos/alchemy.png",
+    blurb: "Alchemy's on-chain data suite — token prices, NFT holdings, transfers and full transaction history across 100+ chains. The agent taps it for fast, read-only market and wallet data.",
+    prompt: "Use your Alchemy tool to fetch the current USD price of ETH and its 24h change.",
+    display: "ETH price + 24h change (Alchemy)",
+  },
 };
 
 // Preferred display order — validated walletless read-only tools first.
@@ -113,6 +117,7 @@ export const MCP_ORDER: string[] = [
   "ens-mcp",                                // ENS (walletless check — first ENS write MCP)
   "277e9e1e17733065",                       // LI.FI
   "a3s25u3omqm0tqjl",                       // Flashbots
+  "alchemy-mcp",                            // Alchemy (walletless read — 97 tools, prices/NFTs/transfers)
   "jupiter-docs",                           // Solana
   "uniswap-mcp",                            // Uniswap (walletless quote — direct v3)
   "5a6c1f48-2850-46f8-9e18-4577197f500d",   // Recompute Kit
