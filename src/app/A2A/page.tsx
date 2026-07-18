@@ -9,6 +9,7 @@ import { GATEWAY_URL } from "@/lib/erc8004";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
+import { ConsultProofCard } from "@/components/ConsultProofCard";
 import { buildCardsFromIds } from "@/lib/mcps";
 
 // ConsultEscrow.open(bytes32 jobId, address provider, address attestor, uint256 deadline) payable
@@ -294,6 +295,13 @@ export default function A2APage() {
                   <a href={`${EXPLORER[escrowChain ?? 0] ?? "https://etherscan.io"}/tx/${txHash}`} target="_blank" rel="noreferrer"
                     className="inline-flex items-center gap-1 text-[11px] text-brassLight hover:text-brass">view transaction <ExternalLink className="w-2.5 h-2.5" /></a>
                 </div>
+              )}
+              {jobToken && jobId && (
+                <ConsultProofCard
+                  jobId={jobId}
+                  gatewayUrl={GATEWAY_URL}
+                  onClose={() => { setJobToken(null); setJobId(null); setJobExpiry(null); setTxHash(null); setConsultErr(null); }}
+                />
               )}
               {jobToken && (
                 <p className="text-[11px] text-center text-paper/40 flex items-center justify-center gap-1">
