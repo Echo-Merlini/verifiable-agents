@@ -596,6 +596,92 @@ function EscrowV1Panel() {
   );
 }
 
+// ── Consult jobs — gateway settlement ledger (backend audit view) ──────────────
+function ConsultJobsAuditPanel() {
+  const { token } = useAuth();
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [meta, setMeta] = useState<{ escrow: string | null; chainId: number }>({ escrow: null, chainId: 1 });
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    if (!token) return;
+    setLoading(true); setErr(null);
+    try {
+      const r = await fetch(`${getGatewayUrl()}/admin/consult/jobs`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const d = await r.json();
+      setJobs(d.jobs ?? []); setMeta({ escrow: d.escrow ?? null, chainId: d.chainId ?? 1 });
+    } catch (e: any) { setErr(e?.message ?? String(e)); }
+    finally { setLoading(false); }
+  }, [token]);
+  useEffect(() => { load(); }, [load]);
+
+  const explorer = meta.chainId === 11155111 ? "https://sepolia.etherscan.io" : "https://etherscan.io";
+  const short = (a: string) => (a ? a.slice(0, 6) + "…" + a.slice(-4) : "—");
+  const eth = (wei: string) => { try { return (Number(BigInt(wei)) / 1e18).toFixed(4); } catch { return "0"; } };
+  const statusPill = (s: string) => {
+    const m: Record<string, string> = { released: "text-green-400 border-green-400/30", open: "text-amber-400 border-amber-400/30", refunded: "text-red-400 border-red-400/30" };
+    return <span className={`text-[10px] px-2 py-0.5 rounded border ${m[s] ?? "text-gb-muted border-gb-border"}`}>{s}</span>;
+  };
+
+  return (
+    <div className="bg-gb-surface border border-gb-border rounded-xl p-5 space-y-4">
+      <div className="flex items-center gap-2">
+        <History className="w-4 h-4 text-green-400" />
+        <p className="text-sm font-semibold text-slate-100">Consult jobs — gateway settlement ledger</p>
+        <button onClick={load} disabled={loading} className="ml-auto flex items-center gap-1 text-xs text-gb-muted hover:text-slate-300 disabled:opacity-50">
+          {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />} Refresh
+        </button>
+      </div>
+      <p className="text-xs text-gb-muted leading-relaxed">
+        Every paid consult the gateway processed, with its on-chain settlement — the backend audit trail. Correlate a job to its release tx and recompute result → commitment → attestor from the proof artifact.
+      </p>
+      {err && <div className="flex items-start gap-2 text-red-400 text-xs"><AlertCircle className="w-4 h-4 mt-0.5 shrink-0" /> {err}</div>}
+      {!loading && jobs.length === 0 && !err && <p className="text-xs text-gb-muted">No consult jobs recorded yet.</p>}
+      {jobs.length > 0 && (
+        <div className="overflow-x-auto rounded-lg border border-gb-border">
+          <table className="w-full text-xs min-w-[640px]">
+            <thead>
+              <tr className="border-b border-gb-border bg-gb-bg text-[10px] text-gb-muted uppercase tracking-wide">
+                <th className="text-left px-3 py-2">Job</th>
+                <th className="text-left px-3 py-2">Consumer</th>
+                <th className="text-left px-3 py-2">Agent</th>
+                <th className="text-right px-3 py-2">Amount</th>
+                <th className="text-left px-3 py-2">Status</th>
+                <th className="text-left px-3 py-2">Release tx</th>
+                <th className="text-right px-3 py-2">Proof</th>
+              </tr>
+            </thead>
+            <tbody>
+              {jobs.map((j) => (
+                <tr key={j.jobId} className="border-b border-gb-border/40 last:border-0 hover:bg-gb-bg/50 transition-colors">
+                  <td className="px-3 py-2.5 font-mono text-slate-300" title={j.jobId}>{short(j.jobId)}</td>
+                  <td className="px-3 py-2.5 font-mono text-gb-faint" title={j.consumer}>{short(j.consumer)}</td>
+                  <td className="px-3 py-2.5 font-mono text-gb-faint" title={`${j.registry}/${j.agentId}`}>#{j.agentId}</td>
+                  <td className="px-3 py-2.5 text-right font-mono text-slate-200">{eth(j.amountWei)}</td>
+                  <td className="px-3 py-2.5">{statusPill(j.status)}</td>
+                  <td className="px-3 py-2.5">
+                    {j.releaseTx
+                      ? <a href={`${explorer}/tx/${j.releaseTx}`} target="_blank" rel="noreferrer" className="font-mono text-brassLight hover:text-brass">{short(j.releaseTx)}</a>
+                      : <span className="text-gb-muted">—</span>}
+                  </td>
+                  <td className="px-3 py-2.5 text-right">
+                    {j.resultHash
+                      ? <a href={`${getGatewayUrl()}/agent/consult/job/${j.jobId}/proof`} target="_blank" rel="noreferrer" className="text-brassLight hover:text-brass">recompute →</a>
+                      : <span className="text-gb-muted">—</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {meta.escrow && <p className="text-[10px] text-gb-muted">escrow <code className="bg-gb-input px-1 rounded font-mono">{short(meta.escrow)}</code> · chain {meta.chainId}</p>}
+    </div>
+  );
+}
+
 export default function SettlementPage() {
   const { token }                     = useAuth();
   const { address }                   = useAccount();
@@ -738,6 +824,7 @@ export default function SettlementPage() {
       {/* ══ Settlement · per-consult granularity (1:1) ══ */}
       <PlatformFeePanel />
       <ConsultEscrowPanel />
+      <ConsultJobsAuditPanel />
 
       {/* ══ Mesh Node Economics — per-period settlement (aggregate) (ERC-8275) ══ */}
       <p className="text-[11px] font-semibold text-gb-faint uppercase tracking-wider pt-2">Mesh Node Economics — infra axis</p>
