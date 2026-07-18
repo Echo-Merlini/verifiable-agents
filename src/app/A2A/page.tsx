@@ -42,6 +42,7 @@ export default function A2APage() {
 
   const [agents, setAgents] = useState<Consultable[]>([]);
   const [idx, setIdx] = useState(0);
+  const [toolIdx, setToolIdx] = useState(0);
   const [loading, setLoading] = useState(true);
   const [pricing, setPricing] = useState<PricingBlock | null>(null);
   const [authorized, setAuthorized] = useState<Record<string, boolean>>({});
@@ -66,7 +67,7 @@ export default function A2APage() {
 
   // Reset the consult session + load escrow pricing when the active agent changes.
   useEffect(() => {
-    setTxHash(null); setJobId(null); setJobToken(null); setJobExpiry(null); setConsultErr(null); setPricing(null);
+    setTxHash(null); setJobId(null); setJobToken(null); setJobExpiry(null); setConsultErr(null); setPricing(null); setToolIdx(0);
     if (!active) return;
     setAuthorized(Object.fromEntries((active.consultTools || []).map((id) => [id, true])));
     fetch(`${GATEWAY_URL}/.well-known/agent/${active.registry}/${active.agentId}.json`)
@@ -180,7 +181,7 @@ export default function A2APage() {
         ) : (
           <div className="mt-6 grid md:grid-cols-2 gap-4 items-start">
             {/* Left — chat */}
-            <div className="liquid-glass rounded-2xl overflow-hidden min-h-[420px] flex flex-col">
+            <div className="liquid-glass rounded-2xl overflow-hidden h-[560px] flex flex-col">
               {jobToken ? (
                 <AgentChat key={`${active.registry}-${active.agentId}-${jobId}`} registry={active.registry} agentId={active.agentId} ownerAddress={address} authToken={jobToken} compact />
               ) : (
@@ -223,28 +224,49 @@ export default function A2APage() {
                 )}
               </div>
 
-              {/* Available tools (owner-curated) — optional consumer scope-down */}
-              {toolCards.length > 0 && (
-                <div className="liquid-glass rounded-2xl p-5 space-y-3">
-                  <div className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-brassLight" /><p className="text-[10px] uppercase tracking-widest text-paper/40">Available tools</p><span className="ml-auto text-[10px] text-paper/25">{chosen.length}/{toolCards.length}</span></div>
-                  <p className="text-[11px] text-paper/35">The owner exposed these for consult. Deselect any you don&apos;t want this job to use.</p>
-                  <div className="space-y-1.5">
-                    {toolCards.map((m) => (
-                      <button key={m.id} onClick={() => setAuthorized((a) => ({ ...a, [m.id]: !a[m.id] }))} disabled={!!jobToken}
-                        className="w-full flex items-center gap-2.5 text-left liquid-glass rounded-xl px-3 py-2 hover:bg-white/5 transition-colors disabled:opacity-60">
-                        <span className={`w-4 h-4 rounded border shrink-0 flex items-center justify-center ${authorized[m.id] ? "bg-brass/25 border-brassLight/50" : "border-white/20"}`}>
-                          {authorized[m.id] && <Check className="w-3 h-3 text-brass" />}
+              {/* Available tools (owner-curated) — compact ◀▶ carousel, tap to scope-down */}
+              {toolCards.length > 0 && (() => {
+                const ti = toolIdx % toolCards.length;
+                const t = toolCards[ti];
+                return (
+                  <div className="liquid-glass rounded-2xl p-5 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-brassLight" />
+                      <p className="text-[10px] uppercase tracking-widest text-paper/40">Available tools</p>
+                      <span className="ml-auto text-[10px] text-paper/25">{chosen.length}/{toolCards.length} on</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => setToolIdx((i) => (i - 1 + toolCards.length) % toolCards.length)} disabled={toolCards.length < 2}
+                        aria-label="Previous tool" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-30 transition-colors">
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => setAuthorized((a) => ({ ...a, [t.id]: !a[t.id] }))} disabled={!!jobToken}
+                        title={authorized[t.id] ? "Included — tap to exclude for this job" : "Excluded — tap to include"}
+                        className="flex-1 min-w-0 flex items-center gap-3 text-left rounded-xl border border-white/8 bg-black/20 px-3 py-2.5 hover:bg-white/5 transition-colors disabled:opacity-60">
+                        <McpLogo card={t} className="h-6 w-6 shrink-0" />
+                        <span className="min-w-0 flex-1">
+                          <span className="text-xs text-paper/80 font-medium">{t.label}</span>
+                          <span className="text-[9px] text-paper/30"> · {t.tagline}</span>
+                          <span className="block text-[10px] text-paper/40 line-clamp-2 mt-0.5 leading-snug">{t.blurb}</span>
                         </span>
-                        <McpLogo card={m} className="h-5 w-5 shrink-0" />
-                        <span className="min-w-0">
-                          <span className="text-xs text-paper/70 font-medium">{m.label}</span>
-                          <span className="block text-[10px] text-paper/35 line-clamp-1">{m.tagline}</span>
+                        <span className={`w-4 h-4 rounded border shrink-0 flex items-center justify-center ${authorized[t.id] ? "bg-brass/25 border-brassLight/50" : "border-white/20"}`}>
+                          {authorized[t.id] && <Check className="w-3 h-3 text-brass" />}
                         </span>
                       </button>
-                    ))}
+                      <button onClick={() => setToolIdx((i) => (i + 1) % toolCards.length)} disabled={toolCards.length < 2}
+                        aria-label="Next tool" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 disabled:opacity-30 transition-colors">
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-center gap-1.5">
+                      {toolCards.map((_, i) => (
+                        <span key={i} className={`h-1 w-1 rounded-full transition-colors ${i === ti ? "bg-brassLight" : "bg-white/15"}`} />
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-paper/30 text-center">Owner-exposed · tap the card to include/exclude for this job</p>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Pay */}
               {!jobToken && (
