@@ -37,11 +37,11 @@ export function BrandFavicon() {
     const subName  = SUB_NAMES[route ?? ""] ?? SUB_NAMES[subLabel] ?? null;
     const isRoot   = !subName;
 
+    // On the app/demo domains (root) keep the static Vértice favicon; only override
+    // for actual ENS subname pages (agents./agent./… served via eth.limo).
+    if (isRoot) return;
     (async () => {
-      // Try the current page own icon first, then fall back to root
-      const icon =
-        (!isRoot && (await fetchIcon(subName!))) ||
-        (await fetchIcon(ENS_NAME));
+      const icon = await fetchIcon(subName!);
       if (icon) setFavicon(icon);
     })();
   }, []);
