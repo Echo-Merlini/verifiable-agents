@@ -28,7 +28,7 @@ const STEPS = [
   { t: "OCP · ERC-8281 anchor", who: "Damon & Vincent", d: "joint work on observation commitments" },
   { t: "Pocket Network",        who: "",                d: "collaboration on the decentralized-inference side" },
   { t: "Jimmy joined",          who: "",                d: "when we helped land his ERC — task-hash / primary artifact" },
-  { t: "Fede",                  who: "Inveritas",       d: "catching every flaw early through his lens" },
+  { t: "Fede",                  who: "invinoveritas",       d: "catching every flaw early through his lens" },
   { t: "trustless-AI",          who: "",                d: "the shared home for the reference implementations" },
 ];
 
