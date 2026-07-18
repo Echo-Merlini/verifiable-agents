@@ -32,19 +32,20 @@ export type McpConfig = {
   display: string;     // the user bubble shown in chat
   logo?: string;       // /logos/*.webp|svg (official brand mark)
   icon?: "recompute" | "forensics" | "storage"; // lucide fallback where no logo exists
+  fill?: boolean;      // logo carries its own background → fill the chip (vs centered transparent mark)
   hidden?: boolean;    // in the public list but not worth surfacing
 };
 
 // Keyed by the gateway's MCP id (from /agent/public-mcps).
 export const MCP_CONFIG: Record<string, McpConfig> = {
   "f8ee90057b5b7578": {
-    label: "OpenSea", tagline: "NFT market", logo: "/logos/opensea.webp",
+    label: "OpenSea", tagline: "NFT market", logo: "/logos/opensea.webp", fill: true,
     blurb: "OpenSea NFT marketplace. Reads collection stats, floor prices and live listings, and prepares buy calldata — so the agent can surface real NFTs you can actually purchase.",
     prompt: "Show me some NFTs currently listed in the goblinarinos721 collection on OpenSea, with their images and prices.",
     display: "Goblinarinos NFTs + prices (OpenSea)",
   },
   "277e9e1e17733065": {
-    label: "LI.FI", tagline: "Cross-chain", logo: "/logos/lifi.webp",
+    label: "LI.FI", tagline: "Cross-chain", logo: "/logos/lifi.webp", fill: true,
     blurb: "LI.FI cross-chain router. Finds the best bridge-and-swap route across 30+ chains for ETH and ERC-20 tokens, and returns a ready-to-sign quote with fees and timing.",
     prompt: "Use your LI.FI tool to find the best route to bridge 0.1 ETH from Ethereum to Base, and summarise it.",
     display: "Best route to bridge 0.1 ETH → Base (LI.FI)",
@@ -56,7 +57,7 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     display: "Latest block + base fee (Flashbots)",
   },
   "jupiter-docs": {
-    label: "Solana", tagline: "Solana DeFi", logo: "/logos/solana.svg",
+    label: "Solana", tagline: "Solana DeFi", logo: "/logos/jupiter.webp", fill: true,
     blurb: "Jupiter — Solana's DeFi hub. Looks up token prices, market cap, liquidity and swap routes across every Solana DEX. Multichain reach, not just Ethereum.",
     prompt: "Use your Solana token tool to look up BONK (mint DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263) and give me its price, market cap and liquidity.",
     display: "BONK price + market cap (Solana)",
@@ -68,13 +69,13 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     display: "How to verify by recomputing (Recompute Kit)",
   },
   "60651853-eb38-4b85-818f-7203f67ae52c": {
-    label: "1inch", tagline: "DEX aggregator", logo: "/logos/1inch.webp",
+    label: "1inch", tagline: "DEX aggregator", logo: "/logos/1inch.webp", fill: true,
     blurb: "1inch DEX aggregator. Finds the best swap price across dozens of liquidity sources, plus limit orders and portfolio data. Swaps ask for your wallet to sign.",
     prompt: "Use your 1inch tool to show me the best price to swap 1 ETH into USDC on Ethereum — a price quote only, don't prepare a transaction.",
     display: "Best price 1 ETH → USDC (1inch)",
   },
   "0ebe0db5-7da0-4b66-a401-f50c976cc72c": {
-    label: "Symbiosis", tagline: "Cross-chain swaps", logo: "/logos/symbiosis.webp",
+    label: "Symbiosis", tagline: "Cross-chain swaps", logo: "/logos/symbiosis.webp", fill: true,
     blurb: "Symbiosis Finance cross-chain swaps. Returns read-only quotes and calldata to move value between chains in a single step.",
     prompt: "Use your Symbiosis tool to quote a cross-chain swap of 100 USDC from Ethereum to Arbitrum, and summarise the route.",
     display: "Quote 100 USDC → Arbitrum (Symbiosis)",
@@ -86,7 +87,7 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     display: "Scam-victim recovery playbook (Forensics)",
   },
   "uniswap-mcp": {
-    label: "Uniswap", tagline: "Direct swaps", logo: "/logos/uniswap.webp",
+    label: "Uniswap", tagline: "Direct swaps", logo: "/logos/uniswap.webp", fill: true,
     blurb: "Uniswap v3, straight from the protocol — no aggregator. Prices swaps via the on-chain QuoterV2 (best fee tier auto-picked) and builds SwapRouter02 calldata your own wallet signs. Every swap is recomputable.",
     prompt: "Use your Uniswap tool to quote swapping 0.1 ETH into USDC on Uniswap (Ethereum, chainId 1) — price only, don't prepare a transaction.",
     display: "Quote 0.1 ETH → USDC (Uniswap)",
@@ -98,13 +99,13 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     display: "Is recompute.eth available? (ENS)",
   },
   "zerog-mcp": {
-    label: "0G", tagline: "Decentralized storage", logo: "/logos/0g.jpg", icon: "storage",
+    label: "0G", tagline: "Decentralized storage", logo: "/logos/0g.jpg", icon: "storage", fill: true,
     blurb: "0G decentralized Storage. Writes an action's recompute artifacts — the raw input, output and manifest anyone re-derives from — to a decentralized data layer instead of a single server. The artifact stays recomputable from 0G.",
     prompt: "Use your 0G tool to store this recompute artifact and return its rootHash: {\"input\":\"can we exchange 0.1 ETH to USDC\",\"output\":\"quoted 183.9 USDC on Uniswap\",\"note\":\"KYA demo artifact\"}",
     display: "Store a recompute artifact on 0G",
   },
   "alchemy-mcp": {
-    label: "Alchemy", tagline: "Multi-chain data", logo: "/logos/alchemy.png",
+    label: "Alchemy", tagline: "Multi-chain data", logo: "/logos/alchemy.png", fill: true,
     blurb: "Alchemy's on-chain data suite — token prices, NFT holdings, transfers and full transaction history across 100+ chains. The agent taps it for fast, read-only market and wallet data.",
     prompt: "Use your Alchemy tool to fetch the current USD price of ETH and its 24h change.",
     display: "ETH price + 24h change (Alchemy)",

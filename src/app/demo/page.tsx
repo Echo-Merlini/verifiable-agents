@@ -237,7 +237,7 @@ export default function DemoPage() {
               <div key={c.id} className="relative group">
                 <button onClick={() => pick(c)} className="liquid-glass w-full h-full group/btn rounded-2xl p-4 text-left transition-colors hover:border-brassLight/40">
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10">
-                    <McpLogo card={c} className="h-6 w-6" />
+                    <McpLogo card={c} className="h-6 w-6" fill />
                   </span>
                   <p className="mt-3 font-display font-medium text-paper flex items-center gap-1">
                     {c.label}

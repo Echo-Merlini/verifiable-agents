@@ -7,8 +7,14 @@ import type { McpCard } from "@/lib/mcps";
  * or a lettermark as a last resort. Logos sit on a neutral dark chip so their true
  * brand colours show.
  */
-export function McpLogo({ card, className = "h-6 w-6" }: { card: McpCard; className?: string }) {
+export function McpLogo({ card, className = "h-6 w-6", fill = false }: { card: McpCard; className?: string; fill?: boolean }) {
   if (card.logo) {
+    // Logos that carry their own background fill the (square) chip edge-to-edge; transparent
+    // marks stay centered. `fill` is only passed by square-chip call sites (demo, mint).
+    if (fill && card.fill) {
+      // eslint-disable-next-line @next/next/no-img-element
+      return <img src={card.logo} alt={card.label} className="h-full w-full object-cover rounded-[inherit]" />;
+    }
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={card.logo} alt={card.label} className={`${className} object-contain`} />;
   }

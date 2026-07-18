@@ -259,7 +259,7 @@ export default function MintAgentPage() {
                   {cards.filter((c) => tools.has(c.id)).map((c) => (
                     <button key={c.id} onClick={() => toggleTool(c.id)} disabled={busy} title={`Remove ${c.label}`}
                       className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 border border-brassLight/40 hover:border-red-400/50 transition-colors disabled:opacity-50">
-                      <McpLogo card={c} className="h-5 w-5" />
+                      <McpLogo card={c} className="h-5 w-5" fill />
                     </button>
                   ))}
                 </div>
@@ -272,7 +272,7 @@ export default function MintAgentPage() {
                     <div className="mt-1.5 liquid-glass rounded-2xl p-4">
                       <div className="flex items-start gap-4">
                         <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/10">
-                          <McpLogo card={c} className="h-8 w-8" />
+                          <McpLogo card={c} className="h-8 w-8" fill />
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between gap-2">
