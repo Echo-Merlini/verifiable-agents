@@ -8,8 +8,8 @@ import { shortAddr } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import {
-  LayoutDashboard, Database, Globe, Wallet,
-  Sparkles, Rocket, Settings, LogOut, Loader2, Bot, ChevronDown, Zap, Plug, ShieldCheck, FileCheck2, Coins,
+  LayoutDashboard, Database, Globe, Wallet, BarChart3,
+  Sparkles, Key, Rocket, Settings, LogOut, Loader2, Bot, ChevronDown, Zap, Plug, ShieldCheck, FileCheck2, Network, Users, Coins,
 } from "lucide-react";
 import type { GatewayEnvKey } from "@/hooks/useGatewayEnv";
 
@@ -19,18 +19,23 @@ const nav = [
     items: [
       { href: "/admin",          label: "Dashboard", icon: LayoutDashboard },
       { href: "/admin/ens",      label: "ENS",       icon: Globe },
+      { href: "/admin/wallets",  label: "Wallets",   icon: Wallet },
+      { href: "/admin/data",     label: "Data",      icon: BarChart3 },
       { href: "/admin/ai",       label: "AI",        icon: Sparkles },
       { href: "/admin/agents",   label: "Agents",    icon: Bot },
       { href: "/admin/credits",  label: "Credits",   icon: Zap },
       { href: "/admin/mcps",       label: "MCPs",      icon: Plug },
       { href: "/admin/approvals",    label: "Approvals",   icon: ShieldCheck },
       { href: "/admin/attestations", label: "Attestations", icon: FileCheck2 },
+      { href: "/admin/router",       label: "Gateway / Router", icon: Network },
       { href: "/admin/settlement",   label: "Settlement",        icon: Coins },
+      { href: "/admin/profiles",   label: "Profiles",  icon: Users },
     ],
   },
   {
     section: "System",
     items: [
+      { href: "/admin/api-keys", label: "API Keys",  icon: Key },
       { href: "/admin/deploy",   label: "Deploy",    icon: Rocket },
       { href: "/admin/settings", label: "Settings",  icon: Settings },
     ],
