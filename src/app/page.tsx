@@ -7,12 +7,8 @@ import { Landing } from "@/components/Landing";
 
 const STATIC = process.env.NEXT_PUBLIC_STATIC_EXPORT === "1";
 const SUB_ROUTES: Record<string, string> = {
-  agents: "agents",
   agent: "agent",
-  "my-agents": "my-agents",
   "use-agent": "use-agent",
-  spec: "spec",
-  feed: "feed",
   claim: "claim",
   topup: "topup",
   "top-up": "topup",
@@ -20,11 +16,7 @@ const SUB_ROUTES: Record<string, string> = {
   mint: "mint",
   "mint-agent": "mint",
 };
-const AgentsPage   = dynamic(() => import("./agents/page"),    { ssr: false });
 const AgentPage    = dynamic(() => import("./agent/page"),     { ssr: false });
-const MyAgentsPage = dynamic(() => import("./my-agents/page"), { ssr: false });
-const SpecPage     = dynamic(() => import("./spec/page"),      { ssr: false });
-const FeedPage     = dynamic(() => import("./feed/page"),      { ssr: false });
 const ClaimPage    = dynamic(() => import("./claim/page"),     { ssr: false });
 const UseAgentPage = dynamic(() => import("./use-agent/page"), { ssr: false });
 const FactoryPage  = dynamic(() => import("./factory/page"),   { ssr: false });
@@ -1064,12 +1056,8 @@ export default function RootPage() {
     setSubPage(SUB_ROUTES[pathSeg] ?? "root");
   }, []);
 
-  if (subPage === "agents")    return <AgentsPage />;
   if (subPage === "agent")     return <AgentPage />;
-  if (subPage === "my-agents")  return <MyAgentsPage />;
   if (subPage === "use-agent")  return <UseAgentPage />;
-  if (subPage === "spec")      return <SpecPage />;
-  if (subPage === "feed")      return <FeedPage />;
   if (subPage === "claim")     return <ClaimPage />;
   if (subPage === "factory")   return <FactoryPage />;
   if (subPage === "topup")     return <TopupPage />;
