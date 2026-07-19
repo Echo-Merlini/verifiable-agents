@@ -87,6 +87,78 @@ This is the showroom and the product being the same primitive: in the marketplac
 
 MVP for Sun 26 = **A + B**, with C + D as the differentiators. If C/D slip, the deck still shows a two-sided, recomputable-reputation marketplace; C/D are what make it a *compliance* product, not a store.
 
+## Phase C — MCPEntitlementRegistry (contract scope)
+
+The contract that makes "buy an MCP, carried in the agent's metadata" real, and (via its
+event log) the substrate for the Phase-D licensed-MCP audit. House style: MIT, `^0.8.20`,
+no OpenZeppelin, event-first, pull-payment, recompute-friendly — same idiom as
+`ConsultEscrow.sol`.
+
+**The one idea:** entitlements key off the **agent NFT** `(registry, tokenId)`, not off a
+wallet or our DB. So a capability is **carried with the token** on transfer — the new
+owner inherits every MCP the token holds — and anyone recomputes the entitlement set from
+the `EntitlementGranted` log. No trusted database in the authorization path.
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+/// @title MCPEntitlementRegistry — specialized-MCP capabilities owned by the agent NFT
+contract MCPEntitlementRegistry {
+    address public owner;                              // platform admin (registers MCPs)
+
+    struct Mcp { uint256 price; address payTo; uint64 duration; bool active; }
+    mapping(bytes32 => Mcp) public mcps;               // mcpId = keccak256(bytes(catalogSlug))
+
+    // agentKey(registry,tokenId) -> mcpId -> expiry (type(uint64).max = perpetual, else unix ts)
+    mapping(bytes32 => mapping(bytes32 => uint64)) public entitlement;
+    mapping(address => uint256) public balances;      // pull-payment accrual per payTo
+
+    event OwnerSet(address indexed owner);
+    event McpRegistered(bytes32 indexed mcpId, uint256 price, address payTo, uint64 duration, bool active);
+    event EntitlementGranted(address indexed registry, uint256 indexed tokenId, bytes32 indexed mcpId, address buyer, uint64 expiry, uint256 paid);
+    event Withdrawn(address indexed to, uint256 amount);
+
+    function agentKey(address registry, uint256 tokenId) public pure returns (bytes32) {
+        return keccak256(abi.encode(registry, tokenId));
+    }
+    // registerMcp(onlyOwner) · buy(registry,tokenId,mcpId) payable · isEntitled(...) view · withdraw()
+}
+```
+
+**Mechanics decided in scope:**
+- **Perpetual OR subscription in one field.** `duration == 0` ⇒ perpetual (`expiry = uint64.max`);
+  `duration > 0` ⇒ time-boxed, renewals extend from `max(now, currentExpiry)`. Demo sells
+  perpetual; the same contract supports recurring (the compliance-revenue shape) with zero code change.
+- **Anyone may fund a capability for a token** (it only *adds* value to that token). Authority
+  to *use* it is the token's current owner — the gateway checks `ownerOf` off-chain, exactly
+  as it recomputes escrow status. No owner-gate on `buy`, so gifting/sponsoring works.
+- **`payTo` is per-MCP** (the provider, or treasury) — so third-party MCP providers can be paid
+  directly. Capability side of the marketplace is two-sided too.
+- **Exact-price `buy`** (`msg.value == price`), pull-payment `withdraw()` — no change-making, no push-reentrancy.
+- `mcpId = keccak256(bytes(catalogSlug))` binds on-chain entitlements to the existing
+  `agent-mcp-catalog` slugs.
+
+**Gateway integration (Phase C, part 2):**
+- Admin registers each *premium* catalog MCP: `registerMcp(mcpId, price, payTo, duration, active)`.
+- Tool authorization: for premium MCPs the gateway adds an `isEntitled(registry, tokenId, mcpId)`
+  read (same pattern as the escrow read) before allowing the tool; free/base tools skip it.
+- `/marketplace` gains an **MCP store**: purchasable capabilities; the buyer's own wallet signs
+  `buy()` (non-custodial); the entitlement attaches to their agent token.
+
+**Feeds Phase D:** the `EntitlementGranted` log + the agent's per-action MCP-usage log let a
+verifier check *the agent invoked only MCPs it was entitled to* — the least-privilege audit.
+
+**Decisions (locked 2026-07-14):** deploy to **Ethereum mainnet** — one chain across the
+whole family (GenesisAgentRegistry + ConsultEscrow + entitlements). First **premium**
+(purchasable) MCP is the **ENS write-MCP**: "buy the capability to give your agent a real
+`.eth` identity it controls" (`ens_register` / set records / `ens_set_contenthash` gated
+behind entitlement). Demo price set low so the buy tx is cheap; gas is the only real cost.
+
+**Files:** `contracts/src/MCPEntitlementRegistry.sol` + `script/DeployMCPEntitlementRegistry.s.sol`
++ `test/MCPEntitlementRegistry.t.sol` (carry-on-transfer, perpetual vs expiry, exact-price,
+pull-payment, isEntitled boundary). Then gateway read + `/marketplace` MCP store.
+
 ## Non-goals
 - No custodial anything — every purchase (agent, service, entitlement) is signed by the buyer's own wallet.
 - Not a general NFT exchange — secondary agent trading can lean on OpenSea + our reputation overlay rather than a bespoke order book (revisit if needed).

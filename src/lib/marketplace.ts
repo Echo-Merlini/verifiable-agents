@@ -62,6 +62,59 @@ export async function fetchReputation(registry: string, agentId: string): Promis
   }
 }
 
+// ── Premium MCP store ────────────────────────────────────────────────────────
+// Purchasable capabilities bound to an agent NFT (carried with the token). Mirrors the
+// gateway PremiumMcpView.
+
+export interface PremiumMcp {
+  slug: string;
+  label: string;
+  tagline: string;
+  description: string;
+  logo: string;
+  gates: string[];
+  mcpId: string;          // keccak256(slug) — the on-chain id
+  price: string;          // wei (live on-chain price if registered, else default)
+  active: boolean;
+  payTo: string | null;
+  registered: boolean;    // registered on-chain yet?
+  contract: string | null;
+  chainId: number;
+}
+
+export interface Entitlement {
+  registry: string;
+  tokenId: string;
+  slug: string;
+  mcpId: string;
+  entitled: boolean | null; // null = unknown (not deployed / read failed)
+  expiry: string | null;
+  perpetual: boolean;
+  contract: string | null;
+  chainId: number;
+}
+
+export async function fetchPremiumMcps(): Promise<PremiumMcp[]> {
+  try {
+    const r = await fetch(`${getGatewayUrl()}/marketplace/mcps`);
+    if (!r.ok) return [];
+    const list = await r.json();
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchEntitlement(registry: string, tokenId: string, slug: string): Promise<Entitlement | null> {
+  try {
+    const r = await fetch(`${getGatewayUrl()}/marketplace/entitlement/${registry}/${tokenId}/${slug}`);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch {
+    return null;
+  }
+}
+
 // ── Presentation helpers (pure) ────────────────────────────────────────────────
 // Nothing here invents a number — they only format the Wilson floor + raw counts a
 // verifier reproduces from the same escrow reads.

@@ -8,6 +8,7 @@ import { fetchMarketAgents, type MarketAgent } from "@/lib/marketplace";
 import { buildCardsFromIds } from "@/lib/mcps";
 import { McpLogo } from "@/components/McpLogo";
 import { ReputationBadge } from "@/components/ReputationBadge";
+import { McpStore } from "@/components/McpStore";
 
 function fmtHours(s?: number) {
   if (!s) return "—";
@@ -141,6 +142,9 @@ export default function MarketplacePage() {
           ))}
         </div>
       )}
+
+      {/* Premium MCP store — buy a capability, carried by the agent NFT */}
+      {!loading && <McpStore agents={agents} />}
     </main>
   );
 }
