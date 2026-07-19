@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio } from "lucide-react";
 import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord } from "@/lib/liveRecord";
+import { TopNav } from "@/components/TopNav";
 
 // Self-contained: a real mainnet attestation baked to /showcase.json. The recompute
 // still runs live in the browser + reads mainnet — only the record fetch is frozen,
@@ -63,15 +64,12 @@ export default function VerifyPage() {
   const amber = !anyFail && anyAmber;        // couldn't fully check, but nothing mismatched
 
   return (
-    <main className="min-h-screen bg-deepink text-paper px-6 md:px-10 py-10">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <a href="/demo" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</a>
-          <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80">Don&apos;t trust. Recompute.</span>
-        </div>
+    <main className="min-h-screen bg-deepink text-paper">
+      <TopNav />
+      <div className="max-w-3xl mx-auto px-6 md:px-10 py-10">
+        <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80">Don&apos;t trust. Recompute.</span>
 
-        <h1 className="mt-10 font-display font-medium tracking-tightest text-4xl sm:text-5xl">
+        <h1 className="mt-4 font-display font-medium tracking-tightest text-4xl sm:text-5xl">
           Verify it <span className="brass-text">yourself.</span>
         </h1>
         <p className="mt-4 text-gb-muted max-w-xl">

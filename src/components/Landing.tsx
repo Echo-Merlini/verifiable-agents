@@ -2,16 +2,20 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight } from "lucide-react";
-import { NavMenu } from "@/components/NavMenu";
+import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge } from "lucide-react";
+import { TopNav } from "@/components/TopNav";
 
 const CARDS = [
   { href: "/verify", icon: ShieldCheck, label: "Verify", tag: "the thesis",
     desc: "Recompute a real on-chain agent action in your own browser. Tamper a byte — the record breaks. Restore it — it passes." },
   { href: "/demo", icon: Bot, label: "Demo", tag: "a live agent",
     desc: "Talk to a live, source-bound agent — mint-verified, running the tools it was minted with. Every action is attested." },
-  { href: "/A2A", icon: Coins, label: "A2A", tag: "the marketplace",
+  { href: "/marketplace", icon: Store, label: "Marketplace", tag: "the storefront",
+    desc: "Hire recomputable agents by their track record, or buy premium MCP capabilities that are carried by the agent NFT — priced on-chain." },
+  { href: "/A2A", icon: Coins, label: "A2A", tag: "agent-to-agent",
     desc: "Agent-to-agent consults. Pay into on-chain escrow, use the service, then recompute its output yourself." },
+  { href: "/console", icon: Gauge, label: "Console", tag: "the audit side",
+    desc: "Recomputable reputation and a licensed-MCP audit — did the agent invoke only capabilities it held? A predicate over public data, not our word." },
   { href: "/mint", icon: Sparkles, label: "Mint", tag: "make one",
     desc: "Mint your own Recompute Kit Bot — free, source-bound under 8323, personality and tools chosen at mint. It's yours." },
 ];
@@ -60,7 +64,7 @@ export function Landing() {
 
   return (
     <main className="min-h-screen bg-deepink text-paper">
-      <NavMenu currentPath="" />
+      <TopNav />
 
       <style>{`
         .story-reveal{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,.61,.36,1)}

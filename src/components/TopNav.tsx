@@ -7,7 +7,8 @@ import { ShieldCheck } from "lucide-react";
 // Lightweight top bar for the marketplace surfaces, matching the /demo header. The
 // wallet lives inline in each page's own flow (buy / connect), so this is nav only.
 const LINKS = [
-  { href: "/demo", label: "Home" },
+  { href: "/", label: "Home" },
+  { href: "/demo", label: "Demo" },
   { href: "/mint", label: "Mint" },
   { href: "/marketplace", label: "Marketplace" },
   { href: "/A2A", label: "A2A" },
