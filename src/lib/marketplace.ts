@@ -120,20 +120,27 @@ export async function fetchEntitlement(registry: string, tokenId: string, slug: 
 
 // ── Licensed-MCP audit ───────────────────────────────────────────────────────
 export type AuditVerdict = "clean" | "violation" | "unknown";
-export interface McpAuditPremiumUse { tool: string; slug: string; entitled: boolean | null; }
+export interface McpAuditPremiumUse {
+  tool: string;
+  slug: string;
+  entitledAtAction: boolean | null; // recomputed at the action's time (Q1)
+  gate: "allow" | "deny" | null;    // recorded gate decision (Q2)
+  verdict: AuditVerdict;
+}
 export interface McpAuditRow {
   id: number;
   actionType: string;
   createdAt: number;
   mcpsUsed: string[];
   premiumUsed: McpAuditPremiumUse[];
+  denied: { tool: string; reason: string }[];
   verdict: AuditVerdict;
 }
 export interface McpAudit {
   registry: string;
   agentId: string;
   rows: McpAuditRow[];
-  summary: { actions: number; clean: number; violation: number; unknown: number };
+  summary: { actions: number; clean: number; violation: number; unknown: number; enforced: number };
   recompute: { method: string; contract: string | null; chainId: number; note: string };
 }
 

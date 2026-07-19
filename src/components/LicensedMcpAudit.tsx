@@ -67,6 +67,7 @@ export function LicensedMcpAudit({ registry, agentId }: { registry: string; agen
           <span className="rounded bg-emerald-400/10 px-1.5 py-0.5 text-emerald-300">{summary.clean}✓</span>
           {summary.violation > 0 && <span className="rounded bg-rose-400/10 px-1.5 py-0.5 text-rose-300">{summary.violation}✕</span>}
           {summary.unknown > 0 && <span className="rounded bg-amber-400/10 px-1.5 py-0.5 text-amber-200">{summary.unknown}?</span>}
+          {summary.enforced > 0 && <span className="rounded bg-sky-400/10 px-1.5 py-0.5 text-sky-300" title="gate-blocked attempts (enforcement working)">{summary.enforced}⛔</span>}
         </div>
       </div>
 
@@ -87,7 +88,7 @@ export function LicensedMcpAudit({ registry, agentId }: { registry: string; agen
                   <span className="text-zinc-400">{r.actionType}</span>
                   <span className="ml-auto flex flex-wrap items-center justify-end gap-1">
                     {r.premiumUsed.map((u, i) => (
-                      <span key={i} className={`font-mono text-[10px] ${VERDICT[u.entitled === false ? "violation" : u.entitled === null ? "unknown" : "clean"].text}`}>
+                      <span key={i} className={`font-mono text-[10px] ${VERDICT[u.verdict].text}`} title={`${u.gate ?? "no gate decision"} · entitled@action: ${u.entitledAtAction === null ? "unknown" : u.entitledAtAction}`}>
                         {u.tool}
                       </span>
                     ))}
