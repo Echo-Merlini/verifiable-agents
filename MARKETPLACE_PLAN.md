@@ -159,6 +159,12 @@ behind entitlement). Demo price set low so the buy tx is cheap; gas is the only 
 + `test/MCPEntitlementRegistry.t.sol` (carry-on-transfer, perpetual vs expiry, exact-price,
 pull-payment, isEntitled boundary). Then gateway read + `/marketplace` MCP store.
 
+**DEPLOYED (2026-07-14, Ethereum mainnet):**
+- `MCPEntitlementRegistry` → **`0x6374556D1c19924584644BD48ebecF444e43Ed9F`** (owner = safe deployer `0xFf9a…4ca14`)
+- Premium MCP registered: `ens-write`, mcpId `0x6be39bd6…cc82f794` (= keccak256("ens-write")),
+  price **0.001 ETH**, payTo **`0x9C01826A3D027D3CEB42D185A646df055b325aAF`**, duration 0 (perpetual), active.
+- Gateway env: `MCP_ENTITLEMENT_ADDRESS` + `MCP_ENTITLEMENT_CHAIN_ID=1` — store live, buy flow enabled.
+
 ## Non-goals
 - No custodial anything — every purchase (agent, service, entitlement) is signed by the buyer's own wallet.
 - Not a general NFT exchange — secondary agent trading can lean on OpenSea + our reputation overlay rather than a bespoke order book (revisit if needed).
