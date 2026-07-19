@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Bot, Loader2, ShieldCheck, FileJson, Gauge, ArrowUpRight, Store } from "lucide-react";
 import { fetchMarketAgents, type MarketAgent } from "@/lib/marketplace";
 import { ReputationBreakdown } from "@/components/ReputationBreakdown";
+import { LicensedMcpAudit } from "@/components/LicensedMcpAudit";
 import { getGatewayUrl } from "@/hooks/useGatewayEnv";
 
 function ConsoleInner() {
@@ -109,6 +110,8 @@ function ConsoleInner() {
 
                 <ReputationBreakdown rep={selected.reputation} />
 
+                <LicensedMcpAudit registry={selected.registry} agentId={selected.agentId} />
+
                 {/* Recompute affordances */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Link
@@ -139,11 +142,10 @@ function ConsoleInner() {
                   )}
                 </div>
 
-                {/* Phase C placeholder — owner controls + per-action receipt feed + licensed-MCP audit */}
+                {/* Next deepening — per-action receipt feed (the /verify chain per action) */}
                 <div className="rounded-2xl border border-dashed border-white/[0.08] p-4 text-[11px] leading-relaxed text-zinc-500">
-                  <span className="text-zinc-400">Coming next:</span> per-action receipt feed and the licensed-MCP
-                  audit (did the agent invoke only capabilities it was entitled to?) — a least-privilege control the
-                  owner and any auditor can re-run once MCP entitlements move on-chain.
+                  <span className="text-zinc-400">Next:</span> a per-action receipt feed — each action's
+                  full attestation chain, recomputable inline the way <Link href="/verify" className="text-brassLight hover:underline">/verify</Link> does for the showcase run.
                 </div>
               </>
             )}

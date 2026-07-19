@@ -115,6 +115,35 @@ export async function fetchEntitlement(registry: string, tokenId: string, slug: 
   }
 }
 
+// ── Licensed-MCP audit ───────────────────────────────────────────────────────
+export type AuditVerdict = "clean" | "violation" | "unknown";
+export interface McpAuditPremiumUse { tool: string; slug: string; entitled: boolean | null; }
+export interface McpAuditRow {
+  id: number;
+  actionType: string;
+  createdAt: number;
+  mcpsUsed: string[];
+  premiumUsed: McpAuditPremiumUse[];
+  verdict: AuditVerdict;
+}
+export interface McpAudit {
+  registry: string;
+  agentId: string;
+  rows: McpAuditRow[];
+  summary: { actions: number; clean: number; violation: number; unknown: number };
+  recompute: { method: string; contract: string | null; chainId: number; note: string };
+}
+
+export async function fetchMcpAudit(registry: string, agentId: string): Promise<McpAudit | null> {
+  try {
+    const r = await fetch(`${getGatewayUrl()}/marketplace/mcp-audit/${registry}/${agentId}`);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch {
+    return null;
+  }
+}
+
 // ── Presentation helpers (pure) ────────────────────────────────────────────────
 // Nothing here invents a number — they only format the Wilson floor + raw counts a
 // verifier reproduces from the same escrow reads.
