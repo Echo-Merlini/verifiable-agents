@@ -87,6 +87,7 @@ export default function DemoPage() {
   const [myAgents, setMyAgents] = useState<OwnedAgent[]>([]);
   const [ai, setAi] = useState(0);                                   // active owned-agent index
   const [cards, setCards] = useState<McpCard[]>([]);                 // tools of the featured agent
+  const trackRef = useRef<HTMLDivElement>(null);                     // MCP carousel scroll track
   const [lastExchange, setLastExchange] = useState<{ query: string; reply: string } | null>(null);
   const [recomputing, setRecomputing] = useState(false);
   const [recomputeErr, setRecomputeErr] = useState<string | null>(null);
@@ -237,32 +238,52 @@ export default function DemoPage() {
         {cards.length === 0 ? (
           <p className="mt-3 text-[12px] text-gb-faint">{isRkb ? "This agent was minted with no tools selected." : "Loading tools…"}</p>
         ) : (
-          <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {cards.map((c) => (
-              <div key={c.id} className="relative group">
+          <div className="relative mt-3">
+            {/* left / right arrows — rotate through the loadout, 3–4 cards visible at a time */}
+            {cards.length > 3 && (
+              <>
                 <button
-                  onClick={() => pick(c)}
-                  className="relative flex w-full h-full flex-col overflow-hidden rounded-2xl border border-brassLight/20 bg-white/[0.03] p-4 text-left shadow-sm transition-all duration-300 ease-out hover:-translate-y-1.5 hover:border-brassLight/60 hover:bg-white/[0.06] hover:shadow-[0_14px_34px_-14px_rgba(198,160,90,0.5)] motion-reduce:transform-none motion-reduce:transition-none"
+                  onClick={() => trackRef.current?.scrollBy({ left: -320, behavior: "smooth" })}
+                  aria-label="Previous tools"
+                  className="absolute -left-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-deepink/90 p-2 text-gb-muted shadow-lg backdrop-blur transition-colors hover:border-brassLight/50 hover:text-brassLight sm:flex"
                 >
-                  {/* premium marker — gold glow dot (all demo capabilities are premium) */}
-                  <span title="Premium MCP" className="pointer-events-none absolute right-3 top-3 h-1.5 w-1.5 rounded-full bg-brassLight/70 shadow-[0_0_8px_2px_rgba(198,160,90,0.5)]" />
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/5 border border-brass/25 transition-colors group-hover:border-brassLight/50">
-                    <McpLogo card={c} className="h-6 w-6" fill />
-                  </span>
-                  <p className="mt-3 font-display font-medium text-paper flex items-center gap-1">
-                    {c.label}
-                    <ArrowUpRight className="h-3.5 w-3.5 text-brassLight/70 opacity-0 -translate-x-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 motion-reduce:transform-none motion-reduce:transition-none" />
-                  </p>
-                  {/* tagline slides in on hover — fixed height reserved so the lift never reflows the grid */}
-                  <p className="mt-0.5 h-8 text-[11px] leading-snug text-gb-faint opacity-0 translate-y-1.5 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none motion-reduce:opacity-100">
-                    {c.tagline}
-                  </p>
+                  <ChevronLeft className="h-4 w-4" />
                 </button>
-                <div className="pointer-events-none absolute left-1/2 top-full z-30 mt-2 w-64 -translate-x-1/2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                  <div className="rounded-xl border border-white/10 bg-deepink/95 px-3 py-2.5 text-[11px] italic leading-relaxed text-gb-muted shadow-xl backdrop-blur">{c.blurb}</div>
+                <button
+                  onClick={() => trackRef.current?.scrollBy({ left: 320, behavior: "smooth" })}
+                  aria-label="Next tools"
+                  className="absolute -right-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-deepink/90 p-2 text-gb-muted shadow-lg backdrop-blur transition-colors hover:border-brassLight/50 hover:text-brassLight sm:flex"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </>
+            )}
+            <div
+              ref={trackRef}
+              className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {cards.map((c) => (
+                <div key={c.id} className="group relative w-[calc(50%-0.375rem)] shrink-0 snap-start sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.5625rem)]">
+                  <span className="pointer-events-none absolute right-2 top-2 z-10 rounded-full bg-brass/15 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider text-brassLight ring-1 ring-brass/40">Premium</span>
+                  <button
+                    onClick={() => pick(c)}
+                    className="liquid-glass group/btn h-full w-full rounded-2xl p-4 text-left ring-1 ring-brassLight/30 transition-all duration-200 hover:-translate-y-1 hover:ring-brassLight/60 hover:shadow-[0_12px_28px_-14px_rgba(198,160,90,0.45)] motion-reduce:transform-none motion-reduce:transition-none"
+                  >
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-brass/25">
+                      <McpLogo card={c} className="h-6 w-6" fill />
+                    </span>
+                    <p className="mt-3 font-display font-medium text-paper flex items-center gap-1">
+                      {c.label}
+                      <ArrowUpRight className="h-3.5 w-3.5 text-gb-faint transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                    </p>
+                    <p className="mt-0.5 text-[11px] text-gb-faint">{c.tagline}</p>
+                  </button>
+                  <div className="pointer-events-none absolute left-1/2 top-full z-30 mt-2 w-64 -translate-x-1/2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                    <div className="rounded-xl border border-white/10 bg-deepink/95 px-3 py-2.5 text-[11px] italic leading-relaxed text-gb-muted shadow-xl backdrop-blur">{c.blurb}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
