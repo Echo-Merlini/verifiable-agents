@@ -1,0 +1,12 @@
+Recomputable Agents
+Copyright 2026 Vértice Criativo
+
+Developed and maintained by Vértice Criativo (https://verticecriativo.pt).
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+these files except in compliance with the License. A copy is in the LICENSE file,
+or at http://www.apache.org/licenses/LICENSE-2.0.
+
+The recompute primitives, shared conformance vectors, and MCP reference
+implementations this project builds on (github.com/trustless-ai) are separately
+dedicated to the public domain under CC0. Their license is not affected by this one.
