@@ -194,3 +194,15 @@ export function shortAddr(a: string | null | undefined): string {
   if (!a) return "—";
   return a.length > 12 ? `${a.slice(0, 6)}…${a.slice(-4)}` : a;
 }
+
+/**
+ * Slug normalization — MUST match the gateway (lib/entitlement.ts) so a mcpId written from the
+ * admin (keccak256(normalize(slug))) is the same id the gateway reads. NFC → lowercase → trim,
+ * charset [a-z0-9-]; throws otherwise. Without this, "ENS-Write" would register a capability id
+ * the gateway never resolves. (Pinned per Pavlo's review.)
+ */
+export function normalizeSlug(slug: string): string {
+  const s = slug.normalize("NFC").toLowerCase().trim();
+  if (!/^[a-z0-9-]+$/.test(s)) throw new Error(`invalid slug "${slug}" — must normalize to [a-z0-9-]`);
+  return s;
+}

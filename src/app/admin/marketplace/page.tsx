@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { keccak256, toBytes, parseEther, formatEther } from "viem";
 import { useAccount, useWalletClient } from "wagmi";
 import { Loader2, Store, Plus, ExternalLink, Check, ShieldCheck } from "lucide-react";
-import { fetchPremiumMcps, fetchMarketAgents, type PremiumMcp, type MarketAgent } from "@/lib/marketplace";
+import { fetchPremiumMcps, fetchMarketAgents, normalizeSlug, type PremiumMcp, type MarketAgent } from "@/lib/marketplace";
 import { MCP_ENTITLEMENT_REGISTER_ABI } from "@/lib/mcpEntitlementDeploy";
 
 const EXPLORER: Record<number, string> = { 1: "https://etherscan.io", 84532: "https://sepolia.basescan.org" };
@@ -45,7 +45,7 @@ export default function AdminMarketplacePage() {
     if (!contract) { setErr("Registry not deployed — deploy it from the Deploy tab first."); return; }
     try {
       setBusy(true);
-      const mcpId = keccak256(toBytes(slug.trim()));
+      const mcpId = keccak256(toBytes(normalizeSlug(slug))); // MUST match the gateway's normalize
       const price = parseEther((priceEth || "0").trim());
       const duration = BigInt(Math.max(0, Math.floor(Number(durationDays) || 0)) * 86400);
       const hash = await walletClient.writeContract({
@@ -106,7 +106,16 @@ export default function AdminMarketplacePage() {
           {/* registerMcp form */}
           <div className="liquid-glass rounded-xl p-4">
             <h2 className="flex items-center gap-2 text-sm font-semibold text-slate-100"><Plus className="h-4 w-4" /> Register / update a premium MCP</h2>
-            <p className="mt-1 text-xs text-gb-muted">Owner-only on-chain call. mcpId = keccak256(slug). Duration 0 = perpetual.</p>
+            <p className="mt-1 text-xs text-gb-muted">Owner-only on-chain call. mcpId = keccak256(normalize(slug)) — must match the gateway. Duration 0 = perpetual.</p>
+            {(() => {
+              try {
+                const n = normalizeSlug(slug);
+                const id = keccak256(toBytes(n));
+                return <p className="mt-1 font-mono text-[10px] text-emerald-300">normalize → &quot;{n}&quot; · mcpId {id.slice(0, 20)}…</p>;
+              } catch (e: any) {
+                return <p className="mt-1 font-mono text-[10px] text-rose-300">{e.message}</p>;
+              }
+            })()}
             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
               <label className="text-[11px] text-gb-muted">Slug
                 <input value={slug} onChange={(e) => setSlug(e.target.value)} className="mt-1 w-full rounded-lg bg-black/30 px-2.5 py-1.5 font-mono text-sm text-slate-100 ring-1 ring-white/[0.08]" />
