@@ -75,6 +75,7 @@ export interface PremiumMcp {
   tagline: string;
   description: string;
   logo: string;
+  icon?: string;          // lucide fallback when no logo file (forensics / recompute)
   gates: string[];
   mcpId: string;          // keccak256(slug) — the on-chain id
   price: string;          // wei (live on-chain price if registered, else default)

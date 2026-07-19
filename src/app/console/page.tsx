@@ -7,6 +7,7 @@ import { Bot, Loader2, ShieldCheck, FileJson, Gauge, ArrowUpRight, Store } from 
 import { fetchMarketAgents, fetchPremiumMcps, type MarketAgent, type PremiumMcp } from "@/lib/marketplace";
 import { ReputationBreakdown } from "@/components/ReputationBreakdown";
 import { LicensedMcpAudit } from "@/components/LicensedMcpAudit";
+import { TopNav } from "@/components/TopNav";
 import { getGatewayUrl } from "@/hooks/useGatewayEnv";
 
 function ConsoleInner() {
@@ -37,7 +38,7 @@ function ConsoleInner() {
     : null;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <main className="mx-auto max-w-6xl px-4 pb-12 pt-8 sm:px-6">
       <div className="flex items-center gap-3">
         <Gauge className="h-6 w-6 text-brassLight" />
         <h1 className="font-display text-2xl font-bold sm:text-3xl">Console</h1>
@@ -175,8 +176,11 @@ function ConsoleInner() {
 
 export default function ConsolePage() {
   return (
-    <Suspense fallback={<div className="flex min-h-[40vh] items-center justify-center text-zinc-500"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
-      <ConsoleInner />
-    </Suspense>
+    <>
+      <TopNav />
+      <Suspense fallback={<div className="flex min-h-[40vh] items-center justify-center text-zinc-500"><Loader2 className="h-5 w-5 animate-spin" /></div>}>
+        <ConsoleInner />
+      </Suspense>
+    </>
   );
 }

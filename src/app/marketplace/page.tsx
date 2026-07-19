@@ -9,6 +9,7 @@ import { buildCardsFromIds } from "@/lib/mcps";
 import { McpLogo } from "@/components/McpLogo";
 import { ReputationBadge } from "@/components/ReputationBadge";
 import { McpStore } from "@/components/McpStore";
+import { TopNav } from "@/components/TopNav";
 
 function fmtHours(s?: number) {
   if (!s) return "—";
@@ -132,7 +133,9 @@ export default function MarketplacePage() {
   }, []);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <>
+    <TopNav />
+    <main className="mx-auto max-w-6xl px-4 pb-12 pt-8 sm:px-6">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Store className="h-6 w-6 text-brassLight" />
@@ -164,5 +167,6 @@ export default function MarketplacePage() {
       {/* Premium MCP store — buy a capability, carried by the agent NFT */}
       {!loading && <McpStore agents={agents} />}
     </main>
+    </>
   );
 }
