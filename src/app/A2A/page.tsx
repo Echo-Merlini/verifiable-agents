@@ -10,6 +10,8 @@ import { useWalletModal } from "@/hooks/useWalletModal";
 import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
 import { ConsultProofCard } from "@/components/ConsultProofCard";
+import { ReputationBadge } from "@/components/ReputationBadge";
+import { fetchReputation, type Reputation } from "@/lib/marketplace";
 import { buildCardsFromIds } from "@/lib/mcps";
 
 // ConsultEscrow.open(bytes32 jobId, address provider, address attestor, uint256 deadline) payable
@@ -74,6 +76,16 @@ export default function A2APage() {
 
   const active = agents.length ? agents[idx] : null;
   const toolCards = useMemo(() => (active ? buildCardsFromIds(active.consultTools || []) : []), [active]);
+
+  // Recomputable reputation for the agent on the consult card (predicate over escrow settlements).
+  const [rep, setRep] = useState<Reputation | null>(null);
+  useEffect(() => {
+    if (!active) { setRep(null); return; }
+    let alive = true;
+    setRep(null);
+    fetchReputation(active.registry, active.agentId).then((r) => { if (alive) setRep(r); });
+    return () => { alive = false; };
+  }, [active?.registry, active?.agentId]);
 
   // Reset the consult session + load escrow pricing when the active agent changes.
   useEffect(() => {
@@ -152,8 +164,11 @@ export default function A2APage() {
         {/* Top bar */}
         <div className="flex items-center justify-between gap-4">
           <Link href="/demo" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</Link>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
             <Link href="/demo" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Demo</Link>
+            <Link href="/mint" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Mint</Link>
+            <Link href="/marketplace" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Marketplace</Link>
+            <Link href="/console" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Console</Link>
             <Link href="/verify" className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">Verify</Link>
             <span className="w-px h-4 bg-white/12" aria-hidden />
             {!address ? (
@@ -217,7 +232,8 @@ export default function A2APage() {
                 <img src={active.image} alt={active.name} className="w-20 h-20 rounded-2xl object-cover border border-white/10 shrink-0" style={{ imageRendering: "pixelated" }} />
                 <div className="flex-1 min-w-0">
                   <h1 className="font-display font-medium text-paper text-xl leading-tight truncate">{active.name}</h1>
-                  {active.description && <p className="text-sm text-paper/50 mt-1 line-clamp-3">{active.description}</p>}
+                  <div className="mt-1.5"><ReputationBadge rep={rep} /></div>
+                  {active.description && <p className="text-sm text-paper/50 mt-1.5 line-clamp-3">{active.description}</p>}
                 </div>
               </div>
 
