@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatEther } from "viem";
 import { Bot, Coins, ClipboardCheck, ExternalLink, Loader2, Store } from "lucide-react";
-import { fetchMarketAgents, type MarketAgent } from "@/lib/marketplace";
+import { fetchMarketAgents, fetchPremiumMcps, type MarketAgent, type PremiumMcp } from "@/lib/marketplace";
 import { buildCardsFromIds } from "@/lib/mcps";
 import { McpLogo } from "@/components/McpLogo";
 import { ReputationBadge } from "@/components/ReputationBadge";
@@ -26,9 +26,21 @@ function fmtPrice(wei: string) {
   }
 }
 
-function AgentCard({ a }: { a: MarketAgent }) {
-  const tools = useMemo(() => buildCardsFromIds(a.consultTools || []).slice(0, 6), [a.consultTools]);
-  const extra = Math.max(0, (a.consultTools?.length || 0) - tools.length);
+function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, PremiumMcp> }) {
+  // Loadout = owner-configured tools + capabilities the agent HOLDS on-chain (bought premium
+  // MCPs, e.g. ENS Write), merged and deduped by slug so a held capability shows as its own
+  // square rather than a separate pill.
+  const cards = useMemo(() => {
+    const toolCards = buildCardsFromIds(a.consultTools || []);
+    const heldCards = (a.entitlements ?? [])
+      .map((slug) => premium.get(slug))
+      .filter(Boolean)
+      .map((p) => ({ id: (p as PremiumMcp).slug, label: (p as PremiumMcp).label, logo: (p as PremiumMcp).logo, icon: (p as PremiumMcp).icon, fill: (p as PremiumMcp).fill }));
+    const seen = new Set<string>();
+    return [...heldCards, ...toolCards].filter((c: any) => (seen.has(c.id) ? false : (seen.add(c.id), true)));
+  }, [a.consultTools, a.entitlements, premium]);
+  const tools = cards.slice(0, 6);
+  const extra = Math.max(0, cards.length - tools.length);
   const agentRef = `${a.registry}:${a.agentId}`;
   const openseaUrl = `https://opensea.io/assets/ethereum/${a.registry}/${a.agentId}`;
 
@@ -62,7 +74,7 @@ function AgentCard({ a }: { a: MarketAgent }) {
         <div className="mt-3 flex items-center gap-1.5">
           {tools.map((t) => (
             <div key={t.id} className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-black/30 ring-1 ring-brassLight/45" title={t.label}>
-              <McpLogo card={t} className="h-5 w-5" fill />
+              <McpLogo card={t as any} className="h-5 w-5" fill />
             </div>
           ))}
           {extra > 0 && <span className="font-mono text-[11px] text-zinc-500">+{extra}</span>}
@@ -106,12 +118,14 @@ function AgentCard({ a }: { a: MarketAgent }) {
 export default function MarketplacePage() {
   const [agents, setAgents] = useState<MarketAgent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [premium, setPremium] = useState<Map<string, PremiumMcp>>(new Map());
 
   useEffect(() => {
     fetchMarketAgents().then((list) => {
       setAgents(list);
       setLoading(false);
     });
+    fetchPremiumMcps().then((list) => setPremium(new Map(list.map((m) => [m.slug, m]))));
   }, []);
 
   return (
@@ -141,7 +155,7 @@ export default function MarketplacePage() {
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {agents.map((a) => (
-            <AgentCard key={`${a.registry}:${a.agentId}`} a={a} />
+            <AgentCard key={`${a.registry}:${a.agentId}`} a={a} premium={premium} />
           ))}
         </div>
       )}
