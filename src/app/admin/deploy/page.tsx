@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { AGENT_FACTORY_ABI, FACTORY_ADDRESS, GATEWAY_URL } from "@/lib/erc8004";
 import { GENESIS_REGISTRY_BYTECODE, GENESIS_REGISTRY_CTOR_ABI } from "@/lib/genesisDeploy";
+import { MCP_ENTITLEMENT_BYTECODE } from "@/lib/mcpEntitlementDeploy";
 const FACADE_ADDRESS = process.env.NEXT_PUBLIC_FACADE_ADDRESS || "";
 const GENESIS_REGISTRY_ADDRESS = process.env.NEXT_PUBLIC_GENESIS_REGISTRY_ADDRESS || "";
 
@@ -1231,6 +1232,7 @@ REGISTRAR_ADDRESS=0x...`} />
         <FactoryFacadeDeployCard />
         <GenesisRegistryDeployCard />
         <ConsultEscrowDeployCard />
+        <SimpleDeployCard label="MCPEntitlementRegistry" bytecode={MCP_ENTITLEMENT_BYTECODE} desc="Agent Capability Entitlements — buy an MCP capability bound to an agent NFT (carried with the token on transfer). Deployer becomes owner; then registerMcp(mcpId, price, payTo, duration, active) each premium capability and read isEntitled(registry, tokenId, mcpId). Powers the marketplace store + the licensed-MCP audit." envVar="NEXT_PUBLIC_MCP_ENTITLEMENT_ADDRESS" current={process.env.NEXT_PUBLIC_MCP_ENTITLEMENT_ADDRESS} />
         <SimpleDeployCard label="EscrowV1" bytecode={ESCROW_V1_BYTECODE} desc="Mesh Node Economics (M4) — order-based agent-service escrow with dispute/arbitration: createOrder → confirm/dispute/resolve/refund; slash proceeds accumulate in the slash pool." envVar="NEXT_PUBLIC_ESCROW_V1_ADDRESS" current={process.env.NEXT_PUBLIC_ESCROW_V1_ADDRESS} />
         <SimpleDeployCard label="CommitRevealSettler" bytecode={COMMIT_REVEAL_SETTLER_BYTECODE} desc="Mesh Node Economics (M3) — on-chain commit-reveal of the period contribution snapshot: nodes submitCommit(periodId, hash) then submitReveal(rows); reveal mismatches are caught on-chain." envVar="NEXT_PUBLIC_COMMIT_REVEAL_SETTLER_ADDRESS" current={process.env.NEXT_PUBLIC_COMMIT_REVEAL_SETTLER_ADDRESS} />
       </div>

@@ -16,6 +16,8 @@ export interface Reputation {
   inFlight: number;
   notOnchain: number;
   unverifiable: number;
+  bindingVerified?: number;       // jobs whose jobId recomputes from its published salt
+  bindingAsserted?: number;       // legacy jobs (no salt) — binding not recomputable
   trials: number;                 // successful + unsuccessful (the Wilson n)
   successRate: number | null;     // point estimate; null when trials = 0
   wilsonLower: number | null;     // 95% lower bound; null when trials = 0

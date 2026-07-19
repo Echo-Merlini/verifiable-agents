@@ -70,6 +70,16 @@ export function ReputationBreakdown({ rep }: { rep: Reputation | null | undefine
         {rep.notOnchain > 0 && <Stat icon={HelpCircle} label="Never opened" value={rep.notOnchain} tone="text-zinc-400" />}
       </div>
 
+      {/* Binding recomputability */}
+      {(rep.bindingVerified !== undefined || rep.bindingAsserted !== undefined) && (
+        <div className="mt-4 flex items-center gap-2 rounded-lg bg-black/20 px-3 py-2 text-[11px]">
+          <span className="text-zinc-500">job→agent binding:</span>
+          <span className="text-emerald-300">{rep.bindingVerified ?? 0} recomputable</span>
+          {(rep.bindingAsserted ?? 0) > 0 && <span className="text-zinc-400">· {rep.bindingAsserted} legacy (asserted)</span>}
+          <span className="ml-auto font-mono text-zinc-600">jobId = keccak(consumer:registry:agentId:salt)</span>
+        </div>
+      )}
+
       {/* Axis honesty + recompute provenance */}
       <div className="mt-4 space-y-2 border-t border-white/[0.06] pt-4 text-[11px] leading-relaxed text-zinc-500">
         <p>
