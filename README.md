@@ -18,7 +18,7 @@ AI agents are black boxes. On-chain, you're asked to **trust** that an agent saw
 Every agent action is wrapped in a chain of custody that **anyone** can re-derive from public data — no server, no oracle, no privileged access:
 
 1. **Attested in** — the exact input the model received is committed on-chain (WYRIWE input-provenance, **ERC-8299**), so the reviewed input is provably the executed input.
-2. **Executed** — the agent acts hands-off through **MCP tools** (OpenSea, LI.FI, Flashbots, Solana, …). Any value-moving action is **non-custodial**: the gateway only builds calldata; the *user's own wallet* signs.
+2. **Executed** — the agent acts hands-off through **MCP tools** — Uniswap swaps, ENS registration + records, 0G storage, OpenSea, LI.FI, Alchemy, and more. Any value-moving action is **non-custodial**: the gateway only builds calldata; the *user's own wallet* signs.
 3. **Attested out** — the output is anchored on-chain (Observation-Commitment, **ERC-8281** `record()`) and signed as an EIP-712 **KYA-L4** attestation.
 4. **Recomputed** — press **Verify** and the checks re-run **client-side** against public data. Match ⇒ green. Tamper one byte ⇒ red. **No trust required.**
 
@@ -51,7 +51,7 @@ flowchart TB
 
     subgraph gw["Gateway — Bun · Hono · SQLite"]
         LLM["LLM (Anthropic)"]
-        MCP["MCP tools<br/>OpenSea · LI.FI · Flashbots · Solana"]
+        MCP["MCP tools<br/>Uniswap · ENS · 0G · OpenSea · LI.FI · …"]
         ATT["Attestation pipeline<br/>WYRIWE in → OCP out"]
     end
 
@@ -90,7 +90,10 @@ flowchart TB
 
 | Integration | How it's used |
 | --- | --- |
-| **ENS** | Agent identity as a `.eth` name (`vertice.eth`); subnames (`agents.` / `spec.` / `feed.`) via a CCIP-Read offchain resolver; on-chain IPFS contenthash so `vertice.eth.limo` resolves in any browser. |
+| **ENS — identity** | The agent is a `.eth` name (`vertice.eth`); subnames via a CCIP-Read offchain resolver + on-chain IPFS contenthash so `*.eth.limo` resolves in any browser. |
+| **ENS — write (novel)** | The **first ENS *write* MCP**: an agent registers a `.eth` name (commit→reveal) and sets its records — `addr`, `text` (incl. ENSIP-25 agent records), primary, and **contenthash** — **non-custodially**, the owner's own wallet signing; the name's real resolver is looked up on-chain (works on subnames). A demo agent used it to point `lens.trustless-ai.eth` at an IPFS build on-chain — attested + recomputable. Existing ENS MCPs are read-only. |
+| **Uniswap** | Direct Uniswap v3 (no aggregator): an MCP prices swaps via the on-chain **QuoterV2** and builds **SwapRouter02** calldata the user's wallet signs — Ethereum + Base, every swap recomputable. |
+| **0G** | Recompute artifacts (raw input / output / manifest) written to **0G decentralized Storage**, so an action's evidence lives on a decentralized data layer, not a single server — content-addressed by root hash. |
 | **IPFS** | Pinned pages + attestation artifacts; a self-contained CID renewer publishes ENS record pages out of the box (no external server). |
 | **Base (L2)** | Live per-action attestation anchors write to **Base Sepolia**; the mainnet showcase anchor reads from **Ethereum mainnet**. |
 
