@@ -87,9 +87,9 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
   }, [isConnected, address, live, mcp, selected, chainId, switchChainAsync, writeContractAsync, publicClient, openWallet]);
 
   return (
-    <div className="liquid-glass flex flex-col rounded-2xl p-4">
+    <div className="liquid-glass flex flex-col rounded-2xl p-4 ring-1 ring-brassLight/40 shadow-[0_0_18px_-6px_rgba(224,162,76,0.35)]">
       <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black/30 ring-1 ring-white/[0.06]">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black/30 ring-1 ring-brass/30">
           <McpLogo card={{ id: mcp.slug, label: mcp.label, logo: mcp.logo } as any} className="h-6 w-6" />
         </div>
         <div className="min-w-0 flex-1">

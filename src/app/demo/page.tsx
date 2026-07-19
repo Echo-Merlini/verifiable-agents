@@ -229,14 +229,18 @@ export default function DemoPage() {
         <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">
           {isRkb ? "Its tools — chosen at mint" : "Its tools — hover to learn, click to watch it run"}
         </p>
+        <p className="mt-1 text-[11px] text-brassLight/80">
+          Every capability is a <span className="font-medium">premium</span> MCP — bought and carried by the agent NFT in production, unlocked here as a demo bonus.
+        </p>
         {cards.length === 0 ? (
           <p className="mt-3 text-[12px] text-gb-faint">{isRkb ? "This agent was minted with no tools selected." : "Loading tools…"}</p>
         ) : (
           <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
             {cards.map((c) => (
               <div key={c.id} className="relative group">
-                <button onClick={() => pick(c)} className="liquid-glass w-full h-full group/btn rounded-2xl p-4 text-left transition-colors hover:border-brassLight/40">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-white/10">
+                <span className="pointer-events-none absolute right-2 top-2 z-10 rounded-full bg-brass/15 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider text-brassLight ring-1 ring-brass/40">Premium</span>
+                <button onClick={() => pick(c)} className="liquid-glass w-full h-full group/btn rounded-2xl p-4 text-left ring-1 ring-brassLight/30 transition-colors hover:ring-brassLight/60">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-brass/25">
                     <McpLogo card={c} className="h-6 w-6" fill />
                   </span>
                   <p className="mt-3 font-display font-medium text-paper flex items-center gap-1">
