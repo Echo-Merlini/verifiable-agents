@@ -91,8 +91,8 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
         <span>window {fmtHours(a.completionWindow)}</span>
       </div>
 
-      {/* Actions */}
-      <div className="mt-4 flex items-center gap-2 border-t border-white/[0.06] pt-3">
+      {/* Actions — pinned to the bottom so buttons align across cards regardless of text length */}
+      <div className="mt-auto flex items-center gap-2 border-t border-white/[0.06] pt-3">
         <Link
           href={`/A2A?agent=${encodeURIComponent(agentRef)}`}
           className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-brass/90 px-3 py-2 text-sm font-medium text-white transition hover:bg-brass"

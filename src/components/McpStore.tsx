@@ -89,14 +89,11 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
   return (
     <div className="liquid-glass flex flex-col rounded-2xl p-4 ring-1 ring-brassLight/40 shadow-[0_0_18px_-6px_rgba(224,162,76,0.35)]">
       <div className="flex items-start gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black/30 ring-1 ring-brass/30">
-          <McpLogo card={{ id: mcp.slug, label: mcp.label, logo: mcp.logo, icon: mcp.icon } as any} className="h-6 w-6" />
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-black/30 ring-2 ring-brassLight/60">
+          <McpLogo card={{ id: mcp.slug, label: mcp.label, logo: mcp.logo, icon: mcp.icon, fill: mcp.fill } as any} className="h-6 w-6" fill />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="font-display text-base font-semibold">{mcp.label}</h3>
-            <span className="rounded-full bg-brass/15 px-2 py-0.5 text-[10px] uppercase tracking-wider text-brassLight ring-1 ring-brass/30">Premium</span>
-          </div>
+          <h3 className="font-display text-base font-semibold">{mcp.label}</h3>
           <p className="text-xs text-zinc-500">{mcp.tagline}</p>
         </div>
       </div>
@@ -108,8 +105,8 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
         <span>{mcp.registered ? "registered on-chain" : live ? "not registered yet" : "launching on mainnet"}</span>
       </div>
 
-      {/* Equip flow */}
-      <div className="mt-4 border-t border-white/[0.06] pt-3">
+      {/* Equip flow — pinned to the bottom so buttons align across cards */}
+      <div className="mt-auto border-t border-white/[0.06] pt-3">
         {txHash ? (
           <div className="flex items-center gap-2 text-sm text-emerald-300">
             <Check className="h-4 w-4" /> Attached to agent #{selected.tokenId}

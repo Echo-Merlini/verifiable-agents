@@ -161,6 +161,7 @@ export default function DemoPage() {
           <div className="flex items-center gap-5">
             <Link href="/mint" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Mint</Link>
             <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
+            <Link href="/marketplace" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Marketplace</Link>
             {isRkb && <Link href="/consult" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Configure</Link>}
             <Link href="/verify" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">
               <ShieldCheck className="h-3.5 w-3.5" /> Verify
