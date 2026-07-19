@@ -260,7 +260,7 @@ export default function DemoPage() {
             )}
             <div
               ref={trackRef}
-              className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+              className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-1 pt-3 pb-3 scroll-px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             >
               {cards.map((c) => (
                 <div key={c.id} className="group relative w-[calc(50%-0.375rem)] shrink-0 snap-start sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.5625rem)]">
@@ -288,7 +288,7 @@ export default function DemoPage() {
         )}
 
         {/* Chat — remounts per agent so each has a fresh session */}
-        <div className="mt-6 liquid-glass rounded-2xl overflow-hidden h-[560px] p-4">
+        <div className="mt-6 liquid-glass rounded-2xl overflow-hidden h-[500px] p-4">
           <AgentChat
             key={`${featured.registry}-${featured.agentId}`}
             registry={featured.registry}
