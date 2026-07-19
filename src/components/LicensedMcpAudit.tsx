@@ -106,6 +106,9 @@ export function LicensedMcpAudit({ registry, agentId }: { registry: string; agen
         {audit.recompute.contract && (
           <> · <a href={`${explorer}/address/${audit.recompute.contract}`} target="_blank" rel="noreferrer" className="text-brassLight hover:underline">registry</a></>
         )}
+        {audit.recompute.precedencePolicy && (
+          <> · precedence {audit.recompute.precedencePolicy.basis}/{audit.recompute.precedencePolicy.delta_seconds} ({audit.recompute.precedencePolicy.profile})</>
+        )}
       </p>
     </div>
   );

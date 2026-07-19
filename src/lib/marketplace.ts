@@ -135,14 +135,16 @@ export interface McpAuditRow {
   mcpsUsed: string[];
   premiumUsed: McpAuditPremiumUse[];
   denied: { tool: string; reason: string }[];
+  precedence?: "determinate" | "indeterminate";
   verdict: AuditVerdict;
 }
+export interface PrecedencePolicy { profile: string; basis: string; delta_seconds: string }
 export interface McpAudit {
   registry: string;
   agentId: string;
   rows: McpAuditRow[];
   summary: { actions: number; clean: number; violation: number; unknown: number; enforced: number };
-  recompute: { method: string; contract: string | null; chainId: number; note: string };
+  recompute: { method: string; contract: string | null; chainId: number; note: string; precedencePolicy?: PrecedencePolicy };
 }
 
 export async function fetchMcpAudit(registry: string, agentId: string): Promise<McpAudit | null> {
