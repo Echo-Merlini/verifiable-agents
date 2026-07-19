@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatEther } from "viem";
-import { Bot, Coins, ClipboardCheck, ExternalLink, Loader2, Store, Check } from "lucide-react";
-import { fetchMarketAgents, fetchPremiumMcps, type MarketAgent, type PremiumMcp } from "@/lib/marketplace";
+import { Bot, Coins, ClipboardCheck, ExternalLink, Loader2, Store } from "lucide-react";
+import { fetchMarketAgents, type MarketAgent } from "@/lib/marketplace";
 import { buildCardsFromIds } from "@/lib/mcps";
 import { McpLogo } from "@/components/McpLogo";
 import { ReputationBadge } from "@/components/ReputationBadge";
@@ -26,12 +26,11 @@ function fmtPrice(wei: string) {
   }
 }
 
-function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, PremiumMcp> }) {
+function AgentCard({ a }: { a: MarketAgent }) {
   const tools = useMemo(() => buildCardsFromIds(a.consultTools || []).slice(0, 6), [a.consultTools]);
   const extra = Math.max(0, (a.consultTools?.length || 0) - tools.length);
   const agentRef = `${a.registry}:${a.agentId}`;
   const openseaUrl = `https://opensea.io/assets/ethereum/${a.registry}/${a.agentId}`;
-  const held = (a.entitlements ?? []).map((slug) => premium.get(slug)).filter(Boolean) as PremiumMcp[];
 
   return (
     <div className="liquid-glass flex flex-col rounded-2xl p-4">
@@ -58,30 +57,15 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
       {/* Description */}
       <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-zinc-400">{a.description || "—"}</p>
 
-      {/* Tool loadout */}
+      {/* Tool loadout — all premium capabilities, gold-bordered */}
       {tools.length > 0 && (
         <div className="mt-3 flex items-center gap-1.5">
           {tools.map((t) => (
-            <div key={t.id} className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-md bg-black/30 ring-1 ring-white/[0.06]" title={t.label}>
-              <McpLogo card={t} className="h-4 w-4" fill />
+            <div key={t.id} className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-black/30 ring-1 ring-brassLight/45" title={t.label}>
+              <McpLogo card={t} className="h-5 w-5" fill />
             </div>
           ))}
           {extra > 0 && <span className="font-mono text-[11px] text-zinc-500">+{extra}</span>}
-        </div>
-      )}
-
-      {/* Held premium capabilities (bought, carried by the agent NFT) */}
-      {held.length > 0 && (
-        <div className="mt-3 flex flex-wrap items-center gap-1.5">
-          {held.map((p) => (
-            <span key={p.slug} className="inline-flex items-center gap-1.5 rounded-full bg-brass/12 px-2 py-0.5 text-[11px] text-brassLight ring-1 ring-brass/25" title={`${p.label} — held on-chain`}>
-              <span className="flex h-3.5 w-3.5 items-center justify-center overflow-hidden rounded-[3px]">
-                <McpLogo card={{ id: p.slug, label: p.label, logo: p.logo } as any} className="h-3.5 w-3.5" />
-              </span>
-              {p.label}
-              <Check className="h-3 w-3" />
-            </span>
-          ))}
         </div>
       )}
 
@@ -122,14 +106,12 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
 export default function MarketplacePage() {
   const [agents, setAgents] = useState<MarketAgent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [premium, setPremium] = useState<Map<string, PremiumMcp>>(new Map());
 
   useEffect(() => {
     fetchMarketAgents().then((list) => {
       setAgents(list);
       setLoading(false);
     });
-    fetchPremiumMcps().then((list) => setPremium(new Map(list.map((m) => [m.slug, m]))));
   }, []);
 
   return (
@@ -159,7 +141,7 @@ export default function MarketplacePage() {
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {agents.map((a) => (
-            <AgentCard key={`${a.registry}:${a.agentId}`} a={a} premium={premium} />
+            <AgentCard key={`${a.registry}:${a.agentId}`} a={a} />
           ))}
         </div>
       )}
