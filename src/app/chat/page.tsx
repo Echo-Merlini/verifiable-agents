@@ -10,6 +10,7 @@ import { AgentChat } from "@/components/AgentChat";
 import { CreditsPill } from "@/components/CreditsPill";
 import { getAgentAuthNonce, verifyAgentOwner } from "@/lib/api";
 import { REGISTRY_CHAIN_ID } from "@/lib/erc8004";
+import { DEMO_AGENT } from "@/lib/mcps";
 
 const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 const OWNER_TOKEN_KEY = "ens-kit-owner-token";
@@ -28,6 +29,8 @@ function ChatInner() {
   const params                         = useSearchParams();
   const registry                       = params.get("registry") ?? "";
   const agentId                        = params.get("agentId") ?? "";
+  // The showcase agent wears the same cover as /demo (overrides its raw on-chain name/image).
+  const isDemoAgent = registry.toLowerCase() === DEMO_AGENT.registry.toLowerCase() && agentId === DEMO_AGENT.agentId;
   const { address, isConnected }       = useAccount();
   const { signMessageAsync }           = useSignMessage();
   const { open }                       = useWalletModal();
@@ -100,16 +103,18 @@ function ChatInner() {
           ) : agent ? (
             <div className="flex items-center gap-2.5 flex-1 min-w-0">
               <div className="w-8 h-8 rounded-lg overflow-hidden bg-white/8 shrink-0">
-                {agent.image ? (
+                {(isDemoAgent ? DEMO_AGENT.image : agent.image) ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={agent.image} alt={agent.name} className="w-full h-full object-cover" style={{ imageRendering: "pixelated" }} />
+                  <img src={isDemoAgent ? DEMO_AGENT.image : agent.image} alt={isDemoAgent ? DEMO_AGENT.name : agent.name} className="w-full h-full object-cover" style={{ imageRendering: "pixelated" }} />
                 ) : (
                   <Bot className="w-4 h-4 text-paper/30 m-2" />
                 )}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-display font-medium text-paper truncate">{agent.name}</p>
-                {agent.description ? (
+                <p className="text-sm font-display font-medium text-paper truncate">{isDemoAgent ? DEMO_AGENT.name : agent.name}</p>
+                {isDemoAgent ? (
+                  <p className="text-[10px] text-paper/35 truncate max-w-[260px]">{DEMO_AGENT.ens}</p>
+                ) : agent.description ? (
                   <p className="text-[10px] text-paper/35 truncate max-w-[260px]">{agent.description}</p>
                 ) : isOwner ? (
                   <p className="text-[10px] text-brassLight">Your agent</p>
