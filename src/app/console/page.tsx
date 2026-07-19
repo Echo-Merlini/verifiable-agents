@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Bot, Loader2, ShieldCheck, FileJson, Gauge, ArrowUpRight, Store } from "lucide-react";
-import { fetchMarketAgents, type MarketAgent } from "@/lib/marketplace";
+import { fetchMarketAgents, fetchPremiumMcps, type MarketAgent, type PremiumMcp } from "@/lib/marketplace";
 import { ReputationBreakdown } from "@/components/ReputationBreakdown";
 import { LicensedMcpAudit } from "@/components/LicensedMcpAudit";
 import { getGatewayUrl } from "@/hooks/useGatewayEnv";
@@ -16,6 +16,7 @@ function ConsoleInner() {
   const [agents, setAgents] = useState<MarketAgent[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRef, setSelectedRef] = useState<string | null>(wanted);
+  const [premium, setPremium] = useState<Map<string, PremiumMcp>>(new Map());
 
   useEffect(() => {
     fetchMarketAgents().then((list) => {
@@ -23,6 +24,7 @@ function ConsoleInner() {
       setLoading(false);
       if (!wanted && list.length) setSelectedRef(`${list[0].registry}:${list[0].agentId}`);
     });
+    fetchPremiumMcps().then((list) => setPremium(new Map(list.map((m) => [m.slug, m]))));
   }, [wanted]);
 
   const selected = useMemo(
@@ -102,11 +104,26 @@ function ConsoleInner() {
                       <Bot className="m-3 h-6 w-6 text-zinc-500" />
                     )}
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h2 className="font-display text-xl font-semibold">{selected.name || `Agent #${selected.agentId}`}</h2>
                     <div className="font-mono text-[11px] text-zinc-500">{selected.registry}</div>
                   </div>
                 </div>
+
+                {/* Held premium capabilities (bought, carried by the agent NFT) */}
+                {(selected.entitlements ?? []).length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span className="text-[11px] uppercase tracking-wider text-zinc-500">Capabilities held</span>
+                    {(selected.entitlements ?? []).map((slug) => {
+                      const p = premium.get(slug);
+                      return (
+                        <span key={slug} className="inline-flex items-center gap-1 rounded-full bg-brass/12 px-2 py-0.5 text-[11px] text-brassLight ring-1 ring-brass/25">
+                          {p?.label ?? slug} <ShieldCheck className="h-3 w-3" />
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
 
                 <ReputationBreakdown rep={selected.reputation} />
 

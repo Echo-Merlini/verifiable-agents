@@ -39,6 +39,7 @@ export interface MarketAgent {
   completionWindow: number;       // seconds
   consultTools: string[];
   reputation: Reputation | null;
+  entitlements?: string[];        // premium capability slugs this agent NFT holds (on-chain)
 }
 
 export async function fetchMarketAgents(): Promise<MarketAgent[]> {
