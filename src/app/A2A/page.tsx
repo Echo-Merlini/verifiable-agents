@@ -108,7 +108,12 @@ export default function A2APage() {
     setBusy(true);
     try {
       if (escrowChain && chainId !== escrowChain) { setBusyMsg("Switching network…"); await switchChainAsync({ chainId: escrowChain }); }
-      const jid = keccak256(toHex(`${address}:${active.registry}:${active.agentId}:${Date.now()}:${Math.random()}`));
+      // Recomputable job→agent binding: jobId COMMITS to this agent —
+      // jobId = keccak256(utf8(consumer:registry:agentId:salt)), lowercase addresses. The salt
+      // is sent to the gateway (which verifies the commitment) and published, so anyone
+      // re-derives jobId and confirms it belongs to this agent. No trusted mapping.
+      const salt = toHex(crypto.getRandomValues(new Uint8Array(16)));
+      const jid = keccak256(toHex(`${address.toLowerCase()}:${active.registry.toLowerCase()}:${active.agentId}:${salt}`));
       const windowSecs = active.completionWindow && active.completionWindow > 0 ? active.completionWindow : 3600;
       const deadline = BigInt(Math.floor(Date.now() / 1000) + windowSecs);
 
@@ -131,7 +136,7 @@ export default function A2APage() {
       setBusyMsg("Issuing job token…");
       const res = await fetch(`${GATEWAY_URL}/agent/consult/job`, {
         method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ jobId: jid, registry: active.registry, agentId: active.agentId, tools: chosen, ...(feeTx ? { feeTx } : {}) }),
+        body: JSON.stringify({ jobId: jid, registry: active.registry, agentId: active.agentId, tools: chosen, salt, ...(feeTx ? { feeTx } : {}) }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || `job token failed (${res.status})`);
