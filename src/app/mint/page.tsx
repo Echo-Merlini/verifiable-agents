@@ -15,7 +15,7 @@ import {
   GENESIS_PHASE, GENESIS_PHASE_LABEL, isZero,
 } from "@/lib/erc8004";
 import { useWalletModal } from "@/hooks/useWalletModal";
-import { NavMenu } from "@/components/NavMenu";
+import { TopNav } from "@/components/TopNav";
 import { McpLogo } from "@/components/McpLogo";
 import { buildMcpCards, type McpCard, type PublicMcp } from "@/lib/mcps";
 
@@ -179,7 +179,7 @@ export default function MintAgentPage() {
 
   return (
     <main className="min-h-screen bg-deepink text-paper">
-      <NavMenu />
+      <TopNav />
       <div className="max-w-xl mx-auto px-6 py-10">
         <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">Mint your agent</p>
         <h1 className="mt-2 font-display font-medium tracking-tightest text-4xl">Recompute Kit Bot</h1>
