@@ -165,6 +165,7 @@ export default function A2APage() {
         <div className="flex items-center justify-between gap-4">
           <Link href="/demo" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</Link>
           <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
+            <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Home</Link>
             <Link href="/demo" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Demo</Link>
             <Link href="/mint" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Mint</Link>
             <Link href="/marketplace" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Marketplace</Link>
