@@ -2,15 +2,17 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAccount, useDisconnect } from "wagmi";
-import { Menu, X, Wallet, Zap, Home, Sparkles, LogOut, Coins, ShieldCheck } from "lucide-react";
+import { Menu, X, Wallet, Zap, Home, Sparkles, LogOut, Coins, ShieldCheck, Store, Gauge } from "lucide-react";
 import { useWalletModal } from "@/hooks/useWalletModal";
 
 const LINKS = [
-  { path: "demo/",   label: "Home",            icon: Home,        desc: "Talk to a live, recomputable agent" },
-  { path: "mint/",   label: "Mint Agent",      icon: Sparkles,    desc: "Mint your own Recompute Kit Bot" },
-  { path: "A2A/",    label: "A2A Marketplace", icon: Coins,       desc: "Consult an agent · escrow · recompute" },
-  { path: "verify/", label: "Verify",          icon: ShieldCheck, desc: "Recompute a real action in your browser" },
-  { path: "top-up/", label: "Top Up Credits",  icon: Zap,         desc: "Add AI credits to your wallet" },
+  { path: "demo/",        label: "Home",           icon: Home,        desc: "Talk to a live, recomputable agent" },
+  { path: "mint/",        label: "Mint Agent",     icon: Sparkles,    desc: "Mint your own Recompute Kit Bot" },
+  { path: "marketplace/", label: "Marketplace",    icon: Store,       desc: "Hire, collect, or audit recomputable agents" },
+  { path: "A2A/",         label: "A2A Consult",    icon: Coins,       desc: "Consult an agent · escrow · recompute" },
+  { path: "console/",     label: "Console",        icon: Gauge,       desc: "Owner & auditor — recompute reputation" },
+  { path: "verify/",      label: "Verify",         icon: ShieldCheck, desc: "Recompute a real action in your browser" },
+  { path: "top-up/",      label: "Top Up Credits", icon: Zap,         desc: "Add AI credits to your wallet" },
 ];
 
 export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUrl?: string }) {

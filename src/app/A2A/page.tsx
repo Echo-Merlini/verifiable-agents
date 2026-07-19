@@ -59,7 +59,16 @@ export default function A2APage() {
   // Load the published marketplace.
   useEffect(() => {
     fetch(`${GATEWAY_URL}/agent/consultable`).then((r) => (r.ok ? r.json() : []))
-      .then((list: Consultable[]) => { setAgents(list || []); setLoading(false); })
+      .then((list: Consultable[]) => {
+        setAgents(list || []);
+        setLoading(false);
+        // Deep-link from the marketplace: ?agent=registry:agentId preselects that agent.
+        const want = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("agent") : null;
+        if (want && list?.length) {
+          const i = list.findIndex((a) => `${a.registry}:${a.agentId}` === want);
+          if (i >= 0) setIdx(i);
+        }
+      })
       .catch(() => { setAgents([]); setLoading(false); });
   }, []);
 
