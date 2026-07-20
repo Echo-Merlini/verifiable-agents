@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useAccount, useDisconnect, useWriteContract, useSwitchChain, useChainId, useSendTransaction, usePublicClient } from "wagmi";
 import { formatEther, keccak256, toHex } from "viem";
-import { Bot, Wallet, Loader2, Coins, ShieldCheck, Clock, Check, AlertTriangle, ExternalLink, ChevronLeft, ChevronRight, LogOut, Lock } from "lucide-react";
+import { Bot, Wallet, Loader2, Coins, ShieldCheck, Clock, Check, AlertTriangle, ExternalLink, ChevronLeft, ChevronRight, LogOut, Lock, ClipboardCheck } from "lucide-react";
 import { GATEWAY_URL } from "@/lib/erc8004";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { AgentChat } from "@/components/AgentChat";
@@ -233,13 +233,20 @@ export default function A2APage() {
                 <img src={active.image} alt={active.name} className="w-20 h-20 rounded-2xl object-cover border border-white/10 shrink-0" style={{ imageRendering: "pixelated" }} />
                 <div className="flex-1 min-w-0">
                   <h1 className="font-display font-medium text-paper text-xl leading-tight truncate">{active.name}</h1>
-                  <div className="mt-1.5"><ReputationBadge rep={rep} /></div>
+                  <div className="mt-1.5 flex items-center gap-2">
+                    <ReputationBadge rep={rep} />
+                    <Link href={`/console?agent=${encodeURIComponent(`${active.registry}:${active.agentId}`)}`}
+                      title="Open this agent's audit trail"
+                      className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.15em] text-paper/35 hover:text-brassLight transition-colors">
+                      <ClipboardCheck className="h-3 w-3" /> Audit
+                    </Link>
+                  </div>
                   {active.description && <p className="text-sm text-paper/50 mt-1.5 line-clamp-3">{active.description}</p>}
                 </div>
               </div>
 
               {/* Pricing */}
-              <div className="liquid-glass rounded-2xl p-5 space-y-3">
+              <div className="liquid-glass rounded-2xl border border-brassLight/30 p-5 space-y-3">
                 <div className="flex items-center gap-2"><Coins className="w-4 h-4 text-brassLight" /><p className="text-[10px] uppercase tracking-widest text-paper/40">Consult</p></div>
                 {isPriced ? (
                   <>
@@ -261,7 +268,7 @@ export default function A2APage() {
                 const ti = toolIdx % toolCards.length;
                 const t = toolCards[ti];
                 return (
-                  <div className="liquid-glass rounded-2xl p-5 space-y-3">
+                  <div className="liquid-glass rounded-2xl border border-brassLight/30 p-5 space-y-3">
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="w-4 h-4 text-brassLight" />
                       <p className="text-[10px] uppercase tracking-widest text-paper/40">Available tools</p>
