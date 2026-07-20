@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { getGatewayUrl } from "@/hooks/useGatewayEnv";
-import { Plus, Trash2, Check, Loader2, ExternalLink, Copy, Plug } from "lucide-react";
+import { Plus, Trash2, Check, Loader2, ExternalLink, Copy, Plug, Pencil, X, Tag } from "lucide-react";
 
 interface McpServer {
   id: string;
@@ -12,13 +12,20 @@ interface McpServer {
   active: number;
   auth_type: "none" | "bearer" | "apikey";
   auth_value: string;
+  tags: string;
   skill_count: number;
   created_at: number;
 }
 
-const EMPTY_FORM: { name: string; url: string; description: string; active: number; auth_type: "none" | "bearer" | "apikey" | "basic"; auth_value: string; auth_username: string } = {
+// Curated capability taxonomy (in the spirit of skills.eth.sh) — admins can also type
+// a custom tag. "Premium" marks a paid MCP; the rest are descriptive categories.
+const TAG_OPTIONS = ["Premium", "Descriptive", "DEX", "Infrastructure", "Data", "Commerce", "Identity", "Storage"];
+
+const parseTags = (s: string) => (s ? s.split(",").map((t) => t.trim()).filter(Boolean) : []);
+
+const EMPTY_FORM: { name: string; url: string; description: string; active: number; auth_type: "none" | "bearer" | "apikey" | "basic"; auth_value: string; auth_username: string; tags: string } = {
   name: "", url: "", description: "",
-  active: 1, auth_type: "none", auth_value: "", auth_username: "",
+  active: 1, auth_type: "none", auth_value: "", auth_username: "", tags: "",
 };
 
 export default function McpsPage() {
@@ -29,8 +36,26 @@ export default function McpsPage() {
   const [working, setWorking]   = useState(false);
   const [flash, setFlash]       = useState<{ type: "ok" | "err"; msg: string } | null>(null);
   const [showAdd, setShowAdd]   = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm]         = useState({ ...EMPTY_FORM });
+  const [customTag, setCustomTag] = useState("");
   const [copied, setCopied]     = useState<string | null>(null);
+
+  const formTags = parseTags(form.tags);
+  const toggleTag = (t: string) =>
+    setForm((f) => {
+      const cur = parseTags(f.tags);
+      const next = cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t];
+      return { ...f, tags: next.join(", ") };
+    });
+  const addCustomTag = () => {
+    const t = customTag.trim();
+    if (!t) return;
+    if (!formTags.some((x) => x.toLowerCase() === t.toLowerCase())) {
+      setForm((f) => ({ ...f, tags: [...parseTags(f.tags), t].join(", ") }));
+    }
+    setCustomTag("");
+  };
 
   const notify = (type: "ok" | "err", msg: string) => {
     setFlash({ type, msg });
@@ -53,23 +78,44 @@ export default function McpsPage() {
 
   useEffect(() => { load(); }, [token]);
 
-  const add = async () => {
+  const openNew = () => { setEditingId(null); setForm({ ...EMPTY_FORM }); setCustomTag(""); setShowAdd(true); };
+
+  const startEdit = (s: McpServer) => {
+    setEditingId(s.id);
+    setForm({
+      name: s.name, url: s.url, description: s.description,
+      active: s.active, auth_type: (s.auth_type as any) || "none",
+      auth_value: "", auth_username: "", tags: s.tags || "",
+    });
+    setCustomTag("");
+    setShowAdd(true);
+  };
+
+  const closeForm = () => { setShowAdd(false); setEditingId(null); setForm({ ...EMPTY_FORM }); setCustomTag(""); };
+
+  const save = async () => {
     if (!form.name || !form.url) return;
     setWorking(true);
     try {
-      const submitForm = form.auth_type === "basic"
-        ? { ...form, auth_value: `${form.auth_username}:${form.auth_value}` }
-        : form;
-      const r = await fetch(`${getGatewayUrl()}/admin/mcp-servers`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify(submitForm),
-      });
+      // On edit, only send auth_value if the admin re-entered one (blank = keep existing).
+      const authValue = form.auth_type === "basic"
+        ? (form.auth_value ? `${form.auth_username}:${form.auth_value}` : "")
+        : form.auth_value;
+      const body: any = { name: form.name, url: form.url, description: form.description, active: form.active, auth_type: form.auth_type, tags: form.tags };
+      if (!editingId || authValue) body.auth_value = authValue;
+
+      const r = await fetch(
+        editingId ? `${getGatewayUrl()}/admin/mcp-servers/${editingId}` : `${getGatewayUrl()}/admin/mcp-servers`,
+        {
+          method: editingId ? "PATCH" : "POST",
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        },
+      );
       const d = await r.json();
       if (!r.ok) throw new Error(d.error);
-      notify("ok", `Added ${form.name}`);
-      setForm({ ...EMPTY_FORM });
-      setShowAdd(false);
+      notify("ok", editingId ? `Updated ${form.name}` : `Added ${form.name}`);
+      closeForm();
       load();
     } catch (e: any) { notify("err", e.message); }
     setWorking(false);
@@ -130,7 +176,7 @@ export default function McpsPage() {
           <p className="text-xs text-gb-muted mt-0.5">External Model Context Protocol servers — assign to skills to extend agent tools</p>
         </div>
         <button
-          onClick={() => setShowAdd(v => !v)}
+          onClick={openNew}
           className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
@@ -145,10 +191,10 @@ export default function McpsPage() {
         </div>
       )}
 
-      {/* Add form */}
+      {/* Add / edit form */}
       {showAdd && (
         <div className="bg-gb-surface border border-gb-border rounded-xl p-5 space-y-4">
-          <p className="text-sm font-semibold text-slate-200">New MCP Server</p>
+          <p className="text-sm font-semibold text-slate-200">{editingId ? "Edit MCP Server" : "New MCP Server"}</p>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             <input
               value={form.name}
@@ -205,17 +251,65 @@ export default function McpsPage() {
               />
             )}
           </div>
+          {/* Tags — curated taxonomy + custom */}
+          <div className="space-y-2">
+            <p className="text-[11px] text-gb-muted flex items-center gap-1.5"><Tag className="w-3 h-3" /> Tags</p>
+            <div className="flex flex-wrap gap-1.5">
+              {TAG_OPTIONS.map((t) => {
+                const on = formTags.some((x) => x.toLowerCase() === t.toLowerCase());
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => toggleTag(t)}
+                    className={`text-[11px] px-2.5 py-1 rounded-full border transition-colors ${
+                      on ? "bg-amber-500/15 border-amber-500/40 text-amber-300" : "bg-gb-input border-gb-border text-gb-muted hover:text-slate-300"
+                    }`}
+                  >
+                    {t}
+                  </button>
+                );
+              })}
+            </div>
+            {/* Custom tags not in the taxonomy */}
+            {formTags.filter((t) => !TAG_OPTIONS.some((o) => o.toLowerCase() === t.toLowerCase())).length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {formTags
+                  .filter((t) => !TAG_OPTIONS.some((o) => o.toLowerCase() === t.toLowerCase()))
+                  .map((t) => (
+                    <span key={t} className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full border bg-amber-500/15 border-amber-500/40 text-amber-300">
+                      {t}
+                      <button type="button" onClick={() => toggleTag(t)} className="hover:text-white"><X className="w-2.5 h-2.5" /></button>
+                    </span>
+                  ))}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <input
+                value={customTag}
+                onChange={(e) => setCustomTag(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustomTag(); } }}
+                placeholder="Add a custom tag…"
+                className="flex-1 bg-gb-input border border-gb-border rounded-lg px-3 py-1.5 text-[11px] text-slate-200 placeholder-gb-muted outline-none focus:border-gb-accent"
+              />
+              <button type="button" onClick={addCustomTag} disabled={!customTag.trim()}
+                className="text-[11px] px-3 py-1.5 rounded-lg border border-gb-border text-gb-muted hover:text-slate-300 disabled:opacity-40 transition-colors">
+                Add tag
+              </button>
+            </div>
+          </div>
+
           <div className="flex gap-2">
             <button
-              onClick={add}
+              onClick={save}
               disabled={working || !form.name || !form.url}
               className="flex items-center gap-1.5 text-xs px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white disabled:opacity-40 transition-colors"
             >
-              {working ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
-              Add
+              {working ? <Loader2 className="w-3 h-3 animate-spin" /> : editingId ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+              {editingId ? "Save changes" : "Add"}
             </button>
             <button
-              onClick={() => { setShowAdd(false); setForm({ ...EMPTY_FORM }); }}
+              onClick={closeForm}
               className="text-xs px-4 py-2 rounded-lg border border-gb-border text-gb-muted hover:text-slate-300 transition-colors"
             >
               Cancel
@@ -253,6 +347,17 @@ export default function McpsPage() {
                     <td className="px-5 py-3">
                       <p className="text-xs font-medium text-slate-200">{s.name}</p>
                       {s.description && <p className="text-xs text-gb-muted mt-0.5 truncate max-w-[200px]">{s.description}</p>}
+                      {parseTags(s.tags).length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {parseTags(s.tags).map((t) => (
+                            <span key={t} className={`text-[9px] px-1.5 py-0.5 rounded-full border ${
+                              t.toLowerCase() === "premium"
+                                ? "bg-amber-500/15 border-amber-500/40 text-amber-300"
+                                : "bg-slate-500/10 border-slate-500/25 text-slate-400"
+                            }`}>{t}</span>
+                          ))}
+                        </div>
+                      )}
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-1.5">
@@ -285,13 +390,24 @@ export default function McpsPage() {
                       </button>
                     </td>
                     <td className="px-5 py-3 text-right">
-                      <button
-                        onClick={() => remove(s)}
-                        disabled={working}
-                        className="text-gb-muted hover:text-red-400 transition-colors disabled:opacity-40"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex items-center justify-end gap-3">
+                        <button
+                          onClick={() => startEdit(s)}
+                          disabled={working}
+                          title="Edit"
+                          className="text-gb-muted hover:text-gb-accent transition-colors disabled:opacity-40"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => remove(s)}
+                          disabled={working}
+                          title="Remove"
+                          className="text-gb-muted hover:text-red-400 transition-colors disabled:opacity-40"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
