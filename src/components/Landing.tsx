@@ -104,6 +104,11 @@ export function Landing() {
               Talk to a live agent <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
+          {/* Legend — explains the shield mark that appears across the marketplace/demo cards */}
+          <p className="mt-6 inline-flex items-center gap-2 text-[13px] text-gb-muted">
+            <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-400" />
+            Anything carrying this mark is <span className="text-paper">fully recomputable</span> — re-derivable end-to-end from public data, no human in the loop.
+          </p>
         </section>
 
         {/* Entry cards — Verify leads (the thesis), the rest support */}
