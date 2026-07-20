@@ -157,11 +157,11 @@ export default function DemoPage() {
 
   return (
     <main className="min-h-screen bg-deepink text-paper">
-      <div className="max-w-4xl mx-auto px-6 md:px-10 py-8">
-        {/* Top bar */}
+      <div className="max-w-5xl mx-auto px-6 md:px-10 py-8">
+        {/* Top bar — wider column + wrap-safe nav so the type never breaks to two lines */}
         <div className="flex items-center justify-between gap-4">
-          <Link href="/demo" className="inline-flex items-center gap-2.5 font-display font-medium tracking-tight text-paper"><VerticeMark size={26} spin />Recomputable Agents</Link>
-          <div className="flex items-center gap-5">
+          <Link href="/demo" className="inline-flex items-center gap-2.5 whitespace-nowrap font-display font-medium tracking-tight text-paper"><VerticeMark size={26} spin />Recomputable Agents</Link>
+          <div className="flex flex-wrap items-center justify-end gap-x-5 gap-y-1">
             <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Home</Link>
             <Link href="/mint" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Mint</Link>
             <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
@@ -200,8 +200,8 @@ export default function DemoPage() {
           </div>
         )}
 
-        {/* Agent header — avatar left of the title */}
-        <div className="mt-6 flex items-center gap-4">
+        {/* Agent header — avatar left of the title, in a brass-bordered card */}
+        <div className="mt-6 flex items-center gap-4 rounded-2xl border border-brassLight/30 bg-white/[0.02] p-4 sm:p-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img key={featured.image} src={featured.image} alt={featured.name}
             className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl border border-white/10 object-cover shrink-0"
@@ -286,7 +286,7 @@ export default function DemoPage() {
             </div>
             {/* Fixed description — always present below the carousel, changes on hover
                 (steadier than a per-card tooltip that clips on the first card) */}
-            <div className="mt-1 min-h-[3.25rem] rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
+            <div className="mt-1 min-h-[3.25rem] rounded-xl border border-brassLight/30 bg-white/[0.02] px-4 py-3">
               {hoverMcp ? (
                 <p className="text-[12px] leading-relaxed text-gb-muted">
                   <span className="font-display font-medium text-paper">{hoverMcp.label}</span>
