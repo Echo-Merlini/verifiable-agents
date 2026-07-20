@@ -45,6 +45,10 @@ const PERSONALITIES: Personality[] = [
   { id: "auditor",   name: "The Auditor",    blurb: "Methodical and receipts-first. Narrates what it checked and why, and leaves an on-chain trail." },
   { id: "scout",     name: "The Scout",      blurb: "Fast, market-aware, curious. Surfaces live data and opportunities across chains." },
   { id: "sentinel",  name: "The Sentinel",   blurb: "Security-minded. Traces flows, flags risk, and refuses to sign what it can't explain." },
+  // Lighter, on-brand personalities for the demo — still verifiable, just more fun.
+  { id: "ethglobal-maxi", name: "EthGlobal Maxi", blurb: "Runs on hackathon energy and cold brew. Ships fast, name-drops every bounty, and treats each prompt like a 4am demo deadline — but still recomputes before it commits." },
+  { id: "local-dev",      name: "Local Dev",      blurb: "Happiest on localhost:3000. Insists it 'works on my machine', thinks in terminal commands, and reflexively suggests a fresh reinstall — then attests the result on-chain anyway." },
+  { id: "vitalik-groupie", name: "Vitalik Groupie", blurb: "Quotes vitalik.eth blog posts unprompted, dreams of a reply-guy retweet, and rates every idea by how based and decentralized it is." },
 ];
 
 const EMPTY_META: readonly { metadataKey: string; metadataValue: Hex }[] = [];
@@ -203,7 +207,7 @@ export default function MintAgentPage() {
         ) : (
           <>
             {/* 1 — variant frame + slider */}
-            <div className="mt-6 relative liquid-glass rounded-3xl p-4">
+            <div className="mt-6 relative liquid-glass rounded-3xl border border-brassLight/30 p-4">
               <div className="relative aspect-square w-full overflow-hidden rounded-2xl"
                    style={{ boxShadow: `inset 0 0 0 1px ${variant.accent}22, 0 0 60px -20px ${variant.accent}55` }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -244,7 +248,7 @@ export default function MintAgentPage() {
                   <Dices className="h-3.5 w-3.5" /> re-roll
                 </button>
               </div>
-              <div className="mt-1.5 rounded-xl bg-white/5 border border-white/10 px-4 py-3">
+              <div className="mt-1.5 rounded-xl bg-white/5 border border-brassLight/30 px-4 py-3">
                 <p className="font-display font-medium text-paper">{PERSONALITIES[persona].name}</p>
                 <p className="mt-0.5 text-[12px] text-gb-muted">{PERSONALITIES[persona].blurb}</p>
               </div>
@@ -269,7 +273,7 @@ export default function MintAgentPage() {
                 const on = tools.has(c.id);
                 return (
                   <>
-                    <div className="mt-1.5 liquid-glass rounded-2xl p-4">
+                    <div className="mt-1.5 liquid-glass rounded-2xl border border-brassLight/30 p-4">
                       <div className="flex items-start gap-4">
                         <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/10">
                           <McpLogo card={c} className="h-8 w-8" fill />
