@@ -89,6 +89,7 @@ export default function DemoPage() {
   const [ai, setAi] = useState(0);                                   // active owned-agent index
   const [cards, setCards] = useState<McpCard[]>([]);                 // tools of the featured agent
   const trackRef = useRef<HTMLDivElement>(null);                     // MCP carousel scroll track
+  const [hoverMcp, setHoverMcp] = useState<McpCard | null>(null);    // capability described below the carousel
   const [lastExchange, setLastExchange] = useState<{ query: string; reply: string } | null>(null);
   const [recomputing, setRecomputing] = useState(false);
   const [recomputeErr, setRecomputeErr] = useState<string | null>(null);
@@ -267,6 +268,8 @@ export default function DemoPage() {
                   <span className="pointer-events-none absolute right-2 top-2 z-10 rounded-full bg-brass/15 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider text-brassLight ring-1 ring-brass/40">Premium</span>
                   <button
                     onClick={() => pick(c)}
+                    onMouseEnter={() => setHoverMcp(c)}
+                    onFocus={() => setHoverMcp(c)}
                     className="liquid-glass group/btn h-full w-full rounded-2xl p-4 text-left ring-1 ring-brassLight/30 transition-all duration-200 hover:-translate-y-1 hover:ring-brassLight/60 hover:shadow-[0_12px_28px_-14px_rgba(198,160,90,0.45)] motion-reduce:transform-none motion-reduce:transition-none"
                   >
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-brass/25">
@@ -278,11 +281,23 @@ export default function DemoPage() {
                     </p>
                     <p className="mt-0.5 text-[11px] text-gb-faint">{c.tagline}</p>
                   </button>
-                  <div className="pointer-events-none absolute left-1/2 top-full z-30 mt-2 w-64 -translate-x-1/2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                    <div className="rounded-xl border border-white/10 bg-deepink/95 px-3 py-2.5 text-[11px] italic leading-relaxed text-gb-muted shadow-xl backdrop-blur">{c.blurb}</div>
-                  </div>
                 </div>
               ))}
+            </div>
+            {/* Fixed description — always present below the carousel, changes on hover
+                (steadier than a per-card tooltip that clips on the first card) */}
+            <div className="mt-1 min-h-[3.25rem] rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3">
+              {hoverMcp ? (
+                <p className="text-[12px] leading-relaxed text-gb-muted">
+                  <span className="font-display font-medium text-paper">{hoverMcp.label}</span>
+                  <span className="mx-1.5 text-gb-faint">·</span>
+                  <span className="italic">{hoverMcp.blurb}</span>
+                </p>
+              ) : (
+                <p className="text-[12px] italic leading-relaxed text-gb-faint">
+                  Hover a capability to see what it does — click one to watch the agent run it.
+                </p>
+              )}
             </div>
           </div>
         )}
