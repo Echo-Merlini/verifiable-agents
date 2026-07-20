@@ -6,7 +6,7 @@ import { useAccount, useWriteContract, useSwitchChain, useChainId, usePublicClie
 import { Sparkles, Wallet, Loader2, Check, ExternalLink, Lock, ShieldCheck } from "lucide-react";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { McpLogo } from "@/components/McpLogo";
-import { fetchPremiumMcps, fetchEntitlement, type PremiumMcp, type MarketAgent } from "@/lib/marketplace";
+import { fetchPremiumMcps, fetchEntitlement, tagPillClass, type PremiumMcp, type MarketAgent } from "@/lib/marketplace";
 
 // MCPEntitlementRegistry.buy(address registry, uint256 tokenId, bytes32 mcpId) payable
 const ENTITLEMENT_ABI = [
@@ -103,7 +103,7 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
       {mcp.tags && mcp.tags.length > 0 && (
         <div className="mt-2.5 flex flex-wrap gap-1">
           {mcp.tags.map((t) => (
-            <span key={t} className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider text-zinc-500">{t}</span>
+            <span key={t} className={tagPillClass(t)}>{t}</span>
           ))}
         </div>
       )}

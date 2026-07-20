@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatEther } from "viem";
 import { Bot, Coins, ClipboardCheck, ExternalLink, Loader2, Store } from "lucide-react";
-import { fetchMarketAgents, fetchPremiumMcps, type MarketAgent, type PremiumMcp } from "@/lib/marketplace";
+import { fetchMarketAgents, fetchPremiumMcps, tagPillClass, type MarketAgent, type PremiumMcp } from "@/lib/marketplace";
 import { buildCardsFromIds } from "@/lib/mcps";
 import { McpLogo } from "@/components/McpLogo";
 import { ReputationBadge } from "@/components/ReputationBadge";
@@ -96,7 +96,7 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
         {agentTags.length > 0 && (
           <div className="mt-2.5 flex flex-wrap gap-1">
             {agentTags.map((t) => (
-              <span key={t} className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider text-zinc-500">{t}</span>
+              <span key={t} className={tagPillClass(t)}>{t}</span>
             ))}
           </div>
         )}
