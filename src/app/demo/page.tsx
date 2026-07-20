@@ -184,8 +184,7 @@ export default function DemoPage() {
                     {signingIn ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogIn className="h-3.5 w-3.5" />} {signingIn ? "Signing in…" : "Sign in"}
                   </button>
                 ))}
-                <span className="font-mono text-[11px] text-gb-faint">{address.slice(0, 6)}…{address.slice(-4)}</span>
-                <button onClick={disconnectWallet} title="Disconnect" aria-label="Disconnect" className="inline-flex items-center text-gb-muted hover:text-red-400 transition-colors">
+                <button onClick={disconnectWallet} title={`${address.slice(0, 6)}…${address.slice(-4)} — disconnect`} aria-label="Disconnect" className="inline-flex items-center text-gb-muted hover:text-red-400 transition-colors">
                   <LogOut className="h-3.5 w-3.5" />
                 </button>
               </div>
