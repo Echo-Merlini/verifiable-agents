@@ -100,21 +100,24 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
 
       <p className="mt-3 text-xs leading-relaxed text-zinc-400">{mcp.description}</p>
 
-      {mcp.tags && mcp.tags.length > 0 && (
-        <div className="mt-2.5 flex flex-wrap gap-1">
-          {mcp.tags.map((t) => (
-            <span key={t} className={tagPillClass(t)}>{t}</span>
-          ))}
+      {/* Tags + price pinned near the equip bar so they align across cards regardless of
+          how long the description runs */}
+      <div className="mt-auto pt-3">
+        {mcp.tags && mcp.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {mcp.tags.map((t) => (
+              <span key={t} className={tagPillClass(t)}>{t}</span>
+            ))}
+          </div>
+        )}
+        <div className={`flex items-center justify-between text-[11px] text-zinc-500 ${mcp.tags && mcp.tags.length > 0 ? "mt-2.5" : ""}`}>
+          <span className="font-mono">{fmtPrice(mcp.price)}</span>
+          <span>{mcp.registered ? "registered on-chain" : live ? "not registered yet" : "launching on mainnet"}</span>
         </div>
-      )}
-
-      <div className="mt-3 flex items-center justify-between text-[11px] text-zinc-500">
-        <span className="font-mono">{fmtPrice(mcp.price)}</span>
-        <span>{mcp.registered ? "registered on-chain" : live ? "not registered yet" : "launching on mainnet"}</span>
       </div>
 
-      {/* Equip flow — pinned to the bottom so buttons align across cards */}
-      <div className="mt-auto border-t border-white/[0.06] pt-3">
+      {/* Equip flow — sits directly under the pinned tags/price cluster */}
+      <div className="mt-3 border-t border-white/[0.06] pt-3">
         {txHash ? (
           <div className="flex items-center gap-2 text-sm text-emerald-300">
             <Check className="h-4 w-4" /> Attached to agent #{selected.tokenId}
