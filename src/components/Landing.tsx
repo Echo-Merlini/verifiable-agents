@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge, Network, type LucideIcon } from "lucide-react";
+import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge, Network, Send, type LucideIcon } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
 
 type Entry = { href: string; icon: LucideIcon; label: string; tag: string; desc: string; external?: boolean };
@@ -264,6 +264,32 @@ export function Landing() {
                 Watch an agent act <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* Developer community */}
+        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
+          <div className="story-reveal liquid-glass rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8">
+            <div className="flex-1 min-w-0">
+              <Eyebrow>Build it with us</Eyebrow>
+              <h2 className="font-display font-medium tracking-tighter2 text-2xl sm:text-3xl leading-[1.05]">
+                A developer group for the recompute stack.
+              </h2>
+              <p className="mt-3 text-sm sm:text-[15px] leading-relaxed text-paper/60 max-w-md">
+                Standards authors, agent builders and auditors, working the composed ERCs in the open.
+                Join the Telegram or scan the code.
+              </p>
+              <a href="https://t.me/+yMiNs57dySEzMzZh" target="_blank" rel="noreferrer"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-brass px-6 py-3 text-sm font-display font-medium text-deepink hover:bg-brassLight transition-colors">
+                <Send className="w-4 h-4" /> Join the Telegram group
+              </a>
+            </div>
+            <a href="https://t.me/+yMiNs57dySEzMzZh" target="_blank" rel="noreferrer"
+              title="Scan to join the developer group"
+              className="shrink-0 self-center rounded-2xl bg-white p-2.5 shadow-lg ring-1 ring-white/10 transition-transform hover:-translate-y-1 motion-reduce:transform-none">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/telegram-devs-qr.png" alt="QR code — join the developer Telegram group" className="h-36 w-36 sm:h-40 sm:w-40" />
+            </a>
           </div>
         </section>
 
