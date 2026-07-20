@@ -96,7 +96,7 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
         {agentTags.length > 0 && (
           <div className="mt-2.5 flex flex-wrap gap-1">
             {agentTags.map((t) => (
-              <span key={t} className={tagPillClass(t)}>{t}</span>
+              <span key={t} className={tagPillClass(t, "sm")}>{t}</span>
             ))}
           </div>
         )}

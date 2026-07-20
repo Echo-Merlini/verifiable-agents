@@ -90,8 +90,9 @@ export interface PremiumMcp {
 
 // Tag pill styling — "Premium" always reads gold, "Community" always silver, everything
 // else is a quiet gray category chip. Shared by the MCP store + agent cards.
-export function tagPillClass(tag: string): string {
-  const base = "rounded-full border px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider";
+export function tagPillClass(tag: string, size: "sm" | "md" = "md"): string {
+  const dims = size === "sm" ? "px-1.5 py-0 text-[8px]" : "px-2 py-0.5 text-[9px]";
+  const base = `rounded-full border ${dims} font-medium uppercase tracking-wider`;
   const t = tag.toLowerCase();
   if (t === "premium") return `${base} border-brassLight/40 bg-brass/15 text-brassLight`;
   if (t === "community") return `${base} border-slate-300/40 bg-slate-300/10 text-slate-300`;
