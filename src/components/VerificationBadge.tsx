@@ -16,7 +16,7 @@ export function VerificationBadge({ status, className = "" }: { status: Verifica
         : "Attested — vouched for, not fully recomputable"}
       className={`inline-flex shrink-0 ${className}`}
     >
-      <Icon className={`h-4 w-4 ${rec ? "text-emerald-400" : "text-amber-400"}`} />
+      <Icon className={`h-4 w-4 ${rec ? "text-zinc-500" : "text-amber-400"}`} />
     </span>
   );
 }
