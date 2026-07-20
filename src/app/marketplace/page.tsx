@@ -39,12 +39,9 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
     const seen = new Set<string>();
     return [...heldCards, ...toolCards].filter((c: any) => (seen.has(c.id) ? false : (seen.add(c.id), true)));
   }, [a.consultTools, a.entitlements, premium]);
-  // Category tags for the agent = union of its loadout capabilities' tags (shared taxonomy).
-  const agentTags = useMemo(() => {
-    const set = new Set<string>();
-    for (const c of cards) premium.get((c as any).id)?.tags?.forEach((t) => set.add(t));
-    return Array.from(set);
-  }, [cards, premium]);
+  // Agent category tags — the deduped union of its loadout's tags, aggregated by the gateway
+  // (consult tools are mcp_server ids, so the tag join has to happen server-side).
+  const agentTags = a.tags ?? [];
   const tools = cards.slice(0, 6);
   const extra = Math.max(0, cards.length - tools.length);
   const agentRef = `${a.registry}:${a.agentId}`;
