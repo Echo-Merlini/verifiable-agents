@@ -45,7 +45,7 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
   const openseaUrl = `https://opensea.io/assets/ethereum/${a.registry}/${a.agentId}`;
 
   return (
-    <div className="liquid-glass flex flex-col rounded-2xl p-4">
+    <div className="liquid-glass flex flex-col rounded-2xl border border-brassLight/30 p-4">
       {/* Identity row */}
       <div className="flex items-start gap-3">
         <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-black/30 ring-1 ring-white/[0.06]">
@@ -69,26 +69,28 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
       {/* Description */}
       <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-zinc-400">{a.description || "—"}</p>
 
-      {/* Tool loadout — all premium capabilities, gold-bordered */}
-      {tools.length > 0 && (
-        <div className="mt-3 flex items-center gap-1.5">
-          {tools.map((t) => (
-            <div key={t.id} className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-black/30 ring-1 ring-brassLight/45" title={t.label}>
-              <McpLogo card={t as any} className="h-5 w-5" fill />
-            </div>
-          ))}
-          {extra > 0 && <span className="font-mono text-[11px] text-zinc-500">+{extra}</span>}
+      {/* Loadout + price cluster — pinned near the actions bar so the squares and
+          price line always sit at the same height across cards, regardless of how
+          long the description runs */}
+      <div className="mt-auto pt-3">
+        {tools.length > 0 && (
+          <div className="flex items-center gap-1.5">
+            {tools.map((t) => (
+              <div key={t.id} className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-black/30 ring-1 ring-brassLight/45" title={t.label}>
+                <McpLogo card={t as any} className="h-5 w-5" fill />
+              </div>
+            ))}
+            {extra > 0 && <span className="font-mono text-[11px] text-zinc-500">+{extra}</span>}
+          </div>
+        )}
+        <div className={`flex items-center gap-4 text-[11px] text-zinc-500 ${tools.length > 0 ? "mt-3" : ""}`}>
+          <span className="inline-flex items-center gap-1"><Coins className="h-3.5 w-3.5" /> {fmtPrice(a.consultPrice)}</span>
+          <span>window {fmtHours(a.completionWindow)}</span>
         </div>
-      )}
-
-      {/* Price + window */}
-      <div className="mt-3 flex items-center gap-4 text-[11px] text-zinc-500">
-        <span className="inline-flex items-center gap-1"><Coins className="h-3.5 w-3.5" /> {fmtPrice(a.consultPrice)}</span>
-        <span>window {fmtHours(a.completionWindow)}</span>
       </div>
 
-      {/* Actions — pinned to the bottom so buttons align across cards regardless of text length */}
-      <div className="mt-auto flex items-center gap-2 border-t border-white/[0.06] pt-3">
+      {/* Actions bar */}
+      <div className="mt-3 flex items-center gap-2 border-t border-white/[0.06] pt-3">
         <Link
           href={`/A2A?agent=${encodeURIComponent(agentRef)}`}
           className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-brass/90 px-3 py-2 text-sm font-medium text-white transition hover:bg-brass"
