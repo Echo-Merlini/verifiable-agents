@@ -2,10 +2,12 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge } from "lucide-react";
+import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge, Network, type LucideIcon } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
 
-const CARDS = [
+type Entry = { href: string; icon: LucideIcon; label: string; tag: string; desc: string; external?: boolean };
+
+const CARDS: Entry[] = [
   { href: "/verify", icon: ShieldCheck, label: "Verify", tag: "the thesis",
     desc: "Recompute a real on-chain agent action in your own browser. Tamper a byte — the record breaks. Restore it — it passes." },
   { href: "/demo", icon: Bot, label: "Demo", tag: "a live agent",
@@ -18,6 +20,8 @@ const CARDS = [
     desc: "Recomputable reputation and a licensed-MCP audit — did the agent invoke only capabilities it held? A predicate over public data, not our word." },
   { href: "/mint", icon: Sparkles, label: "Mint", tag: "make one",
     desc: "Mint your own Recompute Kit Bot — free, source-bound under 8323, personality and tools chosen at mint. It's yours." },
+  { href: "https://trustless-ai.com/", external: true, icon: Network, label: "Trustless-AI", tag: "open · CC0",
+    desc: "The CC0 home for this stack — decentralized AI infrastructure anyone can provide and anyone can use. Reference implementations, no license, no gatekeeper." },
 ];
 
 // Verify leads the band (it's the thesis); the rest are supporting surfaces.
@@ -124,6 +128,7 @@ export function Landing() {
           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {REST.map((c) => (
               <Link key={c.href} href={c.href}
+                {...(c.external ? { target: "_blank", rel: "noreferrer" } : {})}
                 className="group liquid-glass rounded-3xl p-5 transition-all duration-200 hover:-translate-y-1 hover:border-brassLight/40 hover:shadow-[0_12px_28px_-14px_rgba(198,160,90,0.4)] motion-reduce:transform-none motion-reduce:transition-none">
                 <div className="flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/5 border border-white/10">
