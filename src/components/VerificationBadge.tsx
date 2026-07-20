@@ -8,13 +8,15 @@ export function VerificationBadge({ status, className = "" }: { status: Verifica
   const rec = status === "recomputable";
   const Icon = rec ? ShieldCheck : Shield;
   return (
-    <Icon
+    <span
       role="img"
       aria-label={rec ? "Recomputable" : "Attested"}
       title={rec
         ? "Fully recomputable — reproduced end-to-end from golden vectors, no human in the loop"
         : "Attested — vouched for, not fully recomputable"}
-      className={`h-4 w-4 shrink-0 ${rec ? "text-emerald-400" : "text-amber-400"} ${className}`}
-    />
+      className={`inline-flex shrink-0 ${className}`}
+    >
+      <Icon className={`h-4 w-4 ${rec ? "text-emerald-400" : "text-amber-400"}`} />
+    </span>
   );
 }
