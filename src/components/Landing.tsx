@@ -77,16 +77,6 @@ export function Landing() {
       `}</style>
 
       <div className="max-w-5xl mx-auto px-6 md:px-10">
-        {/* Top bar */}
-        <div className="flex items-center justify-between py-6">
-          <span className="font-display font-medium tracking-tight text-paper">Recomputable Agents</span>
-          <div className="flex items-center gap-5">
-            <Link href="/verify" className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">Verify</Link>
-            <Link href="/demo" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Demo</Link>
-            <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
-          </div>
-        </div>
-
         {/* Hero */}
         <section className="pt-16 pb-14 sm:pt-24 sm:pb-20">
           <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">ETHGlobal Lisbon · Recompute Kit</p>

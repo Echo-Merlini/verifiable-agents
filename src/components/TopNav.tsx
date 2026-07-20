@@ -21,7 +21,7 @@ export function TopNav() {
     <header className="border-b border-white/[0.06]">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-5 gap-y-2 px-4 py-4 sm:px-6">
         <Link href="/demo" className="font-display font-medium tracking-tight text-paper">
-          Verifiable Agents
+          Recomputable Agents
         </Link>
         <nav className="flex flex-wrap items-center gap-x-5 gap-y-1">
           {LINKS.map((l) => {

@@ -163,7 +163,7 @@ function ConsultInner() {
       <div className="max-w-xl mx-auto px-6 py-8 space-y-4">
         {/* Top bar */}
         <div className="flex items-center justify-between gap-4">
-          <Link href="/demo" className="font-display font-medium tracking-tight text-paper">Verifiable Agents</Link>
+          <Link href="/demo" className="font-display font-medium tracking-tight text-paper">Recomputable Agents</Link>
           <div className="flex items-center gap-4">
             <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
             <Link href="/verify" className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">Verify</Link>
