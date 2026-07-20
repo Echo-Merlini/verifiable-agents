@@ -20,6 +20,9 @@ const CARDS = [
     desc: "Mint your own Recompute Kit Bot — free, source-bound under 8323, personality and tools chosen at mint. It's yours." },
 ];
 
+// Verify leads the band (it's the thesis); the rest are supporting surfaces.
+const [LEAD, ...REST] = CARDS;
+
 const CHECKS = [
   { lbl: "raw input",  op: "keccak(query)",         hash: "0x2469bae0…9fef30" },
   { lbl: "provenance", op: "sanitization pipeline",  hash: "0x2469bae0…9fef30" },
@@ -99,26 +102,45 @@ export function Landing() {
           </div>
         </section>
 
-        {/* Entry cards */}
-        <section className="grid sm:grid-cols-2 gap-3 pb-4">
-          {CARDS.map((c) => (
-            <Link key={c.href} href={c.href}
-              className="group liquid-glass rounded-3xl p-5 transition-colors hover:border-brassLight/40">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/5 border border-white/10">
-                  <c.icon className="w-5 h-5 text-brassLight" />
-                </span>
-                <div className="flex-1">
-                  <p className="font-display font-medium text-paper flex items-center gap-1.5">
-                    {c.label}
-                    <ArrowUpRight className="w-3.5 h-3.5 text-gb-faint transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </p>
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-gb-faint">{c.tag}</p>
+        {/* Entry cards — Verify leads (the thesis), the rest support */}
+        <section className="pb-4">
+          {/* Lead: Verify */}
+          <Link href={LEAD.href}
+            className="group relative flex flex-col overflow-hidden rounded-3xl border border-brassLight/30 bg-brass/[0.06] p-6 sm:flex-row sm:items-center sm:gap-6 sm:p-7 transition-all duration-200 hover:-translate-y-1 hover:border-brassLight/60 hover:shadow-[0_20px_44px_-20px_rgba(198,160,90,0.5)] motion-reduce:transform-none motion-reduce:transition-none">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-brassLight/30 bg-brass/15">
+              <LEAD.icon className="h-7 w-7 text-brassLight" />
+            </span>
+            <div className="mt-4 flex-1 sm:mt-0">
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-brassLight/80">{LEAD.tag}</p>
+              <p className="mt-1 flex items-center gap-2 font-display font-medium text-2xl text-paper sm:text-3xl">
+                {LEAD.label}
+                <ArrowUpRight className="h-5 w-5 text-brassLight/70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </p>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-paper/60 sm:text-[15px]">{LEAD.desc}</p>
+            </div>
+          </Link>
+
+          {/* Supporting surfaces */}
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {REST.map((c) => (
+              <Link key={c.href} href={c.href}
+                className="group liquid-glass rounded-3xl p-5 transition-all duration-200 hover:-translate-y-1 hover:border-brassLight/40 hover:shadow-[0_12px_28px_-14px_rgba(198,160,90,0.4)] motion-reduce:transform-none motion-reduce:transition-none">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/5 border border-white/10">
+                    <c.icon className="w-5 h-5 text-brassLight" />
+                  </span>
+                  <div className="flex-1">
+                    <p className="font-display font-medium text-paper flex items-center gap-1.5">
+                      {c.label}
+                      <ArrowUpRight className="w-3.5 h-3.5 text-gb-faint transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </p>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-gb-faint">{c.tag}</p>
+                  </div>
                 </div>
-              </div>
-              <p className="mt-3 text-sm text-paper/50 leading-relaxed">{c.desc}</p>
-            </Link>
-          ))}
+                <p className="mt-3 text-sm text-paper/50 leading-relaxed">{c.desc}</p>
+              </Link>
+            ))}
+          </div>
         </section>
 
         {/* ─── The story ─────────────────────────────────────────────── */}
