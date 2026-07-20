@@ -39,6 +39,12 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
     const seen = new Set<string>();
     return [...heldCards, ...toolCards].filter((c: any) => (seen.has(c.id) ? false : (seen.add(c.id), true)));
   }, [a.consultTools, a.entitlements, premium]);
+  // Category tags for the agent = union of its loadout capabilities' tags (shared taxonomy).
+  const agentTags = useMemo(() => {
+    const set = new Set<string>();
+    for (const c of cards) premium.get((c as any).id)?.tags?.forEach((t) => set.add(t));
+    return Array.from(set);
+  }, [cards, premium]);
   const tools = cards.slice(0, 6);
   const extra = Math.max(0, cards.length - tools.length);
   const agentRef = `${a.registry}:${a.agentId}`;
@@ -87,6 +93,13 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
           <span className="inline-flex items-center gap-1"><Coins className="h-3.5 w-3.5" /> {fmtPrice(a.consultPrice)}</span>
           <span>window {fmtHours(a.completionWindow)}</span>
         </div>
+        {agentTags.length > 0 && (
+          <div className="mt-2.5 flex flex-wrap gap-1">
+            {agentTags.map((t) => (
+              <span key={t} className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider text-zinc-500">{t}</span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Actions bar */}

@@ -100,6 +100,14 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
 
       <p className="mt-3 text-xs leading-relaxed text-zinc-400">{mcp.description}</p>
 
+      {mcp.tags && mcp.tags.length > 0 && (
+        <div className="mt-2.5 flex flex-wrap gap-1">
+          {mcp.tags.map((t) => (
+            <span key={t} className="rounded-full border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider text-zinc-500">{t}</span>
+          ))}
+        </div>
+      )}
+
       <div className="mt-3 flex items-center justify-between text-[11px] text-zinc-500">
         <span className="font-mono">{fmtPrice(mcp.price)}</span>
         <span>{mcp.registered ? "registered on-chain" : live ? "not registered yet" : "launching on mainnet"}</span>

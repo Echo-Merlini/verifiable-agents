@@ -77,6 +77,7 @@ export interface PremiumMcp {
   logo: string;
   icon?: string;          // lucide fallback when no logo file (forensics / recompute)
   fill?: boolean;         // logo fills the icon square (bg-logos) vs centered transparent mark
+  tags?: string[];        // browsable taxonomy (Premium / DEX / Data / …), shared with /admin/mcps
   gates: string[];
   mcpId: string;          // keccak256(slug) — the on-chain id
   price: string;          // wei (live on-chain price if registered, else default)
