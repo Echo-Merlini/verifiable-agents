@@ -19,7 +19,7 @@ interface McpServer {
 
 // Curated capability taxonomy (in the spirit of skills.eth.sh) — admins can also type
 // a custom tag. "Premium" marks a paid MCP; the rest are descriptive categories.
-const TAG_OPTIONS = ["Premium", "Descriptive", "DEX", "Infrastructure", "Data", "Commerce", "Identity", "Storage"];
+const TAG_OPTIONS = ["Premium", "Community", "Recomputable", "Attested", "Descriptive", "DEX", "Infrastructure", "Data", "Commerce", "Identity", "Storage"];
 
 const parseTags = (s: string) => (s ? s.split(",").map((t) => t.trim()).filter(Boolean) : []);
 

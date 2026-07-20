@@ -6,7 +6,8 @@ import { useAccount, useWriteContract, useSwitchChain, useChainId, usePublicClie
 import { Sparkles, Wallet, Loader2, Check, ExternalLink, Lock, ShieldCheck } from "lucide-react";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { McpLogo } from "@/components/McpLogo";
-import { fetchPremiumMcps, fetchEntitlement, tagPillClass, type PremiumMcp, type MarketAgent } from "@/lib/marketplace";
+import { fetchPremiumMcps, fetchEntitlement, tagPillClass, verificationOf, VERIFICATION_TAGS, type PremiumMcp, type MarketAgent } from "@/lib/marketplace";
+import { VerificationBadge } from "@/components/VerificationBadge";
 
 // MCPEntitlementRegistry.buy(address registry, uint256 tokenId, bytes32 mcpId) payable
 const ENTITLEMENT_ABI = [
@@ -93,7 +94,10 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
           <McpLogo card={{ id: mcp.slug, label: mcp.label, logo: mcp.logo, icon: mcp.icon, fill: mcp.fill } as any} className="h-6 w-6" fill />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="font-display text-base font-semibold">{mcp.label}</h3>
+          <div className="flex items-start justify-between gap-2">
+            <h3 className="font-display text-base font-semibold">{mcp.label}</h3>
+            <VerificationBadge status={verificationOf(mcp.tags)} />
+          </div>
           <p className="text-xs text-zinc-500">{mcp.tagline}</p>
         </div>
       </div>
@@ -103,14 +107,17 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
       {/* Tags + price pinned near the equip bar so they align across cards regardless of
           how long the description runs */}
       <div className="mt-auto pt-3">
-        {mcp.tags && mcp.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {mcp.tags.map((t) => (
-              <span key={t} className={tagPillClass(t)}>{t}</span>
-            ))}
-          </div>
-        )}
-        <div className={`flex items-center justify-between text-[11px] text-zinc-500 ${mcp.tags && mcp.tags.length > 0 ? "mt-2.5" : ""}`}>
+        {(() => {
+          const pills = (mcp.tags ?? []).filter((t) => !VERIFICATION_TAGS.has(t.toLowerCase()));
+          return pills.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              {pills.map((t) => (
+                <span key={t} className={tagPillClass(t)}>{t}</span>
+              ))}
+            </div>
+          ) : null;
+        })()}
+        <div className={`flex items-center justify-between text-[11px] text-zinc-500 ${(mcp.tags ?? []).some((t) => !VERIFICATION_TAGS.has(t.toLowerCase())) ? "mt-2.5" : ""}`}>
           <span className="font-mono">{fmtPrice(mcp.price)}</span>
           <span>{mcp.registered ? "registered on-chain" : live ? "not registered yet" : "launching on mainnet"}</span>
         </div>

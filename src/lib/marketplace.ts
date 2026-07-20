@@ -100,6 +100,14 @@ export function tagPillClass(tag: string, size: "sm" | "md" = "md"): string {
   return `${base} border-white/[0.08] bg-white/[0.03] text-zinc-500`;
 }
 
+// Verification status — the proposal's Recomputable-vs-Attested axis. Default is "recomputable"
+// (all house catalog MCPs ship golden vectors); an "Attested" tag flips it to the exception lane.
+export type Verification = "recomputable" | "attested";
+export const VERIFICATION_TAGS = new Set(["recomputable", "attested"]);
+export function verificationOf(tags?: string[]): Verification {
+  return (tags ?? []).some((t) => t.toLowerCase() === "attested") ? "attested" : "recomputable";
+}
+
 export interface Entitlement {
   registry: string;
   tokenId: string;

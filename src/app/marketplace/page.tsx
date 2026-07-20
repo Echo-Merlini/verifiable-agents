@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatEther } from "viem";
 import { Bot, Coins, ClipboardCheck, ExternalLink, Loader2, Store } from "lucide-react";
-import { fetchMarketAgents, fetchPremiumMcps, tagPillClass, type MarketAgent, type PremiumMcp } from "@/lib/marketplace";
+import { fetchMarketAgents, fetchPremiumMcps, tagPillClass, verificationOf, VERIFICATION_TAGS, type MarketAgent, type PremiumMcp } from "@/lib/marketplace";
+import { VerificationBadge } from "@/components/VerificationBadge";
 import { buildCardsFromIds } from "@/lib/mcps";
 import { McpLogo } from "@/components/McpLogo";
 import { ReputationBadge } from "@/components/ReputationBadge";
@@ -42,9 +43,10 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
   // Agent category tags — the deduped union of its loadout's tags, aggregated by the gateway
   // (consult tools are mcp_server ids, so the tag join has to happen server-side). Pull Premium
   // first and Community second so they aren't lost among a dense loadout; keep the rest as-is.
+  const verification = verificationOf(a.tags);
   const agentTags = useMemo(() => {
     const rank = (t: string) => (t.toLowerCase() === "premium" ? 0 : t.toLowerCase() === "community" ? 1 : 2);
-    return [...(a.tags ?? [])].sort((x, y) => rank(x) - rank(y));
+    return [...(a.tags ?? [])].filter((t) => !VERIFICATION_TAGS.has(t.toLowerCase())).sort((x, y) => rank(x) - rank(y));
   }, [a.tags]);
   const shownTags = agentTags.slice(0, 8);
   const extraTags = agentTags.length - shownTags.length;
@@ -68,6 +70,7 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
             <h3 className="truncate font-display text-base font-semibold">{a.name || `Agent #${a.agentId}`}</h3>
+            <VerificationBadge status={verification} />
           </div>
           <div className="mt-1.5">
             <ReputationBadge rep={a.reputation} />
