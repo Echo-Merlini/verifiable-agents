@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
+import { VerticeMark } from "@/components/VerticeMark";
 
 // Lightweight top bar for the marketplace surfaces, matching the /demo header. The
 // wallet lives inline in each page's own flow (buy / connect), so this is nav only.
@@ -20,7 +21,8 @@ export function TopNav() {
   return (
     <header className="border-b border-white/[0.06]">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-5 gap-y-2 px-4 py-4 sm:px-6">
-        <Link href="/demo" className="font-display font-medium tracking-tight text-paper">
+        <Link href="/demo" className="inline-flex items-center gap-2.5 font-display font-medium tracking-tight text-paper">
+          <VerticeMark size={26} spin />
           Recomputable Agents
         </Link>
         <nav className="flex flex-wrap items-center gap-x-5 gap-y-1">

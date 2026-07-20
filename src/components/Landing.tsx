@@ -247,26 +247,6 @@ export function Landing() {
           </div>
         </section>
 
-        {/* Close */}
-        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
-          <div className="story-reveal">
-            <Eyebrow>From a single WYRIWE to this</Eyebrow>
-            <h2 className="font-display font-medium tracking-tightest text-4xl sm:text-6xl leading-[0.98]">
-              Don&apos;t trust. <span className="brass-text">Recompute.</span>
-            </h2>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="/verify"
-                className="inline-flex items-center gap-2 rounded-full bg-brass px-6 py-3 text-sm font-display font-medium text-deepink hover:bg-brassLight transition-colors">
-                <ShieldCheck className="w-4 h-4" /> Recompute a real action
-              </Link>
-              <Link href="/demo"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-paper/80 hover:border-brassLight/40 hover:text-paper transition-colors">
-                Watch an agent act <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
         {/* Developer community */}
         <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
           <div className="story-reveal liquid-glass rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8">
@@ -290,6 +270,26 @@ export function Landing() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/telegram-devs-qr.png" alt="QR code — join the developer Telegram group" className="h-36 w-36 sm:h-40 sm:w-40" />
             </a>
+          </div>
+        </section>
+
+        {/* Close */}
+        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
+          <div className="story-reveal">
+            <Eyebrow>From a single WYRIWE to this</Eyebrow>
+            <h2 className="font-display font-medium tracking-tightest text-4xl sm:text-6xl leading-[0.98]">
+              Don&apos;t trust. <span className="brass-text">Recompute.</span>
+            </h2>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link href="/verify"
+                className="inline-flex items-center gap-2 rounded-full bg-brass px-6 py-3 text-sm font-display font-medium text-deepink hover:bg-brassLight transition-colors">
+                <ShieldCheck className="w-4 h-4" /> Recompute a real action
+              </Link>
+              <Link href="/demo"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-paper/80 hover:border-brassLight/40 hover:text-paper transition-colors">
+                Watch an agent act <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </section>
 
