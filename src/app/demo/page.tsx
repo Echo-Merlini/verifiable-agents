@@ -9,6 +9,7 @@ import { ShieldCheck, ArrowUpRight, Wallet, ChevronLeft, ChevronRight, LogIn, Lo
 import { buildLiveRecord, stashLiveRecord } from "@/lib/liveRecord";
 import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
+import { VerticeMark } from "@/components/VerticeMark";
 import { buildMcpCards, buildCardsFromIds, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { getAgentAuthNonce, verifyAgentOwner } from "@/lib/api";
@@ -158,7 +159,7 @@ export default function DemoPage() {
       <div className="max-w-4xl mx-auto px-6 md:px-10 py-8">
         {/* Top bar */}
         <div className="flex items-center justify-between gap-4">
-          <Link href="/demo" className="font-display font-medium tracking-tight text-paper">Recomputable Agents</Link>
+          <Link href="/demo" className="inline-flex items-center gap-2.5 font-display font-medium tracking-tight text-paper"><VerticeMark size={26} spin />Recomputable Agents</Link>
           <div className="flex items-center gap-5">
             <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Home</Link>
             <Link href="/mint" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Mint</Link>

@@ -11,6 +11,7 @@ import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
 import { ConsultProofCard } from "@/components/ConsultProofCard";
 import { ReputationBadge } from "@/components/ReputationBadge";
+import { VerticeMark } from "@/components/VerticeMark";
 import { fetchReputation, type Reputation } from "@/lib/marketplace";
 import { buildCardsFromIds } from "@/lib/mcps";
 
@@ -163,7 +164,7 @@ export default function A2APage() {
       <div className="max-w-5xl mx-auto px-6 py-8">
         {/* Top bar */}
         <div className="flex items-center justify-between gap-4">
-          <Link href="/demo" className="font-display font-medium tracking-tight text-paper">Recomputable Agents</Link>
+          <Link href="/demo" className="inline-flex items-center gap-2.5 font-display font-medium tracking-tight text-paper"><VerticeMark size={26} spin />Recomputable Agents</Link>
           <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
             <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Home</Link>
             <Link href="/demo" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Demo</Link>
