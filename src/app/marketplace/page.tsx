@@ -40,8 +40,14 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
     return [...heldCards, ...toolCards].filter((c: any) => (seen.has(c.id) ? false : (seen.add(c.id), true)));
   }, [a.consultTools, a.entitlements, premium]);
   // Agent category tags — the deduped union of its loadout's tags, aggregated by the gateway
-  // (consult tools are mcp_server ids, so the tag join has to happen server-side).
-  const agentTags = a.tags ?? [];
+  // (consult tools are mcp_server ids, so the tag join has to happen server-side). Pull Premium
+  // first and Community second so they aren't lost among a dense loadout; keep the rest as-is.
+  const agentTags = useMemo(() => {
+    const rank = (t: string) => (t.toLowerCase() === "premium" ? 0 : t.toLowerCase() === "community" ? 1 : 2);
+    return [...(a.tags ?? [])].sort((x, y) => rank(x) - rank(y));
+  }, [a.tags]);
+  const shownTags = agentTags.slice(0, 8);
+  const extraTags = agentTags.length - shownTags.length;
   const tools = cards.slice(0, 6);
   const extra = Math.max(0, cards.length - tools.length);
   const agentRef = `${a.registry}:${a.agentId}`;
@@ -90,11 +96,12 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
           <span className="inline-flex items-center gap-1"><Coins className="h-3.5 w-3.5" /> {fmtPrice(a.consultPrice)}</span>
           <span>window {fmtHours(a.completionWindow)}</span>
         </div>
-        {agentTags.length > 0 && (
+        {shownTags.length > 0 && (
           <div className="mt-2.5 flex flex-wrap gap-1">
-            {agentTags.map((t) => (
+            {shownTags.map((t) => (
               <span key={t} className={tagPillClass(t, "sm")}>{t}</span>
             ))}
+            {extraTags > 0 && <span className={tagPillClass("+", "sm")}>+{extraTags}</span>}
           </div>
         )}
       </div>
