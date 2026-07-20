@@ -228,7 +228,7 @@ export default function A2APage() {
 
             {/* Right — agent card + pay */}
             <div className="space-y-4">
-              <div className="liquid-glass rounded-3xl p-5 flex gap-4">
+              <div className="liquid-glass rounded-3xl border border-brassLight/30 p-5 flex gap-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={active.image} alt={active.name} className="w-20 h-20 rounded-2xl object-cover border border-white/10 shrink-0" style={{ imageRendering: "pixelated" }} />
                 <div className="flex-1 min-w-0">
