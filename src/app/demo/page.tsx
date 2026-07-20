@@ -13,6 +13,7 @@ import { VerticeMark } from "@/components/VerticeMark";
 import { buildMcpCards, buildCardsFromIds, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { getAgentAuthNonce, verifyAgentOwner } from "@/lib/api";
+import { tagPillClass } from "@/lib/marketplace";
 
 const TOKEN_KEY = "ens-kit-admin-token";
 
@@ -90,6 +91,7 @@ export default function DemoPage() {
   const [cards, setCards] = useState<McpCard[]>([]);                 // tools of the featured agent
   const trackRef = useRef<HTMLDivElement>(null);                     // MCP carousel scroll track
   const [hoverMcp, setHoverMcp] = useState<McpCard | null>(null);    // capability described below the carousel
+  const [mcpTags, setMcpTags] = useState<Record<string, string[]>>({}); // mcp_server id → taxonomy tags
   const [lastExchange, setLastExchange] = useState<{ query: string; reply: string } | null>(null);
   const [recomputing, setRecomputing] = useState(false);
   const [recomputeErr, setRecomputeErr] = useState<string | null>(null);
@@ -99,6 +101,18 @@ export default function DemoPage() {
     fetch(`${GW_URL}/agent/public-mcps`).then((r) => (r.ok ? r.json() : []))
       .then((mcps: PublicMcp[]) => setFallbackCards(buildMcpCards(mcps))).catch(() => setFallbackCards([]));
   }, []);
+
+  // Taxonomy tags per tool (mcp_server id → tags), so each loadout card shows its categories.
+  useEffect(() => {
+    fetch(`${GW_URL}/marketplace/mcp-tags`).then((r) => (r.ok ? r.json() : {}))
+      .then((m: Record<string, string[]>) => setMcpTags(m || {})).catch(() => setMcpTags({}));
+  }, []);
+
+  // Premium first, Community second, rest after — the shared ordering.
+  const orderTags = (tags: string[]) => {
+    const rank = (t: string) => (t.toLowerCase() === "premium" ? 0 : t.toLowerCase() === "community" ? 1 : 2);
+    return [...tags].sort((a, b) => rank(a) - rank(b));
+  };
 
   // On connect → the wallet's Recompute Kit Bots.
   useEffect(() => {
@@ -265,7 +279,21 @@ export default function DemoPage() {
             >
               {cards.map((c) => (
                 <div key={c.id} className="group relative w-[calc(50%-0.375rem)] shrink-0 snap-start sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.5625rem)]">
-                  <span className="pointer-events-none absolute right-2 top-2 z-10 rounded-full bg-brass/15 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider text-brassLight ring-1 ring-brass/40">Premium</span>
+                  {/* Taxonomy tags — a vertical column from Premium downwards, capped at 4 + N */}
+                  {(() => {
+                    const ts = orderTags(mcpTags[c.id] || []);
+                    if (!ts.length) return null;
+                    const shown = ts.slice(0, 4);
+                    const extra = ts.length - shown.length;
+                    return (
+                      <div className="pointer-events-none absolute right-2 top-2 z-10 flex flex-col items-end gap-1">
+                        {shown.map((t) => (
+                          <span key={t} className={tagPillClass(t, "sm")}>{t}</span>
+                        ))}
+                        {extra > 0 && <span className={tagPillClass("+", "sm")}>+{extra}</span>}
+                      </div>
+                    );
+                  })()}
                   <button
                     onClick={() => pick(c)}
                     onMouseEnter={() => setHoverMcp(c)}
@@ -275,11 +303,11 @@ export default function DemoPage() {
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-brass/25">
                       <McpLogo card={c} className="h-6 w-6" fill />
                     </span>
-                    <p className="mt-3 font-display font-medium text-paper flex items-center gap-1">
+                    <p className="mt-3 pr-16 font-display font-medium text-paper flex items-center gap-1">
                       {c.label}
                       <ArrowUpRight className="h-3.5 w-3.5 text-gb-faint transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
                     </p>
-                    <p className="mt-0.5 text-[11px] text-gb-faint">{c.tagline}</p>
+                    <p className="mt-0.5 pr-16 text-[11px] text-gb-faint">{c.tagline}</p>
                   </button>
                 </div>
               ))}
