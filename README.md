@@ -4,7 +4,7 @@
 >
 > *Don't trust. Recompute.*
 
-**Live demo:** unveiled at **ETHGlobal Lisbon** — open `/verify`, press **Recompute**, and watch every check re-derive in your own browser.
+**Live demo:** **[demo.verticecriativo.pt](https://demo.verticecriativo.pt)** — unveiled at **ETHGlobal Lisbon**. Open `/verify`, press **Recompute**, and watch every check re-derive in your own browser. Every MCP capability is **free to try live** at the event.
 **By:** [Vértice Criativo](https://verticecriativo.pt) — a self-hosted, verifiable, full-stack studio.
 
 ---
