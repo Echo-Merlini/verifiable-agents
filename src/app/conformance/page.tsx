@@ -85,9 +85,30 @@ export default function ConformancePage() {
           Listing is a <span className="text-brassLight">predicate</span>, not a permission.
         </h1>
         <p className="mt-4 max-w-[54ch] font-serif text-[18px] leading-relaxed text-paper/70">
-          No committee reviews a submission. A capability is graded against a{" "}
-          <span className="text-paper">hash-pinned</span> set of golden vectors — reproduce every one
-          and it lists itself. <span className="text-paper">The vectors decide, not a human.</span>
+          This is how a capability <em className="text-paper not-italic font-medium">lists in the marketplace</em>.
+          No committee reviews it — it's graded against a <span className="text-paper">hash-pinned</span> set
+          of golden vectors, and reproducing every one is what lists it.{" "}
+          <span className="text-paper">The vectors decide, not a human.</span>
+        </p>
+
+        {/* how it's used — the MCP listing flow */}
+        <div className="mt-8 grid gap-3 sm:grid-cols-3">
+          {[
+            { n: "01", t: "Submit an MCP", d: "Point the gate at a capability + the category suite it claims — content-hashed golden vectors." },
+            { n: "02", t: "Recompute", d: "Every vector is re-derived against it. Reproduce them all and it passes — no human in the loop." },
+            { n: "03", t: "Auto-list", d: "Deterministic capabilities earn the Recomputable badge and list themselves; live-data ones go to the Attested lane." },
+          ].map((s) => (
+            <div key={s.n} className="rounded-xl border border-white/[0.07] bg-ink/40 p-4">
+              <div className="font-mono text-[12px] text-brassLight">{s.n}</div>
+              <div className="mt-1 font-semibold">{s.t}</div>
+              <div className="mt-1 text-[12.5px] leading-snug text-paper/55">{s.d}</div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-6 text-[13.5px] text-paper/55">
+          Below, the machine gate runs live on <span className="text-paper">Chronicle Checkpoint
+          Continuity</span> — our reference recomputable capability — graded against its 20 pinned vectors,
+          exactly as a submitted MCP would be.
         </p>
 
         {/* suite card */}
