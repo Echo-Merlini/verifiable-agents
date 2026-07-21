@@ -18,11 +18,11 @@ type RunResult = {
 // The communication act, in the grammar humans already use. Inputs mirror the pinned suite;
 // the recomputed hash comes from the live engine.
 const LINKS = [
-  { name: "who",       w: "Who",                   said: "dinamic.eth",                          note: "the agent's identity (ENS namehash)" },
-  { name: "said_what", w: "Said what",             said: "“swap 1 ETH to USDC on Uniswap”",       tampered: "“swap 10 ETH to USDC …”",  note: "the exact instruction it acted on" },
-  { name: "channel",   w: "Through which channel", said: "uniswap",                              note: "the MCP capability used" },
-  { name: "to_whom",   w: "To whom",               said: "0xFf9a…ca14",                          note: "the recipient / counterparty" },
-  { name: "effect",    w: "With what effect",      said: "exactInputSingle calldata · user signs", note: "the anchored outcome" },
+  { name: "who",       w: "Who",                   said: "dinamic.eth",                                  note: "the agent's identity (ENS namehash)" },
+  { name: "said_what", w: "Said what",             said: "“set dinamic.eth address to 0xFf9a…ca14”",     tampered: "“…set to 0x…dEaD”", note: "the exact instruction it acted on" },
+  { name: "channel",   w: "Through which channel", said: "ens",                                          note: "the MCP capability used" },
+  { name: "to_whom",   w: "To whom",               said: "0xFf9a…ca14",                                  note: "the address being set / owner" },
+  { name: "effect",    w: "With what effect",      said: "ens_set_addr calldata",                        note: "recomputed from a LIVE ENS MCP call", live: true },
 ];
 
 const short = (h?: string) => (h && h.length > 16 ? `${h.slice(0, 12)}…${h.slice(-6)}` : h || "");
@@ -108,7 +108,12 @@ export default function ConformancePage() {
                 <div key={l.name} className={`grid grid-cols-[130px_1fr_auto] items-center gap-3 py-3 transition-opacity ${revealed || !result ? "opacity-100" : "opacity-35"}`}>
                   <div className="font-mono text-[12px] uppercase tracking-wide text-brassLight/90">{l.w}</div>
                   <div className="min-w-0">
-                    <div className={`truncate text-[13.5px] ${failed ? "text-red-300" : "text-paper/90"}`}>{said}</div>
+                    <div className={`flex items-center gap-2 text-[13.5px] ${failed ? "text-red-300" : "text-paper/90"}`}>
+                      <span className="truncate">{said}</span>
+                      {(l as any).live && (
+                        <span className="shrink-0 rounded border border-emerald-400/40 bg-emerald-400/10 px-1.5 py-[1px] font-mono text-[9px] uppercase tracking-wide text-emerald-300">live mcp</span>
+                      )}
+                    </div>
                     <div className="truncate font-mono text-[11px] text-paper/40">
                       {revealed && r ? (failed ? "does not reproduce the pinned record" : short(r.got?.value)) : l.note}
                     </div>
