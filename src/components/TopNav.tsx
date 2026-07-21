@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/demo", label: "Demo" },
   { href: "/mint", label: "Mint" },
   { href: "/marketplace", label: "Marketplace" },
+  { href: "/conformance", label: "Gate" },
   { href: "/A2A", label: "A2A" },
   { href: "/console", label: "Console" },
 ];
