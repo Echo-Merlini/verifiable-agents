@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ShieldCheck, Loader2, Check, X, Cpu, AlertTriangle, ArrowRight, Fingerprint } from "lucide-react";
+import { ShieldCheck, Loader2, Check, X, Cpu, AlertTriangle, ArrowRight, Fingerprint, Download } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
 import { VerificationBadge } from "@/components/VerificationBadge";
 import { tagPillClass } from "@/lib/marketplace";
@@ -18,7 +18,18 @@ type RunResult = {
   verdict: string; pass: boolean; tampered?: boolean;
   reproduced: number | null; total: number | null;
   run?: { results?: VecResult[]; vectors_sha256?: string };
+  receipt?: any;
 };
+
+function downloadReceipt(receipt: any, ok: boolean) {
+  const blob = new Blob([JSON.stringify(receipt, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `conformance-receipt-ens-write${ok ? "" : "-rejected"}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
 
 // The candidate MCP being submitted to the gate.
 const CANDIDATE = {
@@ -151,6 +162,18 @@ export default function ConformancePage() {
                     <div className="font-semibold text-red-300">Not listed</div>
                     <div className="text-[13px] text-paper/60">A vector didn't reproduce, so it can't earn the badge. Not rejected by a person — it just doesn't recompute. Fix the failing link and resubmit.</div>
                   </div>
+                </div>
+              </div>
+            )}
+            {result?.receipt && (
+              <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-deepink/50 p-4">
+                <button onClick={() => downloadReceipt(result.receipt, !!listed)}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-brassLight/40 bg-brassLight/10 px-4 py-2.5 font-display text-[13px] font-semibold text-brassLight transition hover:bg-brassLight/20">
+                  <Download className="h-4 w-4" /> Download receipt
+                </button>
+                <div className="min-w-0 flex-1 text-[12px] leading-snug text-paper/55">
+                  A portable <span className="font-mono text-[11px] text-paper/70">receiptos.evidence_capsule.v0</span> — its
+                  root recomputes offline and every vector carries its rule + expected + got. Re-verify it yourself; no trust in this gate.
                 </div>
               </div>
             )}
