@@ -12,7 +12,7 @@ const mmss = (s: number) => {
 };
 
 export default function VoicePlayer({
-  src = "/why-recompute.mp3",
+  src = "/why-recompute.v2.mp3",
   label = "Hear the why",
 }: { src?: string; label?: string }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
