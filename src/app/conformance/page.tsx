@@ -9,9 +9,11 @@ import { tagPillClass } from "@/lib/marketplace";
 
 const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 const SUITE = "ens_write.v0";
-const SUITE_HASH = "29d57fd5…";
+const SUITE_HASH = "f4fec32a…";
 
-type VecResult = { name: string; ok: boolean; got?: any };
+const short = (h?: string) => (h && h.length > 16 ? `${h.slice(0, 10)}…${h.slice(-4)}` : h || "");
+
+type VecResult = { name: string; ok: boolean; got?: any; expected?: any };
 type RunResult = {
   verdict: string; pass: boolean; tampered?: boolean;
   reproduced: number | null; total: number | null;
@@ -88,7 +90,7 @@ export default function ConformancePage() {
 
         {/* Step 2 — Grade */}
         {phase !== "idle" && (
-          <Step n="02" t="Grade it — the vectors run against it">
+          <Step n="02" t="Grade it — the recompute-kit re-derives each tx; the MCP must match">
             <div className="rounded-xl border border-white/10 bg-deepink/50 p-4">
               <div className="flex items-center justify-between font-mono text-[12px] text-paper/55">
                 <span>{phase === "grading" ? "recomputing golden vectors…" : `suite verified · ${result?.run?.vectors_sha256?.slice(0, 12) ?? SUITE_HASH}…`}</span>
@@ -96,11 +98,16 @@ export default function ConformancePage() {
               </div>
               {phase === "grading" && <div className="mt-3 flex items-center gap-2 text-paper/50"><Loader2 className="h-4 w-4 animate-spin" /> grading the submission…</div>}
               {phase === "done" && (
-                <div className="mt-3 space-y-1.5">
+                <div className="mt-3 space-y-2">
                   {results.map((v) => (
-                    <div key={v.name} className="flex items-center gap-2.5 font-mono text-[12px]">
-                      <span className={`inline-grid h-4 w-4 place-items-center rounded ${v.ok ? "bg-emerald-400/12 text-emerald-300" : "bg-red-400/15 text-red-400"}`}>{v.ok ? <Check className="h-2.5 w-2.5" /> : <X className="h-2.5 w-2.5" />}</span>
-                      <span className={v.ok ? "text-paper/70" : "text-red-300"}>{v.name}{!v.ok && " — does not reproduce"}</span>
+                    <div key={v.name}>
+                      <div className="flex items-center gap-2.5 font-mono text-[12px]">
+                        <span className={`inline-grid h-4 w-4 place-items-center rounded ${v.ok ? "bg-emerald-400/12 text-emerald-300" : "bg-red-400/15 text-red-400"}`}>{v.ok ? <Check className="h-2.5 w-2.5" /> : <X className="h-2.5 w-2.5" />}</span>
+                        <span className={v.ok ? "text-paper/75" : "text-red-300"}>{v.name}</span>
+                      </div>
+                      <div className="ml-[26px] mt-0.5 font-mono text-[10px] text-paper/40">
+                        rules <span className="text-paper/55">{short(v.expected?.value)}</span> <span className={v.ok ? "text-emerald-300" : "text-red-400"}>{v.ok ? "↔" : "≠"}</span> mcp <span className={v.ok ? "text-paper/55" : "text-red-300"}>{short(v.got?.value)}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
