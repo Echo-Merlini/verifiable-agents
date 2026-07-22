@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ShieldCheck, Loader2, Check, X, Search, ArrowRight, Fingerprint, Download } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
@@ -8,7 +8,14 @@ import { VerificationBadge } from "@/components/VerificationBadge";
 import { tagPillClass } from "@/lib/marketplace";
 
 const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
+const CATALOG_URL = "https://raw.githubusercontent.com/Echo-Merlini/agent-mcp-catalog/main/catalog.json";
 const short = (h?: string) => (h && h.length > 16 ? `${h.slice(0, 10)}…${h.slice(-4)}` : h || "");
+
+type CatalogMcp = {
+  slug: string; name: string; category?: string; endpoint?: string | null;
+  introspectable?: boolean; verification?: string;
+  lanes?: { recomputable?: number | null; attested?: number | null };
+};
 
 type Tool = { tool: string; lane: "recomputable" | "attested"; ok?: boolean; recompute?: string; expected?: any; got?: any; reason?: string };
 type Result = { endpoint: string; tools?: Tool[]; recomputable: number; attested: number; pass: boolean; receipt?: any; error?: string };
@@ -33,19 +40,29 @@ export default function ConformancePage() {
   const [endpoint, setEndpoint] = useState("https://gateway.ensub.org/mcp/ens");
   const [phase, setPhase] = useState<"idle" | "grading" | "done">("idle");
   const [result, setResult] = useState<Result | null>(null);
+  const [catalog, setCatalog] = useState<CatalogMcp[]>([]);
 
-  async function submit() {
-    if (phase === "grading" || !endpoint.trim()) return;
+  useEffect(() => {
+    fetch(CATALOG_URL)
+      .then((r) => r.json())
+      .then((d) => setCatalog(Array.isArray(d?.mcps) ? d.mcps : []))
+      .catch(() => setCatalog([]));
+  }, []);
+
+  async function submit(ep?: string) {
+    const target = (ep ?? endpoint).trim();
+    if (phase === "grading" || !target) return;
+    if (ep) setEndpoint(ep);
     setPhase("grading"); setResult(null);
     try {
       const r = await fetch(`${GW_URL}/conformance/introspect`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ endpoint: endpoint.trim() }),
+        body: JSON.stringify({ endpoint: target }),
       });
       const d: Result = await r.json();
       setTimeout(() => { setResult(d); setPhase("done"); }, 700);
     } catch (e) {
-      setResult({ endpoint, recomputable: 0, attested: 0, pass: false, error: String(e) });
+      setResult({ endpoint: target, recomputable: 0, attested: 0, pass: false, error: String(e) });
       setPhase("done");
     }
   }
@@ -79,12 +96,38 @@ export default function ConformancePage() {
                 spellCheck={false}
                 className="min-w-0 flex-1 bg-transparent py-3 font-mono text-[13px] text-paper placeholder:text-paper/30 focus:outline-none" />
             </div>
-            <button onClick={submit} disabled={phase === "grading"}
+            <button onClick={() => submit()} disabled={phase === "grading"}
               className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brassLight px-5 py-3 font-display text-[14px] font-semibold text-deepink transition hover:bg-[#ecb264] disabled:opacity-60">
               {phase === "grading" ? <><Loader2 className="h-4 w-4 animate-spin" /> Recomputing…</> : <>Submit to the gate</>}
             </button>
           </div>
           <div className="mt-2 font-mono text-[11px] text-paper/40">reads <span className="text-paper/55">tools/list</span>, matches each tool against the recompute-kit's recipe registry — https only</div>
+
+          {catalog.filter((m) => m.endpoint && m.introspectable !== false).length > 0 && (
+            <div className="mt-4">
+              <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.18em] text-paper/40">
+                or try one from the <a href="https://github.com/Echo-Merlini/agent-mcp-catalog" target="_blank" rel="noreferrer" className="text-brassLight/80 underline decoration-dotted underline-offset-2 hover:text-brassLight">catalog</a>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {catalog.filter((m) => m.endpoint && m.introspectable !== false).map((m) => {
+                  const r = m.lanes?.recomputable ?? 0;
+                  const a = m.lanes?.attested;
+                  const isRec = (r ?? 0) > 0;
+                  return (
+                    <button key={m.slug} onClick={() => submit(m.endpoint!)} disabled={phase === "grading"}
+                      title={m.endpoint!}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-[11px] transition disabled:opacity-50 ${
+                        endpoint === m.endpoint ? "border-brassLight/60 bg-brassLight/10 text-paper" : "border-white/12 bg-deepink/50 text-paper/70 hover:border-white/25 hover:text-paper"}`}>
+                      <span className={`h-1.5 w-1.5 rounded-full ${isRec ? "bg-emerald-400" : "bg-brassLight"}`} />
+                      {m.name}
+                      <span className="text-paper/35">{r}/{a ?? "·"}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-2 font-mono text-[10px] text-paper/30"><span className="text-emerald-400">●</span> has a live recipe · <span className="text-brassLight">●</span> attested only · counts are recomputable/attested tools</div>
+            </div>
+          )}
         </Step>
 
         {/* 02 — detect + grade */}
