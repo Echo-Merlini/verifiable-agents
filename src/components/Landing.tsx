@@ -104,7 +104,7 @@ export function Landing() {
               className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-paper/80 hover:border-brassLight/40 hover:text-paper transition-colors">
               Talk to a live agent <ArrowRight className="w-4 h-4" />
             </Link>
-            <VoicePlayer label="Hear the why · 2:54" />
+            <VoicePlayer label="Hear the why · 2:59" />
           </div>
         </section>
 
