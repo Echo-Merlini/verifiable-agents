@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge, Network, Send, type LucideIcon } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
+import VoicePlayer from "@/components/VoicePlayer";
 
 type Entry = { href: string; icon: LucideIcon; label: string; tag: string; desc: string; external?: boolean };
 
@@ -103,6 +104,7 @@ export function Landing() {
               className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-paper/80 hover:border-brassLight/40 hover:text-paper transition-colors">
               Talk to a live agent <ArrowRight className="w-4 h-4" />
             </Link>
+            <VoicePlayer label="Hear the why · 2:54" />
           </div>
         </section>
 
