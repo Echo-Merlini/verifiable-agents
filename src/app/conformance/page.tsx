@@ -8,8 +8,8 @@ import { VerificationBadge } from "@/components/VerificationBadge";
 import { tagPillClass } from "@/lib/marketplace";
 
 const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
-const SUITE = "communication_chain.v0";
-const SUITE_HASH = "d9d63cc8…";
+const SUITE = "ens_write.v0";
+const SUITE_HASH = "29d57fd5…";
 
 type VecResult = { name: string; ok: boolean; got?: any };
 type RunResult = {
