@@ -1,9 +1,11 @@
 import { ShieldCheck, Shield } from "lucide-react";
 import type { Verification } from "@/lib/marketplace";
 
-// Icon-only mark. Green shield = Recomputable (verified end-to-end against golden vectors, no
-// human in the loop); amber shield = Attested (vouched for, not fully recomputable). The home
-// page explains the symbol — see Landing legend.
+// Icon-only mark, deliberately discreet — both shields stay muted grey so they don't shout. The
+// checkmark shield (lighter grey) = Recomputable (verified end-to-end against golden vectors, no
+// human in the loop); the plain shield (dimmer grey) = Attested (vouched for, not fully
+// recomputable — the quiet exception lane). Icon shape + shade tell them apart; the marketplace
+// and home-page legends spell it out.
 export function VerificationBadge({ status, className = "" }: { status: Verification; className?: string }) {
   const rec = status === "recomputable";
   const Icon = rec ? ShieldCheck : Shield;
@@ -16,7 +18,7 @@ export function VerificationBadge({ status, className = "" }: { status: Verifica
         : "Attested — vouched for, not fully recomputable"}
       className={`inline-flex shrink-0 ${className}`}
     >
-      <Icon className={`h-4 w-4 ${rec ? "text-zinc-500" : "text-amber-400"}`} />
+      <Icon className={`h-4 w-4 ${rec ? "text-zinc-500" : "text-zinc-600"}`} />
     </span>
   );
 }

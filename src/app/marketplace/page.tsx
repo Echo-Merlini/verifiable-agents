@@ -172,9 +172,9 @@ export default function MarketplacePage() {
           <ShieldCheck className="h-3.5 w-3.5 text-zinc-500" />
           <span><b className="font-semibold text-zinc-300">Recomputable</b> — re-derived from golden vectors, no human in the loop</span>
         </span>
-        <span className="inline-flex items-center gap-1.5" title="Vouched for, not fully recomputable — the exception lane">
-          <Shield className="h-3.5 w-3.5 text-amber-400" />
-          <span><b className="font-semibold text-amber-300/90">Attested</b> — vouched for, not fully recomputable</span>
+        <span className="inline-flex items-center gap-1.5" title="Vouched for, not fully recomputable — the quiet exception lane">
+          <Shield className="h-3.5 w-3.5 text-zinc-600" />
+          <span><b className="font-semibold text-zinc-400">Attested</b> — vouched for, not fully recomputable</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
           <span className={tagPillClass("Premium", "sm")}>Premium</span>
