@@ -303,8 +303,8 @@ export function Landing() {
         {/* Footer */}
         <footer className="mt-20 border-t border-white/8 py-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <p className="font-mono text-[11px] text-gb-muted">
-            Six standards, composed, live on mainnet ·{" "}
-            <span className="text-brassLight/80">8004 · 8217 · 8281 · 8299 · 8275 · 8323</span>
+            Five standards, composed, live on mainnet ·{" "}
+            <span className="text-brassLight/80">8004 · 8299 · 8281 · 8275 · 8323</span>
           </p>
           <div className="flex items-center gap-6">
             <a href="/coloredpaper.html" target="_blank" rel="noreferrer"
