@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { formatEther } from "viem";
-import { Bot, Coins, ClipboardCheck, ExternalLink, Loader2, Store } from "lucide-react";
+import { Bot, Coins, ClipboardCheck, ExternalLink, Loader2, Store, Shield, ShieldCheck } from "lucide-react";
 import { fetchMarketAgents, fetchPremiumMcps, tagPillClass, verificationOf, VERIFICATION_TAGS, type MarketAgent, type PremiumMcp } from "@/lib/marketplace";
 import { VerificationBadge } from "@/components/VerificationBadge";
 import { buildCardsFromIds } from "@/lib/mcps";
@@ -164,6 +164,28 @@ export default function MarketplacePage() {
         score is a predicate over public escrow settlements — recomputed on-chain, not asserted.
         <Link href="/console" className="ml-1 text-brassLight hover:underline">Owner &amp; auditor console →</Link>
       </p>
+
+      {/* Legend — what the shields and tags on each card mean */}
+      <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 text-[11px] text-zinc-500">
+        <span className="font-medium uppercase tracking-wider text-zinc-400">What the marks mean</span>
+        <span className="inline-flex items-center gap-1.5" title="Reproduced end-to-end from golden vectors, no human in the loop">
+          <ShieldCheck className="h-3.5 w-3.5 text-zinc-500" />
+          <span><b className="font-semibold text-zinc-300">Recomputable</b> — re-derived from golden vectors, no human in the loop</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5" title="Vouched for, not fully recomputable — the exception lane">
+          <Shield className="h-3.5 w-3.5 text-amber-400" />
+          <span><b className="font-semibold text-amber-300/90">Attested</b> — vouched for, not fully recomputable</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className={tagPillClass("Premium", "sm")}>Premium</span>
+          <span>paid capability, carried by the agent NFT</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <span className={tagPillClass("Community", "sm")}>Community</span>
+          <span>open, community-listed</span>
+        </span>
+        <span className="text-zinc-600">Other tags = capability categories (DEX, Data, …)</span>
+      </div>
 
       {/* Grid */}
       {loading ? (
