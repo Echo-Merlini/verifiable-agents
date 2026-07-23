@@ -96,7 +96,7 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-display text-base font-semibold">{mcp.label}</h3>
-            <VerificationBadge status={verificationOf(mcp.tags)} />
+            <VerificationBadge status={mcp.verification ?? verificationOf(mcp.tags)} />
           </div>
           <p className="text-xs text-zinc-500">{mcp.tagline}</p>
         </div>
