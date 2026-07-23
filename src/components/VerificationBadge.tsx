@@ -4,9 +4,22 @@ import type { Verification } from "@/lib/marketplace";
 // Icon-only mark, deliberately discreet — both shields stay muted grey so they don't shout. The
 // checkmark shield (lighter grey) = Recomputable (verified end-to-end against golden vectors, no
 // human in the loop); the plain shield (dimmer grey) = Attested (vouched for, not fully
-// recomputable — the quiet exception lane). Icon shape + shade tell them apart; the marketplace
-// and home-page legends spell it out.
+// recomputable — the quiet exception lane). "both" renders the two side by side: a mixed loadout
+// that spans both lanes. Icon shape + shade tell them apart; the marketplace/home legends spell it out.
 export function VerificationBadge({ status, className = "" }: { status: Verification; className?: string }) {
+  if (status === "both") {
+    return (
+      <span
+        role="img"
+        aria-label="Recomputable and attested"
+        title="Mixed loadout — some capabilities recomputable, some attested"
+        className={`inline-flex shrink-0 items-center -space-x-0.5 ${className}`}
+      >
+        <ShieldCheck className="h-4 w-4 text-zinc-500" />
+        <Shield className="h-4 w-4 text-zinc-600" />
+      </span>
+    );
+  }
   const rec = status === "recomputable";
   const Icon = rec ? ShieldCheck : Shield;
   return (

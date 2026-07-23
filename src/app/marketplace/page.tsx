@@ -43,7 +43,7 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
   // Agent category tags — the deduped union of its loadout's tags, aggregated by the gateway
   // (consult tools are mcp_server ids, so the tag join has to happen server-side). Pull Premium
   // first and Community second so they aren't lost among a dense loadout; keep the rest as-is.
-  const verification = verificationOf(a.tags);
+  const verification = a.verification ?? verificationOf(a.tags);  // gate-derived lane, tags as fallback
   const agentTags = useMemo(() => {
     const rank = (t: string) => (t.toLowerCase() === "premium" ? 0 : t.toLowerCase() === "community" ? 1 : 2);
     return [...(a.tags ?? [])].filter((t) => !VERIFICATION_TAGS.has(t.toLowerCase())).sort((x, y) => rank(x) - rank(y));
@@ -175,6 +175,10 @@ export default function MarketplacePage() {
         <span className="inline-flex items-center gap-1.5" title="Vouched for, not fully recomputable — the quiet exception lane">
           <Shield className="h-3.5 w-3.5 text-zinc-600" />
           <span><b className="font-semibold text-zinc-400">Attested</b> — vouched for, not fully recomputable</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5" title="A loadout that spans both lanes">
+          <span className="inline-flex items-center -space-x-0.5"><ShieldCheck className="h-3.5 w-3.5 text-zinc-500" /><Shield className="h-3.5 w-3.5 text-zinc-600" /></span>
+          <span>both — a loadout spanning both lanes</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
           <span className={tagPillClass("Premium", "sm")}>Premium</span>

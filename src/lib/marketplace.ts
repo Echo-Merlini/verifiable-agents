@@ -43,6 +43,7 @@ export interface MarketAgent {
   reputation: Reputation | null;
   entitlements?: string[];        // premium capability slugs this agent NFT holds (on-chain)
   tags?: string[];                // deduped union of its loadout's tags (gateway-aggregated)
+  verification?: Verification;    // gate-DERIVED lane over the loadout (recomputable/attested/both)
 }
 
 export async function fetchMarketAgents(): Promise<MarketAgent[]> {
@@ -102,8 +103,9 @@ export function tagPillClass(tag: string, size: "sm" | "md" = "md"): string {
 
 // Verification status — the proposal's Recomputable-vs-Attested axis. Default is "recomputable"
 // (all house catalog MCPs ship golden vectors); an "Attested" tag flips it to the exception lane.
-export type Verification = "recomputable" | "attested";
+export type Verification = "recomputable" | "attested" | "both";
 export const VERIFICATION_TAGS = new Set(["recomputable", "attested"]);
+// Legacy fallback from hand-set tags; the gate-derived `agent.verification` is preferred when present.
 export function verificationOf(tags?: string[]): Verification {
   return (tags ?? []).some((t) => t.toLowerCase() === "attested") ? "attested" : "recomputable";
 }
