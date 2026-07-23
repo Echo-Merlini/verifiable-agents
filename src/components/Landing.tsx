@@ -306,10 +306,16 @@ export function Landing() {
             Six standards, composed, live on mainnet ·{" "}
             <span className="text-brassLight/80">8004 · 8217 · 8281 · 8299 · 8275 · 8323</span>
           </p>
-          <a href="https://github.com/Echo-Merlini/verifiable-agents" target="_blank" rel="noreferrer"
-            className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">
-            GitHub <ArrowUpRight className="w-3 h-3" />
-          </a>
+          <div className="flex items-center gap-6">
+            <a href="/coloredpaper.html" target="_blank" rel="noreferrer"
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/70 hover:text-brassLight">
+              ColoredPaper <ArrowUpRight className="w-3 h-3" />
+            </a>
+            <a href="https://github.com/Echo-Merlini/verifiable-agents" target="_blank" rel="noreferrer"
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">
+              GitHub <ArrowUpRight className="w-3 h-3" />
+            </a>
+          </div>
         </footer>
       </div>
     </main>

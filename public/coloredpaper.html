@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DEILS — A Digital Entity Interaction Legal System (coloredpaper)</title>
+<meta name="description" content="DEILS — triggered, reproducible accountability without surveillance. The coloredpaper: not something to trust, something the implementations can recompute.">
+<style>
+  :root {
+    --paper:#f4efe4; --panel:#ece7da; --ink:#1c1811; --muted:#6d6555; --faint:#938a77;
+    --brass:#976820; --brass2:#b6893a; --line:rgba(28,24,17,0.15); --line2:rgba(28,24,17,0.08);
+    --good:#2f7d55;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#13110c; --panel:#1b1710; --ink:#ece5d5; --muted:#a49a86; --faint:#756c5b;
+    --brass:#d59c46; --brass2:#b6893a; --line:rgba(236,229,213,0.14); --line2:rgba(236,229,213,0.07);
+    --good:#6cc191;
+  }}
+  :root[data-theme="light"]{--paper:#f4efe4;--panel:#ece7da;--ink:#1c1811;--muted:#6d6555;--faint:#938a77;--brass:#976820;--brass2:#b6893a;--line:rgba(28,24,17,0.15);--line2:rgba(28,24,17,0.08);--good:#2f7d55;}
+  :root[data-theme="dark"]{--paper:#13110c;--panel:#1b1710;--ink:#ece5d5;--muted:#a49a86;--faint:#756c5b;--brass:#d59c46;--brass2:#b6893a;--line:rgba(236,229,213,0.14);--line2:rgba(236,229,213,0.07);--good:#6cc191;}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    line-height:1.6;font-size:18px;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;}
+  .wrap{max-width:44rem;margin:0 auto;padding:0 26px;}
+
+  header{padding:64px 0 26px;border-bottom:1px solid var(--line);}
+  .eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--brass);}
+  h1{font-size:clamp(40px,9vw,68px);line-height:.98;letter-spacing:-.03em;font-weight:640;margin:18px 0 0;}
+  .sub{font-size:clamp(19px,3vw,23px);color:var(--ink);margin:14px 0 0;font-style:italic;}
+  .tag{color:var(--muted);margin-top:6px;}
+  .note{margin-top:22px;font-size:14.5px;color:var(--muted);border-left:3px solid var(--brass);padding:2px 0 2px 16px;}
+  .note b{color:var(--brass);font-style:normal;}
+
+  h2{font-size:14px;letter-spacing:.02em;text-transform:uppercase;color:var(--brass);font-weight:700;
+    margin:44px 0 4px;font-family:ui-monospace,Menlo,monospace;}
+  h2 .n{color:var(--faint);margin-right:.6em;}
+  h3{font-size:19px;margin:26px 0 4px;letter-spacing:-.01em;}
+  p{margin:14px 0;}
+  strong{font-weight:700;}
+  em{color:var(--ink);}
+  a{color:var(--brass);text-decoration:none;border-bottom:1px solid var(--brass2);}
+  ul{margin:14px 0;padding-left:1.1em;}
+  li{margin:8px 0;}
+  .lead{font-size:20px;}
+
+  .chain{font-family:ui-monospace,Menlo,monospace;font-size:13.5px;line-height:1.7;color:var(--ink);
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0;
+    overflow-x:auto;}
+  .chain .k{color:var(--brass);}
+
+  .layers{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:18px 0;background:var(--panel);}
+  .layer{display:grid;grid-template-columns:2rem 1fr;gap:14px;padding:14px 18px;border-top:1px solid var(--line2);}
+  .layer:first-child{border-top:none;}
+  .layer .i{font-family:ui-monospace,Menlo,monospace;color:var(--brass);font-weight:700;}
+  .layer .t{font-size:16px;line-height:1.5;}
+  .layer .t b{font-weight:700;}
+  .boundary{font-family:ui-monospace,Menlo,monospace;font-size:13.5px;color:var(--brass);text-align:center;
+    padding:12px;background:color-mix(in srgb,var(--brass) 9%,transparent);letter-spacing:.02em;}
+
+  .kv{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:12px 16px;margin:14px 0;overflow-x:auto;}
+  .pill{display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.08em;
+    text-transform:uppercase;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--muted);}
+  .status .run{color:var(--good);} .status .q{color:var(--brass);}
+
+  .reframe{margin:40px 0 8px;padding:22px 0;border-top:1px solid var(--line);}
+  .reframe .big{font-size:clamp(22px,3.6vw,28px);line-height:1.32;font-weight:600;letter-spacing:-.015em;}
+  .reframe .dt{font-family:ui-monospace,Menlo,monospace;font-size:15px;margin-top:14px;}
+  .reframe .dt b{color:var(--brass);}
+
+  footer{border-top:1px solid var(--line);margin-top:36px;padding:24px 0 72px;
+    font-family:ui-monospace,Menlo,monospace;font-size:12.5px;color:var(--muted);
+    display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;}
+  footer a{color:var(--muted);border-bottom:1px solid var(--line);}
+  footer a:hover{color:var(--brass);border-color:var(--brass);}
+  footer .sp{flex:1;}
+  @media(max-width:480px){h1{font-size:44px;}}
+</style>
+</head><body>
+
+<header><div class="wrap">
+  <div class="eyebrow">Working paper · v0.2 · trustless-ai</div>
+  <h1>DEILS</h1>
+  <div class="sub">A Digital Entity Interaction Legal System</div>
+  <div class="tag">Triggered, reproducible accountability without surveillance.</div>
+  <div class="note">Call it a <b>coloredpaper</b>, not a whitepaper — the thing was already running when the words showed up. Not a promise to be trusted; a receipt the implementations can recompute.</div>
+</div></header>
+
+<main class="wrap">
+
+  <h2><span class="n">§</span>Abstract</h2>
+  <p class="lead">As AI agents move from <em>advising</em> to <em>acting</em> — signing transactions, moving value, making commitments on a person's behalf — society faces a false choice: log everything (surveillance) or log nothing (impunity). DEILS proposes a third path.</p>
+  <p>Interactions are private by default — <strong>no continuous surveillance</strong>: for an interaction <em>covered by a pinned coverage policy</em>, only a <strong>metadata-minimal commitment</strong> (a hash of the content plus its position in a monotonic sequence) is published, and its <strong>content is revealed only when triggered</strong>. When revealed, the content is a <strong>receipt</strong>: a record whose result anyone can independently re-derive from committed inputs under pinned public rules. The stack keeps four boundaries distinct — <span class="mono">integrity ≠ protocol conformance ≠ legal finding ≠ settlement</span> — so judgment stays with courts; the receipt is <em>evidence</em>, not the verdict. The primitives are not hypothetical: the receipt and conformance layers run today; full leg-2 interoperability is specified and queued, not yet running (§6).</p>
+
+  <h2><span class="n">§</span>Scope — and what the chain already does</h2>
+  <p>A settled <strong>on-chain action is already self-evidencing</strong>: the chain shows the transaction happened, and anyone can read it. DEILS adds nothing there, and shouldn't pretend to.</p>
+  <p>What the chain does <strong>not</strong> show is everything that produced that action — or happened instead of one:</p>
+  <ul>
+    <li>the <strong>off-chain behaviour</strong> — the instruction the agent acted on, its reasoning trace, the conversation, off-chain API calls, the model's inference inputs and outputs — which today leaves <strong>no tamper-evident trace at all</strong>;</li>
+    <li>the <strong>binding</strong> between that off-chain intent and the on-chain action. The chain shows <em>that</em> 0.1 ETH moved to address X; never that X was the <em>right</em> recipient under the rules for what the user actually asked. "The transaction executed" and "the agent did what it was asked, correctly" are different claims — only the first is on-chain.</li>
+  </ul>
+  <p>DEILS targets exactly that gap. <strong>The chain proves what settled; DEILS proves what the agent did to get there.</strong></p>
+
+  <h2><span class="n">1</span>The false choice</h2>
+  <p>Accountability for automated systems today defaults to <em>monitor everything, just in case</em>: pervasive logging, retained indefinitely, privacy eroded on the off-chance of a future dispute. The alternative in practice is <em>nothing</em> — no durable, tamper-evident account of what an agent did, so no recourse when it errs, and no way for an honest operator to prove it did the right thing.</p>
+  <p>Neither serves a world where agents act with real consequences. Constant surveillance is a civil-liberties cost paid by everyone to catch the few; its absence is an accountability vacuum.</p>
+
+  <h2><span class="n">2</span>The third path</h2>
+  <p>Human law already resolves this for people. You are not filmed continuously; but when a dispute arises, evidence is <em>produced</em> and weighed. DEILS ports that model to human↔agent interaction:</p>
+  <ul>
+    <li><strong>No continuous surveillance:</strong> the <em>content</em> of interactions is never recorded ambiently.</li>
+    <li><strong>On a covered interaction:</strong> for any interaction covered by a <strong>pinned coverage policy</strong>, a <strong>metadata-minimal commitment</strong> — a hash of the content plus its <strong>position in a monotonic sequence</strong> — is published. The interaction's <em>existence</em> goes on the record; its <em>content</em> does not.</li>
+    <li><strong>When triggered:</strong> the content is disclosed, checked against its commitment, and — if it binds — the receipt is <strong>reproducible</strong>: any party, trusting neither the human nor the agent, re-derives the claimed result from committed inputs under pinned rules and confirms it byte-for-byte.</li>
+  </ul>
+
+  <h2><span class="n">3</span>Three pillars</h2>
+  <h3>3.1 &nbsp;Standardized, auditable protocols</h3>
+  <p>Interactions run over open, versioned protocols whose rules are public and whose conformance is machine-gradeable — so "the agent followed the rules" is a checkable statement, not a promise.</p>
+  <h3>3.2 &nbsp;Privacy in the content, never in the existence</h3>
+  <p>Persisting an interaction does <strong>not</strong> mean publishing its substance — but for a <em>covered</em> interaction it does mean publishing <em>that it happened</em>. A monotonic ledger alone only prevents deletion <em>after</em> a commitment is published; full non-suppression needs the prior step — a <strong>coverage event</strong> creating an <strong>obligation to issue</strong>:</p>
+  <div class="chain"><span class="k">coverage event</span> → obligation to issue → monotonic position → public commitment → content withheld / revealed</div>
+  <p>A covered interaction with no commitment is a <em>visible gap</em>, not a silent absence. DEILS therefore claims non-suppression for <strong>covered</strong> interactions — not automatically for every conceivable one.</p>
+  <p><strong><span class="mono">content_commitment</span> is its own identity — not the receipt root.</strong> It binds the private content; the ReceiptOS <span class="mono">receipt_root</span> binds the canonical receipt envelope. They must not collapse. The rule is pinned exactly:</p>
+  <div class="kv">content_commitment = "0x" + sha256( JCS(content) )</div>
+  <p>where <span class="mono">JCS</span> is a <strong>named, exact profile</strong> (RFC 8785 / the receipts' <span class="mono">receiptos-c14n-v0</span> variant) — because number formatting, Unicode, and escaping are where two honest implementations quietly diverge.</p>
+  <p><strong>Metadata is minimized, not eliminated.</strong> Sequence activity can still reveal frequency or timing. Guardrails DEILS names: <em>pseudonymous lanes, batching, delayed-publication windows, no party identifiers, and no exact timestamps unless required.</em></p>
+  <h3>3.3 &nbsp;On-demand receipts, and a reveal that can say NO</h3>
+  <p>When content held behind a published commitment is disclosed, the first check is whether it matches. A match <strong>binds</strong> the content (then conformance is recomputed — verified / rejected / unverifiable). A mismatch is a named, <strong>fail-closed</strong> state — <span class="mono">content_commitment_mismatch</span> — never a quiet "invalid." The public entry already committed to something, so a mismatch is <em>itself evidence</em>. The system detects and names it and preserves both artifacts; <em>which</em> failure it was — tampering, error, or misconduct — is a question for the court, not the check. No verdict is ever computed over content that isn't bound to its commitment.</p>
+
+  <h2><span class="n">4</span>The accountability model — four layers</h2>
+  <p>DEILS's credibility rests on keeping four things separate. The crypto establishes the first two; the law owns the last two.</p>
+  <div class="layers">
+    <div class="layer"><span class="i">1</span><span class="t"><b>Record integrity.</b> Does the committed object reproduce? Authenticated, tamper-evident.</span></div>
+    <div class="layer"><span class="i">2</span><span class="t"><b>Protocol conformance.</b> Under the pinned rules — verified / rejected / unverifiable (fail-closed). A record can have perfect integrity and still be a <em>rejected</em> verdict.</span></div>
+    <div class="layer"><span class="i">3</span><span class="t"><b>Legal admissibility &amp; finding.</b> What may a court admit, and what does it establish? A finding, made by a court, not a hash.</span></div>
+    <div class="layer"><span class="i">4</span><span class="t"><b>Judgment &amp; settlement.</b> Liability, remedy, enforcement.</span></div>
+    <div class="boundary">integrity ≠ protocol conformance ≠ legal finding ≠ settlement</div>
+  </div>
+  <p>Most "blockchain proves it" proposals fail by collapsing these — implying a cryptographic check is a legal conclusion. DEILS refuses that at every seam. A reproducible receipt is authenticated <strong>evidence</strong>, not a verdict. <span class="mono">Reproducible ≠ conformant-in-law ≠ true-in-law ≠ liable.</span></p>
+
+  <h2><span class="n">5</span>Who is accountable</h2>
+  <p>DEILS does <strong>not</strong> propose legal personhood for AI. It makes an agent's actions <strong>legible</strong> so the responsible party — the operator, deployer, or principal who put the agent in the loop — can be held to account <em>on evidence rather than assertion</em>. Exoneration is a first-class outcome: an honest builder can <strong>prove</strong> their agent did exactly what it should, defeating a false claim with the same machinery that would have convicted a dishonest one.</p>
+
+  <h2><span class="n">6</span>Reference implementation — exact status</h2>
+  <p class="status"><span class="pill run">Running today</span></p>
+  <ul>
+    <li><strong>Verifiable agent identity</strong> — ERC-8004 / on-chain agent bindings; an action is attributable to a specific, source-bound agent.</li>
+    <li><strong>Reproducible receipts + conformance</strong> — a conformance gate emits portable evidence capsules whose roots recompute offline; a tri-state verdict grades an action against hash-pinned rules.</li>
+    <li><strong>A live showcase</strong> — recomputable in the viewer's own browser.</li>
+  </ul>
+  <p class="status"><span class="pill q">Leg-2 — specified &amp; queued, not yet running</span></p>
+  <p>The reveal-check semantics are pinned; an independent second checker exists (built from the spec, blind). Full leg-2 <strong>interoperability is not running</strong> until all four land, in order: (1) the primary held-content extension; (2) the pinned neutral vector set; (3) the adapter; (4) the blind cross-implementation diff. That is an excellent status — and it is not the same as "done."</p>
+  <p>Honestly scoped: what runs today establishes <strong>record integrity and protocol conformance</strong>. What DEILS still owes is the <strong>legal groundwork</strong> — mapping receipts to jurisdictions' rules of evidence. The technology is ahead of the law; DEILS is the bridge.</p>
+
+  <h2><span class="n">7</span>What DEILS is — and is not</h2>
+  <ul>
+    <li>Not automatic court-admissibility; admissibility is jurisdiction-specific legal work.</li>
+    <li>Not AI legal personhood.</li>
+    <li>Not total logging; deliberately the opposite.</li>
+    <li>It <strong>is</strong> a design pattern (coverage-policy + commit-reveal + reproducible receipts + conformance), a legal / civil-liberties framing, and a working reference stack that already embodies the running parts.</li>
+  </ul>
+
+  <h2><span class="n">8</span>Next steps</h2>
+  <ul>
+    <li><strong>Technical standards</strong> — pin the receipt, commitment-anchoring, coverage-policy, and conformance-profile formats as ERCs, implementable by anyone.</li>
+    <li><strong>Legal framework</strong> — this paper, taken to digital-rights organizations and legal scholars, with the privacy and no-omission claims stated precisely enough to survive scrutiny.</li>
+    <li><strong>A pilot</strong> — one real interaction producing a real receipt, used as evidence in a mock dispute, end to end.</li>
+  </ul>
+
+  <div class="reframe">
+    <div class="big">Not "monitor everything just in case," but "publish only a metadata-minimal commitment when a covered interaction occurs, and reveal the content only when triggered — reproducible from public rules by anyone."</div>
+    <div class="dt">Don't trust. <b>Recompute.</b></div>
+  </div>
+
+</main>
+
+<footer><div class="wrap" style="display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;">
+  <span>DEILS · working paper v0.2</span>
+  <span class="sp"></span>
+  <a href="https://demo.verticecriativo.pt/conformance">see it recompute</a>
+  <a href="https://github.com/trustless-ai/recompute-kit">recompute-kit</a>
+</div></footer>
+</body></html>
