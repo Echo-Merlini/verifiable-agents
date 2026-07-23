@@ -81,9 +81,12 @@ export default function ConformancePage() {
           Drop an MCP. The <span className="text-brassLight">recompute</span> decides what lists.
         </h1>
         <p className="mt-4 max-w-[54ch] font-serif text-[18px] leading-relaxed text-paper/70">
-          No committee, no submission form. Paste an endpoint — the recompute-kit reads its tools,
-          re-derives each output from <span className="text-paper">public rules</span>, and lists the ones it can
-          reproduce with a portable receipt. What it can't independently recompute drops to Attested.
+          No committee, no submission form. Paste an endpoint — the recompute-kit reads its tools and
+          re-derives each output <span className="text-paper">byte-for-byte</span> from public rules: a tool that
+          reproduces exactly lists as <span className="text-emerald-300">Recomputable</span>, with a portable receipt.
+          Change a single byte and it fails — anything that can't be independently reproduced drops to
+          <span className="text-brassLight"> Attested</span> (signed provenance, not reproduced). Every tool lands in
+          one lane or the other.
         </p>
 
         {/* 01 — drop the endpoint */}
