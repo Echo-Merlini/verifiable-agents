@@ -8,7 +8,7 @@ import { shortAddr } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import {
-  LayoutDashboard, Database, Globe, Wallet, BarChart3,
+  LayoutDashboard, Database, Globe, Wallet, HardDrive,
   Sparkles, Key, Rocket, Settings, LogOut, Loader2, Bot, ChevronDown, Zap, Plug, ShieldCheck, FileCheck2, Network, Users, Coins, Store, Gauge,
 } from "lucide-react";
 import type { GatewayEnvKey } from "@/hooks/useGatewayEnv";
@@ -20,7 +20,7 @@ const nav = [
       { href: "/admin",          label: "Dashboard", icon: LayoutDashboard },
       { href: "/admin/ens",      label: "ENS",       icon: Globe },
       { href: "/admin/wallets",  label: "Wallets",   icon: Wallet },
-      { href: "/admin/data",     label: "Data",      icon: BarChart3 },
+      { href: "/admin/data",     label: "Storage",   icon: HardDrive },
       { href: "/admin/ai",       label: "AI",        icon: Sparkles },
       { href: "/admin/agents",   label: "Agents",    icon: Bot },
       { href: "/admin/credits",  label: "Credits",   icon: Zap },
