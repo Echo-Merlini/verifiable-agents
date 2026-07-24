@@ -110,6 +110,12 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     prompt: "Use your The Graph tool (graph_query_at_block) to read the Uniswap v3 USDC/WETH 0.05% pool (id 0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640) totalValueLockedUSD at block 20000000, and show the result — that's a byte-reproducible read anyone can recompute.",
     display: "Read Uniswap data via The Graph (block-pinned · recomputable)",
   },
+  "uniswapx-mcp": {
+    label: "UniswapX", tagline: "Signed swap intent", logo: "/logos/uniswap.webp", fill: true,
+    blurb: "UniswapX — the agent signs a gasless, non-custodial swap INTENT (a Dutch-auction order via EIP-712 + Permit2); fillers execute it on-chain. The order hash is deterministic and independently recomputable, the signature verifiable — recompute the intent before a filler touches it. Don't trust the order — recompute it.",
+    prompt: "Use your UniswapX tool (uniswapx_build_order) to build a gasless swap intent for swapper 0xFf9a176577Fb42b6bc9c19fd05a241e8fCd0ca14: sell 0.1 WETH (0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2, inputAmount 100000000000000000) for USDC (0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48), outputStartAmount 185000000 decaying to outputEndAmount 180000000. Show the order hash and that it's an EIP-712 intent to sign — recomputable before any filler touches it.",
+    display: "Build a UniswapX intent (gasless · recomputable)",
+  },
   "alchemy-mcp": {
     label: "Alchemy", tagline: "Multi-chain data", logo: "/logos/alchemy.png", fill: true,
     blurb: "Alchemy's on-chain data suite — token prices, NFT holdings, transfers and full transaction history across 100+ chains. The agent taps it for fast, read-only market and wallet data.",
@@ -130,6 +136,7 @@ export const MCP_ORDER: string[] = [
   "5a6c1f48-2850-46f8-9e18-4577197f500d",   // Recompute Kit
   "zerog-mcp",                              // 0G decentralized storage (walletless — gateway-signed)
   "thegraph-mcp",                           // The Graph (walletless read — block-pinned recomputable)
+  "uniswapx-mcp",                           // UniswapX (walletless — signed Dutch-order intent, recomputable hash)
   "60651853-eb38-4b85-818f-7203f67ae52c",   // 1inch
   "0ebe0db5-7da0-4b66-a401-f50c976cc72c",   // Symbiosis
   "d0041cfe-a5e5-4782-afc3-8dcf7c03edd0",   // Forensics
