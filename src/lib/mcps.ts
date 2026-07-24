@@ -113,8 +113,8 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
   "uniswapx-mcp": {
     label: "UniswapX", tagline: "Signed swap intent", logo: "/logos/uniswap.webp", fill: true,
     blurb: "UniswapX — the agent signs a gasless, non-custodial swap INTENT (a Dutch-auction order via EIP-712 + Permit2); fillers execute it on-chain. The order hash is deterministic and independently recomputable, the signature verifiable — recompute the intent before a filler touches it. Don't trust the order — recompute it.",
-    prompt: "Use your UniswapX tool (uniswapx_build_order) to build a gasless swap intent for swapper 0xFf9a176577Fb42b6bc9c19fd05a241e8fCd0ca14: sell 0.1 WETH (0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2, inputAmount 100000000000000000) for USDC (0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48), outputStartAmount 185000000 decaying to outputEndAmount 180000000. Show the order hash and that it's an EIP-712 intent to sign — recomputable before any filler touches it.",
-    display: "Build a UniswapX intent (gasless · recomputable)",
+    prompt: "Use your UniswapX tool (uniswapx_order_hash) — read-only, do NOT sign or send anything — to compute the deterministic EIP-712 order hash of this explicit Dutch order and just display the hash: chainId 1, swapper 0xFf9a176577Fb42b6bc9c19fd05a241e8fCd0ca14, nonce 1000000, deadline 1790000300, decayStartTime 1790000000, decayEndTime 1790000120, inputToken 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2, inputStartAmount 100000000000000000, inputEndAmount 100000000000000000, outputToken 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48, outputStartAmount 185000000, outputEndAmount 180000000. Explain that this order hash is byte-reproducible — anyone recomputes it from the order, before a filler touches it.",
+    display: "Recompute a UniswapX order hash (deterministic)",
   },
   "alchemy-mcp": {
     label: "Alchemy", tagline: "Multi-chain data", logo: "/logos/alchemy.png", fill: true,
