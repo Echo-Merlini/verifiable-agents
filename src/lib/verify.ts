@@ -42,6 +42,13 @@ export type Showcase = {
   ocpContract?: Address;     // ERC-8281 OCP anchor contract
   l3ChainId?: number;        // chain the anchor lives on (1 = mainnet showcase · 84532 = Base Sepolia live actions)
   live?: boolean;            // true = recomputing a just-happened action, not the baked showcase
+  zerog?: {                  // the action's recompute artifact, really stored on 0G decentralized storage
+    network: string;
+    root: string;            // content-addressed flow-merkle root (recomputable from the bytes)
+    tx: string;              // the 0G store transaction
+    bytes: number;
+    artifact: string;        // the exact canonical manifest bytes that were stored
+  };
 };
 
 // A check has three honest outcomes — never conflate the last two:

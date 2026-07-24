@@ -78,6 +78,15 @@ export default function StoragePage() {
     if (j.error) return setErr(j.error);
     setStored(j);
   }
+  async function loadShowcase() {
+    setErr("");
+    try {
+      const z = (await fetch("/showcase.json").then((r) => r.json())).zerog;
+      if (!z?.artifact) { setErr("showcase has no 0G artifact baked"); return; }
+      setContent(z.artifact); setStored(null); setFetched(null);
+      setComputed({ rootHash: z.root, bytes: z.bytes, network: z.network, note: "Live showcase manifest — really stored on 0G." });
+    } catch (e: any) { setErr(e?.message || String(e)); }
+  }
   async function doFetch() {
     const root = stored?.rootHash || computedRoot;
     if (!root) return setErr("Compute or store a root first.");
@@ -124,8 +133,12 @@ export default function StoragePage() {
       <div className="bg-gb-surface border border-gb-border rounded-xl p-4 space-y-3">
         <div className="flex items-center justify-between">
           <label className="text-xs font-semibold text-slate-200">Recompute artifact</label>
-          <button onClick={() => { setContent(SAMPLE); setComputed(null); setStored(null); setFetched(null); setErr(""); }}
-            className="text-[11px] text-gb-muted hover:text-slate-300">reset sample</button>
+          <div className="flex items-center gap-3">
+            <button onClick={loadShowcase}
+              className="text-[11px] text-gb-accent hover:text-gb-accent/80">load live showcase</button>
+            <button onClick={() => { setContent(SAMPLE); setComputed(null); setStored(null); setFetched(null); setErr(""); }}
+              className="text-[11px] text-gb-muted hover:text-slate-300">reset sample</button>
+          </div>
         </div>
         <textarea
           value={content}

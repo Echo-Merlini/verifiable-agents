@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio } from "lucide-react";
+import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, Database } from "lucide-react";
 import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
@@ -19,6 +19,54 @@ function tamperOneChar(s: string): string {
   const c = s[i];
   const repl = c.toLowerCase() === "a" ? "e" : "a";
   return s.slice(0, i) + (c === c.toUpperCase() ? repl.toUpperCase() : repl) + s.slice(i + 1);
+}
+
+// The showcase action's recompute artifact is really stored on 0G — fetch it back and recompute its
+// content-addressed root, live. Proves the evidence lives on decentralized storage, not our server.
+function ZeroGEvidence({ sc }: { sc: Showcase }) {
+  const z = sc.zerog;
+  const [state, setState] = useState<"idle" | "fetching" | "ok" | "bad" | "err">("idle");
+  const [msg, setMsg] = useState("");
+  if (!z) return null;
+  async function post(body: object) {
+    return fetch("/api/storage", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json());
+  }
+  async function fetchVerify() {
+    setState("fetching"); setMsg("");
+    try {
+      const f = await post({ action: "fetch", rootHash: z!.root });
+      if (f.error || f.content == null) { setState("err"); setMsg(f.error || "no content"); return; }
+      const re = await post({ action: "root", content: f.content });
+      const match = re.rootHash === z!.root;
+      setState(match ? "ok" : "bad");
+      setMsg(match ? `fetched ${f.bytes} bytes from 0G · root recomputed · matches` : `recomputed ${re.rootHash} ≠ committed root`);
+    } catch (e: unknown) { setState("err"); setMsg(e instanceof Error ? e.message : String(e)); }
+  }
+  return (
+    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Database className="h-4 w-4 text-brassLight" />
+          <span className="font-display text-[15px] text-paper">Evidence on 0G</span>
+        </div>
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">{z.network}</span>
+      </div>
+      <p className="mt-1.5 text-[12px] text-gb-muted">The manifest anyone recomputes this action from ({z.bytes} bytes) lives on decentralized storage, content-addressed — not on our server.</p>
+      <div className="mt-3 space-y-1 font-mono text-[11px]">
+        <div><span className="text-paper/40">root </span><span className="break-all text-paper/80">{z.root}</span></div>
+        <div><span className="text-paper/40">store tx </span><span className="break-all text-paper/55">{z.tx}</span></div>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <button onClick={fetchVerify} disabled={state === "fetching"}
+          className="inline-flex items-center gap-1.5 rounded-full border border-brassLight/30 px-3.5 py-1.5 text-[12px] text-brassLight hover:border-brassLight/50 disabled:opacity-50">
+          {state === "fetching" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Fetch &amp; recompute
+        </button>
+        {state === "ok" && <span className="inline-flex items-center gap-1 text-[12px] text-emerald-300"><CheckIcon className="h-3.5 w-3.5" /> {msg}</span>}
+        {state === "bad" && <span className="text-[12px] text-red-300">{msg}</span>}
+        {state === "err" && <span className="text-[12px] text-amber-300">could not reach 0G — {msg}</span>}
+      </div>
+    </div>
+  );
 }
 
 export default function VerifyPage() {
@@ -235,6 +283,8 @@ export default function VerifyPage() {
                   )}
                   <p className="mt-2 font-mono text-[10px] uppercase tracking-wide text-gb-muted">recipes via recompute-kit · recomputekit-ai.com</p>
                 </div>
+
+                {sc?.zerog && <ZeroGEvidence sc={sc} />}
               </div>
             )}
 
