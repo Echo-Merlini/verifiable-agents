@@ -3,7 +3,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { keccak256, toBytes, parseEther, formatEther } from "viem";
 import { useAccount, useWalletClient } from "wagmi";
-import { Loader2, Store, Plus, ExternalLink, Check, ShieldCheck } from "lucide-react";
+import { Loader2, Store, Plus, ExternalLink, Check, ShieldCheck, Copy } from "lucide-react";
+
+function CopyBtn({ value, label }: { value: string; label?: string }) {
+  const [done, setDone] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={() => { navigator.clipboard.writeText(value); setDone(true); setTimeout(() => setDone(false), 1200); }}
+      title={`Copy ${label ?? "value"}`}
+      className="inline-flex items-center text-gb-muted hover:text-brassLight"
+    >
+      {done ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+    </button>
+  );
+}
 import { fetchPremiumMcps, fetchMarketAgents, normalizeSlug, type PremiumMcp, type MarketAgent } from "@/lib/marketplace";
 import { MCP_ENTITLEMENT_REGISTER_ABI } from "@/lib/mcpEntitlementDeploy";
 
@@ -74,7 +88,10 @@ export default function AdminMarketplacePage() {
         <p className="mt-0.5 text-xs text-gb-muted">
           Premium MCP capabilities — purchased and carried by the agent NFT. Registry:{" "}
           {contract ? (
-            <a href={`${explorer}/address/${contract}`} target="_blank" rel="noreferrer" className="font-mono text-brassLight hover:underline">{contract}</a>
+            <span className="inline-flex items-center gap-1">
+              <a href={`${explorer}/address/${contract}`} target="_blank" rel="noreferrer" className="font-mono text-brassLight hover:underline">{contract}</a>
+              <CopyBtn value={contract} label="registry" />
+            </span>
           ) : <span className="text-amber-300">not deployed (Deploy tab)</span>}
         </p>
       </div>
@@ -96,9 +113,24 @@ export default function AdminMarketplacePage() {
                 <p className="mt-1 text-xs text-gb-muted">{m.tagline}</p>
                 <div className="mt-2 grid grid-cols-2 gap-1 font-mono text-[11px] text-gb-muted">
                   <span>price {formatEther(BigInt(m.price || "0"))} ETH</span>
-                  <span>payTo {m.payTo ? `${m.payTo.slice(0, 6)}…${m.payTo.slice(-4)}` : "—"}</span>
-                  <span className="col-span-2 break-all">mcpId {m.mcpId.slice(0, 18)}…</span>
+                  <span className="inline-flex items-center gap-1">
+                    payTo {m.payTo ? `${m.payTo.slice(0, 6)}…${m.payTo.slice(-4)}` : "—"}
+                    {m.payTo && <CopyBtn value={m.payTo} label="payTo" />}
+                  </span>
+                  <span className="col-span-2 inline-flex items-center gap-1">
+                    slug <span className="text-slate-300">{m.slug}</span> <CopyBtn value={m.slug} label="slug" />
+                  </span>
+                  <span className="col-span-2 inline-flex items-center gap-1 break-all">
+                    mcpId {m.mcpId.slice(0, 20)}… <CopyBtn value={m.mcpId} label="mcpId" />
+                  </span>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => { setSlug(m.slug); setPriceEth(formatEther(BigInt(m.price || "0"))); if (m.payTo) setPayTo(m.payTo); }}
+                  className="mt-2 inline-flex items-center gap-1 rounded-lg bg-brass/12 px-2 py-1 text-[11px] text-brassLight ring-1 ring-brass/25 transition hover:bg-brass/20"
+                >
+                  <Plus className="h-3 w-3" /> Use in form
+                </button>
               </div>
             ))}
           </div>
