@@ -6,7 +6,9 @@ import { mainnet, sepolia } from "@reown/appkit/networks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
-const projectId = "3b3f1c4ecbfa7edd5c5327b56985074a";
+// Reown/WalletConnect projectId — the GobLanding project (works on mobile iOS; the previous
+// hardcoded one was unconfigured → "failed to publish payload"). Override via env if needed.
+const projectId = process.env.NEXT_PUBLIC_REOWN_PROJECT_ID || "0ef0fb9a8de743a918d511c63bc8e7b8";
 
 // Use current origin so WalletConnect domain verification always matches
 const appUrl =
