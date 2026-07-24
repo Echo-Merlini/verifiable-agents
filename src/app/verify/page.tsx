@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, Database } from "lucide-react";
+import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, Database, ExternalLink } from "lucide-react";
 import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
@@ -54,7 +54,13 @@ function ZeroGEvidence({ sc }: { sc: Showcase }) {
       <p className="mt-1.5 text-[12px] text-gb-muted">The manifest anyone recomputes this action from ({z.bytes} bytes) lives on decentralized storage, content-addressed — not on our server.</p>
       <div className="mt-3 space-y-1 font-mono text-[11px]">
         <div><span className="text-paper/40">root </span><span className="break-all text-paper/80">{z.root}</span></div>
-        <div><span className="text-paper/40">store tx </span><span className="break-all text-paper/55">{z.tx}</span></div>
+        <div>
+          <span className="text-paper/40">store tx </span>
+          <a href={`https://chainscan-galileo.0g.ai/tx/${z.tx}`} target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-1 break-all text-brassLight/80 underline decoration-brassLight/25 underline-offset-2 hover:text-brassLight">
+            {z.tx}<ExternalLink className="h-3 w-3 shrink-0" />
+          </a>
+        </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <button onClick={fetchVerify} disabled={state === "fetching"}
