@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useSignMessage } from "wagmi";
+import { useAppKit } from "@reown/appkit/react";
 import { getNonce, verifySiwe } from "@/lib/api";
 
 const TOKEN_KEY = "ens-kit-admin-token";
 
 export function useAuth() {
-  const { address } = useAccount();
-const [token, setToken] = useState<string | null>(null);
+  const { address, isConnected } = useAccount();
+  const { signMessageAsync } = useSignMessage();
+  const { open } = useAppKit();
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(TOKEN_KEY);
@@ -29,13 +32,13 @@ const [token, setToken] = useState<string | null>(null);
     setLoading(true);
     setError(null);
     try {
-      const eth = (window as any).ethereum;
-      if (!eth) throw new Error("MetaMask not found. Install it at metamask.io.");
-
-      // Always request accounts via raw provider — works whether wagmi is connected or not
-      const accounts: string[] = await eth.request({ method: "eth_requestAccounts" });
-      const connectedAddress = (accounts[0] ?? address) as `0x${string}`;
-      if (!connectedAddress) throw new Error("No account available.");
+      // Sign with the WAGMI-connected wallet (not raw window.ethereum) so it works on mobile
+      // Safari / WalletConnect, not just the desktop MetaMask extension.
+      if (!isConnected || !address) {
+        await open(); // opens the wallet modal — WalletConnect deep-links to the wallet app on mobile
+        throw new Error("Connect your wallet, then tap Sign In again.");
+      }
+      const connectedAddress = address as `0x${string}`;
 
       const nonce = await getNonce();
       const domain = window.location.host;
@@ -52,11 +55,7 @@ const [token, setToken] = useState<string | null>(null);
         `Issued At: ${new Date().toISOString()}`,
       ].join("\n");
 
-      // personal_sign with plain text — MetaMask shows the readable SIWE message
-      const signature: string = await eth.request({
-        method: "personal_sign",
-        params: [message, connectedAddress],
-      });
+      const signature = await signMessageAsync({ message });
 
       const { token: jwt } = await verifySiwe(message, signature, password);
       localStorage.setItem(TOKEN_KEY, jwt);
@@ -66,7 +65,7 @@ const [token, setToken] = useState<string | null>(null);
     } finally {
       setLoading(false);
     }
-  }, [address]);
+  }, [address, isConnected, signMessageAsync, open]);
 
   const logout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);
