@@ -104,6 +104,12 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     prompt: "Use your 0G tool to store this recompute artifact and return its rootHash: {\"input\":\"can we exchange 0.1 ETH to USDC\",\"output\":\"quoted 183.9 USDC on Uniswap\",\"note\":\"KYA demo artifact\"}",
     display: "Store a recompute artifact on 0G",
   },
+  "thegraph-mcp": {
+    label: "The Graph", tagline: "Indexed data", logo: "/logos/thegraph.png", fill: true,
+    blurb: "The Graph decentralized network. Queries live blockchain data via subgraphs — and pins a read to a finalized block for a byte-reproducible result anyone can recompute. Live data is attested; a block-pinned read is recomputable.",
+    prompt: "Use your The Graph tool (graph_query_at_block) to read the Uniswap v3 USDC/WETH 0.05% pool (id 0x88e6a0c2ddd26feeb64f039a2c41296fcb3f5640) totalValueLockedUSD at block 20000000, and show the result — that's a byte-reproducible read anyone can recompute.",
+    display: "Read Uniswap data via The Graph (block-pinned · recomputable)",
+  },
   "alchemy-mcp": {
     label: "Alchemy", tagline: "Multi-chain data", logo: "/logos/alchemy.png", fill: true,
     blurb: "Alchemy's on-chain data suite — token prices, NFT holdings, transfers and full transaction history across 100+ chains. The agent taps it for fast, read-only market and wallet data.",
@@ -123,6 +129,7 @@ export const MCP_ORDER: string[] = [
   "uniswap-mcp",                            // Uniswap (walletless quote — direct v3)
   "5a6c1f48-2850-46f8-9e18-4577197f500d",   // Recompute Kit
   "zerog-mcp",                              // 0G decentralized storage (walletless — gateway-signed)
+  "thegraph-mcp",                           // The Graph (walletless read — block-pinned recomputable)
   "60651853-eb38-4b85-818f-7203f67ae52c",   // 1inch
   "0ebe0db5-7da0-4b66-a401-f50c976cc72c",   // Symbiosis
   "d0041cfe-a5e5-4782-afc3-8dcf7c03edd0",   // Forensics
