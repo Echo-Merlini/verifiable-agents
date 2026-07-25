@@ -13,9 +13,12 @@ const BASE_SUBGRAPH =
   process.env.ANCHOR_SUBGRAPH_BASE_URL ||
   "https://api.studio.thegraph.com/query/1756895/recomputable-agents-anchor-base/v0.0.1";
 
+// An identical input is anchored by many txs (each re-run calls record() again with the same
+// digest), so we fetch ALL anchors for the digest — the client confirms the commitment is indexed
+// and, when present, that this action's exact tx is among them. Newest first.
 const QUERY = `query Anchor($digest: Bytes!) {
   _meta { block { number } hasIndexingErrors }
-  anchors(where: { digest: $digest }, first: 1) {
+  anchors(where: { digest: $digest }, first: 50, orderBy: blockNumber, orderDirection: desc) {
     id
     digest
     committer
@@ -40,8 +43,8 @@ export async function POST(req: Request) {
     });
     const j = await r.json();
     if (j.errors) return NextResponse.json({ error: j.errors?.[0]?.message || "subgraph error" }, { status: 502 });
-    const anchor = j?.data?.anchors?.[0] ?? null;
-    return NextResponse.json({ anchor, meta: j?.data?._meta ?? null });
+    const anchors = j?.data?.anchors ?? [];
+    return NextResponse.json({ anchors, anchor: anchors[0] ?? null, meta: j?.data?._meta ?? null });
   } catch (e: unknown) {
     return NextResponse.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
   }

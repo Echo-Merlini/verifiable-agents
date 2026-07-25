@@ -140,13 +140,18 @@ function GraphEvidence({ sc, query }: { sc: Showcase; query: string }) {
       const digest = keccakUtf8(query); // recomputed from the editable query — tamper-sensitive
       const r = await fetch("/api/anchor", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ digest, chainId: sc.l3ChainId }) }).then((x) => x.json());
       if (r.error) { setState("err"); setMsg(r.error); return; }
-      const a = r.anchor;
-      if (!a) { setState("bad"); setMsg(`no anchor indexed for digest ${short(digest)} — this query was never committed`); return; }
-      const agree = a.digest?.toLowerCase() === digest.toLowerCase() && a.txHash?.toLowerCase() === sc.l3Tx?.toLowerCase();
-      setState(agree ? "ok" : "bad");
-      setMsg(agree
-        ? `The Graph returns the same anchor the RPC read did · tx ${short(a.txHash)} · block ${a.blockNumber}`
-        : `subgraph anchor disagrees with the on-chain read (tx ${short(a.txHash)})`);
+      // The where:{digest} filter means every returned anchor commits THIS digest. Tampering the
+      // query → new digest → the filter returns nothing → red. An identical input is anchored by
+      // many txs (each re-run calls record() again), so agreement = the commitment is indexed; the
+      // exact tx match only strengthens the wording when this action's tx has been indexed.
+      const anchors: Array<{ digest?: string; txHash?: string; blockNumber?: string }> = r.anchors ?? (r.anchor ? [r.anchor] : []);
+      const indexed = anchors.filter((x) => x.digest?.toLowerCase() === digest.toLowerCase());
+      if (!indexed.length) { setState("bad"); setMsg(`no anchor indexed for digest ${short(digest)} — this query was never committed`); return; }
+      const exact = indexed.find((x) => x.txHash?.toLowerCase() === sc.l3Tx?.toLowerCase());
+      setState("ok");
+      setMsg(exact
+        ? `The Graph returns the same anchor the RPC read did · tx ${short(exact.txHash!)} · block ${exact.blockNumber}`
+        : `The Graph indexes this commitment · ${indexed.length} anchor${indexed.length > 1 ? "s" : ""} share this digest · latest tx ${short(indexed[0].txHash!)} · block ${indexed[0].blockNumber}`);
     } catch (e: unknown) { setState("err"); setMsg(e instanceof Error ? e.message : String(e)); }
   }
   return (
