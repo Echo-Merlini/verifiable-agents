@@ -14,6 +14,15 @@ const GW = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 const SHOWCASE_URL = process.env.NEXT_PUBLIC_SHOWCASE_URL || "/showcase.json";
 const short = (h?: string) => (h ? h.slice(0, 10) + "…" + h.slice(-6) : "—");
 
+// Standards badge — surfaces which ERC / ENSIP / EIP each check or panel implements, so a
+// judge watching /verify can see exactly which standard is being recomputed in real time.
+function StdBadge({ children }: { children: string }) {
+  return <span className="shrink-0 rounded-md border border-brassLight/25 bg-brassLight/[0.06] px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wider text-brassLight/80">{children}</span>;
+}
+const CHECK_STANDARD: Record<string, string> = {
+  raw: "ERC-8299", input: "ERC-8299", out: "ERC-8281", l3: "ERC-8281", l4: "EIP-712",
+};
+
 // Flip exactly one byte of the query so a tamper is one click, not a guess.
 function tamperOneChar(s: string): string {
   const i = s.search(/[a-zA-Z0-9]/);
@@ -80,6 +89,7 @@ function ZeroGEvidence({ sc }: { sc: Showcase }) {
         <div className="flex items-center gap-2">
           <img src="/logos/0g.jpg" alt="0G" className="h-5 w-5 rounded-md object-cover" />
           <span className="font-display text-[15px] text-paper">Evidence on 0G</span>
+          <StdBadge>ERC-8281</StdBadge>
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">{z.network}</span>
       </div>
@@ -145,6 +155,7 @@ function GraphEvidence({ sc, query }: { sc: Showcase; query: string }) {
         <div className="flex items-center gap-2">
           <img src="/logos/thegraph.webp" alt="The Graph" className="h-5 w-5 rounded-full object-contain" />
           <span className="font-display text-[15px] text-paper">Queryable on The Graph</span>
+          <StdBadge>ERC-8281</StdBadge>
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">Subgraph · {chainLabel}</span>
       </div>
@@ -194,6 +205,7 @@ function ZeroGChainEvidence({ sc, query }: { sc: Showcase; query: string }) {
         <div className="flex items-center gap-2">
           <img src="/logos/0g.jpg" alt="0G Chain" className="h-5 w-5 rounded-md object-cover" />
           <span className="font-display text-[15px] text-paper">Second anchor on 0G Chain</span>
+          <StdBadge>ERC-8281</StdBadge>
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">{zc.network}</span>
       </div>
@@ -293,6 +305,7 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
           ? <img src="/logos/ens.png" alt="ENS" className="h-4 w-auto" />
           : <Fingerprint className="h-4 w-4 text-brassLight" />}
         <span className="font-display text-[15px] text-paper">Identity binding · ERC-8323</span>
+        <StdBadge>ENSIP-25</StdBadge>
       </div>
       <p className="mt-1.5 text-[12px] text-gb-muted">Who took this action is provable too. The agent NFT is bound to a <span className="text-paper/70">source token</span> — live only while the source is controlled by the agent&apos;s holder — and the holder carries an <span className="text-paper/70">ENS name</span>. Re-read both owners, and reverse-resolve the holder&apos;s name, in your browser.</p>
       <div className="mt-3 space-y-1 font-mono text-[11px]">
@@ -597,7 +610,10 @@ export default function VerifyPage() {
                         {pass ? <CheckIcon className="h-3.5 w-3.5" /> : unver ? <HelpCircle className="h-3.5 w-3.5" /> : <XIcon className="h-3.5 w-3.5" />}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="font-display font-medium">{c.label} <span className="ml-1 font-mono text-[10px] text-brassLight/70">{c.recipe}</span></p>
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="font-display font-medium">{c.label} <span className="ml-1 font-mono text-[10px] text-brassLight/70">{c.recipe}</span></p>
+                          {CHECK_STANDARD[c.id] && <StdBadge>{CHECK_STANDARD[c.id]}</StdBadge>}
+                        </div>
                         {unver ? (
                           // Amber: could not recompute (network). Never rendered as a mismatch.
                           <p className="mt-1 font-mono text-[11px] break-all text-amber-300/90">could not check · <span className="text-amber-200/70">{c.got}</span></p>
