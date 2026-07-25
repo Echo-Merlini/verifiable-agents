@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, ExternalLink, Fingerprint } from "lucide-react";
-import { verifyAll, keccakUtf8, readOwnerOf, resolveEnsIdentity, type Showcase, type Check } from "@/lib/verify";
+import { verifyAll, keccakUtf8, readOwnerOf, resolveEnsIdentity, readEnsText, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
 
@@ -235,6 +235,7 @@ function ZeroGChainEvidence({ sc, query }: { sc: Showcase; query: string }) {
 type Binding = {
   registry: string; agentId: string;
   source_contract?: string; source_token_id?: string;
+  ens_name?: string | null;
   status?: string; matchedCase?: string; sourceOwner?: string; agentHolder?: string;
   mesh?: { agree?: number; dissent?: number; consensus?: string };
 };
@@ -244,6 +245,7 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
   const [msg, setMsg] = useState("");
   const [rec, setRec] = useState<{ so?: string | null; ah?: string | null } | null>(null);
   const [ens, setEns] = useState<{ name: string; verified: boolean } | null>(null);
+  const [ensip, setEnsip] = useState<{ name: string; registered: boolean } | null>(null);
   useEffect(() => {
     let alive = true;
     fetch(`${GW}/agent/${sc.registry}/${sc.agentId}/binding?mesh=1`)
@@ -264,6 +266,15 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
     if (!so || !ah) { setState("err"); setMsg("could not read ownerOf — RPC unavailable, retry"); return; }
     // The human apex: reverse-resolve the holder to its ENS primary name (forward-verified).
     resolveEnsIdentity(ah).then(setEns).catch(() => setEns(null));
+    // ENSIP-25 forward binding: the agent's registered ENS name declares THIS agent. Reconstruct
+    // the agent-registration key (chain-1 EVM prefix + registry + agentId) and read it off the
+    // name via the universal resolver — "1" ⇒ the name names this exact agent.
+    if (b!.ens_name) {
+      const key = `agent-registration[0x00010000010114${sc.registry.slice(2).toLowerCase()}][${sc.agentId}]`;
+      readEnsText(b!.ens_name, key)
+        .then((v) => setEnsip({ name: b!.ens_name as string, registered: v === "1" }))
+        .catch(() => setEnsip(null));
+    }
     if (so.toLowerCase() === ah.toLowerCase()) {
       setState("ok"); setMsg(`source token & agent both owned by ${short(ah)} — binding live (holder), recomputed in your browser`);
     } else if (b!.status === "valid") {
@@ -303,6 +314,15 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
             {ens.verified
               ? <span className="text-emerald-300/80">· reverse + forward verified</span>
               : <span className="text-amber-300/70">· reverse only (unverified)</span>}
+          </div>
+        )}
+        {ensip?.name && (
+          <div>
+            <span className="text-paper/40">ENSIP-25 </span>
+            <span className="text-paper/80">{ensip.name}</span>{" "}
+            {ensip.registered
+              ? <span className="text-emerald-300/80">· names this agent (registered)</span>
+              : <span className="text-amber-300/70">· no registration record for this agent</span>}
           </div>
         )}
       </div>

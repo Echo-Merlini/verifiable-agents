@@ -134,6 +134,18 @@ export async function readOwnerOf(contract: string, tokenId: string): Promise<st
   return null;
 }
 
+/** Read a text record off an ENS name via the universal resolver (CCIP-Read runs in the
+ *  browser). Used to recompute the ENSIP-25 agent-registration record. null = not set / unreadable. */
+export async function readEnsText(name: string, key: string): Promise<string | null> {
+  for (const rpc of L3_RPCS) {
+    try {
+      const client = createPublicClient({ chain: mainnet, transport: http(rpc) });
+      return await client.getEnsText({ name, key });
+    } catch { /* try the next RPC */ }
+  }
+  return null;
+}
+
 /** The ENS primary name of an address — the human apex of the identity chain. Spoof-safe:
  *  reverse-resolve, then FORWARD-verify the name resolves back to the same address (an
  *  unverified reverse record is meaningless). CCIP-Read runs in the browser. null = no name. */
