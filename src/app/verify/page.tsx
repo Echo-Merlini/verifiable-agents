@@ -288,12 +288,11 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
   const mesh = b.mesh;
   return (
     <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <Fingerprint className="h-4 w-4 text-brassLight" />
-          <span className="font-display text-[15px] text-paper">Identity binding · ERC-8323</span>
-        </div>
-        <img src="/logos/ens.png" alt="ENS" className="h-3.5 w-auto opacity-80" />
+      <div className="flex items-center gap-2">
+        {b.ens_name
+          ? <img src="/logos/ens.png" alt="ENS" className="h-4 w-auto" />
+          : <Fingerprint className="h-4 w-4 text-brassLight" />}
+        <span className="font-display text-[15px] text-paper">Identity binding · ERC-8323</span>
       </div>
       <p className="mt-1.5 text-[12px] text-gb-muted">Who took this action is provable too. The agent NFT is bound to a <span className="text-paper/70">source token</span> — live only while the source is controlled by the agent&apos;s holder — and the holder carries an <span className="text-paper/70">ENS name</span>. Re-read both owners, and reverse-resolve the holder&apos;s name, in your browser.</p>
       <div className="mt-3 space-y-1 font-mono text-[11px]">
@@ -339,6 +338,60 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
       {mesh && (mesh.agree ?? 0) > 0 && (
         <p className="mt-2 text-[11px] text-paper/40">Non-self-attested: {mesh.agree} peer node{mesh.agree === 1 ? "" : "s"} independently recomputed this from their own RPC · <span className={mesh.consensus === "confirmed" ? "text-emerald-300/70" : "text-paper/50"}>{mesh.consensus}</span></p>
       )}
+    </div>
+  );
+}
+
+// A printed-receipt keepsake summarising the whole recompute — the 5 checks (live, so a
+// tamper flips them), the anchoring surfaces, and the identity. Cream paper on the dark page.
+function RecomputeReceipt({ sc, checks }: { sc: Showcase; checks: Check[] }) {
+  const [ens, setEns] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetch(`${GW}/agent/${sc.registry}/${sc.agentId}/binding`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (alive && d?.ens_name) setEns(d.ens_name); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [sc.registry, sc.agentId]);
+  const allPass = checks.length > 0 && checks.every((c) => c.status === "pass");
+  const anyFail = checks.some((c) => c.status === "fail");
+  const mk = (s: string) => (s === "pass" ? "✓" : s === "fail" ? "✗" : "~");
+  const surfaceMark = anyFail ? "✗" : allPass ? "✓" : "·";
+  const chainLabel = sc.l3ChainId === 84532 ? "Base Sepolia" : "mainnet";
+  const Row = ({ label, val, faint }: { label: string; val: string; faint?: boolean }) => (
+    <div className="flex items-baseline gap-1.5">
+      <span className={faint ? "text-[#1a1a1a]/55" : ""}>{label}</span>
+      <span className="min-w-[10px] flex-1 -translate-y-[3px] border-b border-dotted border-[#1a1a1a]/25" />
+      <span className="tabular-nums">{val}</span>
+    </div>
+  );
+  return (
+    <div className="mx-auto mt-8 max-w-sm rounded-md bg-[#f6f2e8] text-[#1a1a1a] shadow-[0_12px_40px_-12px_rgba(0,0,0,0.6)]">
+      <div className="border-y-2 border-dashed border-[#1a1a1a]/20 px-7 py-6 font-mono text-[11px] leading-[1.7]">
+        <div className="text-center">
+          <p className="font-display text-[15px] tracking-tight">RECOMPUTE RECEIPT</p>
+          <p className="mt-1 text-[9px] uppercase tracking-[0.24em] text-[#1a1a1a]/50">Don&apos;t trust. Recompute.</p>
+        </div>
+        <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
+        <Row label={ens || sc.ens} val={`#${sc.agentId}`} />
+        <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
+        <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">Recompute · in your browser</p>
+        {checks.map((c) => <Row key={c.id} label={c.label} val={mk(c.status as CheckStatusLite)} />)}
+        <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
+        <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">Surfaces · one action, verified across</p>
+        <Row label={`Ethereum · ${chainLabel}`} val={surfaceMark} />
+        {sc.zerogChain && <Row label="0G Chain · 2nd commit" val={surfaceMark} />}
+        {sc.zerog && <Row label="0G Storage · availability" val={surfaceMark} />}
+        <Row label="The Graph · queryable" val={surfaceMark} />
+        <Row label="Identity · ERC-8323 + ENS" val={ens ? "✓" : "·"} />
+        <div className="my-3 border-t border-dashed border-[#1a1a1a]/30" />
+        <div className="text-center">
+          <p className="font-display text-[13px]">{anyFail ? "✗  TAMPER DETECTED" : allPass ? "✓  RECOMPUTED" : "— PRESS VERIFY —"}</p>
+          <p className="mt-2 break-all text-[8px] leading-snug text-[#1a1a1a]/45">{sc.rawInputHash}</p>
+          <p className="mt-2 text-[9px] uppercase tracking-[0.22em] text-[#1a1a1a]/40">no trust required · shipped by Vértice</p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -582,6 +635,7 @@ export default function VerifyPage() {
                 {sc?.zerog && <ZeroGEvidence sc={sc} />}
                 {sc?.zerogChain && <ZeroGChainEvidence sc={sc} query={query} />}
                 {sc && <GraphEvidence sc={sc} query={query} />}
+                {sc && ran && <RecomputeReceipt sc={sc} checks={checks} />}
               </div>
             )}
 
