@@ -45,10 +45,10 @@ const STEPS = [
 ];
 
 const TOOLS = [
-  { k: "Uniswap",             h: "Swaps, direct.",        d: "QuoterV2 price + SwapRouter02 calldata your own wallet signs. Not an aggregator.", proof: "0.002 ETH → 3.686 USDC", real: true },
-  { k: "0G",                  h: "Stores its own proof.", d: "Writes the recompute artifact to 0G decentralized storage — not a single server.", proof: "rootHash 0x5feede…00e0", real: true },
-  { k: "The Graph",           h: "Indexed & queryable.",  d: "A subgraph indexes the on-chain anchor — recompute it two ways, a raw RPC log read AND a Graph query, and they must agree.", proof: "anchor · block 25548337", real: true },
-  { k: "ENS · first write-MCP", h: "Buys & manages names.", d: "Check, register (commit → reveal), set records — plus the ENSIP-25 agent name. Every other ENS MCP is read-only.", proof: "recompute.eth · available", real: true },
+  { k: "Uniswap",             logo: "/logos/uniswap.webp", h: "Swaps, direct.",        d: "QuoterV2 price + SwapRouter02 calldata your own wallet signs. Not an aggregator.", proof: "0.002 ETH → 3.686 USDC", real: true },
+  { k: "0G",                  logo: "/logos/0g.jpg",       h: "Stores its own proof.", d: "Writes the recompute artifact to 0G decentralized storage — not a single server.", proof: "rootHash 0x5feede…00e0", real: true },
+  { k: "The Graph",           logo: "/logos/thegraph.webp", h: "Indexed & queryable.", d: "A subgraph indexes the on-chain anchor — recompute it two ways, a raw RPC log read AND a Graph query, and they must agree.", proof: "anchor · block 25548337", real: true },
+  { k: "ENS · first write-MCP", logo: "/logos/ens.png",    h: "Buys & manages names.", d: "Check, register (commit → reveal), set records — plus the ENSIP-25 agent name. Every other ENS MCP is read-only.", proof: "recompute.eth · available", real: true },
 ];
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -240,7 +240,10 @@ export function Landing() {
             <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {TOOLS.map((t, i) => (
                 <div key={i} className="liquid-glass rounded-2xl p-5 flex flex-col gap-2">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-brassLight">{t.k}</span>
+                  <span className="inline-flex h-9 w-fit items-center justify-center self-start rounded-lg bg-white px-2.5 shadow-sm">
+                    <img src={t.logo} alt={t.k} className="h-4 w-auto max-w-[80px] object-contain" />
+                  </span>
+                  <span className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-brassLight">{t.k}</span>
                   <h3 className="font-display font-medium text-lg text-paper">{t.h}</h3>
                   <p className="font-serif text-sm leading-relaxed text-paper/55">{t.d}</p>
                   <p className="mt-auto pt-2 font-mono text-[11px] text-gb-faint truncate">
