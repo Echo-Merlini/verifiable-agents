@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, ExternalLink } from "lucide-react";
-import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
+import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, ExternalLink, Fingerprint } from "lucide-react";
+import { verifyAll, keccakUtf8, readOwnerOf, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
+
+const GW = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
 // Self-contained: a real mainnet attestation baked to /showcase.json. The recompute
 // still runs live in the browser + reads mainnet — only the record fetch is frozen,
@@ -221,6 +223,89 @@ function ZeroGChainEvidence({ sc, query }: { sc: Showcase; query: string }) {
         {state === "bad" && <span className="text-[12px] text-red-300">{msg}</span>}
         {state === "err" && <span className="text-[12px] text-amber-300">could not reach 0G Chain — {msg}</span>}
       </div>
+    </div>
+  );
+}
+
+// ERC-8323 Source-Token Agent Binding — the ACTOR's identity, recomputed. The agent NFT is only
+// as sovereign as the source token behind it: the binding is live iff the source token is
+// controlled by the agent's holder (case a). This re-reads BOTH ownerOf's in the visitor's
+// browser — "a provable action, taken by a provably-bound identity." Peer mesh consensus (each
+// node re-derives from its own RPC) is shown as non-self-attested corroboration.
+type Binding = {
+  registry: string; agentId: string;
+  source_contract?: string; source_token_id?: string;
+  status?: string; matchedCase?: string; sourceOwner?: string; agentHolder?: string;
+  mesh?: { agree?: number; dissent?: number; consensus?: string };
+};
+function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
+  const [b, setB] = useState<Binding | null>(null);
+  const [state, setState] = useState<"idle" | "recomputing" | "ok" | "bad" | "err">("idle");
+  const [msg, setMsg] = useState("");
+  const [rec, setRec] = useState<{ so?: string | null; ah?: string | null } | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetch(`${GW}/agent/${sc.registry}/${sc.agentId}/binding?mesh=1`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: Binding | null) => { if (alive && data && data.source_contract && data.source_token_id) setB(data); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [sc.registry, sc.agentId]);
+  if (!b || !b.source_contract || !b.source_token_id) return null;
+
+  async function recompute() {
+    setState("recomputing"); setMsg("");
+    const [so, ah] = await Promise.all([
+      readOwnerOf(b!.source_contract!, b!.source_token_id!),
+      readOwnerOf(sc.registry, sc.agentId),
+    ]);
+    setRec({ so, ah });
+    if (!so || !ah) { setState("err"); setMsg("could not read ownerOf — RPC unavailable, retry"); return; }
+    if (so.toLowerCase() === ah.toLowerCase()) {
+      setState("ok"); setMsg(`source token & agent both owned by ${short(ah)} — binding live (holder), recomputed in your browser`);
+    } else if (b!.status === "valid") {
+      // case (b) ERC-6551 TBA / (c) binding contract — the sovereign paths the gateway verdict covers
+      setState("ok"); setMsg(`binding live (${b!.matchedCase}) — source owner ${short(so)} is the agent's ${b!.matchedCase}`);
+    } else {
+      setState("bad"); setMsg(`source owner ${short(so)} ≠ agent holder ${short(ah)} — binding no longer live`);
+    }
+  }
+
+  const mesh = b.mesh;
+  return (
+    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Fingerprint className="h-4 w-4 text-brassLight" />
+          <span className="font-display text-[15px] text-paper">Identity binding · ERC-8323</span>
+        </div>
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">source-token</span>
+      </div>
+      <p className="mt-1.5 text-[12px] text-gb-muted">Who took this action is provable too. The agent NFT is bound to a <span className="text-paper/70">source token</span> — the binding is live only while the source is controlled by the agent&apos;s holder. Re-read both owners in your browser.</p>
+      <div className="mt-3 space-y-1 font-mono text-[11px]">
+        <div>
+          <span className="text-paper/40">source token </span>
+          <a href={`https://opensea.io/assets/ethereum/${b.source_contract}/${b.source_token_id}`} target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-1 break-all text-brassLight/80 underline decoration-brassLight/25 underline-offset-2 hover:text-brassLight">
+            {short(b.source_contract)} #{b.source_token_id}<ExternalLink className="h-3 w-3 shrink-0" />
+          </a>
+        </div>
+        <div><span className="text-paper/40">agent </span><span className="text-paper/80">{short(sc.registry)} #{sc.agentId}</span></div>
+        {rec?.so && <div><span className="text-paper/40">source owner </span><span className="break-all text-paper/80">{rec.so}</span></div>}
+        {rec?.ah && <div><span className="text-paper/40">agent holder </span><span className="break-all text-paper/80">{rec.ah}</span></div>}
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <button onClick={recompute} disabled={state === "recomputing"}
+          className="inline-flex items-center gap-1.5 rounded-full border border-brassLight/30 px-3.5 py-1.5 text-[12px] text-brassLight hover:border-brassLight/50 disabled:opacity-50">
+          {state === "recomputing" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Recompute the binding
+        </button>
+        {state === "ok" && <span className="inline-flex items-center gap-1 text-[12px] text-emerald-300"><CheckIcon className="h-3.5 w-3.5" /> {msg}</span>}
+        {state === "bad" && <span className="text-[12px] text-red-300">{msg}</span>}
+        {state === "err" && <span className="text-[12px] text-amber-300">{msg}</span>}
+      </div>
+      {mesh && (mesh.agree ?? 0) > 0 && (
+        <p className="mt-2 text-[11px] text-paper/40">Non-self-attested: {mesh.agree} peer node{mesh.agree === 1 ? "" : "s"} independently recomputed this from their own RPC · <span className={mesh.consensus === "confirmed" ? "text-emerald-300/70" : "text-paper/50"}>{mesh.consensus}</span></p>
+      )}
     </div>
   );
 }
@@ -460,6 +545,7 @@ export default function VerifyPage() {
                   <p className="mt-2 font-mono text-[10px] uppercase tracking-wide text-gb-muted">recipes via recompute-kit · recomputekit-ai.com</p>
                 </div>
 
+                {sc && <IdentityBindingEvidence sc={sc} />}
                 {sc?.zerog && <ZeroGEvidence sc={sc} />}
                 {sc?.zerogChain && <ZeroGChainEvidence sc={sc} query={query} />}
                 {sc && <GraphEvidence sc={sc} query={query} />}

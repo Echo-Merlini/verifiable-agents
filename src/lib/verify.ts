@@ -113,6 +113,27 @@ export function keccakUtf8(s: string): Hex {
   return keccak256(toHex(s));
 }
 
+// ERC-721 ownerOf — the read behind the ERC-8323 source-token binding recompute. Anyone can
+// re-run it: read who owns the source token AND who holds the agent, in the visitor's browser.
+const OWNER_OF_ABI = [{
+  type: "function", name: "ownerOf", stateMutability: "view",
+  inputs: [{ name: "tokenId", type: "uint256" }], outputs: [{ type: "address" }],
+}] as const;
+
+/** Client-side ownerOf(tokenId) on mainnet, with RPC failover. null = could not read (amber). */
+export async function readOwnerOf(contract: string, tokenId: string): Promise<string | null> {
+  for (const rpc of L3_RPCS) {
+    try {
+      const client = createPublicClient({ chain: mainnet, transport: http(rpc) });
+      const owner = await client.readContract({
+        address: contract as Address, abi: OWNER_OF_ABI, functionName: "ownerOf", args: [BigInt(tokenId)],
+      });
+      return String(owner);
+    } catch { /* try the next RPC */ }
+  }
+  return null;
+}
+
 export function checkRawInput(sc: Showcase): Check {
   const got = keccakUtf8(sc.query);
   return { id: "raw", label: "Raw input", recipe: "wyriwe/raw · keccak256(utf8(query))",
