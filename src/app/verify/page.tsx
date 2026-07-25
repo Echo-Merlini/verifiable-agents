@@ -293,7 +293,7 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
           <Fingerprint className="h-4 w-4 text-brassLight" />
           <span className="font-display text-[15px] text-paper">Identity binding · ERC-8323</span>
         </div>
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">source-token</span>
+        <img src="/logos/ens.png" alt="ENS" className="h-3.5 w-auto opacity-80" />
       </div>
       <p className="mt-1.5 text-[12px] text-gb-muted">Who took this action is provable too. The agent NFT is bound to a <span className="text-paper/70">source token</span> — live only while the source is controlled by the agent&apos;s holder — and the holder carries an <span className="text-paper/70">ENS name</span>. Re-read both owners, and reverse-resolve the holder&apos;s name, in your browser.</p>
       <div className="mt-3 space-y-1 font-mono text-[11px]">
@@ -305,6 +305,7 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
           </a>
         </div>
         <div><span className="text-paper/40">agent </span><span className="text-paper/80">{short(sc.registry)} #{sc.agentId}</span></div>
+        {b.ens_name && <div><span className="text-paper/40">ENS name </span><span className="text-paper/80">{b.ens_name}</span></div>}
         {rec?.so && <div><span className="text-paper/40">source owner </span><span className="break-all text-paper/80">{rec.so}</span></div>}
         {rec?.ah && <div><span className="text-paper/40">agent holder </span><span className="break-all text-paper/80">{rec.ah}</span></div>}
         {ens?.name && (

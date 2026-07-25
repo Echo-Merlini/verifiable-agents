@@ -97,6 +97,7 @@ export default function DemoPage() {
   const [recomputing, setRecomputing] = useState<"user" | "agent" | null>(null);
   const [recomputeErr, setRecomputeErr] = useState<string | null>(null);
   const [rep, setRep] = useState<Reputation | null>(null);   // recomputable reputation of the featured agent
+  const [agentEns, setAgentEns] = useState<string | null>(null); // the agent's ENSIP-25 ENS name
 
   // Bulla Goblin's toolbox (the walletless showcase default).
   useEffect(() => {
@@ -148,8 +149,13 @@ export default function DemoPage() {
   // Featured agent's recomputable reputation (escrow-settlement predicate) — shown as a pill under the name.
   useEffect(() => {
     let alive = true;
-    setRep(null);
+    setRep(null); setAgentEns(null);
     fetchReputation(featured.registry, featured.agentId).then((r) => { if (alive) setRep(r); }).catch(() => {});
+    // The agent's ENSIP-25-registered ENS name (from /binding) — shown as a pill under the name.
+    fetch(`${GW_URL}/agent/${featured.registry}/${featured.agentId}/binding`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (alive && d?.ens_name) setAgentEns(d.ens_name); })
+      .catch(() => {});
     return () => { alive = false; };
   }, [featured.registry, featured.agentId]);
 
@@ -274,6 +280,12 @@ export default function DemoPage() {
             </div>
             <div className="mt-1.5 flex flex-wrap items-center gap-2">
               <p className="font-mono text-[11px] text-gb-faint truncate">{featured.sub}</p>
+              {agentEns && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-0.5 text-[11px] text-paper/75" title="ENSIP-25 agent name — verify on /verify">
+                  <img src="/logos/ens.png" alt="ENS" className="h-3 w-auto" />
+                  {agentEns}
+                </span>
+              )}
               <ReputationBadge rep={rep} />
             </div>
           </div>
