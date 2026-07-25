@@ -47,7 +47,8 @@ const STEPS = [
 const TOOLS = [
   { k: "Uniswap",             h: "Swaps, direct.",        d: "QuoterV2 price + SwapRouter02 calldata your own wallet signs. Not an aggregator.", proof: "0.002 ETH → 3.686 USDC", real: true },
   { k: "0G",                  h: "Stores its own proof.", d: "Writes the recompute artifact to 0G decentralized storage — not a single server.", proof: "rootHash 0x5feede…00e0", real: true },
-  { k: "ENS · first write-MCP", h: "Buys & manages names.", d: "Check, register (commit → reveal), set records. Every other ENS MCP is read-only.", proof: "recompute.eth · available", real: true },
+  { k: "The Graph",           h: "Indexed & queryable.",  d: "A subgraph indexes the on-chain anchor — recompute it two ways, a raw RPC log read AND a Graph query, and they must agree.", proof: "anchor · block 25548337", real: true },
+  { k: "ENS · first write-MCP", h: "Buys & manages names.", d: "Check, register (commit → reveal), set records — plus the ENSIP-25 agent name. Every other ENS MCP is read-only.", proof: "recompute.eth · available", real: true },
 ];
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -236,7 +237,7 @@ export function Landing() {
           <div className="story-reveal">
             <Eyebrow>It doesn&apos;t just talk — it acts</Eyebrow>
             <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">Non-custodial. Recomputable.</h2>
-            <div className="mt-8 grid sm:grid-cols-3 gap-3">
+            <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {TOOLS.map((t, i) => (
                 <div key={i} className="liquid-glass rounded-2xl p-5 flex flex-col gap-2">
                   <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-brassLight">{t.k}</span>
@@ -302,10 +303,16 @@ export function Landing() {
 
         {/* Footer */}
         <footer className="mt-20 border-t border-white/8 py-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <p className="font-mono text-[11px] text-gb-muted">
-            Five standards, composed, live on mainnet ·{" "}
-            <span className="text-brassLight/80">8004 · 8299 · 8281 · 8275 · 8323</span>
-          </p>
+          <div className="font-mono text-[11px] text-gb-muted space-y-1">
+            <p>
+              Five ERCs + two ENSIPs, composed ·{" "}
+              <span className="text-brassLight/80">8004 · 8299 · 8281 · 8275 · 8323 · ENSIP-7 · ENSIP-25</span>
+            </p>
+            <p>
+              Anchored, stored &amp; indexed across{" "}
+              <span className="text-brassLight/80">Ethereum · 0G · The Graph</span>
+            </p>
+          </div>
           <div className="flex items-center gap-6">
             <a href="/coloredpaper.html" target="_blank" rel="noreferrer"
               className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/70 hover:text-brassLight">
