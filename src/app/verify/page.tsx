@@ -377,7 +377,7 @@ function RecomputeReceipt({ sc, checks }: { sc: Showcase; checks: Check[] }) {
         <Row label={ens || sc.ens} val={`#${sc.agentId}`} />
         <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
         <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">Recompute · in your browser</p>
-        {checks.map((c) => <Row key={c.id} label={c.label} val={mk(c.status as CheckStatusLite)} />)}
+        {checks.map((c) => <Row key={c.id} label={c.label} val={mk(c.status)} />)}
         <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
         <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">Surfaces · one action, verified across</p>
         <Row label={`Ethereum · ${chainLabel}`} val={surfaceMark} />
