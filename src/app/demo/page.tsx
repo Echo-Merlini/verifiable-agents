@@ -162,8 +162,8 @@ export default function DemoPage() {
       const [ids, ents] = await Promise.all([
         fetchAgentMcps(active.agent_id),
         fetch(`${GW_URL}/marketplace/agents`).then((r) => (r.ok ? r.json() : []))
-          .then((all: Array<{ registry?: string; agent_id?: string; entitlements?: string[] }>) =>
-            (all || []).find((a) => String(a.agent_id) === String(active.agent_id) && a.registry?.toLowerCase() === RKB)?.entitlements ?? [])
+          .then((all: Array<{ registry?: string; agentId?: string; entitlements?: string[] }>) =>
+            (all || []).find((a) => String(a.agentId) === String(active.agent_id) && a.registry?.toLowerCase() === RKB)?.entitlements ?? [])
           .catch(() => [] as string[]),
       ]);
       if (cancelled) return;
