@@ -83,10 +83,13 @@ export default function VerifyPage() {
   const [ran, setRan] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [live, setLive] = useState(false);
+  const [focus, setFocus] = useState<"user" | "agent" | null>(null);
 
   useEffect(() => {
     // ?live=1 → recompute the action the agent JUST took (stashed by /demo), not the baked showcase.
     if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("live") === "1") {
+      const f = new URLSearchParams(window.location.search).get("focus");
+      if (f === "user" || f === "agent") setFocus(f);
       const rec = readLiveRecord();
       if (rec) { setSc(rec); setQuery(rec.query); setLive(true); return; }
     }
@@ -133,8 +136,17 @@ export default function VerifyPage() {
         </p>
 
         {live && sc && (
-          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/5 px-3.5 py-1.5 text-[12px] text-emerald-300">
-            <Radio className="w-3.5 h-3.5" /> Live — recomputing the action <span className="font-medium">{sc.ens}</span> just took. Not a saved demo; the one you watched.
+          <div className="mt-5 space-y-2">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/5 px-3.5 py-1.5 text-[12px] text-emerald-300">
+              <Radio className="w-3.5 h-3.5" /> Live — recomputing the action <span className="font-medium">{sc.ens}</span> just took. Not a saved demo; the one you watched.
+            </div>
+            {focus && (
+              <p className="max-w-xl text-[12px] text-gb-muted">
+                {focus === "user"
+                  ? <>Focus: the <span className="text-paper">user&apos;s action</span> — the exact input the agent received. Checks <span className="text-brassLight">1–2</span> (raw input + provenance) prove it; all five still recompute below.</>
+                  : <>Focus: the <span className="text-paper">agent&apos;s action</span> — its output, anchored on-chain and signed. Checks <span className="text-brassLight">3–5</span> (output + on-chain anchor + signature) prove it; all five still recompute below.</>}
+              </p>
+            )}
           </div>
         )}
 

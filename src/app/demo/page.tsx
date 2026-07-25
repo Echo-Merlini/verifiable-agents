@@ -93,7 +93,7 @@ export default function DemoPage() {
   const [hoverMcp, setHoverMcp] = useState<McpCard | null>(null);    // capability described below the carousel
   const [mcpTags, setMcpTags] = useState<Record<string, string[]>>({}); // mcp_server id → taxonomy tags
   const [lastExchange, setLastExchange] = useState<{ query: string; reply: string } | null>(null);
-  const [recomputing, setRecomputing] = useState(false);
+  const [recomputing, setRecomputing] = useState<"user" | "agent" | null>(null);
   const [recomputeErr, setRecomputeErr] = useState<string | null>(null);
 
   // Bulla Goblin's toolbox (the walletless showcase default).
@@ -157,16 +157,16 @@ export default function DemoPage() {
 
   // Recompute the action the agent just took — builds the full record from the live
   // exchange + on-chain attestation, stashes it, and opens /verify in real-time mode.
-  const recomputeLast = async () => {
+  const recomputeLast = async (focus: "user" | "agent") => {
     if (!lastExchange) return;
-    setRecomputing(true); setRecomputeErr(null);
+    setRecomputing(focus); setRecomputeErr(null);
     const rec = await buildLiveRecord(
       { ens: featured.name, agentId: featured.agentId, registry: featured.registry },
       lastExchange.query, lastExchange.reply,
     );
-    if (rec) { stashLiveRecord(rec); window.location.href = "/verify?live=1"; return; }
+    if (rec) { stashLiveRecord(rec); window.location.href = `/verify?live=1&focus=${focus}`; return; }
     setRecomputeErr("The attestation is still landing on-chain — give it a couple seconds and retry.");
-    setRecomputing(false);
+    setRecomputing(null);
   };
 
   return (
@@ -344,19 +344,26 @@ export default function DemoPage() {
 
         {/* Recompute the action it JUST took — the real-time proof */}
         {lastExchange ? (
-          <div className="mt-4 rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.04] p-4 flex flex-col sm:flex-row sm:items-center gap-3">
-            <div className="flex-1 min-w-0">
+          <div className="mt-4 rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.04] p-4 flex flex-col gap-3">
+            <div className="min-w-0">
               <p className="text-sm text-paper flex items-center gap-1.5 font-display font-medium">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" /> That action was attested on-chain.
+                <ShieldCheck className="w-4 h-4 text-emerald-400" /> The full exchange was attested on-chain — both sides.
               </p>
-              <p className="text-[12px] text-gb-muted mt-0.5">Recompute all five checks — input, provenance, output, signature, and the on-chain anchor — for the reply you just got. Not a saved demo; the one you watched.</p>
+              <p className="text-[12px] text-gb-muted mt-0.5">Recompute either half in your browser: your <span className="text-paper">input</span> the agent received (attested in), or the agent&apos;s <span className="text-paper">output</span> anchored on-chain and signed (attested out). Same live record; all five checks run either way.</p>
               {recomputeErr && <p className="text-[11px] text-brass/80 mt-1.5">{recomputeErr}</p>}
             </div>
-            <button onClick={recomputeLast} disabled={recomputing}
-              className="shrink-0 inline-flex items-center justify-center gap-2 rounded-2xl bg-brass hover:bg-brassLight text-deepink font-display font-medium text-sm px-5 py-2.5 disabled:opacity-50 transition-colors">
-              {recomputing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Radio className="w-4 h-4" />}
-              {recomputing ? "Building record…" : "Recompute this action (5/5)"}
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <button onClick={() => recomputeLast("user")} disabled={!!recomputing}
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl border border-brass/40 bg-brass/10 hover:bg-brass/20 text-brassLight font-display font-medium text-sm px-5 py-2.5 disabled:opacity-50 transition-colors">
+                {recomputing === "user" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Radio className="w-4 h-4" />}
+                {recomputing === "user" ? "Building record…" : "Recompute user action"}
+              </button>
+              <button onClick={() => recomputeLast("agent")} disabled={!!recomputing}
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-brass hover:bg-brassLight text-deepink font-display font-medium text-sm px-5 py-2.5 disabled:opacity-50 transition-colors">
+                {recomputing === "agent" ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+                {recomputing === "agent" ? "Building record…" : "Recompute agent action"}
+              </button>
+            </div>
           </div>
         ) : (
           <div className="mt-4 rounded-xl border border-white/8 p-4 text-sm text-gb-muted">
