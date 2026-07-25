@@ -50,3 +50,21 @@
 @media (prefers-reduced-motion: reduce) {
   .vertice-spin { animation: none; }
 }
+
+/* Scrollbars — grey tones on the dark ground (default white/light scrollbar looked out of place).
+   color-scheme flips native/overlay scrollbars dark; the WebKit rules give the visible bar its
+   own quiet grey with a lighter hover. */
+:root { color-scheme: dark; }
+* {
+  scrollbar-width: thin;                 /* Firefox */
+  scrollbar-color: #363A45 transparent;  /* thumb · track (Firefox) */
+}
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-track { background: #14161B; }
+::-webkit-scrollbar-thumb {
+  background: #363A45;
+  border-radius: 8px;
+  border: 2px solid #14161B;             /* inset the thumb so it reads as a pill */
+}
+::-webkit-scrollbar-thumb:hover { background: #474C59; }
+::-webkit-scrollbar-corner { background: #14161B; }
