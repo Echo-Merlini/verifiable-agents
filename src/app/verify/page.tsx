@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, Database, ExternalLink, Network } from "lucide-react";
+import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, Database, ExternalLink, Network, Link2 } from "lucide-react";
 import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
@@ -157,6 +157,68 @@ function GraphEvidence({ sc, query }: { sc: Showcase; query: string }) {
         {state === "ok" && <span className="inline-flex items-center gap-1 text-[12px] text-emerald-300"><CheckIcon className="h-3.5 w-3.5" /> {msg}</span>}
         {state === "bad" && <span className="text-[12px] text-red-300">{msg}</span>}
         {state === "err" && <span className="text-[12px] text-amber-300">could not reach The Graph — {msg}</span>}
+      </div>
+    </div>
+  );
+}
+
+// A SECOND on-chain commitment: the same digest anchored on 0G Chain (Galileo EVM testnet).
+// Reads the record() tx's Recorded event via a same-origin proxy and confirms topic1 equals
+// the digest recomputed from the (maybe edited) query — so a tamper breaks this too. One
+// action, two independent chains: Ethereum and 0G Chain both hold the same commitment.
+function ZeroGChainEvidence({ sc, query }: { sc: Showcase; query: string }) {
+  const zc = sc.zerogChain;
+  const [state, setState] = useState<"idle" | "reading" | "ok" | "bad" | "err">("idle");
+  const [msg, setMsg] = useState("");
+  if (!zc) return null;
+  async function read() {
+    setState("reading"); setMsg("");
+    try {
+      const digest = keccakUtf8(query); // recomputed from the editable query — tamper-sensitive
+      const r = await fetch("/api/anchor-0g", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ tx: zc!.tx }) }).then((x) => x.json());
+      if (r.error) { setState("err"); setMsg(r.error); return; }
+      if (r.status !== "0x1") { setState("bad"); setMsg(`record() tx did not succeed (status ${r.status})`); return; }
+      const agree = r.digest?.toLowerCase() === digest.toLowerCase();
+      setState(agree ? "ok" : "bad");
+      setMsg(agree
+        ? `0G Chain holds the same digest · block ${r.blockNumber} · committer ${short(r.committer)}`
+        : `0G Chain digest ${short(r.digest)} ≠ recomputed ${short(digest)}`);
+    } catch (e: unknown) { setState("err"); setMsg(e instanceof Error ? e.message : String(e)); }
+  }
+  return (
+    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Link2 className="h-4 w-4 text-brassLight" />
+          <span className="font-display text-[15px] text-paper">Second anchor on 0G Chain</span>
+        </div>
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">{zc.network}</span>
+      </div>
+      <p className="mt-1.5 text-[12px] text-gb-muted">The same commitment, anchored a <span className="text-paper/70">second time on an independent chain</span>. One action; Ethereum and 0G Chain both hold its digest — tamper the query and neither matches.</p>
+      <div className="mt-3 space-y-1 font-mono text-[11px]">
+        <div>
+          <span className="text-paper/40">contract </span>
+          <a href={`${zc.explorer}/address/${zc.contract}`} target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-1 break-all text-brassLight/80 underline decoration-brassLight/25 underline-offset-2 hover:text-brassLight">
+            {zc.contract}<ExternalLink className="h-3 w-3 shrink-0" />
+          </a>
+        </div>
+        <div>
+          <span className="text-paper/40">record tx </span>
+          <a href={`${zc.explorer}/tx/${zc.tx}`} target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-1 break-all text-brassLight/80 underline decoration-brassLight/25 underline-offset-2 hover:text-brassLight">
+            {zc.tx}<ExternalLink className="h-3 w-3 shrink-0" />
+          </a>
+        </div>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <button onClick={read} disabled={state === "reading"}
+          className="inline-flex items-center gap-1.5 rounded-full border border-brassLight/30 px-3.5 py-1.5 text-[12px] text-brassLight hover:border-brassLight/50 disabled:opacity-50">
+          {state === "reading" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Read the 0G Chain anchor
+        </button>
+        {state === "ok" && <span className="inline-flex items-center gap-1 text-[12px] text-emerald-300"><CheckIcon className="h-3.5 w-3.5" /> {msg}</span>}
+        {state === "bad" && <span className="text-[12px] text-red-300">{msg}</span>}
+        {state === "err" && <span className="text-[12px] text-amber-300">could not reach 0G Chain — {msg}</span>}
       </div>
     </div>
   );
@@ -398,6 +460,7 @@ export default function VerifyPage() {
                 </div>
 
                 {sc?.zerog && <ZeroGEvidence sc={sc} />}
+                {sc?.zerogChain && <ZeroGChainEvidence sc={sc} query={query} />}
                 {sc && <GraphEvidence sc={sc} query={query} />}
               </div>
             )}

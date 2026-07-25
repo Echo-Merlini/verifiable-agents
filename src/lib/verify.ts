@@ -49,6 +49,15 @@ export type Showcase = {
     bytes: number;
     artifact: string;        // the exact canonical manifest bytes that were stored
   };
+  zerogChain?: {             // a SECOND on-chain commitment: the same digest anchored on 0G Chain (EVM)
+    network: string;
+    chainId: number;
+    rpc: string;
+    explorer: string;        // block explorer base (…/tx/<hash>, …/address/<addr>)
+    contract: string;        // the TruthAnchor deployed on 0G Chain
+    tx: string;              // the record() tx holding the digest
+    block: number;
+  };
 };
 
 // A check has three honest outcomes — never conflate the last two:
