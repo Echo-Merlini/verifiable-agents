@@ -21,25 +21,55 @@ function tamperOneChar(s: string): string {
   return s.slice(0, i) + (c === c.toUpperCase() ? repl.toUpperCase() : repl) + s.slice(i + 1);
 }
 
-// The showcase action's recompute artifact is really stored on 0G — fetch it back and recompute its
-// content-addressed root, live. Proves the evidence lives on decentralized storage, not our server.
+// The showcase action's recompute artifact is really stored on 0G — fetch it back, recompute its
+// content-addressed root, AND bind the bytes to the Ethereum anchor: the manifest 0G serves must
+// declare the exact hashes /verify confirmed on-chain. So each surface proves a different property —
+// Ethereum the commitment, 0G the availability — and they're bound to the same action.
 function ZeroGEvidence({ sc }: { sc: Showcase }) {
   const z = sc.zerog;
   const [state, setState] = useState<"idle" | "fetching" | "ok" | "bad" | "err">("idle");
   const [msg, setMsg] = useState("");
   if (!z) return null;
+  // The anchor these bytes are bound to lives on mainnet (showcase) or Base Sepolia (live actions).
+  const anchorTxUrl = sc.l3ChainId === 84532
+    ? `https://sepolia.basescan.org/tx/${sc.l3Tx}`
+    : `https://etherscan.io/tx/${sc.l3Tx}`;
+  const anchorChain = sc.l3ChainId === 84532 ? "Base Sepolia" : "mainnet";
   async function post(body: object) {
     return fetch("/api/storage", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json());
   }
   async function fetchVerify() {
     setState("fetching"); setMsg("");
     try {
+      // 1 · pull the bytes back FROM 0G by root (availability)
       const f = await post({ action: "fetch", rootHash: z!.root });
       if (f.error || f.content == null) { setState("err"); setMsg(f.error || "no content"); return; }
+      // 2 · recompute 0G's content-addressed root from those bytes (content-addressing)
       const re = await post({ action: "root", content: f.content });
-      const match = re.rootHash === z!.root;
-      setState(match ? "ok" : "bad");
-      setMsg(match ? `fetched ${f.bytes} bytes from 0G · root recomputed · matches` : `recomputed ${re.rootHash} ≠ committed root`);
+      if (re.rootHash !== z!.root) { setState("bad"); setMsg(`recomputed ${re.rootHash} ≠ committed root`); return; }
+      // 3 · bind: the manifest 0G serves must declare the SAME hashes Ethereum anchored — else 0G is
+      //     just holding *some* bytes, unconnected to the on-chain commitment.
+      const eq = (a?: string, b?: string) => !!a && !!b && a.toLowerCase() === b.toLowerCase();
+      const fields: [string, string | undefined, string | undefined][] = (() => {
+        try {
+          const m = JSON.parse(f.content);
+          return [
+            ["rawInputHash", m.rawInputHash, sc.rawInputHash],
+            ["inputHash", m.inputHash, sc.inputHash],
+            ["outputHash", m.outputHash, sc.outputHash],
+            ["manifestHash", m.manifestHash, sc.manifestHash],
+            ["l3Tx", m.l3Tx, sc.l3Tx],
+            ["ocpContract", m.ocpContract, sc.ocpContract],
+          ];
+        } catch { return []; }
+      })();
+      if (!fields.length) { setState("bad"); setMsg(`fetched ${f.bytes} bytes · 0G root matches · but the manifest isn't the expected JSON`); return; }
+      const mism = fields.filter(([, a, b]) => !eq(a, b)).map(([k]) => k);
+      const bound = mism.length === 0;
+      setState(bound ? "ok" : "bad");
+      setMsg(bound
+        ? `fetched ${f.bytes} bytes · 0G root matches · ${fields.length}/${fields.length} anchor fields bound to ${anchorChain}`
+        : `fetched ${f.bytes} bytes · 0G root matches · but the manifest diverges from the on-chain anchor: ${mism.join(", ")}`);
     } catch (e: unknown) { setState("err"); setMsg(e instanceof Error ? e.message : String(e)); }
   }
   return (
@@ -51,7 +81,7 @@ function ZeroGEvidence({ sc }: { sc: Showcase }) {
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">{z.network}</span>
       </div>
-      <p className="mt-1.5 text-[12px] text-gb-muted">The manifest anyone recomputes this action from ({z.bytes} bytes) lives on decentralized storage, content-addressed — not on our server.</p>
+      <p className="mt-1.5 text-[12px] text-gb-muted">Ethereum proves the <span className="text-paper/70">commitment</span>; 0G proves <span className="text-paper/70">availability</span>. The manifest anyone recomputes this action from ({z.bytes} bytes) lives on decentralized storage, content-addressed — and its hashes bind back to the on-chain anchor.</p>
       <div className="mt-3 space-y-1 font-mono text-[11px]">
         <div><span className="text-paper/40">root </span><span className="break-all text-paper/80">{z.root}</span></div>
         <div>
@@ -61,11 +91,18 @@ function ZeroGEvidence({ sc }: { sc: Showcase }) {
             {z.tx}<ExternalLink className="h-3 w-3 shrink-0" />
           </a>
         </div>
+        <div>
+          <span className="text-paper/40">binds to </span>
+          <a href={anchorTxUrl} target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-1 break-all text-brassLight/80 underline decoration-brassLight/25 underline-offset-2 hover:text-brassLight">
+            {anchorChain} anchor {sc.l3Tx}<ExternalLink className="h-3 w-3 shrink-0" />
+          </a>
+        </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <button onClick={fetchVerify} disabled={state === "fetching"}
           className="inline-flex items-center gap-1.5 rounded-full border border-brassLight/30 px-3.5 py-1.5 text-[12px] text-brassLight hover:border-brassLight/50 disabled:opacity-50">
-          {state === "fetching" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Fetch &amp; recompute
+          {state === "fetching" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Fetch, recompute &amp; bind
         </button>
         {state === "ok" && <span className="inline-flex items-center gap-1 text-[12px] text-emerald-300"><CheckIcon className="h-3.5 w-3.5" /> {msg}</span>}
         {state === "bad" && <span className="text-[12px] text-red-300">{msg}</span>}
