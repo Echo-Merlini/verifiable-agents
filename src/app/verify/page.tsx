@@ -470,6 +470,15 @@ export default function VerifyPage() {
     else { const q = tamperOneChar(query || sc.query); setQuery(q); run(q, reply); }
   }
   function restore() { if (!sc) return; setQuery(sc.query); setReply(sc.reply); run(sc.query, sc.reply); }
+  // Swap the recompute perspective (user input ↔ agent output) IN-PAGE — no round-trip to /demo,
+  // which re-mounts the chat and wipes it. Reset both preimages so the new side starts untampered,
+  // and re-run if we'd already verified so the rows refresh green for the new focus.
+  function swapFocus(f: "user" | "agent") {
+    setFocus(f);
+    if (!sc) return;
+    setQuery(sc.query); setReply(sc.reply);
+    if (ran) run(sc.query, sc.reply);
+  }
 
   const allOk = ran && checks.length > 0 && checks.every((c) => c.status === "pass");
   const anyFail = ran && checks.some((c) => c.status === "fail");
@@ -540,6 +549,27 @@ export default function VerifyPage() {
                   <p className="mt-1 font-display text-lg">{sc.ens} <span className="text-gb-muted">· #{sc.agentId}</span></p>
                 </div>
                 <span className="font-mono text-[10px] text-gb-faint">registry {short(sc.registry)}</span>
+              </div>
+
+              {/* Swap the recompute perspective in-page — no round-trip to /demo (which clears the chat). */}
+              <div className="mt-5">
+                <div className="inline-flex rounded-full border border-white/10 bg-black/20 p-1 text-[12px]" role="tablist" aria-label="Recompute perspective">
+                  {([["user", "User action"], ["agent", "Agent action"]] as const).map(([f, label]) => {
+                    const on = (focus ?? "user") === f;
+                    return (
+                      <button key={f} type="button" role="tab" aria-selected={on} onClick={() => swapFocus(f)}
+                        className={`rounded-full px-4 py-1.5 font-medium transition-colors ${on ? "bg-brass text-ink" : "text-paper/60 hover:text-paper"}`}>
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-1.5 text-[11px] text-gb-faint">
+                  {editingAgent
+                    ? <>Recomputing the agent&apos;s <span className="text-paper/70">output</span> — tamper the reply below. Checks <span className="text-brassLight/80">3–5</span> prove it.</>
+                    : <>Recomputing the user&apos;s <span className="text-paper/70">input</span> — tamper the query below. Checks <span className="text-brassLight/80">1–2</span> prove it.</>}
+                  {" "}All five recompute either way.
+                </p>
               </div>
 
               <div className="mt-5 flex items-center justify-between gap-3">
