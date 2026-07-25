@@ -45,7 +45,7 @@ const STEPS = [
 ];
 
 const TOOLS = [
-  { k: "Uniswap",             logo: "/logos/uniswap.webp", h: "Swaps, direct.",        d: "QuoterV2 price + SwapRouter02 calldata your own wallet signs. Not an aggregator.", proof: "0.002 ETH → 3.686 USDC", real: true },
+  { k: "Uniswap · UniswapX",  logo: "/logos/uniswap.webp", h: "Swaps & intents.",       d: "Direct swaps — QuoterV2 price + SwapRouter02 calldata your wallet signs — plus UniswapX intent orders (Dutch-auction, Permit2). Not an aggregator.", proof: "0.002 ETH → 3.686 USDC", real: true },
   { k: "0G",                  logo: "/logos/0g.jpg",       h: "Stores its own proof.", d: "Writes the recompute artifact to 0G decentralized storage — not a single server.", proof: "rootHash 0x5feede…00e0", real: true },
   { k: "The Graph",           logo: "/logos/thegraph.webp", h: "Indexed & queryable.", d: "A subgraph indexes the on-chain anchor — recompute it two ways, a raw RPC log read AND a Graph query, and they must agree.", proof: "anchor · block 25548337", real: true },
   { k: "ENS · first write-MCP", logo: "/logos/ens.png",    h: "Buys & manages names.", d: "Check, register (commit → reveal), set records — plus the ENSIP-25 agent name. Every other ENS MCP is read-only.", proof: "recompute.eth · available", real: true },
