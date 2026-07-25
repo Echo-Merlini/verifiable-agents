@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, Database, ExternalLink, Network, Link2 } from "lucide-react";
+import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, ExternalLink } from "lucide-react";
 import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
@@ -76,7 +76,7 @@ function ZeroGEvidence({ sc }: { sc: Showcase }) {
     <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Database className="h-4 w-4 text-brassLight" />
+          <img src="/logos/0g.jpg" alt="0G" className="h-5 w-5 rounded-md object-cover" />
           <span className="font-display text-[15px] text-paper">Evidence on 0G</span>
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">{z.network}</span>
@@ -140,7 +140,7 @@ function GraphEvidence({ sc, query }: { sc: Showcase; query: string }) {
     <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Network className="h-4 w-4 text-brassLight" />
+          <img src="/logos/thegraph.webp" alt="The Graph" className="h-5 w-5 rounded-full object-contain" />
           <span className="font-display text-[15px] text-paper">Queryable on The Graph</span>
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">Subgraph · mainnet</span>
@@ -189,7 +189,7 @@ function ZeroGChainEvidence({ sc, query }: { sc: Showcase; query: string }) {
     <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Link2 className="h-4 w-4 text-brassLight" />
+          <img src="/logos/0g.jpg" alt="0G Chain" className="h-5 w-5 rounded-md object-cover" />
           <span className="font-display text-[15px] text-paper">Second anchor on 0G Chain</span>
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">{zc.network}</span>
