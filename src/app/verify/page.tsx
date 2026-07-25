@@ -305,6 +305,7 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
           ? <img src="/logos/ens.png" alt="ENS" className="h-4 w-auto" />
           : <Fingerprint className="h-4 w-4 text-brassLight" />}
         <span className="font-display text-[15px] text-paper">Identity binding · ERC-8323</span>
+        <StdBadge>ERC-8004</StdBadge>
         <StdBadge>ENSIP-25</StdBadge>
       </div>
       <p className="mt-1.5 text-[12px] text-gb-muted">Who took this action is provable too. The agent NFT is bound to a <span className="text-paper/70">source token</span> — live only while the source is controlled by the agent&apos;s holder — and the holder carries an <span className="text-paper/70">ENS name</span>. Re-read both owners, and reverse-resolve the holder&apos;s name, in your browser.</p>
