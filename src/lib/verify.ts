@@ -151,7 +151,9 @@ export async function checkL4Signature(sc: Showcase): Promise<Check> {
         raw_input_hash: toBytes32(recomputedRaw),
         sanitization_pipeline_hash: toBytes32(sc.sanitizationPipelineHash),
         input_hash: toBytes32(sc.inputHash),
-        output_hash: toBytes32(sc.outputHash),
+        // Recomputed from the (maybe edited) reply — so tampering the agent's OUTPUT also
+        // drifts the recovered signer off the attestor (the L4 sig covers both hashes).
+        output_hash: toBytes32(keccakUtf8(sc.reply)),
         manifest_hash: toBytes32(sc.manifestHash),
         agentId: BigInt(sc.agentId),
         registry: sc.registry,

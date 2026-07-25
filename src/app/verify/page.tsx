@@ -77,7 +77,8 @@ function ZeroGEvidence({ sc }: { sc: Showcase }) {
 
 export default function VerifyPage() {
   const [sc, setSc] = useState<Showcase | null>(null);
-  const [query, setQuery] = useState("");          // editable → powers the tamper test
+  const [query, setQuery] = useState("");          // editable → powers the user-side tamper test
+  const [reply, setReply] = useState("");          // editable when focus=agent → powers the output-side tamper
   const [checks, setChecks] = useState<Check[]>([]);
   const [running, setRunning] = useState(false);
   const [ran, setRan] = useState(false);
@@ -91,28 +92,33 @@ export default function VerifyPage() {
       const f = new URLSearchParams(window.location.search).get("focus");
       if (f === "user" || f === "agent") setFocus(f);
       const rec = readLiveRecord();
-      if (rec) { setSc(rec); setQuery(rec.query); setLive(true); return; }
+      if (rec) { setSc(rec); setQuery(rec.query); setReply(rec.reply); setLive(true); return; }
     }
     fetch(SHOWCASE_URL)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((d: Showcase) => { setSc(d); setQuery(d.query); })
+      .then((d: Showcase) => { setSc(d); setQuery(d.query); setReply(d.reply); })
       .catch(() => setErr("Couldn't load the showcase attestation."));
   }, []);
 
-  const tampered = !!sc && query !== sc.query;
+  const editingAgent = focus === "agent";   // agent-side view → tamper the reply (output), not the query
+  const tampered = !!sc && (query !== sc.query || reply !== sc.reply);
 
-  // Recompute against a specific query value (so tamper/restore can run the new value
+  // Recompute against specific query/reply values (so tamper/restore can run the new value
   // immediately, without waiting on a state update).
-  async function run(q: string = query) {
+  async function run(q: string = query, r: string = reply) {
     if (!sc) return;
     setRunning(true); setRan(false);
-    const result = await verifyAll({ ...sc, query: q });   // recompute against the (maybe edited) query
+    const result = await verifyAll({ ...sc, query: q, reply: r });   // recompute against the (maybe edited) preimages
     setChecks(result);
     setRunning(false); setRan(true);
   }
 
-  function tamper() { if (!sc) return; const q = tamperOneChar(query || sc.query); setQuery(q); run(q); }
-  function restore() { if (!sc) return; setQuery(sc.query); run(sc.query); }
+  function tamper() {
+    if (!sc) return;
+    if (editingAgent) { const r = tamperOneChar(reply || sc.reply); setReply(r); run(query, r); }
+    else { const q = tamperOneChar(query || sc.query); setQuery(q); run(q, reply); }
+  }
+  function restore() { if (!sc) return; setQuery(sc.query); setReply(sc.reply); run(sc.query, sc.reply); }
 
   const allOk = ran && checks.length > 0 && checks.every((c) => c.status === "pass");
   const anyFail = ran && checks.some((c) => c.status === "fail");
@@ -186,27 +192,29 @@ export default function VerifyPage() {
               </div>
 
               <div className="mt-5 flex items-center justify-between gap-3">
-                <label className="block font-mono text-[11px] uppercase tracking-wide text-gb-muted">Query — the public input the agent was given</label>
+                <label className="block font-mono text-[11px] uppercase tracking-wide text-gb-muted">
+                  {editingAgent ? "Reply — the agent's output (edit to tamper)" : "Query — the public input the agent was given"}
+                </label>
                 <span className={`font-mono text-[10px] px-2 py-0.5 rounded-full shrink-0 ${tampered ? "bg-red-500/15 text-red-300" : "bg-emerald-400/10 text-emerald-300/80"}`}>
                   {tampered ? "tampered" : "original"}
                 </span>
               </div>
               <textarea
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                rows={3}
+                value={editingAgent ? reply : query}
+                onChange={(e) => (editingAgent ? setReply(e.target.value) : setQuery(e.target.value))}
+                rows={editingAgent ? 4 : 3}
                 spellCheck={false}
                 className={`mt-2 w-full rounded-xl border bg-black/20 px-4 py-3 text-sm font-mono outline-none transition-colors ${tampered ? "border-red-500/50 text-red-300" : "border-white/10 text-paper focus:border-brassLight/50"}`}
               />
-              <p className="mt-1.5 text-[11px] text-gb-faint">Type in here to change the input — or use <span className="text-brassLight/80">Tamper a byte</span> below. The committed hash on-chain doesn&apos;t move, so any change must break the match.</p>
+              <p className="mt-1.5 text-[11px] text-gb-faint">Type in here to change the {editingAgent ? "agent's reply" : "input"} — or use <span className="text-brassLight/80">Tamper a byte</span> below. The committed hash on-chain doesn&apos;t move, so any change must break the match.</p>
 
-              <p className="mt-4 font-mono text-[11px] uppercase tracking-wide text-gb-muted">Reply — what the agent returned</p>
-              <p className="mt-1 text-sm text-gb-faint whitespace-pre-wrap line-clamp-4">{sc.reply}</p>
+              <p className="mt-4 font-mono text-[11px] uppercase tracking-wide text-gb-muted">{editingAgent ? "Query — the input the agent was given" : "Reply — what the agent returned"}</p>
+              <p className="mt-1 text-sm text-gb-faint whitespace-pre-wrap line-clamp-4">{editingAgent ? sc.query : sc.reply}</p>
             </div>
 
-            {/* Live keccak of the current query */}
+            {/* Live keccak of the currently-edited preimage */}
             <div className="mt-3 font-mono text-[11px] text-gb-faint">
-              keccak256(utf8(query)) = <span className={tampered ? "text-red-300" : "text-brassLight/90"}>{short(keccakUtf8(query))}</span>
+              keccak256(utf8({editingAgent ? "reply" : "query"})) = <span className={tampered ? "text-red-300" : "text-brassLight/90"}>{short(keccakUtf8(editingAgent ? reply : query))}</span>
               {tampered && <span className="text-red-400"> · ≠ the hash committed on-chain</span>}
             </div>
 
