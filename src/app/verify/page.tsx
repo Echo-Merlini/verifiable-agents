@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, Database, ExternalLink } from "lucide-react";
+import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, Database, ExternalLink, Network } from "lucide-react";
 import { verifyAll, keccakUtf8, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
@@ -107,6 +107,56 @@ function ZeroGEvidence({ sc }: { sc: Showcase }) {
         {state === "ok" && <span className="inline-flex items-center gap-1 text-[12px] text-emerald-300"><CheckIcon className="h-3.5 w-3.5" /> {msg}</span>}
         {state === "bad" && <span className="text-[12px] text-red-300">{msg}</span>}
         {state === "err" && <span className="text-[12px] text-amber-300">could not reach 0G — {msg}</span>}
+      </div>
+    </div>
+  );
+}
+
+// The same OCP anchor, indexed and queryable via The Graph — an independent read-path.
+// Queries by the digest RECOMPUTED from the (maybe edited) query, so a tamper makes the
+// subgraph return nothing (red), exactly like the on-chain spine. Ethereum proves the
+// commitment; The Graph proves it's queryable — and the two reads must agree.
+function GraphEvidence({ sc, query }: { sc: Showcase; query: string }) {
+  const [state, setState] = useState<"idle" | "querying" | "ok" | "bad" | "err">("idle");
+  const [msg, setMsg] = useState("");
+  // This subgraph indexes the mainnet TruthAnchor; live Base Sepolia actions aren't in it.
+  if (!sc.l3Tx || sc.l3ChainId === 84532) return null;
+  async function queryIndex() {
+    setState("querying"); setMsg("");
+    try {
+      const digest = keccakUtf8(query); // recomputed from the editable query — tamper-sensitive
+      const r = await fetch("/api/anchor", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ digest }) }).then((x) => x.json());
+      if (r.error) { setState("err"); setMsg(r.error); return; }
+      const a = r.anchor;
+      if (!a) { setState("bad"); setMsg(`no anchor indexed for digest ${short(digest)} — this query was never committed`); return; }
+      const agree = a.digest?.toLowerCase() === digest.toLowerCase() && a.txHash?.toLowerCase() === sc.l3Tx?.toLowerCase();
+      setState(agree ? "ok" : "bad");
+      setMsg(agree
+        ? `The Graph returns the same anchor the RPC read did · tx ${short(a.txHash)} · block ${a.blockNumber}`
+        : `subgraph anchor disagrees with the on-chain read (tx ${short(a.txHash)})`);
+    } catch (e: unknown) { setState("err"); setMsg(e instanceof Error ? e.message : String(e)); }
+  }
+  return (
+    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Network className="h-4 w-4 text-brassLight" />
+          <span className="font-display text-[15px] text-paper">Queryable on The Graph</span>
+        </div>
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">Subgraph · mainnet</span>
+      </div>
+      <p className="mt-1.5 text-[12px] text-gb-muted">Ethereum proves the <span className="text-paper/70">commitment</span>; The Graph proves it&apos;s <span className="text-paper/70">queryable</span>. A subgraph indexes the OCP <span className="font-mono text-paper/70">Recorded</span> events — an independent read-path that must agree with the raw RPC log read.</p>
+      <div className="mt-3 space-y-1 font-mono text-[11px]">
+        <div><span className="text-paper/40">query </span><span className="break-all text-paper/80">{"anchors(where: { digest }) { txHash · committer · blockNumber }"}</span></div>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <button onClick={queryIndex} disabled={state === "querying"}
+          className="inline-flex items-center gap-1.5 rounded-full border border-brassLight/30 px-3.5 py-1.5 text-[12px] text-brassLight hover:border-brassLight/50 disabled:opacity-50">
+          {state === "querying" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Query the index
+        </button>
+        {state === "ok" && <span className="inline-flex items-center gap-1 text-[12px] text-emerald-300"><CheckIcon className="h-3.5 w-3.5" /> {msg}</span>}
+        {state === "bad" && <span className="text-[12px] text-red-300">{msg}</span>}
+        {state === "err" && <span className="text-[12px] text-amber-300">could not reach The Graph — {msg}</span>}
       </div>
     </div>
   );
@@ -348,6 +398,7 @@ export default function VerifyPage() {
                 </div>
 
                 {sc?.zerog && <ZeroGEvidence sc={sc} />}
+                {sc && <GraphEvidence sc={sc} query={query} />}
               </div>
             )}
 
