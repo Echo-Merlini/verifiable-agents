@@ -1,0 +1,5 @@
+{
+  "base-sepolia": {
+    "TruthAnchor": { "address": "0x0963Fd33DF80c94360F2DC22e5c09517AeE7ED5c", "startBlock": 41658338 }
+  }
+}

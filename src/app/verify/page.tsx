@@ -119,13 +119,14 @@ function ZeroGEvidence({ sc }: { sc: Showcase }) {
 function GraphEvidence({ sc, query }: { sc: Showcase; query: string }) {
   const [state, setState] = useState<"idle" | "querying" | "ok" | "bad" | "err">("idle");
   const [msg, setMsg] = useState("");
-  // This subgraph indexes the mainnet TruthAnchor; live Base Sepolia actions aren't in it.
-  if (!sc.l3Tx || sc.l3ChainId === 84532) return null;
+  // A subgraph per network indexes the OCP anchor — mainnet (showcase) or Base Sepolia (live).
+  if (!sc.l3Tx) return null;
+  const chainLabel = sc.l3ChainId === 84532 ? "Base Sepolia" : "mainnet";
   async function queryIndex() {
     setState("querying"); setMsg("");
     try {
       const digest = keccakUtf8(query); // recomputed from the editable query — tamper-sensitive
-      const r = await fetch("/api/anchor", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ digest }) }).then((x) => x.json());
+      const r = await fetch("/api/anchor", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ digest, chainId: sc.l3ChainId }) }).then((x) => x.json());
       if (r.error) { setState("err"); setMsg(r.error); return; }
       const a = r.anchor;
       if (!a) { setState("bad"); setMsg(`no anchor indexed for digest ${short(digest)} — this query was never committed`); return; }
@@ -143,7 +144,7 @@ function GraphEvidence({ sc, query }: { sc: Showcase; query: string }) {
           <img src="/logos/thegraph.webp" alt="The Graph" className="h-5 w-5 rounded-full object-contain" />
           <span className="font-display text-[15px] text-paper">Queryable on The Graph</span>
         </div>
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">Subgraph · mainnet</span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">Subgraph · {chainLabel}</span>
       </div>
       <p className="mt-1.5 text-[12px] text-gb-muted">Ethereum proves the <span className="text-paper/70">commitment</span>; The Graph proves it&apos;s <span className="text-paper/70">queryable</span>. A subgraph indexes the OCP <span className="font-mono text-paper/70">Recorded</span> events — an independent read-path that must agree with the raw RPC log read.</p>
       <div className="mt-3 space-y-1 font-mono text-[11px]">

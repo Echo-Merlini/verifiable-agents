@@ -1,0 +1,15 @@
+{
+  "name": "recomputable-agents-anchor-base",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "auth": "graph auth",
+    "deploy": "graph deploy recomputable-agents-anchor-base"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.97.1",
+    "@graphprotocol/graph-ts": "0.38.0"
+  }
+}

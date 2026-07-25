@@ -46,6 +46,15 @@ export async function buildLiveRecord(agent: LiveAgent, query: string, reply: st
       l3Tx: (a.l3_tx ?? undefined) as Hex | undefined, // may be pending → /verify ambers, retry
       ocpContract: BASE_OCP,
       l3ChainId: BASE_SEPOLIA_ID,
+      // Multi-surface: the gateway stores each chat action's recompute manifest on 0G Storage
+      // and anchors it a SECOND time on 0G Chain (best-effort, async — so these may lag the L4
+      // sign by a few seconds; the panels simply appear once present).
+      zerog: a.zerog_root
+        ? { network: "0G Galileo Storage", root: a.zerog_root as string, tx: (a.zerog_tx ?? "") as string, bytes: Number(a.zerog_bytes ?? 0), artifact: "" }
+        : undefined,
+      zerogChain: a.zerog_chain_tx
+        ? { network: "0G Galileo Testnet", chainId: 16602, rpc: "https://evmrpc-testnet.0g.ai", explorer: "https://chainscan-galileo.0g.ai", contract: "0x29A45029DE2439925f2525E01Be6b6631fC9DD85", tx: a.zerog_chain_tx as string, block: 0 }
+        : undefined,
       live: true,
     };
   } catch {
