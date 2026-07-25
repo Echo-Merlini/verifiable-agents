@@ -36,6 +36,30 @@ The differentiator vs. demo-ware: you don't take our word for anything — you p
 
 A failed on-chain read shows **amber** ("could not check"), never a false green or red — the state is honestly ternary.
 
+## One action, verified across four surfaces
+
+Below the five checks, `/verify` proves the *same* action across four independent systems — each doing the thing it's actually for, each recomputed in your browser, each breaking on a tampered byte:
+
+| Surface | Proves | How you recompute it |
+| --- | --- | --- |
+| **Ethereum** (OCP anchor) | the **commitment** | read the `Recorded` event on mainnet |
+| **0G Chain** | a **second, independent** commitment | the same digest `record()`'d on 0G Chain (Galileo EVM) |
+| **0G Storage** | **availability** | fetch the manifest back by root, recompute its content-address, and bind its hashes to the on-chain anchor (6/6) |
+| **The Graph** | **queryability** | a subgraph indexes the anchor — query it *and* the raw RPC read must agree |
+
+*Ethereum proves the commitment · 0G proves it's there to check · The Graph proves it's independently indexed.* Not "recompute from what — your server?" — from two chains, decentralized storage, and a third-party index.
+
+## Who acted — a provably-bound identity
+
+`/verify` also recomputes **who** took the action, live:
+
+- the agent's **holder** reverse-resolves to its ENS name (`dinamic.eth`), **forward-verified** (spoof-safe primary-name check);
+- an **ENSIP-25** agent record names *this exact agent* (ERC-8004 registry + id);
+- the **ERC-8323 source-token binding** is live — the agent NFT is genuinely controlled by that identity (`ownerOf` re-read in-browser);
+- and **independent nodes recompute the same verdict** (non-self-attested consensus).
+
+*A provable action, taken by a provably-bound identity.* Every recompute also prints a **receipt** — the attested exchange, all checks, all surfaces (each linking to its explorer), and the verdict — that reprints **✗ TAMPER DETECTED** on a flipped byte.
+
 ## Architecture
 
 ```mermaid
@@ -93,11 +117,14 @@ flowchart TB
 | **ENS — identity** | The agent is a `.eth` name (`vertice.eth`); subnames via a CCIP-Read offchain resolver + on-chain IPFS contenthash so `*.eth.limo` resolves in any browser. |
 | **ENS — write (novel)** | The **first ENS *write* MCP**: an agent registers a `.eth` name (commit→reveal) and sets its records — `addr`, `text` (incl. ENSIP-25 agent records), primary, and **contenthash** — **non-custodially**, the owner's own wallet signing; the name's real resolver is looked up on-chain (works on subnames). A demo agent used it to point `lens.trustless-ai.eth` at an IPFS build on-chain — attested + recomputable. Existing ENS MCPs are read-only. |
 | **Uniswap** | Direct Uniswap v3 (no aggregator): an MCP prices swaps via the on-chain **QuoterV2** and builds **SwapRouter02** calldata the user's wallet signs — Ethereum + Base, every swap recomputable. |
-| **0G** | Recompute artifacts (raw input / output / manifest) written to **0G decentralized Storage**, so an action's evidence lives on a decentralized data layer, not a single server — content-addressed by root hash. |
+| **UniswapX** | An MCP fetches the **best price from the Uniswap Trading API** (attested) and packages it as a signable **UniswapX Dutch-auction intent** (ExclusiveDutchOrder + Permit2) — starts at the best price, decays to the floor, returns a **deterministic, recomputable order hash**. |
+| **0G — Storage** | Each action's recompute manifest is written to **0G decentralized Storage** (content-addressed root); `/verify` fetches it back and **binds its hashes to the on-chain anchor** — availability, provably tied to the commitment. |
+| **0G — Chain** | The action's digest is anchored a **second time on 0G Chain** (Galileo EVM) — an independent on-chain commitment beyond Ethereum. |
+| **The Graph** | A **subgraph indexes the OCP anchor's `Recorded` events**, giving `/verify` an independent, queryable read-path — recompute the anchor two ways (raw RPC log read **and** a Graph query) and require they agree. |
 | **IPFS** | Pinned pages + attestation artifacts; a self-contained CID renewer publishes ENS record pages out of the box (no external server). |
 | **Base (L2)** | Live per-action attestation anchors write to **Base Sepolia**; the mainnet showcase anchor reads from **Ethereum mainnet**. |
 
-**Standards referenced:** ERC-8299 (WYRIWE input provenance) · ERC-8281 (Observation-Commitment anchor) · ERC-8004 (agent identity) · ERC-8323 (source-token binding). Verification recipes from the [Recompute Kit](https://recomputekit-ai.com).
+**Standards composed:** ERC-8004 (agent identity) · ERC-8299 (WYRIWE input provenance) · ERC-8281 (Observation-Commitment anchor) · ERC-8275 (reputation) · ERC-8323 (source-token binding) · **ENSIP-7** (contenthash) · **ENSIP-25** (agent record). Reputation is a recomputable predicate — a **Wilson lower bound** over on-chain escrow settlements, so it under-sells rather than flatters. Verification recipes from the [Recompute Kit](https://recomputekit-ai.com).
 
 ## Tech stack
 
@@ -148,13 +175,19 @@ docker run -p 3000:3000 verifiable-agents
 | --- | --- | --- |
 | GenesisAgentRegistry "Recompute Kit Bots" | Ethereum mainnet | `0x8b5AF3A59f81c7e16617E8Eb824BC6FfB792A2C3` |
 | ConsultEscrow (A2A) | Ethereum mainnet | `0x7057fbA75Ca88B8eF43564be3244bdd7163De04D` |
-| ERC-8281 observation anchor (live actions) | Base Sepolia | `sepolia.base.org` |
+| OCP anchor — showcase (mainnet read) | Ethereum mainnet | `0x1e2A118a2bf1C240aE6fDe187c07f905D360f094` |
+| OCP anchor — live per-action | Base Sepolia | `0x0963Fd33DF80c94360F2DC22e5c09517AeE7ED5c` |
+| OCP anchor — 2nd commitment | 0G Galileo (EVM) | `0x29A45029DE2439925f2525E01Be6b6631fC9DD85` |
 
 ## Design decisions
 
 - **No oracle in the verify path — by design.** Outsourcing verification to an off-chain oracle network would mean *trusting* that network — the exact thing this project rejects. Verification is a **recompute anyone can run**, from public artifacts, in their own browser.
 - **Non-custodial.** The gateway holds no key that can move user funds. Every transaction is signed by the visitor's own wallet after an explicit approval card.
 - **Mainnet where it counts.** The registry, escrow, and showcase anchor are on Ethereum mainnet (credibility over a testnet toy); high-frequency per-action anchors use Base Sepolia for gas.
+
+## How this was built
+
+Built with **Claude Code** as the primary coding agent, human-directed throughout — every architectural decision, every standard, and every honesty call (recomputable *vs* attested, mainnet *vs* Base Sepolia) was made and understood by the team, not auto-generated. The AI-assisted process notes and build plans live in [`PLANS/`](./PLANS). Fitting the thesis: even the build process is meant to be **legible, not a black box.**
 
 ---
 
