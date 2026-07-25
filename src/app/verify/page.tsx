@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, ExternalLink, Fingerprint } from "lucide-react";
-import { verifyAll, keccakUtf8, readOwnerOf, type Showcase, type Check } from "@/lib/verify";
+import { verifyAll, keccakUtf8, readOwnerOf, resolveEnsIdentity, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
 
@@ -243,6 +243,7 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
   const [state, setState] = useState<"idle" | "recomputing" | "ok" | "bad" | "err">("idle");
   const [msg, setMsg] = useState("");
   const [rec, setRec] = useState<{ so?: string | null; ah?: string | null } | null>(null);
+  const [ens, setEns] = useState<{ name: string; verified: boolean } | null>(null);
   useEffect(() => {
     let alive = true;
     fetch(`${GW}/agent/${sc.registry}/${sc.agentId}/binding?mesh=1`)
@@ -261,6 +262,8 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
     ]);
     setRec({ so, ah });
     if (!so || !ah) { setState("err"); setMsg("could not read ownerOf — RPC unavailable, retry"); return; }
+    // The human apex: reverse-resolve the holder to its ENS primary name (forward-verified).
+    resolveEnsIdentity(ah).then(setEns).catch(() => setEns(null));
     if (so.toLowerCase() === ah.toLowerCase()) {
       setState("ok"); setMsg(`source token & agent both owned by ${short(ah)} — binding live (holder), recomputed in your browser`);
     } else if (b!.status === "valid") {
@@ -281,7 +284,7 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">source-token</span>
       </div>
-      <p className="mt-1.5 text-[12px] text-gb-muted">Who took this action is provable too. The agent NFT is bound to a <span className="text-paper/70">source token</span> — the binding is live only while the source is controlled by the agent&apos;s holder. Re-read both owners in your browser.</p>
+      <p className="mt-1.5 text-[12px] text-gb-muted">Who took this action is provable too. The agent NFT is bound to a <span className="text-paper/70">source token</span> — live only while the source is controlled by the agent&apos;s holder — and the holder carries an <span className="text-paper/70">ENS name</span>. Re-read both owners, and reverse-resolve the holder&apos;s name, in your browser.</p>
       <div className="mt-3 space-y-1 font-mono text-[11px]">
         <div>
           <span className="text-paper/40">source token </span>
@@ -293,6 +296,15 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
         <div><span className="text-paper/40">agent </span><span className="text-paper/80">{short(sc.registry)} #{sc.agentId}</span></div>
         {rec?.so && <div><span className="text-paper/40">source owner </span><span className="break-all text-paper/80">{rec.so}</span></div>}
         {rec?.ah && <div><span className="text-paper/40">agent holder </span><span className="break-all text-paper/80">{rec.ah}</span></div>}
+        {ens?.name && (
+          <div>
+            <span className="text-paper/40">ENS identity </span>
+            <span className="text-paper/80">{ens.name}</span>{" "}
+            {ens.verified
+              ? <span className="text-emerald-300/80">· reverse + forward verified</span>
+              : <span className="text-amber-300/70">· reverse only (unverified)</span>}
+          </div>
+        )}
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <button onClick={recompute} disabled={state === "recomputing"}

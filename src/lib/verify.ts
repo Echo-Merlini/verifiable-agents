@@ -134,6 +134,22 @@ export async function readOwnerOf(contract: string, tokenId: string): Promise<st
   return null;
 }
 
+/** The ENS primary name of an address — the human apex of the identity chain. Spoof-safe:
+ *  reverse-resolve, then FORWARD-verify the name resolves back to the same address (an
+ *  unverified reverse record is meaningless). CCIP-Read runs in the browser. null = no name. */
+export async function resolveEnsIdentity(address: string): Promise<{ name: string; verified: boolean } | null> {
+  for (const rpc of L3_RPCS) {
+    try {
+      const client = createPublicClient({ chain: mainnet, transport: http(rpc) });
+      const name = await client.getEnsName({ address: address as Address });
+      if (!name) return null;
+      const forward = await client.getEnsAddress({ name });
+      return { name, verified: !!forward && forward.toLowerCase() === address.toLowerCase() };
+    } catch { /* try the next RPC */ }
+  }
+  return null;
+}
+
 export function checkRawInput(sc: Showcase): Check {
   const got = keccakUtf8(sc.query);
   return { id: "raw", label: "Raw input", recipe: "wyriwe/raw · keccak256(utf8(query))",
