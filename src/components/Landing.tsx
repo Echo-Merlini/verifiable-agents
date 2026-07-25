@@ -92,7 +92,7 @@ export function Landing() {
             Don&apos;t trust. <span className="brass-text">Recompute.</span>
           </h1>
           <p className="mt-6 text-gb-muted text-lg max-w-xl leading-relaxed">
-            Live, mainnet-anchored AI agents whose every action you can re-derive yourself —
+            Live, on-chain-anchored AI agents whose every action you can re-derive yourself —
             in your own browser. Not <span className="text-paper">&ldquo;believe my agent.&rdquo;</span> Check it.
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-3">
