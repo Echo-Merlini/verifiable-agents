@@ -13,7 +13,8 @@ import { VerticeMark } from "@/components/VerticeMark";
 import { buildMcpCards, buildCardsFromIds, ENTITLEMENT_SLUG_TO_CARD_ID, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { getAgentAuthNonce, verifyAgentOwner } from "@/lib/api";
-import { tagPillClass } from "@/lib/marketplace";
+import { tagPillClass, fetchReputation, type Reputation } from "@/lib/marketplace";
+import { ReputationBadge } from "@/components/ReputationBadge";
 
 const TOKEN_KEY = "ens-kit-admin-token";
 
@@ -95,6 +96,7 @@ export default function DemoPage() {
   const [lastExchange, setLastExchange] = useState<{ query: string; reply: string } | null>(null);
   const [recomputing, setRecomputing] = useState<"user" | "agent" | null>(null);
   const [recomputeErr, setRecomputeErr] = useState<string | null>(null);
+  const [rep, setRep] = useState<Reputation | null>(null);   // recomputable reputation of the featured agent
 
   // Bulla Goblin's toolbox (the walletless showcase default).
   useEffect(() => {
@@ -142,6 +144,14 @@ export default function DemoPage() {
   const featured = active
     ? { registry: RKB, agentId: active.agent_id, name: active.name || `Bot #${active.agent_id}`, image: active.image, by: "Recompute Kit Bots", sub: `#${active.agent_id} · RKB` }
     : { registry: DEMO_AGENT.registry, agentId: DEMO_AGENT.agentId, name: DEMO_AGENT.name, image: DEMO_AGENT.image, by: DEMO_AGENT.by, sub: DEMO_AGENT.ens };
+
+  // Featured agent's recomputable reputation (escrow-settlement predicate) — shown as a pill under the name.
+  useEffect(() => {
+    let alive = true;
+    setRep(null);
+    fetchReputation(featured.registry, featured.agentId).then((r) => { if (alive) setRep(r); }).catch(() => {});
+    return () => { alive = false; };
+  }, [featured.registry, featured.agentId]);
 
   // Featured agent's tools: per-agent for RKB = its baked tokenURI tools PLUS any on-chain
   // entitlements it bought (so a purchased capability shows up in the loadout). Else the public toolbox.
@@ -262,7 +272,10 @@ export default function DemoPage() {
                 </button>
               )}
             </div>
-            <p className="mt-1.5 font-mono text-[11px] text-gb-faint truncate">{featured.sub}</p>
+            <div className="mt-1.5 flex flex-wrap items-center gap-2">
+              <p className="font-mono text-[11px] text-gb-faint truncate">{featured.sub}</p>
+              <ReputationBadge rep={rep} />
+            </div>
           </div>
         </div>
 
