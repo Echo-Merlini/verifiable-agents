@@ -10,7 +10,7 @@ import { buildLiveRecord, stashLiveRecord } from "@/lib/liveRecord";
 import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
 import { VerticeMark } from "@/components/VerticeMark";
-import { buildMcpCards, buildCardsFromIds, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
+import { buildMcpCards, buildCardsFromIds, ENTITLEMENT_SLUG_TO_CARD_ID, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { getAgentAuthNonce, verifyAgentOwner } from "@/lib/api";
 import { tagPillClass } from "@/lib/marketplace";
@@ -143,10 +143,25 @@ export default function DemoPage() {
     ? { registry: RKB, agentId: active.agent_id, name: active.name || `Bot #${active.agent_id}`, image: active.image, by: "Recompute Kit Bots", sub: `#${active.agent_id} · RKB` }
     : { registry: DEMO_AGENT.registry, agentId: DEMO_AGENT.agentId, name: DEMO_AGENT.name, image: DEMO_AGENT.image, by: DEMO_AGENT.by, sub: DEMO_AGENT.ens };
 
-  // Featured agent's tools: per-agent (from metadata) for RKB, else the public toolbox.
+  // Featured agent's tools: per-agent for RKB = its baked tokenURI tools PLUS any on-chain
+  // entitlements it bought (so a purchased capability shows up in the loadout). Else the public toolbox.
   useEffect(() => {
     if (!active) { setCards(fallbackCards); return; }
-    fetchAgentMcps(active.agent_id).then((ids) => setCards(ids.length ? buildCardsFromIds(ids) : []));
+    let cancelled = false;
+    (async () => {
+      const [ids, ents] = await Promise.all([
+        fetchAgentMcps(active.agent_id),
+        fetch(`${GW_URL}/marketplace/agents`).then((r) => (r.ok ? r.json() : []))
+          .then((all: Array<{ registry?: string; agent_id?: string; entitlements?: string[] }>) =>
+            (all || []).find((a) => String(a.agent_id) === String(active.agent_id) && a.registry?.toLowerCase() === RKB)?.entitlements ?? [])
+          .catch(() => [] as string[]),
+      ]);
+      if (cancelled) return;
+      const entIds = (ents as string[]).map((s) => ENTITLEMENT_SLUG_TO_CARD_ID[s] ?? s);
+      const merged = Array.from(new Set([...ids, ...entIds]));
+      setCards(merged.length ? buildCardsFromIds(merged) : []);
+    })();
+    return () => { cancelled = true; };
   }, [active, fallbackCards]);
 
   const pick = (c: McpCard) => sendRef.current?.(c.prompt, c.display);

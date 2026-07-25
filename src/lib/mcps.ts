@@ -146,6 +146,25 @@ export type McpCard = McpConfig & { id: string };
 
 // Build cards from a bare list of MCP ids (e.g. an agent's selected tools from its
 // NFT metadata) — reuses the same config overlay + ordering as the public list.
+// Map an on-chain entitlement catalog slug → the MCP card id (so a bought capability renders
+// its real card in the demo loadout). Unmapped slugs fall through to buildMcpCards' generic card.
+export const ENTITLEMENT_SLUG_TO_CARD_ID: Record<string, string> = {
+  "ens-write": "ens-mcp",
+  uniswap: "uniswap-mcp",
+  zerog: "zerog-mcp",
+  thegraph: "thegraph-mcp",
+  uniswapx: "uniswapx-mcp",
+  alchemy: "alchemy-mcp",
+  opensea: "f8ee90057b5b7578",
+  lifi: "277e9e1e17733065",
+  flashbots: "a3s25u3omqm0tqjl",
+  solana: "jupiter-docs",
+  "recompute-kit": "5a6c1f48-2850-46f8-9e18-4577197f500d",
+  "1inch": "60651853-eb38-4b85-818f-7203f67ae52c",
+  symbiosis: "0ebe0db5-7da0-4b66-a401-f50c976cc72c",
+  forensics: "d0041cfe-a5e5-4782-afc3-8dcf7c03edd0",
+};
+
 export function buildCardsFromIds(ids: string[]): McpCard[] {
   return buildMcpCards(ids.map((id) => ({ id, name: id })));
 }
