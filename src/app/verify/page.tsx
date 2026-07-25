@@ -342,9 +342,10 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
   );
 }
 
-// A printed-receipt keepsake summarising the whole recompute — the 5 checks (live, so a
-// tamper flips them), the anchoring surfaces, and the identity. Cream paper on the dark page.
-function RecomputeReceipt({ sc, checks }: { sc: Showcase; checks: Check[] }) {
+// A printed-receipt keepsake summarising the whole recompute — the attested exchange (the
+// EDITABLE query/reply, so a tamper shows here too), the 5 live checks, the anchoring surfaces
+// (each a clickable link to its explorer), and the identity. Cream paper on the dark page.
+function RecomputeReceipt({ sc, checks, query, reply }: { sc: Showcase; checks: Check[]; query: string; reply: string }) {
   const [ens, setEns] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;
@@ -358,10 +359,16 @@ function RecomputeReceipt({ sc, checks }: { sc: Showcase; checks: Check[] }) {
   const anyFail = checks.some((c) => c.status === "fail");
   const mk = (s: string) => (s === "pass" ? "✓" : s === "fail" ? "✗" : "~");
   const surfaceMark = anyFail ? "✗" : allPass ? "✓" : "·";
-  const chainLabel = sc.l3ChainId === 84532 ? "Base Sepolia" : "mainnet";
-  const Row = ({ label, val, faint }: { label: string; val: string; faint?: boolean }) => (
+  const isBase = sc.l3ChainId === 84532;
+  const chainLabel = isBase ? "Base Sepolia" : "mainnet";
+  const scan = isBase ? "https://sepolia.basescan.org" : "https://etherscan.io";
+  const graphUrl = `https://thegraph.com/studio/subgraph/recomputable-agents-anchor${isBase ? "-base" : ""}`;
+  const trunc = (s: string, n = 150) => (s.length > n ? s.slice(0, n) + "…" : s);
+  const Row = ({ label, val, href }: { label: string; val: string; href?: string }) => (
     <div className="flex items-baseline gap-1.5">
-      <span className={faint ? "text-[#1a1a1a]/55" : ""}>{label}</span>
+      {href
+        ? <a href={href} target="_blank" rel="noreferrer" className="underline decoration-[#1a1a1a]/30 underline-offset-2 hover:decoration-[#1a1a1a]">{label} ↗</a>
+        : <span>{label}</span>}
       <span className="min-w-[10px] flex-1 -translate-y-[3px] border-b border-dotted border-[#1a1a1a]/25" />
       <span className="tabular-nums">{val}</span>
     </div>
@@ -374,17 +381,21 @@ function RecomputeReceipt({ sc, checks }: { sc: Showcase; checks: Check[] }) {
           <p className="mt-1 text-[9px] uppercase tracking-[0.24em] text-[#1a1a1a]/50">Don&apos;t trust. Recompute.</p>
         </div>
         <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
-        <Row label={ens || sc.ens} val={`#${sc.agentId}`} />
+        <Row label={ens || sc.ens} val={`#${sc.agentId}`} href={ens ? `https://app.ens.domains/${ens}` : undefined} />
+        <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
+        <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">Attested exchange · the preimage</p>
+        <p className="whitespace-pre-wrap break-words text-[#1a1a1a]/85"><span className="text-[#1a1a1a]/45">in&nbsp;&nbsp;</span>&ldquo;{query}&rdquo;</p>
+        <p className="mt-1 whitespace-pre-wrap break-words text-[#1a1a1a]/85"><span className="text-[#1a1a1a]/45">out&nbsp;</span>&ldquo;{trunc(reply)}&rdquo;</p>
         <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
         <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">Recompute · in your browser</p>
         {checks.map((c) => <Row key={c.id} label={c.label} val={mk(c.status)} />)}
         <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
         <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">Surfaces · one action, verified across</p>
-        <Row label={`Ethereum · ${chainLabel}`} val={surfaceMark} />
-        {sc.zerogChain && <Row label="0G Chain · 2nd commit" val={surfaceMark} />}
-        {sc.zerog && <Row label="0G Storage · availability" val={surfaceMark} />}
-        <Row label="The Graph · queryable" val={surfaceMark} />
-        <Row label="Identity · ERC-8323 + ENS" val={ens ? "✓" : "·"} />
+        <Row label={`Ethereum · ${chainLabel}`} val={surfaceMark} href={sc.l3Tx ? `${scan}/tx/${sc.l3Tx}` : undefined} />
+        {sc.zerogChain && <Row label="0G Chain · 2nd commit" val={surfaceMark} href={`${sc.zerogChain.explorer}/tx/${sc.zerogChain.tx}`} />}
+        {sc.zerog && <Row label="0G Storage · availability" val={surfaceMark} href={`https://chainscan-galileo.0g.ai/tx/${sc.zerog.tx}`} />}
+        <Row label="The Graph · queryable" val={surfaceMark} href={graphUrl} />
+        <Row label="Identity · ERC-8323 + ENS" val={ens ? "✓" : "·"} href={ens ? `https://app.ens.domains/${ens}` : undefined} />
         <div className="my-3 border-t border-dashed border-[#1a1a1a]/30" />
         <div className="text-center">
           <p className="font-display text-[13px]">{anyFail ? "✗  TAMPER DETECTED" : allPass ? "✓  RECOMPUTED" : "— PRESS VERIFY —"}</p>
@@ -635,7 +646,7 @@ export default function VerifyPage() {
                 {sc?.zerog && <ZeroGEvidence sc={sc} />}
                 {sc?.zerogChain && <ZeroGChainEvidence sc={sc} query={query} />}
                 {sc && <GraphEvidence sc={sc} query={query} />}
-                {sc && ran && <RecomputeReceipt sc={sc} checks={checks} />}
+                {sc && ran && <RecomputeReceipt sc={sc} checks={checks} query={query} reply={reply} />}
               </div>
             )}
 
