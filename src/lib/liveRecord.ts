@@ -16,14 +16,14 @@ export type LiveAgent = { ens: string; agentId: string; registry: string; attest
 export async function buildLiveRecord(agent: LiveAgent, query: string, reply: string): Promise<Showcase | null> {
   const rawInputHash = keccak256(toHex(query)) as Hex;
   try {
-    const r = await fetch(`${GW}/agent/verify/${rawInputHash}`);
+    const r = await fetch(`${GW}/agent/verify/${rawInputHash}`, { signal: AbortSignal.timeout(12000) });
     if (!r.ok) return null; // not logged yet — caller can retry shortly
     const a = await r.json();
     if (!a?.l4_signature) return null;
 
     let attestor = agent.attestor;
     if (!attestor) {
-      const card = await fetch(`${GW}/.well-known/agent/${agent.registry}/${agent.agentId}.json`)
+      const card = await fetch(`${GW}/.well-known/agent/${agent.registry}/${agent.agentId}.json`, { signal: AbortSignal.timeout(12000) })
         .then((x) => (x.ok ? x.json() : null)).catch(() => null);
       attestor = card?.pricing?.attestor ?? undefined;
     }

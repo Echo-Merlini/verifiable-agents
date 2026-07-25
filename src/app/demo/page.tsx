@@ -169,6 +169,14 @@ export default function DemoPage() {
     setRecomputing(null);
   };
 
+  // Un-stick the recompute buttons if the page is restored from the back/forward cache —
+  // navigating to /verify then hitting Back would otherwise freeze a button mid-"Building record…".
+  useEffect(() => {
+    const onShow = () => setRecomputing(null);
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, []);
+
   return (
     <main className="min-h-screen bg-deepink text-paper">
       <div className="max-w-5xl mx-auto px-6 md:px-10 py-8">
