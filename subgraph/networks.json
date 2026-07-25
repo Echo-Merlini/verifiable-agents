@@ -1,0 +1,8 @@
+{
+  "mainnet": {
+    "TruthAnchor": {
+      "address": "0x1e2A118a2bf1C240aE6fDe187c07f905D360f094",
+      "startBlock": 25548334
+    }
+  }
+}

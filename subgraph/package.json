@@ -1,0 +1,18 @@
+{
+  "name": "recomputable-agents-subgraph",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Indexes the OCP (ERC-8281) TruthAnchor Recorded events — an independent, queryable read-path to the on-chain anchor.",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "auth": "graph auth",
+    "deploy": "graph deploy recomputable-agents-anchor",
+    "create-local": "graph create --node http://localhost:8020/ recomputable-agents-anchor",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 recomputable-agents-anchor"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.97.1",
+    "@graphprotocol/graph-ts": "0.38.0"
+  }
+}

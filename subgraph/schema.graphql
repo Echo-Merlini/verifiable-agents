@@ -1,0 +1,16 @@
+"""
+One OCP `record()` — the on-chain anchor of an attested agent action.
+The same digest a raw RPC log read returns; The Graph makes it queryable so
+`/verify` can confirm the anchor two independent ways and require they agree.
+"""
+type Anchor @entity(immutable: true) {
+  "txHash-logIndex — a stable, collision-free id"
+  id: Bytes!
+  "the committed digest = keccak256(utf8(input)) for a recompute record (Recorded topic1)"
+  digest: Bytes!
+  "the address that called record() (Recorded topic2)"
+  committer: Bytes!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  txHash: Bytes!
+}

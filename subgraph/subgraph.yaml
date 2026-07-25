@@ -1,0 +1,30 @@
+specVersion: 1.0.0
+description: >-
+  Recomputable Agents — an independent, indexed read-path to the OCP (ERC-8281)
+  on-chain anchor. Ethereum proves the commitment; The Graph proves it is
+  *queryable* — every attested action's digest, indexed and cross-checkable
+  against a raw RPC log read. Two independent reads of the same anchor must agree.
+repository: https://github.com/Echo-Merlini/verifiable-agents
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: TruthAnchor
+    network: mainnet
+    source:
+      address: "0x1e2A118a2bf1C240aE6fDe187c07f905D360f094"
+      abi: TruthAnchor
+      startBlock: 25548334
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - Anchor
+      abis:
+        - name: TruthAnchor
+          file: ./abis/TruthAnchor.json
+      eventHandlers:
+        - event: Recorded(indexed bytes32,indexed address)
+          handler: handleRecorded
+      file: ./src/mapping.ts
