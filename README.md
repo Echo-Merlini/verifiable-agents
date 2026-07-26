@@ -179,6 +179,12 @@ docker run -p 3000:3000 verifiable-agents
 | OCP anchor — live per-action | Base Sepolia | `0x0963Fd33DF80c94360F2DC22e5c09517AeE7ED5c` |
 | OCP anchor — 2nd commitment | 0G Galileo (EVM) | `0x29A45029DE2439925f2525E01Be6b6631fC9DD85` |
 
+**Contract source (Foundry + tests):**
+- `TruthAnchor` (the ERC-8281 OCP anchor above, all three chains) → [trustless-ai/agent-contracts-examples · `truth-anchor/`](https://github.com/trustless-ai/agent-contracts-examples/tree/main/truth-anchor) *(mirror: [Echo-Merlini/verifiable-agents-contracts](https://github.com/Echo-Merlini/verifiable-agents-contracts))*
+- `GenesisAgentRegistry` (the agent NFTs) → [trustless-ai/agent-contracts-examples · `genesis-self-source/`](https://github.com/trustless-ai/agent-contracts-examples/tree/main/genesis-self-source)
+- The composed ERC interfaces + `ConsultEscrow` → [trustless-ai/agent-ercs](https://github.com/trustless-ai/agent-ercs)
+- Subgraph manifests + mappings → [`subgraph/`](./subgraph) · [`subgraph-base/`](./subgraph-base)
+
 ## Design decisions
 
 - **No oracle in the verify path — by design.** Outsourcing verification to an off-chain oracle network would mean *trusting* that network — the exact thing this project rejects. Verification is a **recompute anyone can run**, from public artifacts, in their own browser.
