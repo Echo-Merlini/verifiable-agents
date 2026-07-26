@@ -62,6 +62,33 @@ export async function buildLiveRecord(agent: LiveAgent, query: string, reply: st
   }
 }
 
+/** Re-fetch an already-stashed live action and merge in fields that arrived AFTER the initial
+ *  stash. The 0G Storage root, the 0G Chain anchor tx, and (sometimes) the L3 anchor tx are all
+ *  written best-effort/async ~10–15s after the reply, so a record stashed the instant the reply
+ *  landed usually misses them — and the 0G panels then never show for that action. Polling this
+ *  fills them once present. Preserves the preimages/edits; returns the merged record (re-stashed),
+ *  or the original on error / when nothing new arrived. */
+export async function refreshLiveRecord(rec: Showcase): Promise<Showcase> {
+  try {
+    const key = keccak256(toHex(rec.query)) as Hex;
+    const r = await fetch(`${GW}/agent/verify/${key}`, { signal: AbortSignal.timeout(12000) });
+    if (!r.ok) return rec;
+    const a = await r.json();
+    const merged: Showcase = {
+      ...rec,
+      l3Tx: (rec.l3Tx ?? a.l3_tx ?? undefined) as Hex | undefined,
+      zerog: rec.zerog ?? (a.zerog_root
+        ? { network: "0G Galileo Storage", root: a.zerog_root as string, tx: (a.zerog_tx ?? "") as string, bytes: Number(a.zerog_bytes ?? 0), artifact: "" }
+        : undefined),
+      zerogChain: rec.zerogChain ?? (a.zerog_chain_tx
+        ? { network: "0G Galileo Testnet", chainId: 16602, rpc: "https://evmrpc-testnet.0g.ai", explorer: "https://chainscan-galileo.0g.ai", contract: "0x29A45029DE2439925f2525E01Be6b6631fC9DD85", tx: a.zerog_chain_tx as string, block: 0 }
+        : undefined),
+    };
+    if (merged.l3Tx !== rec.l3Tx || merged.zerog !== rec.zerog || merged.zerogChain !== rec.zerogChain) stashLiveRecord(merged);
+    return merged;
+  } catch { return rec; }
+}
+
 export function stashLiveRecord(rec: Showcase) {
   try { sessionStorage.setItem(LIVE_STASH_KEY, JSON.stringify(rec)); } catch {}
 }

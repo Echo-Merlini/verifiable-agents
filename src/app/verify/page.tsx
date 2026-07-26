@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, ExternalLink, Fingerprint } from "lucide-react";
 import { verifyAll, keccakUtf8, readOwnerOf, resolveEnsIdentity, readEnsText, type Showcase, type Check } from "@/lib/verify";
-import { readLiveRecord } from "@/lib/liveRecord";
+import { readLiveRecord, refreshLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
 
 const GW = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
@@ -450,6 +450,25 @@ export default function VerifyPage() {
       .then((d: Showcase) => { setSc(d); setQuery(d.query); setReply(d.reply); })
       .catch(() => setErr("Couldn't load the showcase attestation."));
   }, []);
+
+  // Live 0G Storage / 0G Chain (and a late L3) anchors are written best-effort a few seconds AFTER
+  // the action, so a record stashed the instant the reply landed can miss them — leaving the 0G
+  // panels hidden. Poll the gateway and merge the fields in when they arrive, so the panels appear
+  // without re-running the action. Stops once all present or after ~30s.
+  const scRef = useRef<Showcase | null>(null);
+  scRef.current = sc;
+  useEffect(() => {
+    if (!live) return;
+    let cancelled = false, tries = 0;
+    const id = setInterval(async () => {
+      const cur = scRef.current;
+      if (!cur || (cur.zerog && cur.zerogChain && cur.l3Tx) || tries >= 8) { clearInterval(id); return; }
+      tries++;
+      const merged = await refreshLiveRecord(cur);
+      if (!cancelled && (merged.zerog !== cur.zerog || merged.zerogChain !== cur.zerogChain || merged.l3Tx !== cur.l3Tx)) setSc(merged);
+    }, 4000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [live]);
 
   const editingAgent = focus === "agent";   // agent-side view → tamper the reply (output), not the query
   const tampered = !!sc && (query !== sc.query || reply !== sc.reply);
