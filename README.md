@@ -58,7 +58,20 @@ Below the five checks, `/verify` proves the *same* action across four independen
 - the **ERC-8323 source-token binding** is live — the agent NFT is genuinely controlled by that identity (`ownerOf` re-read in-browser);
 - and **independent nodes recompute the same verdict** (non-self-attested consensus).
 
-*A provable action, taken by a provably-bound identity.* Every recompute also prints a **receipt** — the attested exchange, all checks, all surfaces (each linking to its explorer), and the verdict — that reprints **✗ TAMPER DETECTED** on a flipped byte.
+*A provable action, taken by a provably-bound identity.* Every recompute also prints a **receipt** — the attested exchange, all checks, all surfaces (each linking to its explorer), the **TEE-inference lane by evidence class**, and the verdict — that reprints **✗ TAMPER DETECTED** on a flipped byte.
+
+## The inference itself — TEE-attested, recompute-audited
+
+Recompute proves everything *around* the model call; it can't re-derive the call itself. A **TEE attests** it — the one link recompute can't cover. We closed that gap with **0G TeeML**, and recomputed the attestation end-to-end: from the client SDK's verify path down to the broker's server source. `/verify` runs it live, **honest per evidence class** — a signature over a claim is never silently promoted into a recomputation:
+
+| Check | Evidence basis | In your browser |
+| --- | --- | --- |
+| Signature recovery | **recomputed** | viem `recoverMessageAddress` (EIP-191) ⇒ the TEE signer `0x83df…` |
+| Response binding | **recomputed** | Web Crypto `sha256(JSON(completion))` == the signed digest |
+| Request binding | **broker-asserted** | the signature over the request is established, but the forwarded upstream body isn't client-visible |
+| Enclave attestation | **attested** | a dstack MRTD/RTMR quote — **unavailable** for this provider |
+
+The finding *is* the result: the live 0G Galileo TeeML provider is a **signing relay** in front of an upstream model host, so its "TeeML" is a **broker signature over request/response commitments — not a hardware enclave quote**. We surface that as explicit **amber, never a silent green**, and it upgrades to a green quote-parse the moment a genuine-enclave provider is reachable. Frozen as a public conformance vector — **[`tee-inference.v0`](https://github.com/trustless-ai/recompute-kit/pull/2)** (10/10, hash-pinned) — with a reproducible sample ([gist](https://gist.github.com/TMerlini/19d532bcb627d3ea237c72003d550337); `node verify-check1.mjs` recovers the signer yourself). Two independent implementations recovered the signer cross-language (ethers.js + Python `eth_account`). *"TeeML" ≠ "enclave-executed" for a relay — the recompute discipline caught the label outrunning its evidence.*
 
 ## Architecture
 
@@ -90,6 +103,11 @@ flowchart TB
         IPFS["IPFS / Pinata<br/>pages + artifacts"]
     end
 
+    subgraph zerog["0G"]
+        ZS["Storage + Chain<br/>availability · 2nd anchor"]
+        TEE["TeeML — signed inference<br/>relay · broker-asserted"]
+    end
+
     Judge --> client
     M --> REG
     D --> LLM
@@ -99,8 +117,11 @@ flowchart TB
     MCP --> ATT
     ATT -->|"L3: record(digest)"| ANC
     ATT -->|"L4: EIP-712 sign"| gw
+    ATT -->|"manifest root"| ZS
     V -->|"read Recorded event"| ANC
+    V -->|"fetch + content-address"| ZS
     V -->|"keccak + recover, client-side"| V
+    V -->|"ecrecover + sha256 · by evidence class"| TEE
     ENS --- IPFS
     client --- ENS
 ```
@@ -109,6 +130,7 @@ flowchart TB
 - **Gateway** — Bun · Hono · `bun:sqlite`. Runs the model, the MCP tools ([compatible-MCP catalog](https://github.com/Echo-Merlini/agent-mcp-catalog)), and the attestation pipeline. *(Backend repo — sanitized public version in progress; see [Running it](#running-it).)*
 - **On-chain** — `GenesisAgentRegistry` (self-sourced ERC-721 "mint = get an agent"), `ConsultEscrow` (trustless A2A payment), and the ERC-8281 observation anchor.
 - **Identity & storage** — the agent is an **ENS** name; browser resolution via a CCIP-Read offchain resolver + on-chain IPFS contenthash; artifacts pinned to **IPFS**.
+- **0G** — recompute manifests on **0G Storage** (content-addressed) + a second anchor on **0G Chain**; and **0G TeeML** for the inference step — a signed inference `/verify` recomputes by evidence class (relay ⇒ broker-asserted, never faked green).
 
 ## ENS + Integrations
 
@@ -120,6 +142,7 @@ flowchart TB
 | **UniswapX** | An MCP fetches the **best price from the Uniswap Trading API** (attested) and packages it as a signable **UniswapX Dutch-auction intent** (ExclusiveDutchOrder + Permit2) — starts at the best price, decays to the floor, returns a **deterministic, recomputable order hash**. |
 | **0G — Storage** | Each action's recompute manifest is written to **0G decentralized Storage** (content-addressed root); `/verify` fetches it back and **binds its hashes to the on-chain anchor** — availability, provably tied to the commitment. |
 | **0G — Chain** | The action's digest is anchored a **second time on 0G Chain** (Galileo EVM) — an independent on-chain commitment beyond Ethereum. |
+| **0G — TeeML (inference)** | The **model call itself** is TEE-attested via 0G TeeML; `/verify` recomputes the signed inference **by evidence class** — signer recovery + response digest (recomputed, in-browser), request binding (broker-asserted), enclave quote (attested). The live provider is a relay, so its attestation shows as honest **amber, never a silent green** — recompute discipline catching *"TeeML" ≠ enclave-executed*. Frozen as [`tee-inference.v0`](https://github.com/trustless-ai/recompute-kit/pull/2). |
 | **The Graph** | A **subgraph indexes the OCP anchor's `Recorded` events**, giving `/verify` an independent, queryable read-path — recompute the anchor two ways (raw RPC log read **and** a Graph query) and require they agree. |
 | **IPFS** | Pinned pages + attestation artifacts; a self-contained CID renewer publishes ENS record pages out of the box (no external server). |
 | **Base (L2)** | Live per-action attestation anchors write to **Base Sepolia**; the mainnet showcase anchor reads from **Ethereum mainnet**. |
