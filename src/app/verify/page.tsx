@@ -5,6 +5,7 @@ import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, Arrow
 import { verifyAll, keccakUtf8, readOwnerOf, resolveEnsIdentity, readEnsText, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord, refreshLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
+import { TeeInferenceEvidence } from "@/components/TeeInferenceEvidence";
 
 const GW = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
@@ -717,6 +718,7 @@ export default function VerifyPage() {
                 {sc?.zerog && <ZeroGEvidence sc={sc} />}
                 {sc?.zerogChain && <ZeroGChainEvidence sc={sc} query={query} />}
                 {sc && <GraphEvidence sc={sc} query={query} />}
+                <TeeInferenceEvidence />
                 {sc && ran && <RecomputeReceipt sc={sc} checks={checks} query={query} reply={reply} />}
               </div>
             )}
