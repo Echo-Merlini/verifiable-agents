@@ -41,7 +41,9 @@ function BasisChip({ basis }: { basis: Basis }) {
   return <span className={`shrink-0 rounded-md border px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wider ${tone}`}>{basis}</span>;
 }
 
-export function TeeInferenceEvidence() {
+export type TeeSummary = { sig: St; resp: St; req: St; enclave: St };
+
+export function TeeInferenceEvidence({ onResult }: { onResult?: (r: TeeSummary) => void }) {
   const [s, setS] = useState<Sample | null>(null);
   const [rows, setRows] = useState<Row[]>([]);
   const [running, setRunning] = useState(false);
@@ -51,6 +53,10 @@ export function TeeInferenceEvidence() {
   useEffect(() => {
     fetch(SAMPLE_URL).then((r) => (r.ok ? r.json() : null)).then(setS).catch(() => setS(null));
   }, []);
+
+  // Recompute once when the sample lands so the panel + receipt reflect the honest result immediately;
+  // the buttons below still re-run it and the tamper toggle still breaks it live.
+  useEffect(() => { if (s && !ran) recompute(false); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [s]);
 
   if (!s) return null;
 
@@ -73,6 +79,12 @@ export function TeeInferenceEvidence() {
     // enclave quote — attested lane: unavailable for a relay provider (fail-closed amber, never a silent green)
     const quoteAvailable = !/not available|without local TEE|forwards to an upstream/i.test(s!.attestation_report);
 
+    onResult?.({
+      sig: sigOk ? "verified" : "rejected",
+      resp: respOk ? "verified" : "rejected",
+      req: reqReproduces ? "verified" : "unverifiable",
+      enclave: quoteAvailable ? "verified" : "unverifiable",
+    });
     setRows([
       { id: "sig", label: "Signature recovery", basis: "recomputed", std: "EIP-191",
         status: sigOk ? "verified" : "rejected",
