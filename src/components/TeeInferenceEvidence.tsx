@@ -22,7 +22,7 @@ type Sample = {
 };
 const SAMPLE_URL = process.env.NEXT_PUBLIC_TEEML_SAMPLE_URL || "/teeml-sample.json";
 
-type Basis = "recomputed" | "broker-asserted" | "attested";
+type Basis = "recomputed" | "broker-asserted" | "unavailable";
 type St = "idle" | "verified" | "rejected" | "unverifiable";
 type Row = { id: string; label: string; basis: Basis; std: string; status: St; detail: string };
 
@@ -38,7 +38,8 @@ function BasisChip({ basis }: { basis: Basis }) {
     basis === "recomputed" ? "border-emerald-400/30 bg-emerald-400/[0.06] text-emerald-300/80"
     : basis === "broker-asserted" ? "border-brassLight/25 bg-brassLight/[0.06] text-brassLight/80"
     : "border-amber-400/30 bg-amber-400/[0.06] text-amber-300/80";
-  return <span className={`shrink-0 rounded-md border px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wider ${tone}`}>{basis}</span>;
+  const label = basis === "unavailable" ? "no local quote" : basis;
+  return <span className={`shrink-0 rounded-md border px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wider ${tone}`}>{label}</span>;
 }
 
 export type TeeSummary = { sig: St; resp: St; req: St; enclave: St };
@@ -86,18 +87,18 @@ export function TeeInferenceEvidence({ onResult }: { onResult?: (r: TeeSummary) 
       enclave: quoteAvailable ? "verified" : "unverifiable",
     });
     setRows([
-      { id: "sig", label: "Signature recovery", basis: "recomputed", std: "EIP-191",
+      { id: "sig", label: "Broker signature recovery", basis: "recomputed", std: "EIP-191",
         status: sigOk ? "verified" : "rejected",
-        detail: sigOk ? `ecrecover → ${short(recovered)} = the TEE signer` : `recovered ${short(recovered)} ≠ signer — ${tamper ? "tampered preimage" : "mismatch"}` },
+        detail: sigOk ? `ecrecover → ${short(recovered)} = the 0G broker signer (EIP-191, not an enclave attestation)` : `recovered ${short(recovered)} ≠ signer — ${tamper ? "tampered preimage" : "mismatch"}` },
       { id: "resp", label: "Response binding", basis: "recomputed", std: "0G TeeML",
         status: respOk ? "verified" : "rejected",
         detail: respOk ? `sha256(JSON(completion)) = ${short("0x" + respHash)} = H(response) — the answer is bound` : `recomputed ${short("0x" + respHash)} ≠ committed H(response)` },
       { id: "req", label: "Request binding", basis: "broker-asserted", std: "0G routing-proof",
         status: reqReproduces ? "verified" : "unverifiable",
         detail: "broker signs sha256(forwarded upstream body); the client can't confirm it equals its request — broker-asserted, not independently recomputable" },
-      { id: "enclave", label: "Enclave attestation", basis: "attested", std: "dstack quote",
+      { id: "enclave", label: "Enclave attestation", basis: "unavailable", std: "dstack quote",
         status: quoteAvailable ? "verified" : "unverifiable",
-        detail: quoteAvailable ? "quote parsed" : "no local TEE quote — this provider relays to an upstream (Alibaba DashScope). Fail-closed amber, never a silent green" },
+        detail: quoteAvailable ? "quote parsed" : "no local TEE quote — this provider relays to an upstream (Alibaba DashScope); /attestation/report returns “not available.” Fail-closed amber, never a silent green" },
     ]);
     setRunning(false); setRan(true);
   }
@@ -112,13 +113,13 @@ export function TeeInferenceEvidence({ onResult }: { onResult?: (r: TeeSummary) 
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Cpu className="h-5 w-5 text-brassLight/80" />
-          <span className="font-display text-[15px] text-paper">TEE-attested inference</span>
-          <span className="shrink-0 rounded-md border border-brassLight/25 bg-brassLight/[0.06] px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wider text-brassLight/80">0G TeeML</span>
+          <span className="font-display text-[15px] text-paper">0G TeeML relay evidence</span>
+          <span className="shrink-0 rounded-md border border-amber-400/30 bg-amber-400/[0.06] px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wider text-amber-300/80">relay · broker-signed</span>
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">{s.chain}</span>
       </div>
       <p className="mt-1.5 text-[12px] text-gb-muted">
-        Recompute can&apos;t re-derive the model call — a TEE <span className="text-paper/70">attests</span> it. This recomputes everything <span className="text-paper/70">around</span> it from a real 0G TeeML signed inference, <span className="text-paper/70">in your browser</span>, and shows each check&apos;s <span className="text-paper/70">evidence class</span> honestly. This provider relays to an upstream, so the enclave quote is <span className="text-amber-300/80">unavailable</span> — never faked green.
+        0G TeeML is <em>meant</em> to attest the model call in a sealed enclave. The provider we can reach on Galileo <span className="text-amber-300/80">relays to an upstream</span> and only <span className="text-paper/70">broker-signs</span> a commitment — <strong>not</strong> a hardware quote. So this recomputes each check <span className="text-paper/70">in your browser</span> and shows its <span className="text-paper/70">evidence class</span> honestly: two <span className="text-emerald-300/80">recomputed</span>, one <span className="text-brassLight/80">broker-asserted</span>, and the enclave quote <span className="text-amber-300/80">unavailable</span> — never faked green. Goes fully green only against a genuine-enclave provider.
       </p>
       <div className="mt-3 grid grid-cols-1 gap-1 font-mono text-[11px] sm:grid-cols-2">
         <div><span className="text-paper/40">model </span><span className="text-paper/80">{s.model}</span></div>
@@ -159,7 +160,7 @@ export function TeeInferenceEvidence({ onResult }: { onResult?: (r: TeeSummary) 
             );
           })}
           <p className="pt-1 text-[11px] text-paper/40">
-            Two recomputed-green + one broker-asserted + one attested-unavailable — the label &quot;TeeML&quot; on this relay provider is a broker signature over its commitments, not a hardware quote. The recompute discipline caught it.{" "}
+            Two recomputed-green + one broker-asserted + one no-local-quote — &quot;TeeML&quot; on this relay provider is a broker signature over its commitments, <strong>not</strong> a hardware enclave quote. The recompute discipline caught the label outrunning its evidence.{" "}
             <a href={s.gist} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-brassLight/70 hover:text-brassLight">sample <ExternalLink className="h-3 w-3" /></a>{" · "}
             <a href={s.pr} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-brassLight/70 hover:text-brassLight">tee-inference.v0 <ExternalLink className="h-3 w-3" /></a>
           </p>

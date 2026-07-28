@@ -417,17 +417,17 @@ function RecomputeReceipt({ sc, checks, query, reply, tee }: { sc: Showcase; che
         <Row label="The Graph · queryable" val={surfaceMark} href={graphUrl} />
         <Row label="Identity · ERC-8323 + ENS" val={ens ? "✓" : "·"} href={ens ? `https://app.ens.domains/${ens}` : undefined} />
         <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
-        <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">TEE inference · 0G TeeML · by evidence class</p>
+        <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">0G TeeML relay · by evidence class</p>
         {(() => {
           const m = (st?: string) => (st === "verified" ? "✓" : st === "rejected" ? "✗" : st === "unverifiable" ? "~" : "·");
           return <>
-            <Row label="signer recovery · recomputed" val={m(tee?.sig)} />
+            <Row label="broker signature · recomputed (EIP-191)" val={m(tee?.sig)} />
             <Row label="response binding · recomputed" val={m(tee?.resp)} />
             <Row label="request binding · broker-asserted" val={m(tee?.req)} />
-            <Row label="enclave quote · attested" val={m(tee?.enclave)} />
+            <Row label="enclave quote · no local quote" val={m(tee?.enclave)} />
           </>;
         })()}
-        <p className="mt-1 text-[8px] leading-snug text-[#1a1a1a]/45">~ = honest amber: broker-asserted or attestation-unavailable (relay), never a silent ✓</p>
+        <p className="mt-1 text-[8px] leading-snug text-[#1a1a1a]/45">~ = honest amber: broker-asserted or no-local-quote (relay), never a silent ✓ — not an enclave attestation</p>
         <div className="my-3 border-t border-dashed border-[#1a1a1a]/30" />
         <div className="text-center">
           <p className="font-display text-[13px]">{anyFail ? "✗  TAMPER DETECTED" : allPass ? "✓  RECOMPUTED" : "— PRESS VERIFY —"}</p>
