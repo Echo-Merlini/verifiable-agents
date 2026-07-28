@@ -430,13 +430,16 @@ function RecomputeReceipt({ sc, checks, query, reply, tee, enclave }: { sc: Show
         })()}
         <p className="mt-1 text-[8px] leading-snug text-[#1a1a1a]/45">~ = honest amber: broker-asserted or no-local-quote (relay), never a silent ✓ — not an enclave attestation</p>
         <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
-        <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">0G TeeML enclave · mainnet GLM-5 (real TDX quote)</p>
+        <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">0G TeeML · live glm-5.2 enclave inference (mainnet)</p>
         {(() => {
           const m = (st?: string) => (st === "verified" ? "✓" : st === "rejected" ? "✗" : st === "unverifiable" ? "~" : "·");
           return <>
+            <Row label="signer recovery · recomputed" val={m(enclave?.sig)} />
+            <Row label="request digest · recomputed" val={m(enclave?.req)} />
+            <Row label="response digest · recomputed" val={m(enclave?.resp)} />
             <Row label="enclave quote · TDX" val={m(enclave?.quote)} />
             <Row label="RTMR chain · recomputed" val={m(enclave?.rtmr)} />
-            <Row label="signer binding · recomputed" val={m(enclave?.binding)} />
+            <Row label="signer↔enclave · report_data" val={m(enclave?.binding)} />
             <Row label="MRTD · recomputed" val={m(enclave?.mrtd)} />
             <Row label="provider binding · 0G registry" val={m(enclave?.registry)} />
           </>;
