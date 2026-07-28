@@ -6,7 +6,7 @@ import { verifyAll, keccakUtf8, readOwnerOf, resolveEnsIdentity, readEnsText, ty
 import { readLiveRecord, refreshLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
 import { TeeInferenceEvidence, type TeeSummary } from "@/components/TeeInferenceEvidence";
-import { EnclaveQuoteEvidence } from "@/components/EnclaveQuoteEvidence";
+import { EnclaveQuoteEvidence, type EnclaveSummary } from "@/components/EnclaveQuoteEvidence";
 
 const GW = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
@@ -366,7 +366,7 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
 // A printed-receipt keepsake summarising the whole recompute — the attested exchange (the
 // EDITABLE query/reply, so a tamper shows here too), the 5 live checks, the anchoring surfaces
 // (each a clickable link to its explorer), and the identity. Cream paper on the dark page.
-function RecomputeReceipt({ sc, checks, query, reply, tee }: { sc: Showcase; checks: Check[]; query: string; reply: string; tee?: TeeSummary | null }) {
+function RecomputeReceipt({ sc, checks, query, reply, tee, enclave }: { sc: Showcase; checks: Check[]; query: string; reply: string; tee?: TeeSummary | null; enclave?: EnclaveSummary | null }) {
   const [ens, setEns] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;
@@ -429,6 +429,18 @@ function RecomputeReceipt({ sc, checks, query, reply, tee }: { sc: Showcase; che
           </>;
         })()}
         <p className="mt-1 text-[8px] leading-snug text-[#1a1a1a]/45">~ = honest amber: broker-asserted or no-local-quote (relay), never a silent ✓ — not an enclave attestation</p>
+        <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
+        <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">0G TeeML enclave · mainnet GLM-5 (real TDX quote)</p>
+        {(() => {
+          const m = (st?: string) => (st === "verified" ? "✓" : st === "rejected" ? "✗" : st === "unverifiable" ? "~" : "·");
+          return <>
+            <Row label="enclave quote · TDX" val={m(enclave?.quote)} />
+            <Row label="RTMR chain · recomputed" val={m(enclave?.rtmr)} />
+            <Row label="signer binding · recomputed" val={m(enclave?.binding)} />
+            <Row label="MRTD · recomputed" val={m(enclave?.mrtd)} />
+          </>;
+        })()}
+        <p className="mt-1 text-[8px] leading-snug text-[#1a1a1a]/45">+ 2 residual trust roots (Intel PCS signature · known-good image) — honest amber, not yet closed</p>
         <div className="my-3 border-t border-dashed border-[#1a1a1a]/30" />
         <div className="text-center">
           <p className="font-display text-[13px]">{anyFail ? "✗  TAMPER DETECTED" : allPass ? "✓  RECOMPUTED" : "— PRESS VERIFY —"}</p>
@@ -448,6 +460,7 @@ export default function VerifyPage() {
   const [running, setRunning] = useState(false);
   const [ran, setRan] = useState(false);
   const [tee, setTee] = useState<TeeSummary | null>(null);   // TEE-inference lane result → surfaced in the receipt
+  const [enclave, setEnclave] = useState<EnclaveSummary | null>(null);   // genuine-enclave lane → receipt
   const [err, setErr] = useState<string | null>(null);
   const [live, setLive] = useState(false);
   const [focus, setFocus] = useState<"user" | "agent" | null>(null);
@@ -733,8 +746,8 @@ export default function VerifyPage() {
                 {sc?.zerogChain && <ZeroGChainEvidence sc={sc} query={query} />}
                 {sc && <GraphEvidence sc={sc} query={query} />}
                 <TeeInferenceEvidence onResult={setTee} />
-                <EnclaveQuoteEvidence />
-                {sc && ran && <RecomputeReceipt sc={sc} checks={checks} query={query} reply={reply} tee={tee} />}
+                <EnclaveQuoteEvidence onResult={setEnclave} />
+                {sc && ran && <RecomputeReceipt sc={sc} checks={checks} query={query} reply={reply} tee={tee} enclave={enclave} />}
               </div>
             )}
 
