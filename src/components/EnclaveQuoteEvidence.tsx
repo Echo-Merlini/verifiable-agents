@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { recoverMessageAddress } from "viem";
+import { verifyDcapQuote } from "@/lib/dcap";
 import { Check as CheckIcon, X as XIcon, Loader2, ShieldCheck, RefreshCw, Wand2, RotateCcw } from "lucide-react";
 
 // 0G TeeML enclave attestation — a LIVE glm-5.2 inference on 0G Compute mainnet, recomputed end-to-end in
@@ -35,7 +36,7 @@ async function rtmrReplay(log: { imr: number; digest: string }[], imr: number) {
 type St = "idle" | "verified" | "rejected" | "unverifiable";
 type Basis = "recomputed" | "attested-quote" | "residual";
 type Row = { id: string; label: string; basis: Basis; status: St; detail: string };
-export type EnclaveSummary = { sig: St; req: St; resp: St; quote: St; rtmr: St; binding: St; mrtd: St; registry: St };
+export type EnclaveSummary = { sig: St; req: St; resp: St; quote: St; rtmr: St; binding: St; mrtd: St; registry: St; intel: St };
 
 function Chip({ basis }: { basis: Basis }) {
   const tone = basis === "recomputed" ? "border-emerald-400/30 bg-emerald-400/[0.06] text-emerald-300/80"
@@ -81,9 +82,13 @@ export function EnclaveQuoteEvidence({ onResult }: { onResult?: (r: EnclaveSumma
     const bindingOk = reportSigner.toLowerCase() === recovered.toLowerCase() && !tamper;
     const mrtdOk = q_mrtd === s.mrtd_expected;
     const registryOk = reportSigner.toLowerCase() === (s.registry_signer || "").toLowerCase();
+    // dcap-qvl core — cert chain to the pinned Intel SGX Root CA + QE sig + att binding + quote sig
+    let dcap = { ok: false, chain: false, rootPinned: false, qeSig: false, attBinding: false, quoteSig: false, rootFp: "" };
+    try { dcap = await verifyDcapQuote(s.quote); } catch {}
 
     onResult?.({ sig: sigOk ? "verified" : "rejected", req: reqOk ? "verified" : "rejected", resp: respOk ? "verified" : "rejected",
-      quote: "verified", rtmr: rtmrOk ? "verified" : "rejected", binding: bindingOk ? "verified" : "rejected", mrtd: mrtdOk ? "verified" : "rejected", registry: registryOk ? "verified" : "rejected" });
+      quote: "verified", rtmr: rtmrOk ? "verified" : "rejected", binding: bindingOk ? "verified" : "rejected", mrtd: mrtdOk ? "verified" : "rejected",
+      registry: registryOk ? "verified" : "rejected", intel: dcap.ok ? "verified" : "rejected" });
 
     setRows([
       { id: "sig", label: "Live inference · signer recovery", basis: "recomputed", status: sigOk ? "verified" : "rejected",
@@ -102,8 +107,8 @@ export function EnclaveQuoteEvidence({ onResult }: { onResult?: (r: EnclaveSumma
         detail: mrtdOk ? `MRTD ${short(q_mrtd)} — extracted from the quote, matches tcb_info.mrtd` : "MRTD ≠ tcb_info.mrtd" },
       { id: "registry", label: "Provider binding (0G registry)", basis: "recomputed", status: registryOk ? "verified" : "rejected",
         detail: registryOk ? `signer == the on-chain 0G mainnet registry teeSignerAddress for provider ${short(s.provider)} — bound to the registered provider identity` : "signer ≠ registry teeSignerAddress" },
-      { id: "residual1", label: "Intel PCS quote signature", basis: "residual", status: "unverifiable",
-        detail: "the quote's ECDSA signature + PCK cert-chain to Intel's root (dcap-qvl) — not yet verified client-side; residual trust root" },
+      { id: "intel", label: "Intel PCS quote signature (dcap-qvl)", basis: "recomputed", status: dcap.ok ? "verified" : "rejected",
+        detail: dcap.ok ? `cert chain leaf←PCK Platform CA←Intel SGX Root CA (pinned ${short(dcap.rootFp)}) + QE-report sig + att-key binding + TD-quote sig — genuine Intel-provisioned TDX part` : `dcap-qvl: chain ${dcap.chain} · root-pinned ${dcap.rootPinned} · qe ${dcap.qeSig} · bind ${dcap.attBinding} · quote ${dcap.quoteSig}` },
       { id: "residual2", label: "Known-good image", basis: "residual", status: "unverifiable",
         detail: "whether this MRTD / os_image_hash matches 0G's published glm-5.2 enclave image — pending the expected measurement" },
     ]);
@@ -156,7 +161,7 @@ export function EnclaveQuoteEvidence({ onResult }: { onResult?: (r: EnclaveSumma
             );
           })}
           <p className="pt-1 text-[11px] text-paper/40">
-            Eight recomputed-green (signer recovery · request · response · quote · RTMR chain · signer↔enclave · MRTD · provider) + two honest residual trust roots. A live <span className="font-mono text-paper/55">{s.model}</span> action on 0G Compute mainnet — every byte recomputed in-browser, never trusting a flag. Tamper the response and the signer + digest lanes break.
+            Nine recomputed-green (signer recovery · request · response · quote · RTMR chain · signer↔enclave · MRTD · provider · <span className="text-emerald-300/70">Intel dcap-qvl</span>) + one residual (known-good image — pending 0G&apos;s published measurement). A live <span className="font-mono text-paper/55">{s.model}</span> action on 0G Compute mainnet, verified to the Intel hardware root in your browser — never trusting a flag. Tamper the response and the signer + digest lanes break.
           </p>
         </div>
       )}

@@ -442,9 +442,10 @@ function RecomputeReceipt({ sc, checks, query, reply, tee, enclave }: { sc: Show
             <Row label="signer↔enclave · report_data" val={m(enclave?.binding)} />
             <Row label="MRTD · recomputed" val={m(enclave?.mrtd)} />
             <Row label="provider binding · 0G registry" val={m(enclave?.registry)} />
+            <Row label="Intel PCS quote sig · dcap-qvl" val={m(enclave?.intel)} />
           </>;
         })()}
-        <p className="mt-1 text-[8px] leading-snug text-[#1a1a1a]/45">+ 2 residual trust roots (Intel PCS signature · known-good image) — honest amber, not yet closed</p>
+        <p className="mt-1 text-[8px] leading-snug text-[#1a1a1a]/45">+ 1 residual trust root (known-good image — pending 0G&apos;s published MRTD) — honest amber</p>
         <div className="my-3 border-t border-dashed border-[#1a1a1a]/30" />
         <div className="text-center">
           <p className="font-display text-[13px]">{anyFail ? "✗  TAMPER DETECTED" : allPass ? "✓  RECOMPUTED" : "— PRESS VERIFY —"}</p>
