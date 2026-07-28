@@ -6,6 +6,7 @@ import { verifyAll, keccakUtf8, readOwnerOf, resolveEnsIdentity, readEnsText, ty
 import { readLiveRecord, refreshLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
 import { TeeInferenceEvidence, type TeeSummary } from "@/components/TeeInferenceEvidence";
+import { EnclaveQuoteEvidence } from "@/components/EnclaveQuoteEvidence";
 
 const GW = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
@@ -732,6 +733,7 @@ export default function VerifyPage() {
                 {sc?.zerogChain && <ZeroGChainEvidence sc={sc} query={query} />}
                 {sc && <GraphEvidence sc={sc} query={query} />}
                 <TeeInferenceEvidence onResult={setTee} />
+                <EnclaveQuoteEvidence />
                 {sc && ran && <RecomputeReceipt sc={sc} checks={checks} query={query} reply={reply} tee={tee} />}
               </div>
             )}
