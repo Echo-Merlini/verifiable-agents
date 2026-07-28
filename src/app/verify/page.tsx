@@ -438,6 +438,7 @@ function RecomputeReceipt({ sc, checks, query, reply, tee, enclave }: { sc: Show
             <Row label="RTMR chain · recomputed" val={m(enclave?.rtmr)} />
             <Row label="signer binding · recomputed" val={m(enclave?.binding)} />
             <Row label="MRTD · recomputed" val={m(enclave?.mrtd)} />
+            <Row label="provider binding · 0G registry" val={m(enclave?.registry)} />
           </>;
         })()}
         <p className="mt-1 text-[8px] leading-snug text-[#1a1a1a]/45">+ 2 residual trust roots (Intel PCS signature · known-good image) — honest amber, not yet closed</p>

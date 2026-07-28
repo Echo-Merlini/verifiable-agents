@@ -121,5 +121,9 @@
   ],
   "mrtd_expected": "b24d3b24e9e3c16012376b52362ca09856c4adecb709d5fac33addf1c47e193da075b125b6c364115771390a5461e217",
   "os_image_hash": "1d5283fb98a72814aa092f6041c6ffa8a6785499c479ad6697b07534e6de0c1d",
-  "signer": "0x4C1b546f5Fc11A9c2428eaFEd1D951Aa13C17ee8"
+  "signer": "0x4C1b546f5Fc11A9c2428eaFEd1D951Aa13C17ee8",
+  "provider": "0xd9966e13a6026Fcca4b13E7ff95c94DE268C471C",
+  "registry_signer": "0x4C1b546f5Fc11A9c2428eaFEd1D951Aa13C17ee8",
+  "chain_id": 16661,
+  "registry_note": "0G mainnet InferenceServing registry: getService(0xd9966e\u2026471C).teeSignerAddress"
 }

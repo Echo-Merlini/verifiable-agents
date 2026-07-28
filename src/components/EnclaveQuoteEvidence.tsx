@@ -14,6 +14,7 @@ type Sample = {
   source: string; provider_endpoint: string; model: string; network: string; captured_at: string;
   quote: string; event_log: { imr: number; digest: string }[];
   mrtd_expected: string; os_image_hash: string; signer: string;
+  provider: string; registry_signer: string; chain_id: number; registry_note: string;
 };
 const URL_ = process.env.NEXT_PUBLIC_ENCLAVE_QUOTE_URL || "/glm-enclave-quote.json";
 
@@ -36,7 +37,7 @@ async function rtmrReplay(log: { imr: number; digest: string }[], imr: number) {
 type St = "idle" | "verified" | "rejected" | "unverifiable";
 type Basis = "recomputed" | "attested-quote" | "residual";
 type Row = { id: string; label: string; basis: Basis; status: St; detail: string };
-export type EnclaveSummary = { quote: St; rtmr: St; binding: St; mrtd: St };
+export type EnclaveSummary = { quote: St; rtmr: St; binding: St; mrtd: St; registry: St };
 
 function Chip({ basis }: { basis: Basis }) {
   const tone = basis === "recomputed" ? "border-emerald-400/30 bg-emerald-400/[0.06] text-emerald-300/80"
@@ -75,8 +76,9 @@ export function EnclaveQuoteEvidence({ onResult }: { onResult?: (r: EnclaveSumma
     const rtmrOk = matches.every(Boolean);
     const bindingOk = /^0x[a-fA-F0-9]{40}$/.test(signer);
     const mrtdOk = q_mrtd === s.mrtd_expected;
+    const registryOk = bindingOk && !!s.registry_signer && signer.toLowerCase() === s.registry_signer.toLowerCase();
 
-    onResult?.({ quote: "verified", rtmr: rtmrOk ? "verified" : "rejected", binding: bindingOk ? "verified" : "rejected", mrtd: mrtdOk ? "verified" : "rejected" });
+    onResult?.({ quote: "verified", rtmr: rtmrOk ? "verified" : "rejected", binding: bindingOk ? "verified" : "rejected", mrtd: mrtdOk ? "verified" : "rejected", registry: registryOk ? "verified" : "rejected" });
     setRows([
       { id: "quote", label: "Enclave quote present", basis: "attested-quote", status: "verified",
         detail: `genuine Intel TDX v4 quote (${raw.length} bytes) fetched from the provider's /v1/quote` },
@@ -86,6 +88,8 @@ export function EnclaveQuoteEvidence({ onResult }: { onResult?: (r: EnclaveSumma
         detail: bindingOk ? `report_data commits the TEE signer ${short(signer)} — a response signed by it is provably enclave-executed` : "no valid signer address in report_data" },
       { id: "mrtd", label: "Enclave measurement (MRTD)", basis: "recomputed", status: mrtdOk ? "verified" : "rejected",
         detail: mrtdOk ? `MRTD ${short(q_mrtd)} — extracted from the quote, matches tcb_info.mrtd` : "MRTD ≠ tcb_info.mrtd" },
+      { id: "registry", label: "Provider binding (0G registry)", basis: "recomputed", status: registryOk ? "verified" : "rejected",
+        detail: registryOk ? `report_data signer == the on-chain 0G registry teeSignerAddress for GLM-5 provider ${short(s.provider)} — the enclave is bound to the on-chain provider identity` : "report_data signer ≠ the registry teeSignerAddress" },
       { id: "residual1", label: "Intel PCS quote signature", basis: "residual", status: "unverifiable",
         detail: "the quote's ECDSA signature + PCK cert-chain to Intel's root (dcap-qvl) — not yet verified client-side; residual trust root" },
       { id: "residual2", label: "Known-good image", basis: "residual", status: "unverifiable",
@@ -142,7 +146,7 @@ export function EnclaveQuoteEvidence({ onResult }: { onResult?: (r: EnclaveSumma
             );
           })}
           <p className="pt-1 text-[11px] text-paper/40">
-            Four recomputed-green (quote · RTMR chain · signer binding · MRTD) + two honest residual trust roots (Intel PCS signature, known-good image). Source: <span className="font-mono text-paper/55">{s.model}</span> on 0G Compute mainnet. Tamper one event digest and the RTMR replay breaks — this is really recomputing.
+            Five recomputed-green (quote · RTMR chain · signer binding · MRTD · on-chain provider binding) + two honest residual trust roots (Intel PCS signature, known-good image). Source: <span className="font-mono text-paper/55">{s.model}</span> on 0G Compute mainnet. Tamper one event digest and the RTMR replay breaks — this is really recomputing.
           </p>
         </div>
       )}
