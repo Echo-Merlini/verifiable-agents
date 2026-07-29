@@ -14,7 +14,7 @@ export default function ZeroGTeemlReport() {
     <main className="min-h-screen bg-deepink text-paper">
       <TopNav />
       <div className="max-w-3xl mx-auto px-6 md:px-10 py-10">
-        <a href="/audit" className="text-sm text-gb-muted hover:text-paper transition-colors">← Audit</a>
+        <a href="/reports" className="text-sm text-gb-muted hover:text-paper transition-colors">← Audit Reports</a>
 
         <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80">Audit Report · recompute investigation</p>
         <h1 className="mt-4 font-display font-medium tracking-tightest text-4xl sm:text-5xl">

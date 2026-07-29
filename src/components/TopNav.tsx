@@ -21,7 +21,7 @@ const LINKS = [
 const AUDIT = [
   { href: "/verify", label: "Stack Verify", desc: "recompute a live agent action" },
   { href: "/conformance", label: "MCP Conformance", desc: "recompute our MCPs" },
-  { href: "/reports/0g-teeml", label: "0G TEE Report", desc: "recompute investigation" },
+  { href: "/reports", label: "Audit Reports", desc: "recompute investigations" },
   { href: "https://verticecriativo.pt/review-gate", label: "Review Gate", desc: "independent recomputable review", external: true },
 ];
 
