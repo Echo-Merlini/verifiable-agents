@@ -712,7 +712,7 @@ export default function VerifyPage() {
                       <p className="mt-1.5 text-[12px] text-gb-muted">That red is the point: the check is really re-deriving the hashes, not faking green. Hit <span className="text-brassLight">Restore original</span> to pass again.</p>
                     </>
                   )}
-                  <p className="mt-2 font-mono text-[10px] uppercase tracking-wide text-gb-muted">recipes via recompute-kit · recomputekit-ai.com</p>
+                  <p className="mt-2 font-mono text-[10px] uppercase tracking-wide text-gb-muted">recipes via <a href="/kit" className="text-brassLight/70 hover:text-brassLight">recompute-kit</a></p>
                 </div>
 
                 {sc && <IdentityBindingEvidence sc={sc} />}
