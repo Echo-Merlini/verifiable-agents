@@ -49,15 +49,9 @@ const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org
 // the NFT's on-chain image at mint.
 type BotVariant = { id: string; name: string; accent: string; image: string; ipfs: string };
 const BOT_VARIANTS: BotVariant[] = [
-  { id: "ethglobal", name: "ETH Global", accent: "#F2B705", image: "/bots/ethglobal.webp", ipfs: "ipfs://bafybeiebta24o2srwhlrpb2cxfw4tg3k7htfdmi75ro6npvmaoqh46kmlm" },
-  { id: "ens",       name: "ENS",        accent: "#4A90E2", image: "/bots/ens.webp",       ipfs: "ipfs://bafybeicqk6coonbtrokczf43zaqzjavfw4w4ifoec2w6au25k5bk5j6twq" },
-  { id: "uniswap",   name: "Uniswap",    accent: "#FF2E9A", image: "/bots/uniswap.webp",   ipfs: "ipfs://bafybeih72ysonmwyvzcs7czr4bchk3x6g2ayg3qfhzsuercqjvptkcekeq" },
-  { id: "1inch",     name: "1inch",      accent: "#8BC34A", image: "/bots/1inch.webp",     ipfs: "ipfs://bafybeihiq4zajesunsie4zfnw7xr4poqp2a37wqhdgwokguo6nnqlanlza" },
-  { id: "sui",       name: "Sui",        accent: "#4DA2FF", image: "/bots/sui.webp",       ipfs: "ipfs://bafybeif35qqjud7ftacyk36cjhyqjpv2azr2h7w6wrpreozwbxrc6eyrxu" },
-  { id: "thegraph",  name: "The Graph",  accent: "#E0A24C", image: "/bots/thegraph.webp",  ipfs: "ipfs://bafybeia7myhceipzrxnxftkgp2ccvb5rewnihoorsm3emdlzi3itpwja2a" },
-  { id: "worldcoin", name: "Worldcoin",  accent: "#E53935", image: "/bots/worldcoin.webp", ipfs: "ipfs://bafybeiebqyhtsdn4ttlm75k4w2u3jjpat5y33cdblmwetw5kjwqftv7wpe" },
-  { id: "hedera",    name: "Hedera",     accent: "#AEB4BE", image: "/bots/hedera.webp",    ipfs: "ipfs://bafybeiaoslgie4ne3prn3pjkk6lyeerwe25m2gpnrc2jua7r4by4rcar4m" },
-  { id: "0g",        name: "0G",         accent: "#A45BF0", image: "/bots/0g.webp",        ipfs: "ipfs://bafybeieu6x6mxkfeepphr4zpio2hwnsu226cmt5lbkw5ggprsbs6ngrmfu" },
+  { id: "vertice", name: "Vértice X Trustless-ai", accent: "#E0A24C",
+    image: "https://sapphire-naval-quelea-174.mypinata.cloud/ipfs/bafybeicgte5e2hkw5zvgulsj7gly244qcgj5ynhhlssnk7xsz22dqejvpa",
+    ipfs: "ipfs://bafybeicgte5e2hkw5zvgulsj7gly244qcgj5ynhhlssnk7xsz22dqejvpa" },
 ];
 
 // Auto-assigned personalities. Tiago to add the on-brand hackathon one; keep this
@@ -341,8 +335,8 @@ export default function MintAgentPage() {
                 <img src={custom ? custom.url : variant.image} alt={custom ? "Your uploaded agent art" : variant.name} className="h-full w-full object-contain" />
               </div>
               ); })()}
-              {/* preset arrows — hidden while an upload is in play (arrows are for the preset set) */}
-              {!custom && (<>
+              {/* preset arrows — only when there's more than one preset, and not while an upload is in play */}
+              {!custom && BOT_VARIANTS.length > 1 && (<>
                 <button onClick={() => cycle(-1)} aria-label="Previous"
                   className="absolute left-6 top-[calc(50%-1.75rem)] -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-white/10 hover:bg-black/70 transition-colors">
                   <ChevronLeft className="h-5 w-5" />
@@ -352,13 +346,15 @@ export default function MintAgentPage() {
                   <ChevronRight className="h-5 w-5" />
                 </button>
               </>)}
-              <div className="mt-3 flex items-center justify-center gap-2">
-                {BOT_VARIANTS.map((b, i) => (
-                  <button key={b.id} onClick={() => pickPreset(i)} aria-label={b.name}
-                    className="h-2.5 w-2.5 rounded-full transition-transform"
-                    style={{ background: !custom && i === vi ? b.accent : "#3a3f4b", transform: !custom && i === vi ? "scale(1.25)" : "scale(1)" }} />
-                ))}
-              </div>
+              {BOT_VARIANTS.length > 1 && (
+                <div className="mt-3 flex items-center justify-center gap-2">
+                  {BOT_VARIANTS.map((b, i) => (
+                    <button key={b.id} onClick={() => pickPreset(i)} aria-label={b.name}
+                      className="h-2.5 w-2.5 rounded-full transition-transform"
+                      style={{ background: !custom && i === vi ? b.accent : "#3a3f4b", transform: !custom && i === vi ? "scale(1.25)" : "scale(1)" }} />
+                  ))}
+                </div>
+              )}
               <p className="mt-1 text-center font-mono text-[11px] uppercase tracking-[0.2em]" style={{ color: custom ? "#E0A24C" : variant.accent }}>{custom ? "Custom image" : variant.name}</p>
 
               {/* Upload your own — pinned to IPFS as a step when you press Mint */}
@@ -367,7 +363,7 @@ export default function MintAgentPage() {
                 {custom ? (
                   <button onClick={clearImage} disabled={busy}
                     className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/5 px-3 py-1.5 text-[11px] text-gb-muted hover:text-paper hover:border-white/25 transition-colors disabled:opacity-50">
-                    <X className="h-3.5 w-3.5" /> Remove · use a preset
+                    <X className="h-3.5 w-3.5" /> Remove · use the default
                   </button>
                 ) : (
                   <button onClick={() => fileRef.current?.click()} disabled={busy}
