@@ -1,0 +1,85 @@
+{
+  "schema": "recompute-kit.conformance_proof_object.v0",
+  "proof_object_id": "proofobj-bd9b65f832bec1db683da80be1dcef7027c601f55d7cd7942b1719413e4aafbf",
+  "proof_ref": "receiptos://portable-proof-object/proofobj-bd9b65f832bec1db683da80be1dcef7027c601f55d7cd7942b1719413e4aafbf",
+  "proof_system": "recompute-kit/conformance",
+  "receipt_root": "0xbd9b65f832bec1db683da80be1dcef7027c601f55d7cd7942b1719413e4aafbf",
+  "replay_ref": null,
+  "anchor_ref": null,
+  "created_at": null,
+  "relation_type": "external-conformance",
+  "project_refs": [
+    "trustless-ai/recompute-kit",
+    "Echo-Merlini/agent-mcp-catalog"
+  ],
+  "source_evidence_ref": null,
+  "evidence_capsule": {
+    "schema": "receiptos.evidence_capsule.v0",
+    "action": {
+      "summary": "Gateway agent action · dinamic.eth #11",
+      "source_fields": [
+        "capsule.attestation.inputHash",
+        "capsule.attestation.l3Tx"
+      ]
+    },
+    "evidence": {
+      "summary": "WYRIWE L1–L4 attestation — raw/pipeline/input/output hashes, OCP record() on-chain (chain 1), EIP-712 L4 signature by the attestor. Deep recompute (re-derive every hash + read the anchor + recover the signer): https://ai.verticecriativo.pt/verify",
+      "source_fields": [
+        "capsule.attestation.*"
+      ],
+      "status": "present"
+    },
+    "verifier_result": {
+      "ok": true,
+      "status": "verified"
+    },
+    "capsule": {
+      "profile": "gateway-attestation.v0",
+      "attestation": {
+        "ens": "dinamic.eth",
+        "agentId": "11",
+        "registry": "0xe0454dfa17a57a84c3e0e2dbfda5318cbbe91e2c",
+        "rawInputHash": "0x1d27faf1a3489564a6fb1ff3790e366b36b6807ff769529a3d953636c59c6596",
+        "sanitizationPipelineHash": "0x8116eec29078e8f57c07077d5e8080a35bde73036581df3abb93755d1b1a16ea",
+        "inputHash": "0x1d27faf1a3489564a6fb1ff3790e366b36b6807ff769529a3d953636c59c6596",
+        "outputHash": "0xda1a63d49b8a2c120aa04f8ee08c35dc7f7325ee97d6fa2c69f0868f55e9aa10",
+        "manifestHash": "0xfda4473a6efde788586ef2951e9874c7debd4db3e4fe615f04036aac3cd45011",
+        "l4Signature": "0x74485300a2e390a93745fed20533c59d88aff03dfec7d274342b34d90ca83fd56bd3087e6720d4dc2bf138e1cf30183d3c2ce8ccbc0374f58d765afe776031591b",
+        "attestor": "0x85Fa13511D170FBe173761b63D7f8DD4A6f6Bf1A",
+        "l3Tx": "0xc876d8b2d691eb1bf44f442ade52fe4e795722ccc5307e376dd470e697b6a250",
+        "ocpContract": "0x1e2A118a2bf1C240aE6fDe187c07f905D360f094",
+        "l3ChainId": 1,
+        "timestamp": 1783976366
+      },
+      "recompute": "https://ai.verticecriativo.pt/verify",
+      "verdict": {
+        "pass": true
+      }
+    },
+    "anchor": {
+      "ran_at": 1783976366,
+      "runner": "onchain-boiler-kit/gateway"
+    },
+    "receipt_root": {
+      "stored": "0xbd9b65f832bec1db683da80be1dcef7027c601f55d7cd7942b1719413e4aafbf",
+      "computed": "0xbd9b65f832bec1db683da80be1dcef7027c601f55d7cd7942b1719413e4aafbf",
+      "match": true,
+      "status": "verified",
+      "derivation": "receiptos-c14n-v0 — 0x + sha256(JCS(receipt \\ {anchor, receipt_root}))"
+    }
+  },
+  "provenance_summary": {
+    "verifier_result": {
+      "ok": true,
+      "status": "verified"
+    },
+    "pass": true,
+    "reproduced": null,
+    "total": null,
+    "spec_sha256": null,
+    "vectors_sha256": null,
+    "recompute": null,
+    "runner": "onchain-boiler-kit/gateway",
+    "ran_at": 1783976366
+  }
+}

@@ -22,6 +22,7 @@ const AUDIT = [
   { href: "/verify", label: "Stack Verify", desc: "recompute a live agent action" },
   { href: "/conformance", label: "MCP Conformance", desc: "recompute our MCPs" },
   { href: "/reports", label: "Audit Reports", desc: "recompute investigations" },
+  { href: "/ledger", label: "The Ledger", desc: "public track record · verify offline" },
   { href: "/kit", label: "recompute-kit", desc: "the toolkit + offline verifier" },
   { href: "https://verticecriativo.pt/review-gate", label: "Review Gate", desc: "independent recomputable review", external: true },
 ];
