@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShieldCheck, ChevronDown, ExternalLink } from "lucide-react";
+import { useAccount, useDisconnect } from "wagmi";
+import { ShieldCheck, ChevronDown, ExternalLink, Wallet, LogOut } from "lucide-react";
 import { VerticeMark } from "@/components/VerticeMark";
+import { useWalletModal } from "@/hooks/useWalletModal";
 
 // Lightweight top bar for the marketplace surfaces. The trust/proof surfaces are grouped under one
 // "Audit" dropdown (stack verify · MCP conformance · reports · review gate) so the header stays clean
@@ -31,6 +33,13 @@ export function TopNav() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const auditActive = AUDIT.some((a) => !a.external && path.startsWith(a.href));
+
+  // Wallet lives in the shared header so a connection carries across every service page.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const { address } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { open: openWallet } = useWalletModal();
 
   return (
     <header className="relative border-b border-white/[0.06]">
@@ -94,6 +103,35 @@ export function TopNav() {
               </>
             )}
           </div>
+
+          {/* Wallet — connect once, stay connected while navigating between services */}
+          <span className="hidden h-4 w-px bg-white/12 sm:inline-block" aria-hidden />
+          {!mounted ? null : !address ? (
+            <button
+              onClick={openWallet}
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 transition-colors hover:text-brassLight"
+            >
+              <Wallet className="h-3.5 w-3.5" /> Connect
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={openWallet}
+                title="Wallet · account"
+                className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-emerald-400/80 transition-colors hover:text-emerald-300"
+              >
+                <Wallet className="h-3.5 w-3.5" /> {address.slice(0, 6)}…{address.slice(-4)}
+              </button>
+              <button
+                onClick={() => disconnect()}
+                title="Disconnect"
+                aria-label="Disconnect wallet"
+                className="inline-flex items-center text-gb-muted transition-colors hover:text-red-400"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
         </nav>
       </div>
     </header>

@@ -19,7 +19,7 @@ export const DEMO_AGENT = {
   name: "Eth Global LX Agent '26",
   ens: "ETH Global 2026 · Recompute Kit Bots",
   by: "Recompute Kit Bots",
-  image: "https://gateway.pinata.cloud/ipfs/bafybeiebta24o2srwhlrpb2cxfw4tg3k7htfdmi75ro6npvmaoqh46kmlm",
+  image: "https://sapphire-naval-quelea-174.mypinata.cloud/ipfs/bafybeialj2bsf3dkcgvzspe42eh6czvbzz7xttzgaudk6xy4rkyzue6k4a",
 };
 
 export type PublicMcp = { id: string; name: string; description?: string };
