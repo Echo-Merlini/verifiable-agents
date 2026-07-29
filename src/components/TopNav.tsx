@@ -11,7 +11,7 @@ import { VerticeMark } from "@/components/VerticeMark";
 // and each is a distinct, sellable offering rather than a loose link.
 const LINKS = [
   { href: "/", label: "Home" },
-  { href: "/demo", label: "Demo" },
+  { href: "/demo", label: "Live Agent", live: true },   // the agent that actually runs on the platform (route kept as /demo so external links don't break)
   { href: "/mint", label: "Mint" },
   { href: "/marketplace", label: "Marketplace" },
   { href: "/A2A", label: "A2A" },
@@ -46,10 +46,16 @@ export function TopNav() {
               <Link
                 key={l.href}
                 href={l.href}
-                className={`font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${
+                className={`inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${
                   active ? "text-paper" : "text-gb-muted hover:text-paper"
                 }`}
               >
+                {"live" in l && (l as { live?: boolean }).live && (
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/70" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  </span>
+                )}
                 {l.label}
               </Link>
             );
