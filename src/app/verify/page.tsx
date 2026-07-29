@@ -5,8 +5,8 @@ import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, Arrow
 import { verifyAll, keccakUtf8, readOwnerOf, resolveEnsIdentity, readEnsText, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord, refreshLiveRecord } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
-import { TeeInferenceEvidence, type TeeSummary } from "@/components/TeeInferenceEvidence";
-import { EnclaveQuoteEvidence, type EnclaveSummary } from "@/components/EnclaveQuoteEvidence";
+import { type TeeSummary } from "@/components/TeeInferenceEvidence";
+import { type EnclaveSummary } from "@/components/EnclaveQuoteEvidence";
 
 const GW = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
@@ -417,35 +417,6 @@ function RecomputeReceipt({ sc, checks, query, reply, tee, enclave }: { sc: Show
         {sc.zerog && <Row label="0G Storage · availability" val={surfaceMark} href={`https://chainscan-galileo.0g.ai/tx/${sc.zerog.tx}`} />}
         <Row label="The Graph · queryable" val={surfaceMark} href={graphUrl} />
         <Row label="Identity · ERC-8323 + ENS" val={ens ? "✓" : "·"} href={ens ? `https://app.ens.domains/${ens}` : undefined} />
-        <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
-        <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">0G TeeML relay · by evidence class</p>
-        {(() => {
-          const m = (st?: string) => (st === "verified" ? "✓" : st === "rejected" ? "✗" : st === "unverifiable" ? "~" : "·");
-          return <>
-            <Row label="broker signature · recomputed (EIP-191)" val={m(tee?.sig)} />
-            <Row label="response binding · recomputed" val={m(tee?.resp)} />
-            <Row label="request binding · broker-asserted" val={m(tee?.req)} />
-            <Row label="enclave quote · no local quote" val={m(tee?.enclave)} />
-          </>;
-        })()}
-        <p className="mt-1 text-[8px] leading-snug text-[#1a1a1a]/45">~ = honest amber: broker-asserted or no-local-quote (relay), never a silent ✓ — not an enclave attestation</p>
-        <div className="my-3 border-t border-dotted border-[#1a1a1a]/25" />
-        <p className="mb-1 text-[9px] uppercase tracking-[0.18em] text-[#1a1a1a]/45">0G TeeML · live glm-5.2 enclave inference (mainnet)</p>
-        {(() => {
-          const m = (st?: string) => (st === "verified" ? "✓" : st === "rejected" ? "✗" : st === "unverifiable" ? "~" : "·");
-          return <>
-            <Row label="signer recovery · recomputed" val={m(enclave?.sig)} />
-            <Row label="request digest · recomputed" val={m(enclave?.req)} />
-            <Row label="response digest · recomputed" val={m(enclave?.resp)} />
-            <Row label="enclave quote · TDX" val={m(enclave?.quote)} />
-            <Row label="RTMR chain · recomputed" val={m(enclave?.rtmr)} />
-            <Row label="signer↔enclave · report_data" val={m(enclave?.binding)} />
-            <Row label="MRTD · recomputed" val={m(enclave?.mrtd)} />
-            <Row label="provider binding · 0G registry" val={m(enclave?.registry)} />
-            <Row label="Intel PCS quote sig · dcap-qvl" val={m(enclave?.intel)} />
-          </>;
-        })()}
-        <p className="mt-1 text-[8px] leading-snug text-[#1a1a1a]/45">+ 1 residual trust root (known-good image — pending 0G&apos;s published MRTD) — honest amber</p>
         <div className="my-3 border-t border-dashed border-[#1a1a1a]/30" />
         <div className="text-center">
           <p className="font-display text-[13px]">{anyFail ? "✗  TAMPER DETECTED" : allPass ? "✓  RECOMPUTED" : "— PRESS VERIFY —"}</p>
@@ -464,8 +435,6 @@ export default function VerifyPage() {
   const [checks, setChecks] = useState<Check[]>([]);
   const [running, setRunning] = useState(false);
   const [ran, setRan] = useState(false);
-  const [tee, setTee] = useState<TeeSummary | null>(null);   // TEE-inference lane result → surfaced in the receipt
-  const [enclave, setEnclave] = useState<EnclaveSummary | null>(null);   // genuine-enclave lane → receipt
   const [err, setErr] = useState<string | null>(null);
   const [live, setLive] = useState(false);
   const [focus, setFocus] = useState<"user" | "agent" | null>(null);
@@ -750,9 +719,11 @@ export default function VerifyPage() {
                 {sc?.zerog && <ZeroGEvidence sc={sc} />}
                 {sc?.zerogChain && <ZeroGChainEvidence sc={sc} query={query} />}
                 {sc && <GraphEvidence sc={sc} query={query} />}
-                <TeeInferenceEvidence onResult={setTee} />
-                <EnclaveQuoteEvidence onResult={setEnclave} />
-                {sc && ran && <RecomputeReceipt sc={sc} checks={checks} query={query} reply={reply} tee={tee} enclave={enclave} />}
+                {sc && ran && <RecomputeReceipt sc={sc} checks={checks} query={query} reply={reply} />}
+                <a href="/reports/0g-teeml" className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-4 hover:border-brassLight/30 transition-colors">
+                  <span className="text-[13px] text-gb-muted">Looking for the <span className="text-paper">0G TeeML</span> recompute — relay evidence + live enclave inference? It moved to its own audit report.</span>
+                  <span className="shrink-0 inline-flex items-center gap-1.5 text-[12px] text-brassLight">Read the report <ArrowRight className="h-3.5 w-3.5" /></span>
+                </a>
               </div>
             )}
 
