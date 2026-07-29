@@ -3,7 +3,7 @@
 import { TopNav } from "@/components/TopNav";
 import { ArrowRight, ExternalLink, Terminal } from "lucide-react";
 
-const INSTALL = 'pip install "git+https://github.com/trustless-ai/recompute-kit.git#subdirectory=verify"';
+const INSTALL = "pip install recompute-kit-verify";
 const REPO = "https://github.com/trustless-ai/recompute-kit";
 
 const TRI = [
@@ -32,6 +32,7 @@ export default function KitPage() {
           <div className="flex items-center gap-2 text-[12px] text-gb-muted"><Terminal className="h-4 w-4 text-brassLight/80" /> Verify a receipt offline — stdlib only, zero dependencies</div>
           <pre className="mt-3 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 font-mono text-[12px] text-emerald-300/90"><code>{INSTALL}</code></pre>
           <pre className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 font-mono text-[12px] text-paper/80"><code>{`recompute-verify receipt.json   # exit 0 = good, 1 = bad, 2 = unverifiable`}</code></pre>
+          <p className="mt-2 font-mono text-[10px] text-paper/35">on PyPI: <a href="https://pypi.org/project/recompute-kit-verify/" target="_blank" rel="noopener noreferrer" className="text-brassLight/60 hover:text-brassLight">pypi.org/project/recompute-kit-verify</a></p>
           <p className="mt-3 text-[11px] text-paper/40">It recomputes the receipt&apos;s <code className="text-paper/70">receipt_root</code> (<code className="text-paper/70">receiptos-c14n-v0</code>) and reads the capsule&apos;s conformance verdict verbatim — never inferring the verdict from the root match.</p>
         </div>
 
