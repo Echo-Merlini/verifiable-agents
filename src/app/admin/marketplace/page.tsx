@@ -19,6 +19,7 @@ function CopyBtn({ value, label }: { value: string; label?: string }) {
   );
 }
 import { fetchPremiumMcps, fetchMarketAgents, normalizeSlug, type PremiumMcp, type MarketAgent } from "@/lib/marketplace";
+import { AgentMarketAdmin } from "@/components/AgentMarketAdmin";
 import { MCP_ENTITLEMENT_REGISTER_ABI } from "@/lib/mcpEntitlementDeploy";
 
 const EXPLORER: Record<number, string> = { 1: "https://etherscan.io", 84532: "https://sepolia.basescan.org" };
@@ -95,6 +96,9 @@ export default function AdminMarketplacePage() {
           ) : <span className="text-amber-300">not deployed (Deploy tab)</span>}
         </p>
       </div>
+
+      {/* Agent buy/sell market — contract config, fee + treasury controls, recomputed stats */}
+      <AgentMarketAdmin />
 
       {loading ? (
         <div className="flex items-center gap-2 text-sm text-gb-muted"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</div>

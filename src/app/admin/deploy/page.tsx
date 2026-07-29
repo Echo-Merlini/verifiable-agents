@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { AGENT_FACTORY_ABI, FACTORY_ADDRESS, GATEWAY_URL } from "@/lib/erc8004";
 import { GENESIS_REGISTRY_BYTECODE, GENESIS_REGISTRY_CTOR_ABI } from "@/lib/genesisDeploy";
+import { AGENT_MARKET_BYTECODE, AGENT_MARKET_CTOR_ABI } from "@/lib/agentMarketDeploy";
+import { AGENT_MARKET_ADDRESS } from "@/lib/agentMarketEscrow";
 import { MCP_ENTITLEMENT_BYTECODE } from "@/lib/mcpEntitlementDeploy";
 const FACADE_ADDRESS = process.env.NEXT_PUBLIC_FACADE_ADDRESS || "";
 const GENESIS_REGISTRY_ADDRESS = process.env.NEXT_PUBLIC_GENESIS_REGISTRY_ADDRESS || "";
@@ -576,6 +578,88 @@ function ConsultEscrowDeployCard() {
         <button onClick={deploy} disabled={deploying || !walletClient}
           className="w-full bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 py-2.5 rounded-lg text-sm font-medium transition-colors">
           {deploying ? "Deploying…" : !walletClient ? "Connect wallet first" : "Deploy ConsultEscrow"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ── AgentMarketEscrow deploy (buy/sell agents) ─────────────────────────────────
+
+function AgentMarketEscrowDeployCard() {
+  const { data: walletClient } = useWalletClient();
+  const { address } = useAccount();
+  const publicClient = usePublicClient();
+  const [treasury, setTreasury] = useState("");
+  const [feeBps, setFeeBps]     = useState("250");
+  const [deploying, setDeploying] = useState(false);
+  const [deployed, setDeployed]   = useState<string | null>(null);
+  const [error, setError]         = useState<string | null>(null);
+  const [redeploy, setRedeploy]   = useState(false);
+
+  const liveAddr = AGENT_MARKET_ADDRESS && AGENT_MARKET_ADDRESS.length > 0 ? AGENT_MARKET_ADDRESS : null;
+  const treas = (treasury.trim() || address || "") as `0x${string}`;
+
+  const deploy = async () => {
+    if (!walletClient || !publicClient || !address) return;
+    const bps = Number(feeBps);
+    if (!/^0x[0-9a-fA-F]{40}$/.test(treas)) { setError("Enter a valid treasury address"); return; }
+    if (!Number.isInteger(bps) || bps < 0 || bps > 1000) { setError("Fee must be 0–1000 bps (≤ 10%)"); return; }
+    setDeploying(true); setError(null);
+    try {
+      const hash = await walletClient.deployContract({
+        abi: AGENT_MARKET_CTOR_ABI,
+        bytecode: AGENT_MARKET_BYTECODE as `0x${string}`,
+        args: [treas, BigInt(bps)],
+      });
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      setDeployed(receipt.contractAddress!);
+    } catch (e: any) { setError(e.message); }
+    finally { setDeploying(false); }
+  };
+
+  return (
+    <div className="bg-gb-surface border border-gb-border rounded-xl p-5 space-y-4">
+      <div className="flex items-center gap-2">
+        <Rocket className="w-4 h-4 text-gb-faint" />
+        <p className="text-sm font-semibold">Deploy AgentMarketEscrow</p>
+        {liveAddr && !deployed ? <Pill color="green">Live</Pill> : <Pill color="amber">One-time · gas required</Pill>}
+      </div>
+      <p className="text-xs text-gb-muted leading-relaxed">
+        Buy/sell agents — custodial-while-listed escrow: <code className="bg-gb-input px-1 rounded">list()</code> escrows the agent,
+        <code className="bg-gb-input px-1 rounded">buy()</code> pays the seller (minus fee) + transfers the NFT, <code className="bg-gb-input px-1 rounded">cancel()</code> returns it.
+        Deployer becomes owner; fee + treasury are tunable after in Admin → Marketplace. Listings/sales recompute from the event log.
+      </p>
+      {(!liveAddr || redeploy) && !deployed && (
+        <div className="grid grid-cols-2 gap-3">
+          <label className="col-span-2 text-xs text-gb-muted">Treasury (fee recipient)
+            <input value={treasury} onChange={(e) => setTreasury(e.target.value)} placeholder={address || "0x…"}
+              className="mt-1 w-full bg-gb-input border border-gb-border rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-gb-accent" />
+          </label>
+          <label className="text-xs text-gb-muted">Fee (bps, ≤ 1000)
+            <input value={feeBps} onChange={(e) => setFeeBps(e.target.value)} inputMode="numeric"
+              className="mt-1 w-full bg-gb-input border border-gb-border rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-gb-accent" />
+          </label>
+          <div className="text-xs text-gb-faint self-end pb-2">= {(Number(feeBps || "0") / 100).toFixed(2)}% per sale</div>
+        </div>
+      )}
+      {error && <div className="flex items-start gap-2 text-red-400 text-sm"><AlertCircle className="w-4 h-4 mt-0.5 shrink-0" /> {error}</div>}
+      {deployed ? (
+        <div className="space-y-2">
+          <p className="text-green-400 text-sm font-semibold flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Deployed!</p>
+          <AddrRow label="AgentMarketEscrow" addr={deployed} />
+          <p className="text-xs text-green-300 flex items-center gap-1.5"><ArrowRight className="w-3 h-3" /> Set <code className="bg-gb-input px-1 rounded">NEXT_PUBLIC_AGENT_MARKET_ESCROW</code> + <code className="bg-gb-input px-1 rounded">NEXT_PUBLIC_AGENT_MARKET_FROM_BLOCK</code> (this deploy block).</p>
+        </div>
+      ) : liveAddr && !redeploy ? (
+        <div className="space-y-2">
+          <p className="text-green-400 text-sm font-semibold flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> Live · configured</p>
+          <AddrRow label="AgentMarketEscrow" addr={liveAddr} />
+          <button onClick={() => setRedeploy(true)} className="text-xs text-gb-muted hover:text-slate-300 underline underline-offset-2 transition-colors">Deploy a new one instead</button>
+        </div>
+      ) : (
+        <button onClick={deploy} disabled={deploying || !walletClient}
+          className="w-full bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 py-2.5 rounded-lg text-sm font-medium transition-colors">
+          {deploying ? "Deploying…" : !walletClient ? "Connect wallet first" : "Deploy AgentMarketEscrow"}
         </button>
       )}
     </div>
@@ -1231,6 +1315,7 @@ REGISTRAR_ADDRESS=0x...`} />
         <DeployRegistryCard />
         <FactoryFacadeDeployCard />
         <GenesisRegistryDeployCard />
+        <AgentMarketEscrowDeployCard />
         <ConsultEscrowDeployCard />
         <SimpleDeployCard label="MCPEntitlementRegistry" bytecode={MCP_ENTITLEMENT_BYTECODE} desc="Agent Capability Entitlements — buy an MCP capability bound to an agent NFT (carried with the token on transfer). Deployer becomes owner; then registerMcp(mcpId, price, payTo, duration, active) each premium capability and read isEntitled(registry, tokenId, mcpId). Powers the marketplace store + the licensed-MCP audit." envVar="NEXT_PUBLIC_MCP_ENTITLEMENT_ADDRESS" current={process.env.NEXT_PUBLIC_MCP_ENTITLEMENT_ADDRESS} />
         <SimpleDeployCard label="EscrowV1" bytecode={ESCROW_V1_BYTECODE} desc="Mesh Node Economics (M4) — order-based agent-service escrow with dispute/arbitration: createOrder → confirm/dispute/resolve/refund; slash proceeds accumulate in the slash pool." envVar="NEXT_PUBLIC_ESCROW_V1_ADDRESS" current={process.env.NEXT_PUBLIC_ESCROW_V1_ADDRESS} />

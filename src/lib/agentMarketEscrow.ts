@@ -24,6 +24,12 @@ export const AGENT_MARKET_ABI = [
     inputs: [{ name: "id", type: "uint256" }], outputs: [] },
   { type: "function", name: "cancel", stateMutability: "nonpayable",
     inputs: [{ name: "id", type: "uint256" }], outputs: [] },
+  { type: "function", name: "owner", stateMutability: "view", inputs: [], outputs: [{ type: "address" }] },
+  { type: "function", name: "treasury", stateMutability: "view", inputs: [], outputs: [{ type: "address" }] },
+  { type: "function", name: "feeBps", stateMutability: "view", inputs: [], outputs: [{ type: "uint96" }] },
+  { type: "function", name: "setFeeBps", stateMutability: "nonpayable", inputs: [{ name: "newBps", type: "uint96" }], outputs: [] },
+  { type: "function", name: "setTreasury", stateMutability: "nonpayable", inputs: [{ name: "newTreasury", type: "address" }], outputs: [] },
+  { type: "function", name: "transferOwnership", stateMutability: "nonpayable", inputs: [{ name: "newOwner", type: "address" }], outputs: [] },
   { type: "event", name: "Listed", inputs: [
     { name: "id", type: "uint256", indexed: true }, { name: "seller", type: "address", indexed: true },
     { name: "nft", type: "address", indexed: true }, { name: "tokenId", type: "uint256", indexed: false },
@@ -85,6 +91,31 @@ export async function fetchActiveListings(): Promise<Listing[]> {
     const l = map.get(a.id.toString()); if (l) l.active = false;
   }
   return [...map.values()].filter((l) => l.active).sort((a, b) => Number(b.id - a.id));
+}
+
+/// Read the live contract config (owner / treasury / fee) straight from chain.
+export async function fetchMarketConfig(): Promise<{ owner: string; treasury: string; feeBps: number } | null> {
+  if (!agentMarketConfigured) return null;
+  const address = AGENT_MARKET_ADDRESS as Address;
+  const base = { address, abi: AGENT_MARKET_ABI } as const;
+  const [owner, treasury, feeBps] = await Promise.all([
+    marketClient.readContract({ ...base, functionName: "owner" }),
+    marketClient.readContract({ ...base, functionName: "treasury" }),
+    marketClient.readContract({ ...base, functionName: "feeBps" }),
+  ]);
+  return { owner: owner as string, treasury: treasury as string, feeBps: Number(feeBps as bigint) };
+}
+
+/// Recompute settled volume + fees from the Sold log — the numbers are re-derivable, not asserted.
+export async function fetchMarketStats(): Promise<{ sales: number; volume: bigint; fees: bigint }> {
+  if (!agentMarketConfigured) return { sales: 0, volume: 0n, fees: 0n };
+  const sold = await marketClient.getContractEvents({
+    address: AGENT_MARKET_ADDRESS as Address, abi: AGENT_MARKET_ABI, eventName: "Sold",
+    fromBlock: FROM_BLOCK, toBlock: "latest",
+  });
+  let volume = 0n, fees = 0n;
+  for (const e of sold) { const a = e.args as { price: bigint; fee: bigint }; volume += a.price; fees += a.fee; }
+  return { sales: sold.length, volume, fees };
 }
 
 export const explorerTx = (hash: string) =>
