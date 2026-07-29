@@ -1,0 +1,44 @@
+{
+  "verdict": "approve_with_concerns",
+  "confidence": 0.85,
+  "summary": "The claim is largely supported by recomputable evidence, but there is a residual concern regarding the expected-image authorization pending publication.",
+  "issues": [
+    {
+      "severity": "medium",
+      "category": "correctness",
+      "description": "The expected-image authorization relies on MRTD matching 0G's published glm-5.2 measurement, which is pending publication.",
+      "suggested_fix": "Ensure 0G publishes the glm-5.2 measurement to complete the recomputability of the expected-image authorization.",
+      "attribution": "agentive"
+    }
+  ],
+  "artifact_hash": "dc555f4311d9eea5c101d0f5596438640f912634e2e95874d2823f206f73ab2e",
+  "verifier_pubkey": "6786e18a864893a900bd9858e650f67ccc3513f248fed374b591e2ff6922fbb7",
+  "decision_ref": "sha256:09f1e7582a684684a52423c37def43224dbaa0798b4f526e9b0f26f74a3d808f",
+  "event": {
+    "id": "752399647f04e8cd5877287bda2dc9e7f3def417162f8ab3ad4995dc4fa7505d",
+    "pubkey": "6786e18a864893a900bd9858e650f67ccc3513f248fed374b591e2ff6922fbb7",
+    "created_at": 1785322447,
+    "kind": 30078,
+    "tags": [
+      [
+        "d",
+        "invinoveritas-proof-dc555f4311d9eea5c101d0f5596438640f912634e2e95874d2823f206f73ab2e-1785322447-849f521d"
+      ],
+      [
+        "t",
+        "invinoveritas"
+      ],
+      [
+        "t",
+        "proof"
+      ],
+      [
+        "schema",
+        "invinoveritas.verdict_proof.v1"
+      ]
+    ],
+    "content": "{\"artifact_hash\":\"dc555f4311d9eea5c101d0f5596438640f912634e2e95874d2823f206f73ab2e\",\"artifact_type\":\"analysis\",\"confidence\":0.85,\"conformance_suite\":\"https://github.com/babyblueviper1/preaction-governance-conformance\",\"decision_ref\":\"sha256:09f1e7582a684684a52423c37def43224dbaa0798b4f526e9b0f26f74a3d808f\",\"decision_ref_preimage_fields\":[\"artifact_hash\",\"artifact_type\",\"policy_version\",\"verdict\",\"source_class\",\"vantage_limitation\"],\"decision_ref_preimage_rule\":\"every name in decision_ref_preimage_fields is a key in the hashed preimage object, always -- absent fields (e.g. vantage_limitation when not applicable) are present as JSON null, never omitted from the object.\",\"independent_nodes\":[\"https://invinoveritas-castra.babyblueviper.workers.dev/verify\",\"https://babyblueviper1--2aba75da693711f185891607ee4eb77e.web.val.run\"],\"key_id\":\"6786e18a864893a900bd9858e650f67ccc3513f248fed374b591e2ff6922fbb7\",\"platform\":\"invinoveritas\",\"policy_version\":\"invinoveritas.review.v5\",\"schema\":\"invinoveritas.verdict_proof.v1\",\"source_class\":\"agent_reported\",\"summary_hash\":\"9644a366bd60214b957254037bb98afdb6da7db8c3e2209022c60b238397ffc3\",\"verdict\":\"approve_with_concerns\",\"verified_at\":1785322447,\"verifier_keys\":\"https://api.babyblueviper.com/.well-known/verifier-keys.json\",\"verifier_pubkey\":\"6786e18a864893a900bd9858e650f67ccc3513f248fed374b591e2ff6922fbb7\",\"verify_how\":\"Easiest: install the offline verifier above and recompute locally. Or POST this proof's signed `event` to verify_url (or an independent_node), OR run NIP-01 yourself: recompute the Nostr event id = sha256([0,pubkey,created_at,kind,tags,content]), verify the schnorr signature against verifier_pubkey. valid ⇒ invinoveritas issued this, untampered. No trust required.\",\"verify_offline\":\"npm i invinoveritas-verify  ·  pip install invinoveritas-verify  — recompute this proof on your own machine against verifier_pubkey; you never have to call us.\",\"verify_url\":\"https://api.babyblueviper.com/verify-proof\"}",
+    "sig": "f557838ace3a9d24ca1eaf49a02e9fcdf7442b0e8cf07ce0b5c49889c006d814c5e31932785a29fc9426d79c88049767452aedb67fac700441c7e84fcf809057"
+  },
+  "published_artifact_url": "https://gist.githubusercontent.com/TMerlini/19d532bcb627d3ea237c72003d550337/raw/277afc2cae8fe7a6e14e0df5f978e2289743d98f/flagship-claim.txt"
+}
