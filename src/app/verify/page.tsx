@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, ArrowRight, Wand2, RotateCcw, RefreshCw, Radio, ExternalLink, Fingerprint } from "lucide-react";
 import { verifyAll, keccakUtf8, readOwnerOf, resolveEnsIdentity, readEnsText, type Showcase, type Check } from "@/lib/verify";
-import { readLiveRecord, refreshLiveRecord } from "@/lib/liveRecord";
+import { readLiveRecord, refreshLiveRecord, buildLiveRecordByKey } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
 import { type TeeSummary } from "@/components/TeeInferenceEvidence";
 import { type EnclaveSummary } from "@/components/EnclaveQuoteEvidence";
@@ -440,6 +440,15 @@ export default function VerifyPage() {
   const [focus, setFocus] = useState<"user" | "agent" | null>(null);
 
   useEffect(() => {
+    // ?key=<inputHash> → recompute a SPECIFIC past action from the /ledger (someone else's; text private).
+    const key = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("key") : null;
+    if (key) {
+      buildLiveRecordByKey(key).then((rec) => {
+        if (rec) { setSc(rec); setQuery(""); setReply(""); setLive(true); }
+        else setErr("Couldn't load that action from the ledger right now — retry shortly.");
+      });
+      return;
+    }
     // ?live=1 → recompute the action the agent JUST took (stashed by /demo), not the baked showcase.
     if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("live") === "1") {
       const f = new URLSearchParams(window.location.search).get("focus");
@@ -572,6 +581,11 @@ export default function VerifyPage() {
                 <span className="font-mono text-[10px] text-gb-faint">registry {short(sc.registry)}</span>
               </div>
 
+              {sc.plaintextPrivate ? (
+                <div className="mt-5 rounded-xl border border-brassLight/20 bg-brassLight/[0.04] p-4 text-[12px] text-gb-muted">
+                  This is another agent&apos;s action from the <a href="/ledger" className="text-brassLight/80 hover:text-brassLight">ledger</a> — its query &amp; reply are <span className="text-paper/80">private to that agent&apos;s user</span> (the plaintext never left their browser), so there&apos;s no text to tamper. From the <span className="text-paper/80">committed hashes</span> this still recomputes below: the on-chain <span className="text-paper/80">anchor</span>, the <span className="text-paper/80">EIP-712 signature</span>, and <span className="text-paper/80">0G availability</span>. The input/output-hash lanes read <span className="text-amber-300/80">plaintext private</span> — honest, not a fail.
+                </div>
+              ) : (<>
               {/* Swap the recompute perspective in-page — no round-trip to /demo (which clears the chat). */}
               <div className="mt-5">
                 <div className="inline-flex rounded-full border border-white/10 bg-black/20 p-1 text-[12px]" role="tablist" aria-label="Recompute perspective">
@@ -612,6 +626,7 @@ export default function VerifyPage() {
 
               <p className="mt-4 font-mono text-[11px] uppercase tracking-wide text-gb-muted">{editingAgent ? "Query — the input the agent was given" : "Reply — what the agent returned"}</p>
               <p className="mt-1 text-sm text-gb-faint whitespace-pre-wrap line-clamp-4">{editingAgent ? sc.query : sc.reply}</p>
+              </>)}
             </div>
 
             {/* Live keccak of the currently-edited preimage */}

@@ -42,6 +42,8 @@ export type Showcase = {
   ocpContract?: Address;     // ERC-8281 OCP anchor contract
   l3ChainId?: number;        // chain the anchor lives on (1 = mainnet showcase · 84532 = Base Sepolia live actions)
   live?: boolean;            // true = recomputing a just-happened action, not the baked showcase
+  plaintextPrivate?: boolean; // a ledger action by someone else — the query/reply text is private (never stored);
+                              // recompute the anchor + signature + availability from the committed hashes, not the text
   zerog?: {                  // the action's recompute artifact, really stored on 0G decentralized storage
     network: string;
     root: string;            // content-addressed flow-merkle root (recomputable from the bytes)
@@ -162,19 +164,27 @@ export async function resolveEnsIdentity(address: string): Promise<{ name: strin
   return null;
 }
 
+const PRIVATE = "plaintext private — held by the agent’s user, never stored; the committed hash is anchored + signed below";
+
 export function checkRawInput(sc: Showcase): Check {
+  if (sc.plaintextPrivate) return { id: "raw", label: "Raw input", recipe: "wyriwe/raw · keccak256(utf8(query))",
+    status: "unverifiable", expected: sc.rawInputHash, got: PRIVATE };
   const got = keccakUtf8(sc.query);
   return { id: "raw", label: "Raw input", recipe: "wyriwe/raw · keccak256(utf8(query))",
     status: pf(eq(got, sc.rawInputHash)), expected: sc.rawInputHash, got };
 }
 
 export function checkOutput(sc: Showcase): Check {
+  if (sc.plaintextPrivate) return { id: "out", label: "Output", recipe: "spine · keccak256(utf8(reply))",
+    status: "unverifiable", expected: sc.outputHash, got: PRIVATE };
   const got = keccakUtf8(sc.reply);
   return { id: "out", label: "Output", recipe: "spine · keccak256(utf8(reply))",
     status: pf(eq(got, sc.outputHash)), expected: sc.outputHash, got };
 }
 
 export function checkInputProvenance(sc: Showcase): Check {
+  if (sc.plaintextPrivate) return { id: "input", label: "Input provenance", recipe: "wyriwe · keccak256(utf8(query)) === inputHash",
+    status: "unverifiable", expected: sc.inputHash, got: PRIVATE };
   // Identity-sentinel path: no sanitization ⇒ the input the model received IS the raw
   // input, so it must be keccak256(utf8(query)). Recomputed from the query, so a tamper
   // cascades into this link too (not just the raw-input check).
@@ -187,7 +197,11 @@ export async function checkL4Signature(sc: Showcase): Promise<Check> {
   // Recover from a message whose raw_input_hash is RE-DERIVED from the (maybe edited)
   // query — so a tamper changes the signed digest and the recovered signer drifts off
   // the attestor. Pristine query → recomputed hash == committed → recovers cleanly.
-  const recomputedRaw = keccakUtf8(sc.query);
+  // Private ledger action: no plaintext → recover from the COMMITTED hashes (still a real, local
+  // signature recovery — it just can't cascade a text tamper). Own/showcase action: re-derive from the
+  // (maybe edited) query/reply so a tamper drifts the signer.
+  const rawForSig = sc.plaintextPrivate ? sc.rawInputHash : keccakUtf8(sc.query);
+  const outForSig = sc.plaintextPrivate ? sc.outputHash : keccakUtf8(sc.reply);
   let recovered = "";
   try {
     recovered = await recoverTypedDataAddress({
@@ -206,12 +220,12 @@ export async function checkL4Signature(sc: Showcase): Promise<Check> {
       },
       primaryType: "InferenceAttestation",
       message: {
-        raw_input_hash: toBytes32(recomputedRaw),
+        raw_input_hash: toBytes32(rawForSig),
         sanitization_pipeline_hash: toBytes32(sc.sanitizationPipelineHash),
         input_hash: toBytes32(sc.inputHash),
         // Recomputed from the (maybe edited) reply — so tampering the agent's OUTPUT also
         // drifts the recovered signer off the attestor (the L4 sig covers both hashes).
-        output_hash: toBytes32(keccakUtf8(sc.reply)),
+        output_hash: toBytes32(outForSig),
         manifest_hash: toBytes32(sc.manifestHash),
         agentId: BigInt(sc.agentId),
         registry: sc.registry,
@@ -233,7 +247,7 @@ export async function checkL3Onchain(sc: Showcase): Promise<Check> {
   const base = { id: "l3", label: "L3 anchor (on-chain)", recipe: `8281 · Recorded event topic1 · ${chainLabel}` };
   if (!sc.l3Tx) return { ...base, status: "unverifiable" as const, expected: "an OCP record() tx",
     got: "anchor pending — the record() tx hasn't landed yet, retry in a moment" };
-  const recomputed = keccakUtf8(sc.query);   // the digest the anchor SHOULD hold
+  const recomputed = sc.plaintextPrivate ? sc.rawInputHash : keccakUtf8(sc.query);   // the digest the anchor SHOULD hold
   let lastErr = "";
   for (const rpc of l3Rpcs(sc.l3ChainId)) {
     try {

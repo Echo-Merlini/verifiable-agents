@@ -62,6 +62,44 @@ export async function buildLiveRecord(agent: LiveAgent, query: string, reply: st
   }
 }
 
+/** Load a specific past action BY its input-hash key (a /ledger entry). The plaintext (query/reply) is
+ *  private — never stored — so we recompute the anchor + signature + availability from the COMMITTED
+ *  hashes, not the text. Returns a plaintext-private Showcase, or null if not attested / not found. */
+export async function buildLiveRecordByKey(key: string): Promise<Showcase | null> {
+  try {
+    const r = await fetch(`${GW}/agent/verify/${key}`, { signal: AbortSignal.timeout(12000) });
+    if (!r.ok) return null;
+    const a = await r.json();
+    if (!a?.l4_signature) return null;
+    const registry = (a.registry ?? "") as `0x${string}`;
+    const agentId = String(a.agent_id ?? "");
+    const card = await fetch(`${GW}/.well-known/agent/${registry}/${agentId}.json`, { signal: AbortSignal.timeout(12000) })
+      .then((x) => (x.ok ? x.json() : null)).catch(() => null);
+    const attestor = card?.pricing?.attestor;
+    if (!attestor) return null;
+    return {
+      ens: card?.ens ?? card?.name ?? `agent #${agentId}`,
+      agentId, registry,
+      query: "", reply: "",
+      rawInputHash: (a.raw_input_hash ?? a.input_hash) as Hex,
+      sanitizationPipelineHash: a.sanitization_pipeline_hash as Hex,
+      inputHash: a.input_hash as Hex,
+      outputHash: a.output_hash as Hex,
+      manifestHash: a.manifest_hash as Hex,
+      timestamp: Number(a.l4_timestamp ?? a.created_at ?? 0),
+      l4Signature: a.l4_signature as Hex,
+      attestor: attestor as `0x${string}`,
+      l3Tx: (a.l3_tx ?? undefined) as Hex | undefined,
+      ocpContract: BASE_OCP,
+      l3ChainId: BASE_SEPOLIA_ID,
+      zerog: a.zerog_root ? { network: "0G Galileo Storage", root: a.zerog_root as string, tx: (a.zerog_tx ?? "") as string, bytes: Number(a.zerog_bytes ?? 0), artifact: "" } : undefined,
+      zerogChain: a.zerog_chain_tx ? { network: "0G Galileo Testnet", chainId: 16602, rpc: "https://evmrpc-testnet.0g.ai", explorer: "https://chainscan-galileo.0g.ai", contract: "0x29A45029DE2439925f2525E01Be6b6631fC9DD85", tx: a.zerog_chain_tx as string, block: 0 } : undefined,
+      live: true,
+      plaintextPrivate: true,
+    };
+  } catch { return null; }
+}
+
 /** Re-fetch an already-stashed live action and merge in fields that arrived AFTER the initial
  *  stash. The 0G Storage root, the 0G Chain anchor tx, and (sometimes) the L3 anchor tx are all
  *  written best-effort/async ~10–15s after the reply, so a record stashed the instant the reply

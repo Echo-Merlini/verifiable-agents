@@ -67,7 +67,7 @@ export default function LedgerPage() {
 
               <div className="mt-3 flex flex-wrap gap-4 text-[12px]">
                 <a href={`${GW}${e.receipt}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-brassLight/90 hover:text-brassLight"><Download className="h-3.5 w-3.5" /> receipt</a>
-                <a href="/verify" className="inline-flex items-center gap-1.5 text-brassLight/90 hover:text-brassLight">recompute the chain <ArrowRight className="h-3.5 w-3.5" /></a>
+                <a href={`/verify?key=${e.inputHash}`} className="inline-flex items-center gap-1.5 text-brassLight/90 hover:text-brassLight">recompute the chain <ArrowRight className="h-3.5 w-3.5" /></a>
               </div>
             </div>
           ))}
