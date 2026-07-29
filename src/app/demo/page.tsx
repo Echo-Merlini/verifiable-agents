@@ -291,12 +291,25 @@ export default function DemoPage() {
           </div>
         </div>
 
+        {/* Chat — remounts per agent so each has a fresh session. Sits above the tools:
+            the conversation is the primary surface; the tools below are press-to-test. */}
+        <div className="mt-8 liquid-glass rounded-2xl overflow-hidden h-[500px] p-4">
+          <AgentChat
+            key={`${featured.registry}-${featured.agentId}`}
+            registry={featured.registry}
+            agentId={featured.agentId}
+            {...(isRkb ? { ownerAddress: address, authToken: token ?? undefined } : {})}
+            onReady={(send) => { sendRef.current = send; }}
+            onExchange={(query, reply) => setLastExchange({ query, reply })}
+          />
+        </div>
+
         {/* MCP selectors */}
         <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">
           {isRkb ? "Its tools — chosen at mint" : "Its tools — hover to learn, click to watch it run"}
         </p>
         <p className="mt-1 text-[11px] text-brassLight/80">
-          Every capability is a <span className="font-medium">premium</span> MCP — bought and carried by the agent NFT in production, unlocked here as a demo bonus.
+          Press a capability to put the agent to work — it runs the tool live, and every action is attested on-chain and independently recomputable.
         </p>
         {cards.length === 0 ? (
           <p className="mt-3 text-[12px] text-gb-faint">{isRkb ? "This agent was minted with no tools selected." : "Loading tools…"}</p>
@@ -377,18 +390,6 @@ export default function DemoPage() {
             </div>
           </div>
         )}
-
-        {/* Chat — remounts per agent so each has a fresh session */}
-        <div className="mt-6 liquid-glass rounded-2xl overflow-hidden h-[500px] p-4">
-          <AgentChat
-            key={`${featured.registry}-${featured.agentId}`}
-            registry={featured.registry}
-            agentId={featured.agentId}
-            {...(isRkb ? { ownerAddress: address, authToken: token ?? undefined } : {})}
-            onReady={(send) => { sendRef.current = send; }}
-            onExchange={(query, reply) => setLastExchange({ query, reply })}
-          />
-        </div>
 
         {/* Recompute the action it JUST took — the real-time proof */}
         {lastExchange ? (
