@@ -10,6 +10,7 @@ import { buildCardsFromIds } from "@/lib/mcps";
 import { McpLogo } from "@/components/McpLogo";
 import { ReputationBadge } from "@/components/ReputationBadge";
 import { McpStore } from "@/components/McpStore";
+import { AgentMarketSection } from "@/components/AgentMarketSection";
 import { TopNav } from "@/components/TopNav";
 
 function fmtHours(s?: number) {
@@ -189,6 +190,15 @@ export default function MarketplacePage() {
           <span>open, community-listed</span>
         </span>
         <span className="text-zinc-600">Other tags = capability categories (DEX, Data, …)</span>
+      </div>
+
+      {/* Agent market — buy/sell agents (for sale on top) + your agents carousel */}
+      <AgentMarketSection />
+
+      {/* Hired / published agents */}
+      <div className="mt-10 flex items-center gap-2">
+        <Store className="h-5 w-5 text-brassLight/80" />
+        <h2 className="font-display text-xl font-semibold">Hire an agent</h2>
       </div>
 
       {/* Grid */}
