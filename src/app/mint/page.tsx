@@ -8,7 +8,7 @@ import {
 import { formatEther, type Hex } from "viem";
 import {
   Wallet, Loader2, CheckCircle2, AlertCircle, ChevronLeft, ChevronRight,
-  Dices, ExternalLink, ShieldCheck, Check, Plus, Upload, X, Sparkles,
+  Dices, ExternalLink, ShieldCheck, Check, Upload, X, Sparkles,
 } from "lucide-react";
 import {
   GENESIS_REGISTRY_ABI, GENESIS_REGISTRY_ADDRESS, GENESIS_CHAIN_ID,
@@ -193,9 +193,6 @@ export default function MintAgentPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, receipt.isSuccess, txHash]);
 
-  const toggleTool = (id: string) =>
-    setTools((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
-
   const toggleEquip = (slug: string) =>
     setEquipped((prev) => { const n = new Set(prev); if (n.has(slug)) n.delete(slug); else n.add(slug); return n; });
 
@@ -286,7 +283,7 @@ export default function MintAgentPage() {
   }
 
   const cycle = (d: number) => setVi((i) => (i + d + BOT_VARIANTS.length) % BOT_VARIANTS.length);
-  const cycleMcp = (d: number) => { if (cards.length) setMi((i) => (i + d + cards.length) % cards.length); };
+  const cycleMcp = (d: number) => { if (premium.length) setMi((i) => (i + d + premium.length) % premium.length); };
 
   return (
     <main className="min-h-screen bg-deepink text-paper">
@@ -294,7 +291,7 @@ export default function MintAgentPage() {
       <div className="max-w-xl mx-auto px-6 py-10">
         <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">Mint your agent</p>
         <h1 className="mt-2 font-display font-medium tracking-tightest text-4xl">Recompute Kit Bot</h1>
-        <p className="mt-2 text-sm text-gb-muted">A verifiable agent you recompute, not trust. Mint binds this bot as your agent — pick a look or upload your own, name it, choose its tools.</p>
+        <p className="mt-2 text-sm text-gb-muted">A verifiable agent you recompute, not trust. Mint binds this bot as your agent — pick a look or upload your own, name it, equip its capabilities.</p>
 
         {step === "done" ? (
           <div className="mt-8 liquid-glass rounded-3xl p-8 text-center">
@@ -407,56 +404,68 @@ export default function MintAgentPage() {
               </div>
             </div>
 
-            {/* 4 — MCP selector: browse each tool (logo + description), add the ones you want */}
+            {/* 4 — capability carousel: browse the payable MCPs one at a time; equip adds to the mint */}
+            {premium.length > 0 && (
             <div className="mt-5">
-              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Tools · {tools.size} selected</span>
-              {/* selected tools — small logo squares appear as you Add; tap to remove */}
-              {tools.size > 0 && (
+              <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Capabilities · {equipped.size} equipped</span>
+              {/* equipped so far — small logo squares; tap to un-equip */}
+              {equipped.size > 0 && (
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  {cards.filter((c) => tools.has(c.id)).map((c) => (
-                    <button key={c.id} onClick={() => toggleTool(c.id)} disabled={busy} title={`Remove ${c.label}`}
+                  {premium.filter((m) => equipped.has(m.slug)).map((m) => (
+                    <button key={m.slug} onClick={() => toggleEquip(m.slug)} disabled={busy} title={`Un-equip ${m.label}`}
                       className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 border border-brassLight/40 hover:border-red-400/50 transition-colors disabled:opacity-50">
-                      <McpLogo card={c} className="h-5 w-5" fill />
+                      <McpLogo card={{ id: m.slug, label: m.label, logo: m.logo, icon: m.icon, fill: m.fill } as any} className="h-5 w-5" fill />
                     </button>
                   ))}
                 </div>
               )}
-              {cards.length > 0 && (() => {
-                const c = cards[mi];
-                const on = tools.has(c.id);
+              {(() => {
+                const m = premium[Math.min(mi, premium.length - 1)];
+                const on = equipped.has(m.slug);
+                const live = !!m.contract;
+                const st = equipState[m.slug];
                 return (
                   <>
                     <div className="mt-1.5 liquid-glass rounded-2xl border border-brassLight/30 p-4">
                       <div className="flex items-start gap-4">
-                        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/10">
-                          <McpLogo card={c} className="h-8 w-8" fill />
+                        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-black/30 ring-1 ring-brassLight/40">
+                          <McpLogo card={{ id: m.slug, label: m.label, logo: m.logo, icon: m.icon, fill: m.fill } as any} className="h-8 w-8" fill />
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between gap-2">
-                            <p className="font-display font-medium text-paper">{c.label}</p>
-                            <button onClick={() => toggleTool(c.id)} disabled={busy}
-                              className={`shrink-0 inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[11px] transition-colors disabled:opacity-50 ${on ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300" : "border-white/10 bg-white/5 text-gb-muted hover:text-paper"}`}>
-                              {on ? <><Check className="h-3 w-3" /> Added</> : <><Plus className="h-3 w-3" /> Add</>}
-                            </button>
+                            <p className="font-display font-medium text-paper">{m.label}</p>
+                            <span className="shrink-0 font-mono text-[11px] text-brassLight">{equipEth(m.price)}</span>
                           </div>
-                          <p className="mt-1 text-[12px] leading-relaxed text-gb-muted">{c.blurb}</p>
+                          <p className="mt-1 text-[12px] leading-relaxed text-gb-muted">{m.description || m.tagline}</p>
+                          <button onClick={() => toggleEquip(m.slug)} disabled={busy || !live}
+                            title={live ? undefined : "Launching on mainnet"}
+                            className={`mt-2 inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[11px] transition-colors disabled:opacity-40 ${
+                              st === "done" ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
+                              : st === "error" ? "border-red-400/50 bg-red-400/10 text-red-300"
+                              : on ? "border-brassLight/60 bg-brass/15 text-brassLight" : "border-white/10 bg-white/5 text-gb-muted hover:text-paper"}`}>
+                            {st === "done" ? <><Check className="h-3 w-3" /> Equipped</>
+                              : st === "error" ? <><AlertCircle className="h-3 w-3" /> Skipped</>
+                              : on ? <><Check className="h-3 w-3" /> Added · {equipEth(m.price)}</>
+                              : live ? <><Sparkles className="h-3 w-3" /> Equip · {equipEth(m.price)}</>
+                              : <>Launching soon</>}
+                          </button>
                         </div>
                       </div>
                     </div>
-                    {/* arrows + position dots (brass dot = selected) */}
+                    {/* arrows + position dots (brass dot = equipped) */}
                     <div className="mt-2 flex items-center justify-center gap-3">
-                      <button onClick={() => cycleMcp(-1)} aria-label="Previous tool"
+                      <button onClick={() => cycleMcp(-1)} aria-label="Previous capability"
                         className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
                         <ChevronLeft className="h-4 w-4" />
                       </button>
                       <div className="flex items-center gap-1.5">
-                        {cards.map((cc, i) => (
-                          <button key={cc.id} onClick={() => setMi(i)} aria-label={cc.label}
+                        {premium.map((mm, i) => (
+                          <button key={mm.slug} onClick={() => setMi(i)} aria-label={mm.label}
                             className="h-1.5 rounded-full transition-all"
-                            style={{ width: i === mi ? 16 : 6, background: tools.has(cc.id) ? "#E0A24C" : i === mi ? "#8A909C" : "#3a3f4b" }} />
+                            style={{ width: i === mi ? 16 : 6, background: equipped.has(mm.slug) ? "#E0A24C" : i === mi ? "#8A909C" : "#3a3f4b" }} />
                         ))}
                       </div>
-                      <button onClick={() => cycleMcp(1)} aria-label="Next tool"
+                      <button onClick={() => cycleMcp(1)} aria-label="Next capability"
                         className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
                         <ChevronRight className="h-4 w-4" />
                       </button>
@@ -465,12 +474,13 @@ export default function MintAgentPage() {
                 );
               })()}
             </div>
+            )}
 
             {/* 5 — premium capabilities: equip on-chain entitlements (each adds to the total) */}
             {premium.length > 0 && (
               <div className="mt-6">
-                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Premium capabilities · equip</span>
-                <p className="mt-1 text-[12px] text-gb-muted">Bought for your agent as an on-chain entitlement carried by the NFT. Equipping adds its price to the mint — you sign the mint first, then one purchase per capability.</p>
+                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">All capabilities · quick equip</span>
+                <p className="mt-1 text-[12px] text-gb-muted">Each is bought as an on-chain entitlement carried by the NFT. Equipping adds its price to the mint — you sign the mint first, then one purchase per capability.</p>
                 <div className="mt-2 space-y-1.5">
                   {premium.map((m) => {
                     const on = equipped.has(m.slug);
