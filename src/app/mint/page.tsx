@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   useAccount, useReadContract, useWriteContract,
-  useWaitForTransactionReceipt, useSwitchChain, useChainId,
+  useWaitForTransactionReceipt, useSwitchChain, useChainId, usePublicClient,
 } from "wagmi";
 import { formatEther, type Hex } from "viem";
 import {
   Wallet, Loader2, CheckCircle2, AlertCircle, ChevronLeft, ChevronRight,
-  Dices, ExternalLink, ShieldCheck, Check, Plus,
+  Dices, ExternalLink, ShieldCheck, Check, Plus, Upload, X, Sparkles,
 } from "lucide-react";
 import {
   GENESIS_REGISTRY_ABI, GENESIS_REGISTRY_ADDRESS, GENESIS_CHAIN_ID,
@@ -18,6 +18,29 @@ import { useWalletModal } from "@/hooks/useWalletModal";
 import { TopNav } from "@/components/TopNav";
 import { McpLogo } from "@/components/McpLogo";
 import { buildMcpCards, type McpCard, type PublicMcp } from "@/lib/mcps";
+import { fetchPremiumMcps, type PremiumMcp } from "@/lib/marketplace";
+
+// MCPEntitlementRegistry.buy(address registry, uint256 tokenId, bytes32 mcpId) payable
+const ENTITLEMENT_ABI = [{
+  type: "function", name: "buy", stateMutability: "payable",
+  inputs: [{ name: "registry", type: "address" }, { name: "tokenId", type: "uint256" }, { name: "mcpId", type: "bytes32" }],
+  outputs: [],
+}] as const;
+
+// ERC-721 Transfer(address,address,uint256) topic — used to read the freshly minted tokenId
+// out of the mint receipt so we can equip entitlements onto it.
+const TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
+function mintedTokenIdFromLogs(logs: readonly { address: string; topics: readonly string[] }[], registry: string): bigint | null {
+  const reg = registry.toLowerCase();
+  for (const l of logs) {
+    if (l.address.toLowerCase() === reg && l.topics[0] === TRANSFER_TOPIC && l.topics.length === 4
+        && /^0x0+$/.test(l.topics[1] ?? "")) {   // mint = Transfer from the zero address
+      try { return BigInt(l.topics[3]); } catch { return null; }
+    }
+  }
+  return null;
+}
+const equipEth = (wei: string) => { try { return `${formatEther(BigInt(wei || "0"))} ETH`; } catch { return "—"; } };
 
 const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
@@ -53,7 +76,7 @@ const PERSONALITIES: Personality[] = [
 
 const EMPTY_META: readonly { metadataKey: string; metadataValue: Hex }[] = [];
 
-type Step = "idle" | "pinning-meta" | "minting" | "confirming" | "claiming" | "done";
+type Step = "idle" | "pinning-image" | "pinning-meta" | "minting" | "confirming" | "equipping" | "claiming" | "done";
 
 export default function MintAgentPage() {
   const [mounted, setMounted] = useState(false);
@@ -73,6 +96,16 @@ export default function MintAgentPage() {
   const [tools, setTools] = useState<Set<string>>(new Set());
   const [cards, setCards] = useState<McpCard[]>([]);
   const [mi, setMi] = useState(0);                 // MCP carousel index
+  const [custom, setCustom] = useState<{ file: File; url: string } | null>(null); // uploaded image (overrides preset)
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [imgErr, setImgErr] = useState<string | null>(null);
+
+  // ── premium capabilities (equip = an on-chain MCPEntitlementRegistry.buy, added to the total) ──
+  const [premium, setPremium] = useState<PremiumMcp[]>([]);
+  const [equipped, setEquipped] = useState<Set<string>>(new Set());   // slugs to equip
+  const [equipState, setEquipState] = useState<Record<string, "pending" | "done" | "error">>({});
+  const [mintedId, setMintedId] = useState<string | null>(null);
+  const publicClient = usePublicClient();
 
   // ── flow state ──
   const [step, setStep] = useState<Step>("idle");
@@ -110,10 +143,42 @@ export default function MintAgentPage() {
       .catch(() => setCards([]));
   }, []);
 
-  // After mint confirms → claim the free-trial credits.
+  // Load the premium capability catalog (equip-able, priced, on-chain entitlements).
+  useEffect(() => {
+    fetchPremiumMcps()
+      .then((list) => setPremium(list.filter((m) => m.active)))
+      .catch(() => setPremium([]));
+  }, []);
+
+  // After mint confirms → equip the chosen premium capabilities onto the fresh tokenId, then
+  // claim the free-trial credits. Equips are separate txs (the entitlement binds to the minted
+  // NFT, which only exists once the mint lands) — one signature each, best-effort per capability.
   useEffect(() => {
     if (step !== "confirming" || !receipt.isSuccess || !txHash) return;
     (async () => {
+      // Read the minted tokenId out of the receipt so we can equip onto it.
+      const tokenId = receipt.data ? mintedTokenIdFromLogs(receipt.data.logs as any, registry) : null;
+      if (tokenId != null) setMintedId(tokenId.toString());
+
+      const toEquip = premium.filter((m) => equipped.has(m.slug) && m.contract);
+      if (tokenId != null && toEquip.length > 0) {
+        setStep("equipping");
+        for (const m of toEquip) {
+          setEquipState((s) => ({ ...s, [m.slug]: "pending" }));
+          try {
+            if (chainId !== m.chainId) await switchChainAsync({ chainId: m.chainId });
+            const hash = await writeContractAsync({
+              address: m.contract as Hex, abi: ENTITLEMENT_ABI, functionName: "buy",
+              args: [registry, tokenId, m.mcpId as Hex], value: BigInt(m.price || "0"), chainId: m.chainId,
+            });
+            if (publicClient) await publicClient.waitForTransactionReceipt({ hash });
+            setEquipState((s) => ({ ...s, [m.slug]: "done" }));
+          } catch {
+            setEquipState((s) => ({ ...s, [m.slug]: "error" }));   // skipped/rejected — the mint still stands
+          }
+        }
+      }
+
       setStep("claiming");
       try {
         const r = await fetch(`${GW_URL}/api/genesis/claim-trial`, {
@@ -125,10 +190,38 @@ export default function MintAgentPage() {
       } catch { setTrialGranted(0); }
       setStep("done");
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, receipt.isSuccess, txHash]);
 
   const toggleTool = (id: string) =>
     setTools((prev) => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+
+  const toggleEquip = (slug: string) =>
+    setEquipped((prev) => { const n = new Set(prev); if (n.has(slug)) n.delete(slug); else n.add(slug); return n; });
+
+  // Price math: base mint + Σ equipped premium prices → the total shown upfront.
+  const equipTotalWei = premium.reduce((a, m) => (equipped.has(m.slug) ? a + BigInt(m.price || "0") : a), 0n);
+  const baseWei = price ?? 0n;
+  const totalWei = baseWei + equipTotalWei;
+  const equippedList = premium.filter((m) => equipped.has(m.slug) && m.contract);
+
+  // Upload your own art. Kept as a local object-URL preview; the file is pinned to IPFS
+  // as a step when you press Mint (so nothing is uploaded until you commit).
+  const onPickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImgErr(null);
+    const f = e.target.files?.[0];
+    e.target.value = ""; // allow re-picking the same file
+    if (!f) return;
+    if (!f.type.startsWith("image/")) { setImgErr("Pick an image file (PNG, JPG, GIF, WebP)."); return; }
+    if (f.size > 15 * 1024 * 1024) { setImgErr("Image too large — max 15MB."); return; }
+    setCustom((prev) => { if (prev) URL.revokeObjectURL(prev.url); return { file: f, url: URL.createObjectURL(f) }; });
+  };
+  const clearImage = () =>
+    setCustom((prev) => { if (prev) URL.revokeObjectURL(prev.url); return null; });
+  // Picking a preset drops the uploaded image.
+  const pickPreset = (i: number) => { clearImage(); setVi(i); };
+  // Revoke the preview URL on unmount.
+  useEffect(() => () => { if (custom) URL.revokeObjectURL(custom.url); }, [custom]);
 
   const busy = step !== "idle" && step !== "done";
   const canMint = mounted && isConnected && registryReady && isOpen && !!name.trim() && step === "idle";
@@ -140,7 +233,21 @@ export default function MintAgentPage() {
     try {
       if (chainId !== GENESIS_CHAIN_ID) await switchChainAsync({ chainId: GENESIS_CHAIN_ID });
 
-      // 1. pin metadata (variant image + chosen personality + selected tools)
+      // 1. if the user uploaded their own art, pin it now (before mint) → ipfs:// uri
+      let imageUri = variant.ipfs;
+      let variantLabel = variant.name;
+      if (custom) {
+        setStep("pinning-image");
+        const fd = new FormData();
+        fd.append("file", custom.file);
+        const imgRes = await fetch(`${GW_URL}/api/genesis/pin-image`, { method: "POST", body: fd });
+        const imgData = await imgRes.json();
+        if (!imgData.uri) throw new Error(imgData.error || "Image pin failed");
+        imageUri = imgData.uri;
+        variantLabel = "Custom";
+      }
+
+      // 2. pin metadata (image + chosen personality + selected tools)
       setStep("pinning-meta");
       const p = PERSONALITIES[persona];
       const chosen = cards.filter((c) => tools.has(c.id));
@@ -149,10 +256,10 @@ export default function MintAgentPage() {
         body: JSON.stringify({
           name: name.trim(),
           description: `${p.name} — ${p.blurb}`,
-          image: variant.ipfs,
+          image: imageUri,
           attributes: [
             { trait_type: "Collection", value: "Recompute Kit Bots" },
-            { trait_type: "Variant", value: variant.name },
+            { trait_type: "Variant", value: variantLabel },
             { trait_type: "Personality", value: p.name },
             ...chosen.map((c) => ({ trait_type: "Tool", value: c.label })),
           ],
@@ -165,7 +272,7 @@ export default function MintAgentPage() {
       const metaData = await metaRes.json();
       if (!metaData.uri) throw new Error(metaData.error || "Metadata pin failed");
 
-      // 2. mint
+      // 3. mint
       setStep("minting");
       const hash = await writeContractAsync({
         address: registry, abi: GENESIS_REGISTRY_ABI, functionName: "mint",
@@ -187,7 +294,7 @@ export default function MintAgentPage() {
       <div className="max-w-xl mx-auto px-6 py-10">
         <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">Mint your agent</p>
         <h1 className="mt-2 font-display font-medium tracking-tightest text-4xl">Recompute Kit Bot</h1>
-        <p className="mt-2 text-sm text-gb-muted">A verifiable agent you recompute, not trust. Mint binds this bot as your agent — pick a look, name it, choose its tools.</p>
+        <p className="mt-2 text-sm text-gb-muted">A verifiable agent you recompute, not trust. Mint binds this bot as your agent — pick a look or upload your own, name it, choose its tools.</p>
 
         {step === "done" ? (
           <div className="mt-8 liquid-glass rounded-3xl p-8 text-center">
@@ -196,39 +303,85 @@ export default function MintAgentPage() {
             {trialGranted != null && trialGranted > 0 && (
               <p className="mt-1 text-sm text-gb-muted">{trialGranted} free trial credits granted.</p>
             )}
+            {/* Honest equip summary — a rejected/failed purchase shows as "not equipped", not hidden. */}
+            {equippedList.length > 0 && (
+              <div className="mt-3 space-y-1">
+                {equippedList.map((m) => {
+                  const st = equipState[m.slug];
+                  return (
+                    <p key={m.slug} className="flex items-center justify-center gap-1.5 text-[12px]">
+                      {st === "done"
+                        ? <><Check className="h-3.5 w-3.5 text-emerald-400" /><span className="text-gb-muted">{m.label} equipped</span></>
+                        : <><AlertCircle className="h-3.5 w-3.5 text-amber-400" /><span className="text-gb-muted">{m.label} not equipped — <a href="/marketplace" className="text-brassLight hover:text-brass">add it later</a></span></>}
+                    </p>
+                  );
+                })}
+              </div>
+            )}
+            {/* Close the loop: send them straight to drive the agent they just minted. */}
+            <a href="/demo"
+              className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-brass px-6 py-3.5 font-display font-medium text-deepink hover:bg-brassLight transition-colors">
+              <ShieldCheck className="h-4 w-4" /> Drive {name || "your agent"} <ChevronRight className="h-4 w-4" />
+            </a>
             {txHash && (
-              <a href={`${GENESIS_CHAIN_ID === 1 ? "https://etherscan.io" : "https://sepolia.etherscan.io"}/tx/${txHash}`}
-                target="_blank" rel="noreferrer"
-                className="mt-4 inline-flex items-center gap-1.5 text-sm text-brassLight hover:text-brass">
-                View transaction <ExternalLink className="h-3.5 w-3.5" />
-              </a>
+              <div className="mt-4">
+                <a href={`${GENESIS_CHAIN_ID === 1 ? "https://etherscan.io" : "https://sepolia.etherscan.io"}/tx/${txHash}`}
+                  target="_blank" rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-brassLight hover:text-brass">
+                  View transaction <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </div>
             )}
           </div>
         ) : (
           <>
-            {/* 1 — variant frame + slider */}
+            {/* 1 — variant frame + slider (or your uploaded art) */}
             <div className="mt-6 relative liquid-glass rounded-3xl border border-brassLight/30 p-4">
+              {(() => { const accent = custom ? "#E0A24C" : variant.accent; return (
               <div className="relative aspect-square w-full overflow-hidden rounded-2xl"
-                   style={{ boxShadow: `inset 0 0 0 1px ${variant.accent}22, 0 0 60px -20px ${variant.accent}55` }}>
+                   style={{ boxShadow: `inset 0 0 0 1px ${accent}22, 0 0 60px -20px ${accent}55` }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={variant.image} alt={variant.name} className="h-full w-full object-contain" />
+                <img src={custom ? custom.url : variant.image} alt={custom ? "Your uploaded agent art" : variant.name} className="h-full w-full object-contain" />
               </div>
-              <button onClick={() => cycle(-1)} aria-label="Previous"
-                className="absolute left-6 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-white/10 hover:bg-black/70 transition-colors">
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button onClick={() => cycle(1)} aria-label="Next"
-                className="absolute right-6 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-white/10 hover:bg-black/70 transition-colors">
-                <ChevronRight className="h-5 w-5" />
-              </button>
+              ); })()}
+              {/* preset arrows — hidden while an upload is in play (arrows are for the preset set) */}
+              {!custom && (<>
+                <button onClick={() => cycle(-1)} aria-label="Previous"
+                  className="absolute left-6 top-[calc(50%-1.75rem)] -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-white/10 hover:bg-black/70 transition-colors">
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button onClick={() => cycle(1)} aria-label="Next"
+                  className="absolute right-6 top-[calc(50%-1.75rem)] -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-white/10 hover:bg-black/70 transition-colors">
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>)}
               <div className="mt-3 flex items-center justify-center gap-2">
                 {BOT_VARIANTS.map((b, i) => (
-                  <button key={b.id} onClick={() => setVi(i)} aria-label={b.name}
+                  <button key={b.id} onClick={() => pickPreset(i)} aria-label={b.name}
                     className="h-2.5 w-2.5 rounded-full transition-transform"
-                    style={{ background: i === vi ? b.accent : "#3a3f4b", transform: i === vi ? "scale(1.25)" : "scale(1)" }} />
+                    style={{ background: !custom && i === vi ? b.accent : "#3a3f4b", transform: !custom && i === vi ? "scale(1.25)" : "scale(1)" }} />
                 ))}
               </div>
-              <p className="mt-1 text-center font-mono text-[11px] uppercase tracking-[0.2em]" style={{ color: variant.accent }}>{variant.name}</p>
+              <p className="mt-1 text-center font-mono text-[11px] uppercase tracking-[0.2em]" style={{ color: custom ? "#E0A24C" : variant.accent }}>{custom ? "Custom image" : variant.name}</p>
+
+              {/* Upload your own — pinned to IPFS as a step when you press Mint */}
+              <input ref={fileRef} type="file" accept="image/*" onChange={onPickImage} className="hidden" />
+              <div className="mt-3 flex items-center justify-center">
+                {custom ? (
+                  <button onClick={clearImage} disabled={busy}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/5 px-3 py-1.5 text-[11px] text-gb-muted hover:text-paper hover:border-white/25 transition-colors disabled:opacity-50">
+                    <X className="h-3.5 w-3.5" /> Remove · use a preset
+                  </button>
+                ) : (
+                  <button onClick={() => fileRef.current?.click()} disabled={busy}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-brassLight/40 bg-white/5 px-3 py-1.5 text-[11px] text-brassLight hover:border-brassLight/70 transition-colors disabled:opacity-50">
+                    <Upload className="h-3.5 w-3.5" /> Upload your own image
+                  </button>
+                )}
+              </div>
+              {imgErr && (
+                <p className="mt-2 flex items-center justify-center gap-1.5 text-[11px] text-red-400"><AlertCircle className="h-3.5 w-3.5" />{imgErr}</p>
+              )}
             </div>
 
             {/* 2 — name */}
@@ -313,17 +466,62 @@ export default function MintAgentPage() {
               })()}
             </div>
 
-            {/* 5 — price + mint */}
+            {/* 5 — premium capabilities: equip on-chain entitlements (each adds to the total) */}
+            {premium.length > 0 && (
+              <div className="mt-6">
+                <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Premium capabilities · equip</span>
+                <p className="mt-1 text-[12px] text-gb-muted">Bought for your agent as an on-chain entitlement carried by the NFT. Equipping adds its price to the mint — you sign the mint first, then one purchase per capability.</p>
+                <div className="mt-2 space-y-1.5">
+                  {premium.map((m) => {
+                    const on = equipped.has(m.slug);
+                    const live = !!m.contract;
+                    const st = equipState[m.slug];
+                    return (
+                      <div key={m.slug} className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors ${on ? "border-brassLight/50 bg-brass/[0.06]" : "border-white/10 bg-white/5"}`}>
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-black/30 ring-1 ring-brassLight/40">
+                          <McpLogo card={{ id: m.slug, label: m.label, logo: m.logo, icon: m.icon, fill: m.fill } as any} className="h-5 w-5" fill />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-display font-medium text-paper leading-tight">{m.label}</p>
+                          <p className="truncate text-[11px] text-gb-muted">{m.tagline}</p>
+                        </div>
+                        <span className="shrink-0 font-mono text-[11px] text-brassLight">{equipEth(m.price)}</span>
+                        <button onClick={() => toggleEquip(m.slug)} disabled={busy || !live}
+                          title={live ? undefined : "Launching on mainnet"}
+                          className={`shrink-0 inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[11px] transition-colors disabled:opacity-40 ${
+                            st === "done" ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
+                            : st === "error" ? "border-red-400/50 bg-red-400/10 text-red-300"
+                            : on ? "border-brassLight/60 bg-brass/15 text-brassLight" : "border-white/10 bg-white/5 text-gb-muted hover:text-paper"}`}>
+                          {st === "done" ? <><Check className="h-3 w-3" /> Equipped</>
+                            : st === "error" ? <><AlertCircle className="h-3 w-3" /> Skipped</>
+                            : on ? <><Check className="h-3 w-3" /> Added</>
+                            : <><Sparkles className="h-3 w-3" /> Equip</>}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 6 — price + mint */}
             <div className="mt-7 flex items-center justify-between">
               <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Price</p>
-                <p className="font-display text-2xl" style={{ color: isFree ? "#34D399" : undefined }}>{priceLabel}</p>
-                {supplyLeft != null && <p className="text-[11px] text-gb-faint">{supplyLeft} left</p>}
+                <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">{equipTotalWei > 0n ? "Total" : "Price"}</p>
+                <p className="font-display text-2xl" style={{ color: isFree && equipTotalWei === 0n ? "#34D399" : undefined }}>
+                  {equipTotalWei > 0n ? `${formatEther(totalWei)} ETH` : priceLabel}
+                </p>
+                {equipTotalWei > 0n ? (
+                  <p className="text-[11px] text-gb-faint">{isFree ? "free mint" : `${formatEther(baseWei)} mint`} + {formatEther(equipTotalWei)} equip{equippedList.length > 1 ? "s" : ""}</p>
+                ) : (
+                  supplyLeft != null && <p className="text-[11px] text-gb-faint">{supplyLeft} left</p>
+                )}
               </div>
               <button onClick={handleMint} disabled={busy || (isConnected && !canMint)}
                 className="inline-flex items-center gap-2 rounded-2xl bg-brass px-6 py-3.5 font-display font-medium text-deepink hover:bg-brassLight transition-colors disabled:opacity-40">
                 {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : isConnected ? <ShieldCheck className="h-4 w-4" /> : <Wallet className="h-4 w-4" />}
-                {busy ? "Minting…" : isConnected ? "Mint agent" : "Connect wallet"}
+                {busy ? (step === "pinning-image" ? "Pinning image…" : step === "pinning-meta" ? "Preparing…" : step === "equipping" ? "Equipping…" : step === "claiming" ? "Granting credits…" : "Minting…")
+                  : isConnected ? (equippedList.length > 0 ? "Mint & equip" : "Mint agent") : "Connect wallet"}
               </button>
             </div>
 
