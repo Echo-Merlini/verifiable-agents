@@ -25,6 +25,7 @@ const AUDIT = [
   { href: "/conformance", label: "MCP Conformance", desc: "recompute our MCPs" },
   { href: "/reports", label: "Audit Reports", desc: "recompute investigations" },
   { href: "/ledger", label: "The Ledger", desc: "public track record · verify offline" },
+  { href: "/quantum", label: "Post-Quantum", desc: "recompute a PQ key-binding · two NIST families" },
   { href: "/kit", label: "recompute-kit", desc: "the toolkit + offline verifier" },
   { href: "https://verticecriativo.pt/review-gate", label: "Review Gate", desc: "independent recomputable review", external: true },
 ];

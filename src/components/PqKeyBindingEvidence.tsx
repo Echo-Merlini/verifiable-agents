@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { sha256 } from "viem";
 import { Check as CheckIcon, X as XIcon, Loader2, KeyRound, ExternalLink } from "lucide-react";
 
@@ -33,8 +33,14 @@ function jcs(v: unknown): string {
 const compact = (arr: unknown[]): string => "[" + arr.map((x) => (typeof x === "string" ? JSON.stringify(x) : Array.isArray(x) ? compact(x) : String(x))).join(",") + "]";
 
 type Row = { label: string; ok: boolean | null; detail?: string };
+type Props = { fetchUrl?: string; viewUrl?: string; title?: string; subtitle?: React.ReactNode };
 
-export function PqKeyBindingEvidence() {
+export function PqKeyBindingEvidence({
+  fetchUrl = FETCH_URL,
+  viewUrl = BINDING_URL,
+  title = "Post-quantum key-binding",
+  subtitle,
+}: Props = {}) {
   const [state, setState] = useState<"idle" | "running" | "ok" | "bad" | "err">("idle");
   const [rows, setRows] = useState<Row[]>([]);
   const [meta, setMeta] = useState<{ alg?: string; classical?: string; anchor?: string } | null>(null);
@@ -98,9 +104,9 @@ export function PqKeyBindingEvidence() {
     <div className="mt-4 rounded-2xl border border-brassLight/25 bg-white/[0.02] p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="flex items-center gap-1.5 font-display font-medium text-paper"><KeyRound className="h-4 w-4 text-brassLight" /> Post-quantum key-binding</p>
+          <p className="flex items-center gap-1.5 font-display font-medium text-paper"><KeyRound className="h-4 w-4 text-brassLight" /> {title}</p>
           <p className="mt-1 text-[12px] leading-relaxed text-gb-muted">
-            A binding that says <span className="text-paper/70">this classical key → this post-quantum key</span>, dual-signed and anchored. You don&apos;t trust the server that hosts it — you <span className="text-paper/70">re-derive its identity from raw bytes</span> and check the PQ signature, here, in your browser.
+            {subtitle || <>A binding that says <span className="text-paper/70">this classical key → this post-quantum key</span>, dual-signed and anchored. You don&apos;t trust the server that hosts it — you <span className="text-paper/70">re-derive its identity from raw bytes</span> and check the PQ signature, here, in your browser.</>}
           </p>
         </div>
         <button onClick={run} disabled={state === "running"}
