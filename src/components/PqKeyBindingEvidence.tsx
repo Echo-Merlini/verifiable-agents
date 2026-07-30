@@ -12,8 +12,12 @@ import { Check as CheckIcon, X as XIcon, Loader2, KeyRound, ExternalLink } from 
 // Default target is the shared-profile live binding; point NEXT_PUBLIC_PQ_BINDING_URL at ours once the
 // KYA-L4 binding is deployed. Conforms to recompute-kit conformance/pq-key-binding-v0.
 
+// The real binding (for the "view it" link). The fetch goes through our same-origin proxy
+// (/api/pq-binding) because the .well-known endpoint sends no CORS header — the recompute still
+// happens client-side, so the proxy only moves bytes, it isn't trusted.
 const BINDING_URL = process.env.NEXT_PUBLIC_PQ_BINDING_URL
   || "https://api.babyblueviper.com/.well-known/pq-key-binding.json";
+const FETCH_URL = "/api/pq-binding";
 
 const enc = (s: string) => new TextEncoder().encode(s);
 const hx = (h: string) => { const s = h.replace(/^0x/, ""); const u = new Uint8Array(s.length / 2); for (let i = 0; i < u.length; i++) u[i] = parseInt(s.slice(i * 2, i * 2 + 2), 16); return u; };
@@ -39,7 +43,8 @@ export function PqKeyBindingEvidence() {
   async function run() {
     setState("running"); setErr(""); setRows([]); setMeta(null);
     try {
-      const d = await fetch(BINDING_URL, { signal: AbortSignal.timeout(15000) }).then((r) => r.json());
+      const d = await fetch(FETCH_URL, { signal: AbortSignal.timeout(15000) }).then((r) => r.json());
+      if (d?.error) throw new Error(`binding fetch failed (${d.error})`);
       const st = d.statement;
       const alg: string = st.algorithm;
       const ev = d.schnorr_event; // NIP-01 carrier (optional)
