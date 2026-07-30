@@ -28,6 +28,7 @@ interface AttestationRow {
   duration_ms: number | null;
   created_at: number;
   gate_decisions: string | null;
+  pq_companion: string | null;
 }
 
 function elapsed(ts: number) {
@@ -131,6 +132,22 @@ function PqBadge({ row }: { row: AttestationRow }) {
       className={`inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded font-mono border transition-colors ${admit ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20" : "text-red-400 bg-red-500/10 border-red-500/20 hover:bg-red-500/20"}`}
     >
       <ShieldCheck className="w-2.5 h-2.5" /> {d.decision}
+    </a>
+  );
+}
+
+// The per-agent PQ companion signature on this attestation (Phase 3). Links to the gateway's recompute-
+// and-verify endpoint (re-derive the content-address, ml_dsa65.verify under the agent's bound key).
+function PqCompanionBadge({ row }: { row: AttestationRow }) {
+  if (!row.pq_companion || !row.input_hash) return null;
+  return (
+    <a
+      href={`${getGatewayUrl()}/pq/companion/${row.input_hash}`}
+      target="_blank" rel="noopener noreferrer"
+      title="per-agent PQ companion (ML-DSA-65) signed with this agent's own key — click to recompute + verify"
+      className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded font-mono border text-cyan-300 bg-cyan-500/10 border-cyan-500/20 hover:bg-cyan-500/20"
+    >
+      ML-DSA
     </a>
   );
 }
@@ -337,7 +354,10 @@ export default function AttestationsPage() {
                       <OnchainBadges row={row} />
                     </td>
                     <td className="px-4 py-2.5">
-                      <PqBadge row={row} />
+                      <div className="flex items-center gap-1.5">
+                        <PqBadge row={row} />
+                        <PqCompanionBadge row={row} />
+                      </div>
                     </td>
                     <td className="px-4 py-2.5 text-[11px] text-red-400 max-w-[120px] truncate">
                       {row.error_message ?? ""}
