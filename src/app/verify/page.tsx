@@ -5,6 +5,7 @@ import { Check as CheckIcon, X as XIcon, HelpCircle, Loader2, ShieldCheck, Arrow
 import { verifyAll, keccakUtf8, readOwnerOf, resolveEnsIdentity, readEnsText, type Showcase, type Check } from "@/lib/verify";
 import { readLiveRecord, refreshLiveRecord, buildLiveRecordByKey } from "@/lib/liveRecord";
 import { TopNav } from "@/components/TopNav";
+import { PqKeyBindingEvidence } from "@/components/PqKeyBindingEvidence";
 import { type TeeSummary } from "@/components/TeeInferenceEvidence";
 import { type EnclaveSummary } from "@/components/EnclaveQuoteEvidence";
 
@@ -734,6 +735,7 @@ export default function VerifyPage() {
                 {sc?.zerog && <ZeroGEvidence sc={sc} />}
                 {sc?.zerogChain && <ZeroGChainEvidence sc={sc} query={query} />}
                 {sc && <GraphEvidence sc={sc} query={query} />}
+                <PqKeyBindingEvidence />
                 {sc && ran && <RecomputeReceipt sc={sc} checks={checks} query={query} reply={reply} />}
                 <a href="/reports/0g-teeml" className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-4 hover:border-brassLight/30 transition-colors">
                   <span className="text-[13px] text-gb-muted">Looking for the <span className="text-paper">0G TeeML</span> recompute — relay evidence + live enclave inference? It moved to its own audit report.</span>
