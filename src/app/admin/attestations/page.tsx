@@ -23,6 +23,9 @@ interface AttestationRow {
   manifest_hash: string | null;
   l4_signature: string | null;
   l3_tx: string | null;
+  zerog_chain_tx: string | null;
+  zerog_root: string | null;
+  zerog_tx: string | null;
   caller_depth: number;
   error_message: string | null;
   duration_ms: number | null;
@@ -109,6 +112,37 @@ function OnchainBadges({ row }: { row: AttestationRow }) {
         </span>
       ) : (
         <span className="text-[10px] text-gb-muted/40 px-1.5 py-0.5 rounded border border-gb-border font-mono">L4</span>
+      )}
+      {/* Optional 2nd surface — 0G (chat attestations only): an independent OCP anchor on 0G Chain +
+          the recompute manifest on 0G Storage. Shown only when present, so non-chat rows aren't flagged. */}
+      {row.zerog_chain_tx && (
+        <a
+          href={`https://chainscan-galileo.0g.ai/tx/${row.zerog_chain_tx}`}
+          target="_blank" rel="noopener noreferrer"
+          title={`0G Chain — 2nd independent OCP anchor (Galileo)\n${row.zerog_chain_tx}`}
+          className="flex items-center gap-0.5 text-[10px] text-violet-300 bg-violet-500/10 border border-violet-500/20 px-1.5 py-0.5 rounded font-mono hover:bg-violet-500/20 transition-colors"
+        >
+          <Link2 className="w-2.5 h-2.5" /> 0G
+        </a>
+      )}
+      {row.zerog_root && (
+        row.zerog_tx ? (
+          <a
+            href={`https://chainscan-galileo.0g.ai/tx/${row.zerog_tx}`}
+            target="_blank" rel="noopener noreferrer"
+            title={`0G Storage — manifest availability (content-addressed root)\n${row.zerog_root}`}
+            className="text-[10px] text-violet-300/80 bg-violet-500/10 border border-violet-500/20 px-1.5 py-0.5 rounded font-mono hover:bg-violet-500/20 transition-colors"
+          >
+            0G·S
+          </a>
+        ) : (
+          <span
+            title={`0G Storage — manifest availability (content-addressed root)\n${row.zerog_root}`}
+            className="text-[10px] text-violet-300/80 bg-violet-500/10 border border-violet-500/20 px-1.5 py-0.5 rounded font-mono cursor-default"
+          >
+            0G·S
+          </span>
+        )
       )}
     </div>
   );
@@ -297,6 +331,9 @@ export default function AttestationsPage() {
         <p className="text-[10px] text-gb-muted/70 mt-1.5 font-mono border-t border-emerald-500/10 pt-1.5">
           <span className="text-slate-300">PQ cutoff</span> = a <span className="text-slate-300">pq_key_binding.v0/cutoff</span> verdict is recorded on every attestation (which binding governs · admit/reject). The deployed enforcer reproduces the pinned vectors live →{" "}
           <a href="https://gateway.ensub.org/pq/enforce/selftest" target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline">/pq/enforce/selftest</a>
+        </p>
+        <p className="text-[10px] text-gb-muted/70 mt-1.5 font-mono">
+          <span className="text-violet-300">0G</span> = optional 2nd surface (chat actions): an <span className="text-slate-300">independent OCP anchor on 0G Chain</span>; <span className="text-violet-300">0G·S</span> = the recompute manifest on <span className="text-slate-300">0G Storage</span> (availability). Same digest, second substrate — see the four-surface recompute on /verify.
         </p>
       </div>
 
