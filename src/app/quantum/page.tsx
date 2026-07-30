@@ -68,6 +68,10 @@ export default function QuantumPage() {
           <p className="mt-2 text-[11px] leading-relaxed text-gb-faint">
             We don&apos;t say &ldquo;quantum-proof.&rdquo; The claim is precise: the recompute layer&apos;s trust rests on hashes — the primitive that survives quantum — and here are two post-quantum bindings you can verify yourself. Authentication still uses today&apos;s signatures; the recompute layer doesn&apos;t need them to prove integrity.
           </p>
+          <p className="mt-3 border-t border-white/10 pt-3 text-[11px] leading-relaxed text-gb-faint">
+            No side trusts another&apos;s UI: the ML-DSA binding above <span className="text-paper/70">also recomputes independently on invinoveritas&apos; own origin</span> —{" "}
+            <a href="https://api.babyblueviper.com/verify" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-brassLight hover:text-brass">api.babyblueviper.com/verify <ExternalLink className="h-3 w-3" /></a>. Two panels, two origins, same raw bytes.
+          </p>
         </div>
 
         <div className="mt-6 flex items-center gap-4 text-[12px]">
