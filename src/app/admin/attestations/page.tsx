@@ -254,6 +254,10 @@ export default function AttestationsPage() {
         <p className="text-[10px] text-gb-muted/70 mt-2 font-mono">
           Spine = keccak256(utf8) per §5 Step 3. Recompute any entry: point the wired recompute-kit MCP at the preimage.
         </p>
+        <p className="text-[10px] text-gb-muted/70 mt-1.5 font-mono border-t border-emerald-500/10 pt-1.5">
+          <span className="text-slate-300">PQ cutoff</span> = a <span className="text-slate-300">pq_key_binding.v0/cutoff</span> verdict is recorded on every attestation (which binding governs · admit/reject). The deployed enforcer reproduces the pinned vectors live →{" "}
+          <a href="https://gateway.ensub.org/pq/enforce/selftest" target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline">/pq/enforce/selftest</a>
+        </p>
       </div>
 
       {/* Table */}
