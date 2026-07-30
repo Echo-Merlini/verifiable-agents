@@ -84,7 +84,12 @@ Shor's algorithm breaks the elliptic-curve signatures under most of Web3 and AI 
 
 **Two NIST families, one profile (interop, not per-agent):** the same profile carries invinoveritas' independent **ML-DSA-65** (FIPS-204, lattice) binding. Two *different* implementations reproduce **byte-compatible content-addresses** under one canonicalization alone — proof that `{algorithm}` is a field, not a fork. Both are pinned as golden vectors: [`pq-key-binding-v0`](https://github.com/trustless-ai/recompute-kit/tree/main/conformance/pq-key-binding-v0). Recompute both in your browser at **[/quantum](https://ai.verticecriativo.pt/quantum)**; each also recomputes on its author's own origin (two panels, two origins, same raw bytes).
 
-**Scope, precisely — no "quantum-proof":** what's PQ for every agent today is the hash layer; the key-binding covers **our signing identity (the L4 attestor), one NIST family**; per-agent PQ companion signatures are the **roadmap**, not a shipped claim. The claim is exactly what you can recompute, and no more.
+**Per-agent post-quantum (live).** Beyond the attestor binding, **every agent has its own ML-DSA-65 key**, bound to its identity (owner-authorized) and **batch-Merkle anchored on-chain** — all agent bindings under one Merkle root, one OCP `record()` per epoch, each agent proven by a path. And **every attestation now carries a per-agent PQ companion** signing its content-address under that agent's own key. Recompute any of it yourself:
+- `…/pq/agent/<registry>/<id>/binding` — the agent's binding + its Merkle proof to the anchored root
+- `…/pq/companion/<inputHash>` — recompute the attestation's content-address, verify the companion under the agent's bound key (another agent's key rejects it)
+- `…/pq/enforce/selftest` — the **deployed** cutoff enforcer reproduces the pinned [`pq-key-binding-v0`](https://github.com/trustless-ai/recompute-kit/tree/main/conformance/pq-key-binding-v0) vectors, live
+
+**Scope, precisely — no "quantum-proof":** the recompute layer is hashes (PQ-safe for everyone); the attestor identity **and every agent** now carry an anchored PQ key-binding, and **every attestation** a per-agent ML-DSA companion — all **recorded and recomputable today**. The companion becomes *required* — the enforcer rejects a missing or invalid one — only when a **cutoff** is set: the migration switch, designed and staged, not yet flipped. The claim is exactly what you can recompute, and no more.
 
 ## Architecture
 
@@ -97,12 +102,14 @@ flowchart TB
         D["/demo<br/>drive it live"]
         A["/A2A<br/>hire another agent"]
         V["/verify<br/>recompute in-browser"]
+        Q["/quantum<br/>recompute PQ key-bindings"]
     end
 
     subgraph gw["Gateway — Bun · Hono · SQLite"]
         LLM["LLM (Anthropic)"]
         MCP["MCP tools<br/>Uniswap · ENS · 0G · OpenSea · LI.FI · …"]
         ATT["Attestation pipeline<br/>WYRIWE in → OCP out"]
+        PQ["Post-quantum<br/>per-agent ML-DSA keys · companions<br/>cutoff enforcer"]
     end
 
     subgraph chain["On-chain"]
@@ -131,10 +138,13 @@ flowchart TB
     ATT -->|"L3: record(digest)"| ANC
     ATT -->|"L4: EIP-712 sign"| gw
     ATT -->|"manifest root"| ZS
+    ATT -->|"per-agent ML-DSA companion"| PQ
+    PQ -->|"epoch Merkle root: record()"| ANC
     V -->|"read Recorded event"| ANC
     V -->|"fetch + content-address"| ZS
     V -->|"keccak + recover, client-side"| V
     V -->|"ecrecover + sha256 · by evidence class"| TEE
+    Q -->|"recompute binding + companion"| PQ
     ENS --- IPFS
     client --- ENS
 ```
