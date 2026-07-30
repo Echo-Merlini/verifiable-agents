@@ -27,6 +27,7 @@ interface AttestationRow {
   error_message: string | null;
   duration_ms: number | null;
   created_at: number;
+  gate_decisions: string | null;
 }
 
 function elapsed(ts: number) {
@@ -109,6 +110,28 @@ function OnchainBadges({ row }: { row: AttestationRow }) {
         <span className="text-[10px] text-gb-muted/40 px-1.5 py-0.5 rounded border border-gb-border font-mono">L4</span>
       )}
     </div>
+  );
+}
+
+// The pq_key_binding.v0/cutoff verdict recorded on this attestation (gateway logExecution). Links to the
+// deployed enforcer's selftest, which reproduces the pinned recompute-kit vectors live.
+function PqBadge({ row }: { row: AttestationRow }) {
+  let d: { decision?: string; in_force_binding?: string; rule?: string } | null = null;
+  try {
+    const arr = row.gate_decisions ? JSON.parse(row.gate_decisions) : [];
+    if (Array.isArray(arr)) d = arr.find((x) => typeof x?.gate === "string" && x.gate.startsWith("pq_key_binding.v0")) ?? null;
+  } catch { d = null; }
+  if (!d?.decision) return <span className="text-[10px] text-gb-muted/40 px-1.5 py-0.5 rounded border border-gb-border font-mono">—</span>;
+  const admit = d.decision === "ADMIT";
+  return (
+    <a
+      href="https://gateway.ensub.org/pq/enforce/selftest"
+      target="_blank" rel="noopener noreferrer"
+      title={`pq_key_binding.v0/cutoff → ${d.decision}\nin-force binding: ${d.in_force_binding ?? "?"} · rule: ${d.rule ?? "?"}\nrecompute the enforcer vs the pinned vectors → /pq/enforce/selftest`}
+      className={`inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded font-mono border transition-colors ${admit ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20" : "text-red-400 bg-red-500/10 border-red-500/20 hover:bg-red-500/20"}`}
+    >
+      <ShieldCheck className="w-2.5 h-2.5" /> {d.decision}
+    </a>
   );
 }
 
@@ -280,6 +303,7 @@ export default function AttestationsPage() {
                   <th className="text-left px-4 py-3 font-medium">Pipeline</th>
                   <th className="text-left px-4 py-3 font-medium">Output</th>
                   <th className="text-left px-4 py-3 font-medium">On-chain</th>
+                  <th className="text-left px-4 py-3 font-medium">PQ</th>
                   <th className="text-left px-4 py-3 font-medium">Error</th>
                   <th className="text-left px-4 py-3 font-medium">Time</th>
                 </tr>
@@ -311,6 +335,9 @@ export default function AttestationsPage() {
                     </td>
                     <td className="px-4 py-2.5">
                       <OnchainBadges row={row} />
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <PqBadge row={row} />
                     </td>
                     <td className="px-4 py-2.5 text-[11px] text-red-400 max-w-[120px] truncate">
                       {row.error_message ?? ""}
