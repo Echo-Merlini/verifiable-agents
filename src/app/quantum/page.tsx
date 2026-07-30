@@ -54,7 +54,7 @@ export default function QuantumPage() {
               fetchUrl="/pq/kya-l4-binding.json"
               viewUrl="/pq/kya-l4-binding.json"
               title="KYA-L4 · SLH-DSA-SHA2-192s (hash-based)"
-              subtitle={<>Our reference binding — the whole chain reduces to hashes. Recompute the content-address + verify the SLH-DSA signature client-side. The production binding co-signs the live attestor&apos;s EIP-712 key and OCP-anchors on-chain.</>}
+              subtitle={<>Our production binding — the whole chain reduces to hashes. Recompute the content-address + verify the SLH-DSA signature client-side. Its classical key is OCP-anchored on Ethereum <span className="text-paper/70">mainnet</span>, and the anchor tx is sent by that same key — so the on-chain record <span className="text-paper/70">is</span> the classical proof-of-possession, not a second signature to forge around.</>}
             />
           </div>
         </div>

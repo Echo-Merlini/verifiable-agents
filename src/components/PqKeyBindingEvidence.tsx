@@ -43,7 +43,7 @@ export function PqKeyBindingEvidence({
 }: Props = {}) {
   const [state, setState] = useState<"idle" | "running" | "ok" | "bad" | "err">("idle");
   const [rows, setRows] = useState<Row[]>([]);
-  const [meta, setMeta] = useState<{ alg?: string; classical?: string; anchor?: string } | null>(null);
+  const [meta, setMeta] = useState<{ alg?: string; classical?: string; anchor?: string; anchorTx?: string } | null>(null);
   const [err, setErr] = useState("");
 
   async function run() {
@@ -85,8 +85,8 @@ export function PqKeyBindingEvidence({
       const bad = Uint8Array.from(sig); bad[0] ^= 1;
       const pqTamperRejected = !verifier.verify(pk, msg, bad);
 
-      const anchor = d.ots_anchor ? `OTS → Bitcoin (${d.ots_anchor.status || "?"})` : (d.onchain_anchor ? "OCP on-chain" : "—");
-      setMeta({ alg, classical: st.secp256k1_pubkey, anchor });
+      const anchor = d.ots_anchor ? `OTS → Bitcoin (${d.ots_anchor.status || "?"})` : (d.onchain_anchor ? (d.onchain_anchor.chainId === 1 ? "OCP · Ethereum mainnet" : "OCP on-chain") : "—");
+      setMeta({ alg, classical: st.secp256k1_pubkey, anchor, anchorTx: d.onchain_anchor?.tx });
       const r: Row[] = [
         { label: "content-address recomputed (JCS statement → sha256)", ok: ccOk, detail: ccGot.slice(0, 16) + "…" },
         ...(ev ? [{ label: "carrier event_id recomputed (NIP-01)", ok: idOk, detail: (ev.id as string).slice(0, 16) + "…" }] : []),
@@ -119,7 +119,9 @@ export function PqKeyBindingEvidence({
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] text-gb-faint">
           <span>algorithm <span className="text-brassLight/90">{meta.alg}</span></span>
           <span>classical <span className="text-gb-muted">{meta.classical?.slice(0, 10)}…</span></span>
-          <span>anchor <span className="text-gb-muted">{meta.anchor}</span></span>
+          <span>anchor {meta.anchorTx ? (
+            <a href={`https://etherscan.io/tx/${meta.anchorTx}`} target="_blank" rel="noreferrer" className="text-brassLight/90 hover:text-brass">{meta.anchor} ↗</a>
+          ) : <span className="text-gb-muted">{meta.anchor}</span>}</span>
         </div>
       )}
 
