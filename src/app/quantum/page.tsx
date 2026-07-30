@@ -42,6 +42,9 @@ export default function QuantumPage() {
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gb-muted">
             A post-quantum key-binding says <span className="text-paper/70">this classical key → this post-quantum key</span>, dual-signed and anchored. Below are two live bindings from two <span className="text-paper/70">different</span> NIST post-quantum families — <span className="text-paper/70">ML-DSA</span> (lattice) and <span className="text-paper/70">SLH-DSA</span> (hash-based) — landing on byte-compatible content-addresses through the same canonicalization alone. That&apos;s the interop proof: <code className="rounded bg-white/5 px-1 text-[11px]">{`{algorithm}`}</code> is a field, not a fork. Recompute either one in your browser.
           </p>
+          <p className="mt-2 max-w-2xl text-[12px] leading-relaxed text-gb-faint">
+            To be exact about whose is whose: the <span className="text-paper/70">SLH-DSA</span> binding is <span className="text-paper/70">ours</span> — our gateway&apos;s KYA-L4 attestor identity; the <span className="text-paper/70">ML-DSA</span> one is <span className="text-paper/70">invinoveritas&apos;</span> independent implementation. &ldquo;Two families&rdquo; means two <span className="text-paper/70">independent implementations</span> converging on one profile — not two signatures on every agent.
+          </p>
 
           <div className="mt-4 space-y-3">
             <PqKeyBindingEvidence
@@ -54,7 +57,7 @@ export default function QuantumPage() {
               fetchUrl="/pq/kya-l4-binding.json"
               viewUrl="/pq/kya-l4-binding.json"
               title="KYA-L4 · SLH-DSA-SHA2-192s (hash-based)"
-              subtitle={<>Our production binding — the whole chain reduces to hashes. Recompute the content-address + verify the SLH-DSA signature client-side. Its classical key is OCP-anchored on Ethereum <span className="text-paper/70">mainnet</span>, and the anchor tx is sent by that same key — so the on-chain record <span className="text-paper/70">is</span> the classical proof-of-possession, not a second signature to forge around.</>}
+              subtitle={<>Our production binding — our gateway&apos;s <span className="text-paper/70">L4 attestor identity</span>, the one key that signs <span className="text-paper/70">every agent&apos;s</span> attestation, bound to a hash-based PQ key. Recompute the content-address + verify the SLH-DSA signature client-side. That classical key is OCP-anchored on Ethereum <span className="text-paper/70">mainnet</span>, and the anchor tx is sent by that same key — so the on-chain record <span className="text-paper/70">is</span> the classical proof-of-possession, not a second signature to forge around.</>}
             />
           </div>
         </div>
@@ -67,6 +70,9 @@ export default function QuantumPage() {
           </p>
           <p className="mt-2 text-[11px] leading-relaxed text-gb-faint">
             We don&apos;t say &ldquo;quantum-proof.&rdquo; The claim is precise: the recompute layer&apos;s trust rests on hashes — the primitive that survives quantum — and here are two post-quantum bindings you can verify yourself. Authentication still uses today&apos;s signatures; the recompute layer doesn&apos;t need them to prove integrity.
+          </p>
+          <p className="mt-2 text-[11px] leading-relaxed text-gb-faint">
+            And precise about scope: what&apos;s post-quantum for <span className="text-paper/70">every agent today</span> is the hash-based recompute layer. The key-binding here covers <span className="text-paper/70">our signing identity</span> — the L4 attestor — in <span className="text-paper/70">one</span> NIST family; per-agent PQ companion signatures are the roadmap, not a shipped claim.
           </p>
           <p className="mt-3 border-t border-white/10 pt-3 text-[11px] leading-relaxed text-gb-faint">
             No side trusts another&apos;s UI: the ML-DSA binding above <span className="text-paper/70">also recomputes independently on invinoveritas&apos; own origin</span> —{" "}

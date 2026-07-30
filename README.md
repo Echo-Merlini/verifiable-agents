@@ -73,6 +73,19 @@ Recompute proves everything *around* the model call; it can't re-derive the call
 
 The finding *is* the result: the live 0G Galileo TeeML provider is a **signing relay** in front of an upstream model host, so its "TeeML" is a **broker signature over request/response commitments — not a hardware enclave quote**. We surface that as explicit **amber, never a silent green**, and it upgrades to a green quote-parse the moment a genuine-enclave provider is reachable. Frozen as a public conformance vector — **[`tee-inference.v0`](https://github.com/trustless-ai/recompute-kit/pull/2)** (10/10, hash-pinned) — with a reproducible sample ([gist](https://gist.github.com/TMerlini/19d532bcb627d3ea237c72003d550337); `node verify-check1.mjs` recovers the signer yourself). Two independent implementations recovered the signer cross-language (ethers.js + Python `eth_account`). *"TeeML" ≠ "enclave-executed" for a relay — the recompute discipline caught the label outrunning its evidence.*
 
+## Post-quantum — the signature lane, recomputable
+
+Shor's algorithm breaks the elliptic-curve signatures under most of Web3 and AI attestation. It does **not** break hashes — and re-deriving an action from a hash of public data is the whole trust model here. So the honest split:
+
+- **Post-quantum for every agent, today:** the **hash-based recompute layer**. Receipt roots, input provenance, content-addressing, and every on-chain anchor are hashes end to end — Grover only halves a hash (256→128, still safe) and you can't backdate into an anchor. *Prospective forgery, not retroactive decryption:* nothing already committed is at risk.
+- **The lane we're migrating:** the **signatures**. The fix isn't a second signature (a post-CRQC forger just omits it) — it's an **anchored key-binding + a cutoff**, published before any break and verified by **re-deriving it**, not by trusting a server.
+
+**What's shipped:** our gateway's **KYA-L4 attestor identity** — the one key that signs *every* agent's L4 attestation — is bound to an **SLH-DSA-SHA2-192s** (FIPS-205, hash-based) PQ key, **OCP-anchored on Ethereum mainnet**. The neat part: the `record()` anchor tx is sent by that *same* classical key, so **the on-chain transaction itself is the classical proof-of-possession** — no detached co-sign for a forger to omit.
+
+**Two NIST families, one profile (interop, not per-agent):** the same profile carries invinoveritas' independent **ML-DSA-65** (FIPS-204, lattice) binding. Two *different* implementations reproduce **byte-compatible content-addresses** under one canonicalization alone — proof that `{algorithm}` is a field, not a fork. Both are pinned as golden vectors: [`pq-key-binding-v0`](https://github.com/trustless-ai/recompute-kit/tree/main/conformance/pq-key-binding-v0). Recompute both in your browser at **[/quantum](https://ai.verticecriativo.pt/quantum)**; each also recomputes on its author's own origin (two panels, two origins, same raw bytes).
+
+**Scope, precisely — no "quantum-proof":** what's PQ for every agent today is the hash layer; the key-binding covers **our signing identity (the L4 attestor), one NIST family**; per-agent PQ companion signatures are the **roadmap**, not a shipped claim. The claim is exactly what you can recompute, and no more.
+
 ## Architecture
 
 ```mermaid
