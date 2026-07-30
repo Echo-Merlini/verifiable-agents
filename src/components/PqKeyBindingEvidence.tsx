@@ -62,16 +62,17 @@ export function PqKeyBindingEvidence() {
 
       // 3) PQ companion signature — verified in-browser (no precompile)
       const sigHex: string = d.pq_companion_signature?.signature_hex || d.pq_companion_signature?.signature || "";
-      let verifier: { verify: (sig: Uint8Array, msg: Uint8Array, pk: Uint8Array) => boolean };
+      // @noble/post-quantum 0.4.x API: verify(publicKey, message, signature)
+      let verifier: { verify: (pk: Uint8Array, msg: Uint8Array, sig: Uint8Array) => boolean };
       if (alg.startsWith("ML-DSA-65")) verifier = (await import("@noble/post-quantum/ml-dsa.js")).ml_dsa65;
       else if (alg.startsWith("SLH-DSA-SHA2-192s")) verifier = (await import("@noble/post-quantum/slh-dsa.js")).slh_dsa_sha2_192s;
       else throw new Error(`unsupported algorithm: ${alg}`);
 
       const sig = hx(sigHex), msg = hx(msgHex), pk = hx(st.pq_pubkey);
-      const pqOk = verifier.verify(sig, msg, pk);
+      const pqOk = verifier.verify(pk, msg, sig);
       // 4) tamper: flip one bit of the PQ signature — must reject
       const bad = Uint8Array.from(sig); bad[0] ^= 1;
-      const pqTamperRejected = !verifier.verify(bad, msg, pk);
+      const pqTamperRejected = !verifier.verify(pk, msg, bad);
 
       const anchor = d.ots_anchor ? `OTS → Bitcoin (${d.ots_anchor.status || "?"})` : (d.onchain_anchor ? "OCP on-chain" : "—");
       setMeta({ alg, classical: st.secp256k1_pubkey, anchor });
