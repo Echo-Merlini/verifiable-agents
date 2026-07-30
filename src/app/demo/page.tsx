@@ -10,6 +10,7 @@ import { buildLiveRecord, stashLiveRecord } from "@/lib/liveRecord";
 import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
 import { VerticeMark } from "@/components/VerticeMark";
+import { TopNav } from "@/components/TopNav";
 import { buildMcpCards, buildCardsFromIds, ENTITLEMENT_SLUG_TO_CARD_ID, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { getAgentAuthNonce, verifyAgentOwner } from "@/lib/api";
@@ -119,7 +120,12 @@ export default function DemoPage() {
 
   // On connect → the wallet's Recompute Kit Bots.
   useEffect(() => {
-    if (!address) { setMyAgents([]); return; }
+    if (!address) {
+      setMyAgents([]);
+      // signed out via the shared header → drop the demo session token too
+      localStorage.removeItem(TOKEN_KEY); setToken(null); autoSignRef.current = false;
+      return;
+    }
     fetch(`${GW_URL}/agent/owned/${address}`).then((r) => (r.ok ? r.json() : []))
       .then((all: OwnedAgent[]) => {
         setMyAgents((all || []).filter((a) => a.registry.toLowerCase() === RKB));
@@ -210,42 +216,23 @@ export default function DemoPage() {
 
   return (
     <main className="min-h-screen bg-deepink text-paper">
+      <TopNav />
       <div className="max-w-5xl mx-auto px-6 md:px-10 py-8">
-        {/* Top bar — wider column + wrap-safe nav so the type never breaks to two lines */}
-        <div className="flex items-center justify-between gap-4">
-          <Link href="/demo" className="inline-flex items-center gap-2.5 whitespace-nowrap font-display font-medium tracking-tight text-paper"><VerticeMark size={26} spin />Recomputable Agents</Link>
-          <div className="flex flex-wrap items-center justify-end gap-x-5 gap-y-1">
-            <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Home</Link>
-            <Link href="/mint" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Mint</Link>
-            <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
-            <Link href="/marketplace" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Marketplace</Link>
-            {isRkb && <Link href="/consult" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Configure</Link>}
-            <Link href="/verify" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">
-              <ShieldCheck className="h-3.5 w-3.5" /> Verify
-            </Link>
-            <span className="w-px h-4 bg-white/12" aria-hidden />
-            {!address ? (
-              <button onClick={openWallet} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">
-                <Wallet className="h-3.5 w-3.5" /> Connect
-              </button>
+        {/* /demo-specific context — sign in to drive your agents + configure. Nav + wallet are in TopNav. */}
+        {address && isRkb && (
+          <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
+            <Link href="/consult" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Configure</Link>
+            {token ? (
+              <span className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.2em] text-emerald-400/70" title="Signed in — chatting with your agents">
+                <ShieldCheck className="h-3.5 w-3.5" /> Signed in
+              </span>
             ) : (
-              <div className="flex items-center gap-3">
-                {isRkb && (token ? (
-                  <span className="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.2em] text-emerald-400/70" title="Signed in — chatting with your agents">
-                    <ShieldCheck className="h-3.5 w-3.5" /> Signed in
-                  </span>
-                ) : (
-                  <button onClick={signIn} disabled={signingIn} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight disabled:opacity-50">
-                    {signingIn ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogIn className="h-3.5 w-3.5" />} {signingIn ? "Signing in…" : "Sign in"}
-                  </button>
-                ))}
-                <button onClick={disconnectWallet} title={`${address.slice(0, 6)}…${address.slice(-4)} — disconnect`} aria-label="Disconnect" className="inline-flex items-center text-gb-muted hover:text-red-400 transition-colors">
-                  <LogOut className="h-3.5 w-3.5" />
-                </button>
-              </div>
+              <button onClick={signIn} disabled={signingIn} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight disabled:opacity-50">
+                {signingIn ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogIn className="h-3.5 w-3.5" />} {signingIn ? "Signing in…" : "Sign in"}
+              </button>
             )}
           </div>
-        </div>
+        )}
 
         {address && !isRkb && (
           <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-[12px] text-gb-muted">

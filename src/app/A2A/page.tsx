@@ -12,6 +12,7 @@ import { McpLogo } from "@/components/McpLogo";
 import { ConsultProofCard } from "@/components/ConsultProofCard";
 import { ReputationBadge } from "@/components/ReputationBadge";
 import { VerticeMark } from "@/components/VerticeMark";
+import { TopNav } from "@/components/TopNav";
 import { fetchReputation, type Reputation } from "@/lib/marketplace";
 import { buildCardsFromIds } from "@/lib/mcps";
 
@@ -161,33 +162,9 @@ export default function A2APage() {
 
   return (
     <main className="min-h-screen bg-deepink text-paper">
+      <TopNav />
       <div className="max-w-5xl mx-auto px-6 py-8">
-        {/* Top bar */}
         <div className="flex items-center justify-between gap-4">
-          <Link href="/demo" className="inline-flex items-center gap-2.5 font-display font-medium tracking-tight text-paper"><VerticeMark size={26} spin />Recomputable Agents</Link>
-          <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
-            <Link href="/" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Home</Link>
-            <Link href="/demo" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Demo</Link>
-            <Link href="/mint" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Mint</Link>
-            <Link href="/marketplace" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Marketplace</Link>
-            <Link href="/console" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Console</Link>
-            <Link href="/verify" className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">Verify</Link>
-            <span className="w-px h-4 bg-white/12" aria-hidden />
-            {!address ? (
-              <button onClick={openWallet} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">
-                <Wallet className="h-3.5 w-3.5" /> Connect
-              </button>
-            ) : (
-              <div className="flex items-center gap-3">
-                <button onClick={() => disconnect()} title={`${address.slice(0, 6)}…${address.slice(-4)} — disconnect`} aria-label="Disconnect" className="inline-flex items-center text-gb-muted hover:text-red-400 transition-colors">
-                  <LogOut className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-4 flex items-center justify-between gap-4">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">Agent-to-agent marketplace</p>
             <p className="text-sm text-paper/50 mt-1">Consult a live agent — pay into escrow, use it, then recompute its output yourself.</p>
