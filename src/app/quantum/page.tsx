@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Atom, Hash, ShieldCheck, GitCompareArrows, ArrowRight } from "lucide-react";
+import { Atom, Hash, ShieldCheck, GitCompareArrows, ArrowRight, ExternalLink } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
 import { PqKeyBindingEvidence } from "@/components/PqKeyBindingEvidence";
 
