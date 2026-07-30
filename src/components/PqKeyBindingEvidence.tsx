@@ -49,7 +49,7 @@ export function PqKeyBindingEvidence({
   async function run() {
     setState("running"); setErr(""); setRows([]); setMeta(null);
     try {
-      const d = await fetch(FETCH_URL, { signal: AbortSignal.timeout(15000) }).then((r) => r.json());
+      const d = await fetch(fetchUrl, { signal: AbortSignal.timeout(15000) }).then((r) => r.json());
       if (d?.error) throw new Error(`binding fetch failed (${d.error})`);
       const st = d.statement;
       const alg: string = st.algorithm;
@@ -141,7 +141,7 @@ export function PqKeyBindingEvidence({
       )}
       {state === "err" && <p className="mt-2 flex items-center gap-1.5 text-[12px] text-red-400"><XIcon className="h-3.5 w-3.5" />{err}</p>}
       {state === "ok" && <p className="mt-2 text-[12px] text-emerald-300">Recomputed + verified — the binding is what it claims, no trust in the endpoint.</p>}
-      <a href={BINDING_URL} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-[11px] text-brassLight/70 hover:text-brassLight">the binding <ExternalLink className="h-3 w-3" /></a>
+      <a href={viewUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-[11px] text-brassLight/70 hover:text-brassLight">the binding <ExternalLink className="h-3 w-3" /></a>
     </div>
   );
 }
