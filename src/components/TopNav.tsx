@@ -15,6 +15,7 @@ const LINKS = [
   { href: "/", label: "Home" },
   { href: "/demo", label: "Live Agent", live: true },   // the agent that actually runs on the platform (route kept as /demo so external links don't break)
   { href: "/mint", label: "Mint" },
+  { href: "/my-agents", label: "My Agents" },
   { href: "/marketplace", label: "Marketplace" },
   { href: "/A2A", label: "A2A" },
   { href: "/console", label: "Console" },
