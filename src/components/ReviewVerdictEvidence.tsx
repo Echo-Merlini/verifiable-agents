@@ -14,6 +14,8 @@ import { Check as CheckIcon, X as XIcon, Loader2, ScrollText, RefreshCw, Wand2, 
 const PINNED_VERIFIER = "6786e18a864893a900bd9858e650f67ccc3513f248fed374b591e2ff6922fbb7"; // pin the reviewer key
 const VERDICT_URL = process.env.NEXT_PUBLIC_REVIEW_VERDICT_URL || "/review-verdict.json";
 const KEYS_PROXY = "/api/verifier-keys"; // same-origin relay of the cross-origin rotation manifest
+const LEDGER_PROXY = "/api/review-ledger"; // same-origin relay of the reviewer's public verdict ledger
+const LEDGER_URL = "https://api.babyblueviper.com/ledger";
 
 type Issue = { severity: string; category: string; description: string; suggested_fix?: string };
 type NostrEvent = { id: string; pubkey: string; created_at: number; kind: number; tags: string[][]; content: string; sig: string };
@@ -25,7 +27,7 @@ type Verdict = {
 
 type Basis = "recomputed" | "fetched" | "pending";
 type St = "idle" | "verified" | "rejected" | "unverifiable";
-type Row = { id: string; label: string; basis: Basis; std: string; status: St; detail: string };
+type Row = { id: string; label: string; basis: Basis; std: string; status: St; detail: string; href?: string };
 
 const short = (h?: string) => (h ? h.slice(0, 10) + "…" + h.slice(-6) : "—");
 const enc = new TextEncoder();
@@ -114,6 +116,22 @@ export function ReviewVerdictEvidence({ onResult }: { onResult?: (r: ReviewSumma
                         : `recomputed ${short("0x" + h)} ≠ artifact_hash — the published artifact isn't what was reviewed`;
     } catch { subDetail = "could not fetch the published artifact to re-hash"; }
 
+    // 5 — public-ledger inclusion: fetch the reviewer's OWN verdict ledger and confirm THIS verdict's event
+    // id is a real entry — matched by the recomputed event id, not by trusting a label on the card. The
+    // entry carries an OTS/Bitcoin commitment_proof; deep in-browser OTS/chain replay is the next lane.
+    let ledgerSt: St = "unverifiable", ledgerDetail = "";
+    try {
+      const lg = await fetch(LEDGER_PROXY, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null));
+      const entries: Array<{ entry?: number; event_id?: string }> = lg?.entries || [];
+      const hit = entries.find((e) => (e.event_id || "").toLowerCase() === ev.id.toLowerCase());
+      if (hit) {
+        ledgerSt = "verified";
+        ledgerDetail = `this verdict's event id is entry #${hit.entry} of the reviewer's ${entries.length}-entry public ledger — inclusion confirmed by matching the recomputed event id, not a label. The entry carries an OTS/Bitcoin commitment_proof; deep OTS/chain replay is the next lane.`;
+      } else {
+        ledgerDetail = `event id not found in the reviewer's published ledger (rotated, or predates it) — verify independently at ${LEDGER_URL}`;
+      }
+    } catch { ledgerDetail = `could not fetch the reviewer's ledger (CORS/offline) — verify independently at ${LEDGER_URL}`; }
+
     const R: Row[] = [
       { id: "sig", label: "Reviewer signature", basis: "recomputed", std: "BIP-340 · NIP-01",
         status: sigOk ? "verified" : "rejected",
@@ -128,9 +146,8 @@ export function ReviewVerdictEvidence({ onResult }: { onResult?: (r: ReviewSumma
       { id: "subject", label: "Subject binding", basis: "recomputed", std: "sha256",
         status: subOk ? "verified" : (subDetail.startsWith("could not") ? "unverifiable" : "rejected"),
         detail: subDetail },
-      { id: "ledger", label: "Public-ledger inclusion", basis: "pending", std: "Nostr · OTS · chain",
-        status: "unverifiable",
-        detail: "the signed event is broadcast + Bitcoin-anchored via OpenTimestamps; curated /ledger promotion + in-browser OTS/chain replay land here next — until then, verify independently at /verify-proof or the offline verifier" },
+      { id: "ledger", label: "Public-ledger inclusion", basis: ledgerSt === "verified" ? "fetched" : "pending", std: "Nostr · OTS · chain",
+        status: ledgerSt, detail: ledgerDetail, href: LEDGER_URL },
     ];
     onResult?.({ sig: R[0].status, key: R[1].status, decision: R[2].status, subject: R[3].status, ledger: R[4].status, verdict: v!.verdict });
     setRows(R); setRunning(false); setRan(true);
@@ -206,7 +223,11 @@ export function ReviewVerdictEvidence({ onResult }: { onResult?: (r: ReviewSumma
                   <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${pass ? "bg-emerald-400/15 text-emerald-300" : rej ? "bg-red-500/15 text-red-300" : "bg-amber-400/15 text-amber-300"}`}>
                     <Icon st={r.status} />
                   </span>
-                  <span className="text-[13px] text-paper">{r.label}</span>
+                  {r.href ? (
+                    <a href={r.href} target="_blank" rel="noopener noreferrer" className="text-[13px] text-brassLight hover:text-brass underline-offset-2 hover:underline">{r.label} ↗</a>
+                  ) : (
+                    <span className="text-[13px] text-paper">{r.label}</span>
+                  )}
                   <BasisChip basis={r.basis} />
                   <span className="ml-auto shrink-0 font-mono text-[9px] uppercase tracking-wider text-paper/35">{r.std}</span>
                 </div>
