@@ -62,6 +62,17 @@ export default function QuantumPage() {
           </div>
         </div>
 
+        {/* resilience — why two families, made concrete by the HAWK result */}
+        <div className="mt-8 rounded-2xl border border-brassLight/25 bg-brassLight/[0.03] p-4">
+          <p className="flex items-center gap-1.5 font-display font-medium text-brassLight"><GitCompareArrows className="h-4 w-4" /> Why two families, not one</p>
+          <p className="mt-1.5 text-[12px] leading-relaxed text-gb-muted">
+            In 2026, AI-assisted cryptanalysis weakened <span className="text-paper/70">HAWK</span> — a lattice-based NIST post-quantum <span className="text-paper/70">candidate</span> — surfacing a structural symmetry that two years of human review had missed, in a matter of hours. The lesson isn&apos;t &ldquo;lattices are broken&rdquo;; it&apos;s that <span className="text-paper/70">candidates fall and finalized standards hold</span>: HAWK is deployed nowhere, and the finalized standards (ML-DSA, ML-KEM) came through untouched.
+          </p>
+          <p className="mt-2 text-[12px] leading-relaxed text-gb-muted">
+            Our design already leans on that twice. The per-agent lane uses <span className="text-paper/70">ML-DSA-65</span> — a <span className="text-paper/70">finalized</span> standard (FIPS&nbsp;204), not a candidate. And our root attestor identity uses <span className="text-paper/70">SLH-DSA</span> (FIPS&nbsp;205), which is <span className="text-paper/70">hash-based, not lattice at all</span> — a lattice break like HAWK&apos;s can&apos;t touch it, because its security reduces to plain hash preimage/collision resistance, the same primitive the whole recompute layer already rests on. So even a future weakness in the lattice family leaves the hash lane — and every anchor — standing. Build on what survived the gauntlet, and keep a second, different foundation under it.
+          </p>
+        </div>
+
         {/* conformance + honest line */}
         <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
           <p className="text-[13px] text-gb-muted">
@@ -72,7 +83,7 @@ export default function QuantumPage() {
             We don&apos;t say &ldquo;quantum-proof.&rdquo; The claim is precise: the recompute layer&apos;s trust rests on hashes — the primitive that survives quantum — and here are two post-quantum bindings you can verify yourself. Authentication still uses today&apos;s signatures; the recompute layer doesn&apos;t need them to prove integrity.
           </p>
           <p className="mt-2 text-[11px] leading-relaxed text-gb-faint">
-            And precise about scope: what&apos;s post-quantum for <span className="text-paper/70">every agent today</span> is the hash-based recompute layer. The key-binding here covers <span className="text-paper/70">our signing identity</span> — the L4 attestor — in <span className="text-paper/70">one</span> NIST family; per-agent PQ companion signatures are the roadmap, not a shipped claim.
+            And precise about scope: the binding shown here is <span className="text-paper/70">our signing identity</span> — the L4 attestor, hash-based (SLH-DSA). Beyond it, <span className="text-paper/70">per-agent PQ is now live</span>: every agent has its own ML-DSA-65 key, owner-authorized, epoch-anchored, signing a companion on <span className="text-paper/70">every</span> attestation, with an anchor-time cutoff enforcer and owner-driven rotation/revocation — all recomputable (hit <code className="rounded bg-white/5 px-1 text-[11px]">/pq/agent/&lt;registry&gt;/&lt;id&gt;/enforce/selftest</code> on the gateway). Live enforcement runs in <span className="text-paper/70">shadow</span> — the verdict is recorded, not yet rejected — until companion coverage is proven, so nothing legitimate breaks in the meantime.
           </p>
           <p className="mt-3 border-t border-white/10 pt-3 text-[11px] leading-relaxed text-gb-faint">
             No side trusts another&apos;s UI: the ML-DSA binding above <span className="text-paper/70">also recomputes independently on invinoveritas&apos; own origin</span> —{" "}
