@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { PqAuthorize } from "@/components/PqAuthorize";
 import {
   useAccount, useReadContract, useWriteContract,
   useWaitForTransactionReceipt, useSwitchChain, useChainId, usePublicClient,
@@ -314,6 +315,8 @@ export default function MintAgentPage() {
               className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-brass px-6 py-3.5 font-display font-medium text-deepink hover:bg-brassLight transition-colors">
               <ShieldCheck className="h-4 w-4" /> Drive {name || "your agent"} <ChevronRight className="h-4 w-4" />
             </a>
+            {/* Phase 4 (b): authorize the agent's post-quantum key right at mint, while the owner's wallet is connected. */}
+            {mintedId && <PqAuthorize registry={GENESIS_REGISTRY_ADDRESS} tokenId={mintedId} />}
             {txHash && (
               <div className="mt-4">
                 <a href={`${GENESIS_CHAIN_ID === 1 ? "https://etherscan.io" : "https://sepolia.etherscan.io"}/tx/${txHash}`}
