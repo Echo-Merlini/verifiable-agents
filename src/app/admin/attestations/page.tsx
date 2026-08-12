@@ -158,11 +158,30 @@ function PqBadge({ row }: { row: AttestationRow }) {
   } catch { d = null; }
   if (!d?.decision) return <span className="text-[10px] text-gb-muted/40 px-1.5 py-0.5 rounded border border-gb-border font-mono">—</span>;
   const admit = d.decision === "ADMIT";
+
+  // Link to the rule applied to THIS row's inputs, not to the global selftest. The badge reports a verdict
+  // recorded for one attestation; sending the reader to an endpoint that says nothing about that
+  // attestation makes the link decorative — it looks like evidence and isn't. /pq/enforce recomputes the
+  // admit/reject decision from the inputs given, so a reader can check this row instead of trusting it.
+  //
+  // What this does NOT do: verify the companion signature. That is the ML-DSA badge beside it, which
+  // re-derives the content address and verifies under the key recorded on the companion. Two different
+  // claims, two different links — collapsing them is how a green badge ends up meaning something adjacent
+  // to what it appears to say.
+  let pqPubkey: string | null = null;
+  try {
+    const comp = row.pq_companion ? JSON.parse(row.pq_companion) : null;
+    if (comp && typeof comp.pq_pubkey === "string") pqPubkey = comp.pq_pubkey;
+  } catch { pqPubkey = null; }
+
+  const qs = new URLSearchParams({ anchor_time: String(row.created_at), anchored: String(!!row.l3_tx) });
+  if (pqPubkey) qs.set("companion_pubkey", pqPubkey);
+
   return (
     <a
-      href={`${getGatewayUrl()}/pq/enforce/selftest`}
+      href={`${getGatewayUrl()}/pq/enforce?${qs.toString()}`}
       target="_blank" rel="noopener noreferrer"
-      title={`pq_key_binding.v0/cutoff → ${d.decision}\nin-force binding: ${d.in_force_binding ?? "?"} · rule: ${d.rule ?? "?"}\nrecompute the enforcer vs the pinned vectors → /pq/enforce/selftest`}
+      title={`pq_key_binding.v0/cutoff → ${d.decision}\nin-force binding: ${d.in_force_binding ?? "?"} · rule: ${d.rule ?? "?"}\nrecompute THIS attestation's verdict from its own inputs → /pq/enforce`}
       className={`inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded font-mono border transition-colors ${admit ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20" : "text-red-400 bg-red-500/10 border-red-500/20 hover:bg-red-500/20"}`}
     >
       <ShieldCheck className="w-2.5 h-2.5" /> {d.decision}
