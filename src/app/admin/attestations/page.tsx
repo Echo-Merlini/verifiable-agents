@@ -160,7 +160,7 @@ function PqBadge({ row }: { row: AttestationRow }) {
   const admit = d.decision === "ADMIT";
   return (
     <a
-      href="https://gateway.ensub.org/pq/enforce/selftest"
+      href={`${getGatewayUrl()}/pq/enforce/selftest`}
       target="_blank" rel="noopener noreferrer"
       title={`pq_key_binding.v0/cutoff → ${d.decision}\nin-force binding: ${d.in_force_binding ?? "?"} · rule: ${d.rule ?? "?"}\nrecompute the enforcer vs the pinned vectors → /pq/enforce/selftest`}
       className={`inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded font-mono border transition-colors ${admit ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20" : "text-red-400 bg-red-500/10 border-red-500/20 hover:bg-red-500/20"}`}
@@ -194,7 +194,7 @@ function TierPill({ active, label, color }: { active?: boolean; label: string; c
 function SpecPanel() {
   const [tiers, setTiers] = useState<GwTier | null>(null);
   useEffect(() => {
-    fetch("https://gateway.ensub.org/health", { signal: AbortSignal.timeout(6000) })
+    fetch(`${getGatewayUrl()}/health`, { signal: AbortSignal.timeout(6000) })
       .then(r => r.json()).then(d => setTiers(d.tiers ?? null)).catch(() => {});
   }, []);
   return (
@@ -330,7 +330,7 @@ export default function AttestationsPage() {
         </p>
         <p className="text-[10px] text-gb-muted/70 mt-1.5 font-mono border-t border-emerald-500/10 pt-1.5">
           <span className="text-slate-300">PQ cutoff</span> = a <span className="text-slate-300">pq_key_binding.v0/cutoff</span> verdict is recorded on every attestation (which binding governs · admit/reject). The deployed enforcer reproduces the pinned vectors live →{" "}
-          <a href="https://gateway.ensub.org/pq/enforce/selftest" target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline">/pq/enforce/selftest</a>
+          <a href={`${getGatewayUrl()}/pq/enforce/selftest`} target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline">/pq/enforce/selftest</a>
         </p>
         <p className="text-[10px] text-gb-muted/70 mt-1.5 font-mono">
           <span className="text-violet-300">0G</span> = optional 2nd surface (chat actions): an <span className="text-slate-300">independent OCP anchor on 0G Chain</span>; <span className="text-violet-300">0G·S</span> = the recompute manifest on <span className="text-slate-300">0G Storage</span> (availability). Same digest, second substrate — see the four-surface recompute on /verify.
