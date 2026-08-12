@@ -83,7 +83,23 @@ export default function QuantumPage() {
             We don&apos;t say &ldquo;quantum-proof.&rdquo; The claim is precise: the recompute layer&apos;s trust rests on hashes — the primitive that survives quantum — and here are two post-quantum bindings you can verify yourself. Authentication still uses today&apos;s signatures; the recompute layer doesn&apos;t need them to prove integrity.
           </p>
           <p className="mt-2 text-[11px] leading-relaxed text-gb-faint">
-            And precise about scope: the binding shown here is <span className="text-paper/70">our signing identity</span> — the L4 attestor, hash-based (SLH-DSA). Beyond it, <span className="text-paper/70">per-agent PQ is now live</span>: every agent has its own ML-DSA-65 key, owner-authorized, epoch-anchored, signing a companion on <span className="text-paper/70">every</span> attestation, with an anchor-time cutoff enforcer and owner-driven rotation/revocation — all recomputable (hit <code className="rounded bg-white/5 px-1 text-[11px]">/pq/agent/&lt;registry&gt;/&lt;id&gt;/enforce/selftest</code> on the gateway). Live enforcement runs in <span className="text-paper/70">shadow</span> — the verdict is recorded, not yet rejected — until companion coverage is proven, so nothing legitimate breaks in the meantime.
+            And precise about scope: the binding shown here is <span className="text-paper/70">our signing identity</span> — the L4 attestor, hash-based (SLH-DSA). Beyond it, <span className="text-paper/70">per-agent PQ is now live</span>: every agent has its own ML-DSA-65 key, epoch-anchored, signing a companion on <span className="text-paper/70">every</span> attestation, with an anchor-time cutoff enforcer whose rule you can reproduce against the pinned vectors (hit <code className="rounded bg-white/5 px-1 text-[11px]">/pq/agent/&lt;registry&gt;/&lt;id&gt;/enforce/selftest</code> on the gateway). Live enforcement runs in <span className="text-paper/70">shadow</span> — the verdict is recorded, not yet rejected — until companion coverage is proven, so nothing legitimate breaks in the meantime.
+          </p>
+          {/* What is NOT yet third-party verifiable. Stated because a reader cannot tell the difference
+              between "we did not mention it" and "it is covered", and the second is what silence implies. */}
+          <p className="mt-2 text-[11px] leading-relaxed text-gb-faint">
+            What is <span className="text-paper/70">not</span> yet verifiable without trusting us, stated
+            because leaving it out would read as coverage:{" "}
+            <span className="text-paper/70">owner authorization is optional</span> and currently held by a
+            minority of agents — the rest are gateway-attested, which is a weaker claim.{" "}
+            <span className="text-paper/70">Rotation and revocation are owner-signed</span> and the gateway
+            refuses any other signer, but those signatures were only persisted from 12 Aug 2026, so earlier
+            transitions read <code className="rounded bg-white/5 px-1 text-[11px]">null</code> — that evidence
+            was verified and then discarded, and is gone rather than withheld. And{" "}
+            <span className="text-paper/70">which key governs an artifact</span> still resolves against a
+            value the gateway holds; deriving it from the anchors instead is{" "}
+            <a href="https://github.com/trustless-ai/pq-agent-binding/pull/1" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-brassLight hover:text-brass">proposed as v1 <ExternalLink className="h-3 w-3" /></a>{" "}
+            and is not live.
           </p>
           <p className="mt-3 border-t border-white/10 pt-3 text-[11px] leading-relaxed text-gb-faint">
             No side trusts another&apos;s UI: the ML-DSA binding above <span className="text-paper/70">also recomputes independently on invinoveritas&apos; own origin</span> —{" "}
