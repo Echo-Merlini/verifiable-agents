@@ -8,6 +8,7 @@ import { TopNav } from "@/components/TopNav";
 import { PqKeyBindingEvidence } from "@/components/PqKeyBindingEvidence";
 import { type TeeSummary } from "@/components/TeeInferenceEvidence";
 import { type EnclaveSummary } from "@/components/EnclaveQuoteEvidence";
+import { summaryVerdict, rowMarker, surfaceMark as surfaceMarkOf, rowMarkGlyph, surfaceBanner } from "@/lib/verdict-projection";
 
 const GW = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
@@ -377,10 +378,10 @@ function RecomputeReceipt({ sc, checks, query, reply, tee, enclave }: { sc: Show
       .catch(() => {});
     return () => { alive = false; };
   }, [sc.registry, sc.agentId]);
-  const allPass = checks.length > 0 && checks.every((c) => c.status === "pass");
-  const anyFail = checks.some((c) => c.status === "fail");
-  const mk = (s: string) => (s === "pass" ? "✓" : s === "fail" ? "✗" : "~");
-  const surfaceMark = anyFail ? "✗" : allPass ? "✓" : "·";
+  // Same projection as the summary. This strip previously collapsed could-not-check,
+  // nothing-to-check and not-run into one neutral dot — three states, one glyph.
+  const mk = (s: string) => rowMarkGlyph(s);
+  const surfaceMark = surfaceMarkOf(true, checks).glyph;
   const isBase = sc.l3ChainId === 84532;
   const chainLabel = isBase ? "Base Sepolia" : "mainnet";
   const scan = isBase ? "https://sepolia.basescan.org" : "https://etherscan.io";
@@ -420,7 +421,9 @@ function RecomputeReceipt({ sc, checks, query, reply, tee, enclave }: { sc: Show
         <Row label="Identity · ERC-8323 + ENS" val={ens ? "✓" : "·"} href={ens ? `https://app.ens.domains/${ens}` : undefined} />
         <div className="my-3 border-t border-dashed border-[#1a1a1a]/30" />
         <div className="text-center">
-          <p className="font-display text-[13px]">{anyFail ? "✗  TAMPER DETECTED" : allPass ? "✓  RECOMPUTED" : "— PRESS VERIFY —"}</p>
+          {/* Same projection again — this banner had its own third branch, which read
+              "PRESS VERIFY" for could-not-check as well as for not-run. */}
+          <p className="font-display text-[13px]">{surfaceBanner(true, checks)}</p>
           <p className="mt-2 break-all text-[8px] leading-snug text-[#1a1a1a]/45">{sc.rawInputHash}</p>
           <p className="mt-2 text-[9px] uppercase tracking-[0.22em] text-[#1a1a1a]/40">no trust required · shipped by Vértice</p>
         </div>
@@ -511,11 +514,13 @@ export default function VerifyPage() {
     if (ran) run(sc.query, sc.reply);
   }
 
-  const allOk = ran && checks.length > 0 && checks.every((c) => c.status === "pass");
-  const anyFail = ran && checks.some((c) => c.status === "fail");
-  const anyAmber = ran && checks.some((c) => c.status === "unverifiable");
-  const failed = anyFail;                    // a real mismatch
-  const amber = !anyFail && anyAmber;        // couldn't fully check, but nothing mismatched
+  // Single-sourced from src/lib/verdict-projection.ts so the decision and the words a reader
+  // sees are the same artifact a check can assert. Computing it here as well would be the
+  // parallel implementation @boardyai specifically warned against.
+  const verdict = summaryVerdict(ran, checks);
+  const allOk = verdict.state === "VERIFIED";
+  const failed = verdict.state === "MISMATCH";
+  const amber = verdict.state === "COULD_NOT_CHECK" || verdict.state === "NOTHING_TO_CHECK";
 
   return (
     <main className="min-h-screen bg-deepink text-paper">
@@ -675,8 +680,9 @@ export default function VerifyPage() {
             {ran && (
               <div className="mt-6 space-y-2">
                 {checks.map((c) => {
-                  const pass = c.status === "pass";
-                  const unver = c.status === "unverifiable";
+                  const rm = rowMarker(c.status);
+                  const pass = rm.state === "pass";
+                  const unver = rm.state === "unverifiable";
                   return (
                     <div key={c.id} className={`liquid-glass rounded-xl p-4 flex items-start gap-3 ${pass ? "" : unver ? "border-amber-400/40" : "border-red-500/40"}`}>
                       <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${pass ? "bg-emerald-400/15 text-emerald-300" : unver ? "bg-amber-400/15 text-amber-300" : "bg-red-500/15 text-red-300"}`}>
@@ -689,7 +695,7 @@ export default function VerifyPage() {
                         </div>
                         {unver ? (
                           // Amber: could not recompute (network). Never rendered as a mismatch.
-                          <p className="mt-1 font-mono text-[11px] break-all text-amber-300/90">could not check · <span className="text-amber-200/70">{c.got}</span></p>
+                          <p className="mt-1 font-mono text-[11px] break-all text-amber-300/90">{rm.prefix} · <span className="text-amber-200/70">{c.got}</span></p>
                         ) : (
                           <p className="mt-1 font-mono text-[11px] break-all">
                             <span className="text-gb-faint">recomputed </span>
@@ -712,11 +718,11 @@ export default function VerifyPage() {
 
                 <div className={`mt-4 rounded-2xl p-5 text-center ${allOk ? "border border-brassLight/30 bg-emerald-400/5" : amber ? "border border-amber-400/30 bg-amber-400/5" : "border border-red-500/30 bg-red-500/5"}`}>
                   {allOk ? (
-                    <p className="font-display text-lg text-paper">Recomputed from public data — <span className="brass-text">verified.</span> No trust required.</p>
+                    <p className="font-display text-lg text-paper">{verdict.headline}</p>
                   ) : amber ? (
                     <>
-                      <p className="font-display text-lg text-amber-300">Couldn&apos;t fully verify — the chain was unreachable.</p>
-                      <p className="mt-1.5 text-[12px] text-gb-muted">Every other row recomputed in your browser; the on-chain anchor just couldn&apos;t be read right now. That&apos;s <span className="text-amber-300">could not check</span>, not <span className="text-red-300">did not match</span> — the checker won&apos;t hand you a green it didn&apos;t earn.</p>
+                      <p className="font-display text-lg text-amber-300">{verdict.headline}</p>
+                      <p className="mt-1.5 text-[12px] text-gb-muted">{verdict.detail}</p>
                       <button onClick={() => run()} disabled={running}
                         className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-400/15 border border-amber-400/30 px-4 py-2 text-[12px] text-amber-200 hover:bg-amber-400/25 disabled:opacity-50">
                         <RefreshCw className={`h-3.5 w-3.5 ${running ? "animate-spin" : ""}`} /> Retry the anchor
@@ -724,7 +730,7 @@ export default function VerifyPage() {
                     </>
                   ) : (
                     <>
-                      <p className="font-display text-lg text-red-300">Recompute failed — your edited input no longer matches what was committed on-chain.</p>
+                      <p className="font-display text-lg text-red-300">{verdict.headline}</p>
                       <p className="mt-1.5 text-[12px] text-gb-muted">That red is the point: the check is really re-deriving the hashes, not faking green. Hit <span className="text-brassLight">Restore original</span> to pass again.</p>
                     </>
                   )}
