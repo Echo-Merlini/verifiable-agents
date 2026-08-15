@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { recoverMessageAddress } from "viem";
 import { verifyDcapQuote } from "@/lib/dcap";
 import { Check as CheckIcon, X as XIcon, Loader2, ShieldCheck, RefreshCw, Wand2, RotateCcw } from "lucide-react";
+import { surfaceFor, fromLegacy } from "@/lib/panel-contract";
 
 // 0G TeeML enclave attestation — a LIVE glm-5.2 inference on 0G Compute mainnet, recomputed end-to-end in
 // your browser. We recover the enclave's signer from the response signature OURSELVES (not the router's
@@ -148,7 +149,8 @@ export function EnclaveQuoteEvidence({ onResult }: { onResult?: (r: EnclaveSumma
       {ran && (
         <div className="mt-3 space-y-2">
           {rows.map((r) => {
-            const pass = r.status === "verified", rej = r.status === "rejected";
+            const sfc = surfaceFor(fromLegacy(r.status));
+            const pass = sfc.tone === "green", rej = sfc.tone === "red";
             return (
               <div key={r.id} className={`rounded-xl border p-3 ${pass ? "border-emerald-400/20 bg-emerald-400/[0.03]" : rej ? "border-red-500/30 bg-red-500/[0.03]" : "border-amber-400/25 bg-amber-400/[0.03]"}`}>
                 <div className="flex items-center gap-2">

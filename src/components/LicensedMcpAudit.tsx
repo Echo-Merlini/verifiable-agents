@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ShieldCheck, ShieldAlert, HelpCircle, Loader2, Lock } from "lucide-react";
 import { fetchMcpAudit, type McpAudit, type AuditVerdict } from "@/lib/marketplace";
+import { surfaceFor, fromLegacy } from "@/lib/panel-contract";
 
 const EXPLORER: Record<number, string> = { 1: "https://etherscan.io", 84532: "https://sepolia.basescan.org" };
 
@@ -49,8 +50,8 @@ export function LicensedMcpAudit({ registry, agentId }: { registry: string; agen
   return (
     <div className="liquid-glass rounded-2xl p-5">
       <div className="flex items-start gap-3">
-        {headline === "clean" ? <ShieldCheck className={`h-6 w-6 ${v.text}`} />
-          : headline === "violation" ? <ShieldAlert className={`h-6 w-6 ${v.text}`} />
+        {surfaceFor(fromLegacy(headline)).verdict === "CLEAN" ? <ShieldCheck className={`h-6 w-6 ${v.text}`} />
+          : surfaceFor(fromLegacy(headline)).verdict === "VIOLATION" ? <ShieldAlert className={`h-6 w-6 ${v.text}`} />
           : <HelpCircle className={`h-6 w-6 ${v.text}`} />}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -58,9 +59,9 @@ export function LicensedMcpAudit({ registry, agentId }: { registry: string; agen
             <Lock className="h-3.5 w-3.5 text-zinc-600" />
           </div>
           <p className={`text-sm ${v.text}`}>
-            {headline === "clean" && `All ${summary.actions} action${summary.actions === 1 ? "" : "s"} used only licensed capabilities.`}
-            {headline === "violation" && `${summary.violation} action${summary.violation === 1 ? "" : "s"} invoked an unlicensed MCP.`}
-            {headline === "unknown" && `${summary.unknown} action${summary.unknown === 1 ? "" : "s"} could not be verified (entitlement unreadable).`}
+            {surfaceFor(fromLegacy(headline)).verdict === "CLEAN" && `All ${summary.actions} action${summary.actions === 1 ? "" : "s"} used only licensed capabilities.`}
+            {surfaceFor(fromLegacy(headline)).verdict === "VIOLATION" && `${summary.violation} action${summary.violation === 1 ? "" : "s"} invoked an unlicensed MCP.`}
+            {surfaceFor(fromLegacy(headline)).execution === "COULD_NOT_CHECK" && `${summary.unknown} action${summary.unknown === 1 ? "" : "s"} could not be verified (entitlement unreadable).`}
           </p>
         </div>
         <div className="flex gap-1.5 font-mono text-[11px]">
