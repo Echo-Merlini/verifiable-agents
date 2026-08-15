@@ -1,0 +1,51 @@
+name: verify-surface
+
+# The /verify page is where a person decides whether to trust the result, so a dropped
+# qualifier there is the highest-risk presentation failure we have. @boardyai, 15 Aug 2026:
+# "a correct internal verdict with a collapsed or missing UI marker is still a public
+# falsehood, and vector tests cannot catch it unless the rendered state is part of the
+# asserted state."
+#
+# This repo had no CI at all, so the page's wording could change — or lose a qualifier —
+# with nothing anywhere objecting.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  verify-surface:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # A missing toolchain must not be able to look like a pass.
+      - name: Toolchain present
+        run: bun --version
+
+      - name: the rendered state matches the asserted state
+        run: bun run scripts/check-verdict-projection.ts
+
+      # Proves the check can go red, on every run, rather than trusting that it would.
+      # Mutates the shipped projection four ways — render could-not-check as green, make
+      # nothing-to-check accuse the user again, drop the words from an amber row, re-collapse
+      # the compact glyph — and requires an exact exit 1 for each, plus exit 2 (never 0) when
+      # the golden is absent.
+      - name: and that check can actually go red
+        run: bun run scripts/test-verdict-projection.ts
+
+      # The page must not grow a second copy of the decision. This is the parallel
+      # implementation @boardyai warned about, and it is cheap to detect.
+      - name: the page does not recompute the verdict itself
+        run: |
+          if grep -nE 'checks\.(every|some)\(|c\.status === "' src/app/verify/page.tsx; then
+            echo "::error::verify/page.tsx computes verdict state inline — it must project from src/lib/verdict-projection.ts"
+            exit 1
+          fi
+          echo "ok — the page projects, it does not decide"

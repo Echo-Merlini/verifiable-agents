@@ -1,0 +1,153 @@
+{
+  "note": "Rendered verdicts, pinned. The Boardy rule: the rendered state is part of the asserted state, so changing what a reader sees is a deliberate act that updates this file. Regenerate with bun run scripts/check-verdict-projection.ts --write-golden and read the diff.",
+  "source": "src/lib/verdict-projection.ts",
+  "rows": {
+    "pass": {
+      "state": "pass",
+      "qualified": true,
+      "tone": "green",
+      "prefix": "recomputed"
+    },
+    "fail": {
+      "state": "fail",
+      "qualified": true,
+      "tone": "red",
+      "prefix": "recomputed"
+    },
+    "unverifiable": {
+      "state": "unverifiable",
+      "qualified": true,
+      "tone": "amber",
+      "prefix": "could not check"
+    }
+  },
+  "summaries": {
+    "not_run": {
+      "state": "NOT_RUN",
+      "qualified": true,
+      "tone": "neutral",
+      "headline": "Not recomputed yet.",
+      "detail": "Nothing has been checked, which is not the same as nothing being wrong."
+    },
+    "not_run_with_checks": {
+      "state": "NOT_RUN",
+      "qualified": true,
+      "tone": "neutral",
+      "headline": "Not recomputed yet.",
+      "detail": "Nothing has been checked, which is not the same as nothing being wrong."
+    },
+    "nothing_to_check": {
+      "state": "NOTHING_TO_CHECK",
+      "qualified": true,
+      "tone": "amber",
+      "headline": "Nothing to check.",
+      "detail": "No checks were produced for this action, so this is neither a pass nor a mismatch — there was no recompute to judge."
+    },
+    "all_pass": {
+      "state": "VERIFIED",
+      "qualified": true,
+      "tone": "green",
+      "headline": "Recomputed from public data — verified. No trust required.",
+      "detail": "Every hash was re-derived in your browser and the anchor was read from chain."
+    },
+    "one_fail": {
+      "state": "MISMATCH",
+      "qualified": true,
+      "tone": "red",
+      "headline": "Recompute failed — your edited input no longer matches what was committed on-chain.",
+      "detail": "That red is the point: the check is really re-deriving the hashes, not faking green."
+    },
+    "one_unverifiable": {
+      "state": "COULD_NOT_CHECK",
+      "qualified": true,
+      "tone": "amber",
+      "headline": "Couldn't fully verify — the chain was unreachable.",
+      "detail": "Every other row recomputed in your browser; the on-chain anchor just couldn't be read right now. That's could not check, not did not match — the checker won't hand you a green it didn't earn."
+    },
+    "fail_outranks_unverifiable": {
+      "state": "MISMATCH",
+      "qualified": true,
+      "tone": "red",
+      "headline": "Recompute failed — your edited input no longer matches what was committed on-chain.",
+      "detail": "That red is the point: the check is really re-deriving the hashes, not faking green."
+    },
+    "all_unverifiable": {
+      "state": "COULD_NOT_CHECK",
+      "qualified": true,
+      "tone": "amber",
+      "headline": "Couldn't fully verify — the chain was unreachable.",
+      "detail": "Every other row recomputed in your browser; the on-chain anchor just couldn't be read right now. That's could not check, not did not match — the checker won't hand you a green it didn't earn."
+    }
+  },
+  "glyphs": {
+    "not_run": {
+      "mark": {
+        "glyph": "·",
+        "state": "NOT_RUN",
+        "qualified": true
+      },
+      "banner": "— PRESS VERIFY —"
+    },
+    "not_run_with_checks": {
+      "mark": {
+        "glyph": "·",
+        "state": "NOT_RUN",
+        "qualified": true
+      },
+      "banner": "— PRESS VERIFY —"
+    },
+    "nothing_to_check": {
+      "mark": {
+        "glyph": "·",
+        "state": "NOTHING_TO_CHECK",
+        "qualified": true
+      },
+      "banner": "·  NOTHING TO CHECK"
+    },
+    "all_pass": {
+      "mark": {
+        "glyph": "✓",
+        "state": "VERIFIED",
+        "qualified": true
+      },
+      "banner": "✓  RECOMPUTED"
+    },
+    "one_fail": {
+      "mark": {
+        "glyph": "✗",
+        "state": "MISMATCH",
+        "qualified": true
+      },
+      "banner": "✗  TAMPER DETECTED"
+    },
+    "one_unverifiable": {
+      "mark": {
+        "glyph": "~",
+        "state": "COULD_NOT_CHECK",
+        "qualified": true
+      },
+      "banner": "~  COULD NOT CHECK"
+    },
+    "fail_outranks_unverifiable": {
+      "mark": {
+        "glyph": "✗",
+        "state": "MISMATCH",
+        "qualified": true
+      },
+      "banner": "✗  TAMPER DETECTED"
+    },
+    "all_unverifiable": {
+      "mark": {
+        "glyph": "~",
+        "state": "COULD_NOT_CHECK",
+        "qualified": true
+      },
+      "banner": "~  COULD NOT CHECK"
+    }
+  },
+  "rowGlyphs": {
+    "pass": "✓",
+    "fail": "✗",
+    "unverifiable": "~"
+  }
+}
