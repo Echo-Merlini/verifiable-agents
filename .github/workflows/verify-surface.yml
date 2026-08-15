@@ -39,6 +39,17 @@ jobs:
       - name: the frozen panel contract holds
         run: bun run scripts/check-panel-contract.ts
 
+      # The deploy-verification contract (@boardyai, 15 Aug 2026), promoted from a live
+      # failure: a deploy check reported "NOT FOUND across 27 chunks" while the deployment was
+      # correct, because the selector assumed an app/ prefix and the routes emitted bare page
+      # chunks. It was correct about the chunks it knew how to name and wrong about the
+      # deployment it was meant to inspect — a coverage failure, not a content failure.
+      #
+      # Rule 5 is the load-bearing control: a fixture exercises the layout CHANGING, so the
+      # checker has to prove it follows the deployment rather than a remembered shape.
+      - name: the checker's own coverage is established, not assumed
+        run: bun run scripts/test-deploy-coverage.ts
+
       # Rule 6: panels may choose labels and colours, but cannot derive status again. Cheap to
       # detect and the failure mode being designed against, so it is a gate rather than a
       # convention. Any panel that decides a verdict from raw strings instead of projecting
