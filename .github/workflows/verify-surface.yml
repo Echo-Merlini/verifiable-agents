@@ -39,6 +39,28 @@ jobs:
       - name: the frozen panel contract holds
         run: bun run scripts/check-panel-contract.ts
 
+      # Rule 6: panels may choose labels and colours, but cannot derive status again. Cheap to
+      # detect and the failure mode being designed against, so it is a gate rather than a
+      # convention. Any panel that decides a verdict from raw strings instead of projecting
+      # the (executionState, verdict?) pair fails here.
+      - name: panels project, they do not decide
+        run: |
+          fail=0
+          for f in src/components/EnclaveQuoteEvidence.tsx \
+                   src/components/TeeInferenceEvidence.tsx \
+                   src/components/ReviewVerdictEvidence.tsx \
+                   src/components/PqKeyBindingEvidence.tsx \
+                   src/components/LicensedMcpAudit.tsx; do
+            grep -q "panel-contract" "$f" || { echo "::error::$f does not consume the shared contract"; fail=1; }
+          done
+          # Substring matching on a verdict is how an unrecognised value became a rejection.
+          if grep -rn 'verdict\.includes(\|status\.includes(' src/components/*.tsx | grep -v '^\s*//' | grep -v '// Was:'; then
+            echo "::error::a panel matches a verdict by substring — unknown values will land on a verdict"
+            fail=1
+          fi
+          [ "$fail" = "0" ] && echo "ok — panels project the pair, they do not re-derive it"
+          exit $fail
+
       # Proves the check can go red, on every run, rather than trusting that it would.
       # Mutates the shipped projection four ways — render could-not-check as green, make
       # nothing-to-check accuse the user again, drop the words from an amber row, re-collapse

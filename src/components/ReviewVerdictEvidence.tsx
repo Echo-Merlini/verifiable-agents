@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { schnorr } from "@noble/curves/secp256k1";
 import { Check as CheckIcon, X as XIcon, Loader2, ScrollText, RefreshCw, Wand2, RotateCcw, ExternalLink } from "lucide-react";
+import { surfaceFor, fromLegacy } from "@/lib/panel-contract";
 
 // The Review Gate, recomputed in your browser. An independent reviewer (invinoveritas / babyblueviper) signs a
 // verdict over Vértice's own work; this panel re-derives the WHOLE proof from public bytes — no trust in the
@@ -156,7 +157,13 @@ export function ReviewVerdictEvidence({ onResult }: { onResult?: (r: ReviewSumma
   const Icon = ({ st }: { st: St }) =>
     st === "verified" ? <CheckIcon className="h-3.5 w-3.5" /> : st === "rejected" ? <XIcon className="h-3.5 w-3.5" /> : <span className="text-[13px] leading-none">◑</span>;
 
-  const vt = v.verdict === "approve" ? "text-emerald-300" : v.verdict.includes("concern") ? "text-brassLight" : "text-red-300";
+  // Was: v.verdict === "approve" ? green : v.verdict.includes("concern") ? brass : red
+  // A SUBSTRING match with everything unmatched falling to red — so an unrecognised verdict
+  // from a future version rendered as a rejection, and "no_concerns_raised" would have gone
+  // brass by accident. Unknown now resolves to COULD_NOT_CHECK, which is neither.
+  const vSurface = surfaceFor(fromLegacy(v.verdict));
+  const vt = vSurface.tone === "green" ? "text-emerald-300"
+    : vSurface.tone === "red" ? "text-red-300" : "text-brassLight";
 
   return (
     <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
@@ -164,7 +171,7 @@ export function ReviewVerdictEvidence({ onResult }: { onResult?: (r: ReviewSumma
         <div className="flex items-center gap-2">
           <ScrollText className="h-5 w-5 text-brassLight/80" />
           <span className="font-display text-[15px] text-paper">Independent review — recomputed</span>
-          <span className={`shrink-0 rounded-md border px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wider ${v.verdict.includes("concern") ? "border-brassLight/30 bg-brassLight/[0.06] text-brassLight/80" : v.verdict === "approve" ? "border-emerald-400/30 bg-emerald-400/[0.06] text-emerald-300/80" : "border-red-500/30 bg-red-500/[0.06] text-red-300/80"}`}>{v.verdict.replace(/_/g, " ")}</span>
+          <span className={`shrink-0 rounded-md border px-1.5 py-0.5 font-mono text-[9px] font-medium uppercase tracking-wider ${vSurface.tone === "green" ? "border-emerald-400/30 bg-emerald-400/[0.06] text-emerald-300/80" : vSurface.tone === "red" ? "border-red-500/30 bg-red-500/[0.06] text-red-300/80" : "border-brassLight/30 bg-brassLight/[0.06] text-brassLight/80"}`}>{v.verdict.replace(/_/g, " ")}</span>
         </div>
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-paper/40">invinoveritas</span>
       </div>

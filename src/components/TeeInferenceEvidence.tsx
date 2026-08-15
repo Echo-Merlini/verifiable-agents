@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { recoverMessageAddress } from "viem";
 import { Check as CheckIcon, X as XIcon, Loader2, Cpu, RefreshCw, Wand2, RotateCcw, ExternalLink } from "lucide-react";
+import { surfaceFor, fromLegacy } from "@/lib/panel-contract";
 
 // TEE-attested inference ⊕ recompute — the one link recompute can't re-derive is the model call
 // itself; a TEE attests it. This panel recomputes everything AROUND that call, in your browser,
@@ -144,7 +145,8 @@ export function TeeInferenceEvidence({ onResult }: { onResult?: (r: TeeSummary) 
       {ran && (
         <div className="mt-3 space-y-2">
           {rows.map((r) => {
-            const pass = r.status === "verified", rej = r.status === "rejected";
+            const sfc = surfaceFor(fromLegacy(r.status));
+            const pass = sfc.tone === "green", rej = sfc.tone === "red";
             return (
               <div key={r.id} className={`rounded-xl border p-3 ${pass ? "border-emerald-400/20 bg-emerald-400/[0.03]" : rej ? "border-red-500/30 bg-red-500/[0.03]" : "border-amber-400/25 bg-amber-400/[0.03]"}`}>
                 <div className="flex items-center gap-2">

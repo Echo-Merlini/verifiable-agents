@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { sha256 } from "viem";
 import { Check as CheckIcon, X as XIcon, Loader2, KeyRound, ExternalLink } from "lucide-react";
+import { combineSubChecks, surfaceFor } from "@/lib/panel-contract";
 
 // Verify a post-quantum key-binding — in the browser, from raw bytes. The binding is self-verifying:
 // you RE-DERIVE its content-address (canonical_content = JCS(statement); sha256), and, for a NIP-01
@@ -41,7 +42,9 @@ export function PqKeyBindingEvidence({
   title = "Post-quantum key-binding",
   subtitle,
 }: Props = {}) {
-  const [state, setState] = useState<"idle" | "running" | "ok" | "bad" | "err">("idle");
+  // "cnc" = could-not-check. The panel previously had nowhere to put an unestablished
+  // sub-check, which is why one was being folded into "ok" and the rest into "bad".
+  const [state, setState] = useState<"idle" | "running" | "ok" | "bad" | "cnc" | "err">("idle");
   const [rows, setRows] = useState<Row[]>([]);
   const [meta, setMeta] = useState<{ alg?: string; classical?: string; anchor?: string; anchorTx?: string } | null>(null);
   const [err, setErr] = useState("");
@@ -141,6 +144,8 @@ export function PqKeyBindingEvidence({
       )}
       {state === "err" && <p className="mt-2 flex items-center gap-1.5 text-[12px] text-red-400"><XIcon className="h-3.5 w-3.5" />{err}</p>}
       {state === "ok" && <p className="mt-2 text-[12px] text-emerald-300">Recomputed + verified — the binding is what it claims, no trust in the endpoint.</p>}
+      {state === "cnc" && <p className="mt-2 text-[12px] text-amber-300">{surfaceFor({ execution: "COULD_NOT_CHECK" }).text}</p>}
+      {state === "cnc" && <p className="mt-2 text-[12px] text-amber-300">{surfaceFor({ execution: "COULD_NOT_CHECK" }).text}</p>}
       <a href={viewUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-[11px] text-brassLight/70 hover:text-brassLight">the binding <ExternalLink className="h-3 w-3" /></a>
     </div>
   );
