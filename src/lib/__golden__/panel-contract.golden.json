@@ -1,0 +1,482 @@
+{
+  "note": "Frozen panel state contract (@boardyai, 2026-08-15). Every vector carries an explicit expected execution state, verdict (or null) and qualifier. Changing what a reader is told is a deliberate act that updates this file — read the diff.",
+  "contract": {
+    "execution": [
+      "NOT_RUN",
+      "PENDING",
+      "NOTHING_TO_CHECK",
+      "COULD_NOT_CHECK",
+      "CHECKED"
+    ],
+    "verdicts": [
+      "VERIFIED",
+      "REJECTED",
+      "APPROVE",
+      "CONCERN",
+      "CLEAN",
+      "VIOLATION"
+    ]
+  },
+  "source": "src/lib/panel-contract.ts",
+  "outcomes": {
+    "exec:NOT_RUN": {
+      "execution": "NOT_RUN",
+      "verdict": null,
+      "qualified": true,
+      "tone": "neutral",
+      "text": "Not checked yet — nothing has been attempted, which is not the same as nothing being wrong."
+    },
+    "exec:PENDING": {
+      "execution": "PENDING",
+      "verdict": null,
+      "qualified": true,
+      "tone": "amber",
+      "text": "Checking — no result yet. This is not a pass."
+    },
+    "exec:NOTHING_TO_CHECK": {
+      "execution": "NOTHING_TO_CHECK",
+      "verdict": null,
+      "qualified": true,
+      "tone": "neutral",
+      "text": "Nothing to check — the input is understood, and there is no applicable claim here."
+    },
+    "exec:COULD_NOT_CHECK": {
+      "execution": "COULD_NOT_CHECK",
+      "verdict": null,
+      "qualified": true,
+      "tone": "amber",
+      "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+    },
+    "checked:VERIFIED": {
+      "execution": "CHECKED",
+      "verdict": "VERIFIED",
+      "qualified": true,
+      "tone": "green",
+      "text": "Checked — verified."
+    },
+    "checked:REJECTED": {
+      "execution": "CHECKED",
+      "verdict": "REJECTED",
+      "qualified": true,
+      "tone": "red",
+      "text": "Checked — rejected."
+    },
+    "checked:APPROVE": {
+      "execution": "CHECKED",
+      "verdict": "APPROVE",
+      "qualified": true,
+      "tone": "green",
+      "text": "Checked — approved."
+    },
+    "checked:CONCERN": {
+      "execution": "CHECKED",
+      "verdict": "CONCERN",
+      "qualified": true,
+      "tone": "amber",
+      "text": "Checked — concerns raised."
+    },
+    "checked:CLEAN": {
+      "execution": "CHECKED",
+      "verdict": "CLEAN",
+      "qualified": true,
+      "tone": "green",
+      "text": "Checked — clean."
+    },
+    "checked:VIOLATION": {
+      "execution": "CHECKED",
+      "verdict": "VIOLATION",
+      "qualified": true,
+      "tone": "red",
+      "text": "Checked — violation found."
+    }
+  },
+  "legacy": {
+    "\"idle\"": {
+      "outcome": {
+        "execution": "NOT_RUN"
+      },
+      "surface": {
+        "execution": "NOT_RUN",
+        "verdict": null,
+        "qualified": true,
+        "tone": "neutral",
+        "text": "Not checked yet — nothing has been attempted, which is not the same as nothing being wrong."
+      }
+    },
+    "\"running\"": {
+      "outcome": {
+        "execution": "PENDING"
+      },
+      "surface": {
+        "execution": "PENDING",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Checking — no result yet. This is not a pass."
+      }
+    },
+    "\"pending\"": {
+      "outcome": {
+        "execution": "PENDING"
+      },
+      "surface": {
+        "execution": "PENDING",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Checking — no result yet. This is not a pass."
+      }
+    },
+    "\"err\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "\"error\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "\"unverifiable\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "\"unknown\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "\"verified\"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "VERIFIED"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "VERIFIED",
+        "qualified": true,
+        "tone": "green",
+        "text": "Checked — verified."
+      }
+    },
+    "\"ok\"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "VERIFIED"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "VERIFIED",
+        "qualified": true,
+        "tone": "green",
+        "text": "Checked — verified."
+      }
+    },
+    "\"rejected\"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "REJECTED"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "REJECTED",
+        "qualified": true,
+        "tone": "red",
+        "text": "Checked — rejected."
+      }
+    },
+    "\"bad\"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "REJECTED"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "REJECTED",
+        "qualified": true,
+        "tone": "red",
+        "text": "Checked — rejected."
+      }
+    },
+    "\"approve\"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "APPROVE"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "APPROVE",
+        "qualified": true,
+        "tone": "green",
+        "text": "Checked — approved."
+      }
+    },
+    "\"concern\"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "CONCERN"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "CONCERN",
+        "qualified": true,
+        "tone": "amber",
+        "text": "Checked — concerns raised."
+      }
+    },
+    "\"clean\"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "CLEAN"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "CLEAN",
+        "qualified": true,
+        "tone": "green",
+        "text": "Checked — clean."
+      }
+    },
+    "\"violation\"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "VIOLATION"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "VIOLATION",
+        "qualified": true,
+        "tone": "red",
+        "text": "Checked — violation found."
+      }
+    },
+    "\"UNVERIFIABLE\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "\"Verified\"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "VERIFIED"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "VERIFIED",
+        "qualified": true,
+        "tone": "green",
+        "text": "Checked — verified."
+      }
+    },
+    "\"  ok  \"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "VERIFIED"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "VERIFIED",
+        "qualified": true,
+        "tone": "green",
+        "text": "Checked — verified."
+      }
+    },
+    "\"no_concerns_raised\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "\"concerns_addressed\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "\"approved\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "\"vIoLaTiOn\"": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "VIOLATION"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "VIOLATION",
+        "qualified": true,
+        "tone": "red",
+        "text": "Checked — violation found."
+      }
+    },
+    "\"future_state_from_2027\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "\"\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "\"null\"": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    }
+  },
+  "subchecks": {
+    "all_true": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "VERIFIED"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "VERIFIED",
+        "qualified": true,
+        "tone": "green",
+        "text": "Checked — verified."
+      }
+    },
+    "identity_unknown": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "one_false": {
+      "outcome": {
+        "execution": "CHECKED",
+        "verdict": "REJECTED"
+      },
+      "surface": {
+        "execution": "CHECKED",
+        "verdict": "REJECTED",
+        "qualified": true,
+        "tone": "red",
+        "text": "Checked — rejected."
+      }
+    },
+    "unknown_and_false": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "all_unknown": {
+      "outcome": {
+        "execution": "COULD_NOT_CHECK"
+      },
+      "surface": {
+        "execution": "COULD_NOT_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "amber",
+        "text": "Could not check — a check was attempted and no result could be established. This is not a rejection."
+      }
+    },
+    "empty": {
+      "outcome": {
+        "execution": "NOTHING_TO_CHECK"
+      },
+      "surface": {
+        "execution": "NOTHING_TO_CHECK",
+        "verdict": null,
+        "qualified": true,
+        "tone": "neutral",
+        "text": "Nothing to check — the input is understood, and there is no applicable claim here."
+      }
+    }
+  }
+}

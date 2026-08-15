@@ -32,6 +32,13 @@ jobs:
       - name: the rendered state matches the asserted state
         run: bun run scripts/check-verdict-projection.ts
 
+      # The frozen panel state contract (@boardyai, 15 Aug 2026): a two-layer separation of
+      # execution state from domain verdict, with a verdict existing only under CHECKED.
+      # Vectors were written before any panel changed, so the contract is the thing panels get
+      # forced through rather than something reverse-engineered from them afterwards.
+      - name: the frozen panel contract holds
+        run: bun run scripts/check-panel-contract.ts
+
       # Proves the check can go red, on every run, rather than trusting that it would.
       # Mutates the shipped projection four ways — render could-not-check as green, make
       # nothing-to-check accuse the user again, drop the words from an amber row, re-collapse
