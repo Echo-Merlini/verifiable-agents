@@ -317,6 +317,10 @@ export function Landing() {
             </p>
           </div>
           <div className="flex items-center gap-6">
+            <a href="/story"
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/70 hover:text-brassLight">
+              Story
+            </a>
             <a href="/coloredpaper.html" target="_blank" rel="noreferrer"
               className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/70 hover:text-brassLight">
               ColoredPaper <ArrowUpRight className="w-3 h-3" />
