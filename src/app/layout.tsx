@@ -12,7 +12,9 @@ const jetbrains    = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"]
 
 const GW_URL      = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 const ENS_NAME    = process.env.NEXT_PUBLIC_ENS_NAME    || "dinamic.eth";
-const SHARE_IMAGE = "https://sapphire-naval-quelea-174.mypinata.cloud/ipfs/bafybeiarvaczogtqwxkprx5m4cjabyfdwuj7q4patnjhsoxoffteofg43q";
+// On-origin PNG (1200x630). X/Twitter and most crawlers do NOT render SVG or fetch
+// IPFS gateways reliably — must be a raster on a fast host, hence a same-origin .png.
+const SHARE_IMAGE = "https://ai.verticecriativo.pt/og.png";
 
 export async function generateMetadata(): Promise<Metadata> {
   let description = `${ENS_NAME} — on-chain agent identities powered by ENS`;
