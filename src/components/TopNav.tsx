@@ -19,6 +19,7 @@ const LINKS = [
   { href: "/marketplace", label: "Marketplace" },
   { href: "/A2A", label: "A2A" },
   { href: "/console", label: "Console" },
+  { href: "https://claude.ai/code/artifact/703f623f-137b-4493-a91f-821a4ba2907d", label: "For business", external: true, cta: true },
 ];
 
 const AUDIT = [
@@ -53,6 +54,25 @@ export function TopNav() {
         <nav className="flex flex-wrap items-center gap-x-5 gap-y-1">
           {LINKS.map((l) => {
             const active = path === l.href;
+            const ext = "external" in l && (l as { external?: boolean }).external;
+            const cta = "cta" in l && (l as { cta?: boolean }).cta;
+            if (ext) {
+              return (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={
+                    cta
+                      ? "inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.2em] rounded-full border border-brassLight/40 px-3 py-1 text-brassLight hover:bg-brassLight/10 transition-colors"
+                      : "inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper transition-colors"
+                  }
+                >
+                  {l.label}{cta ? " →" : ""}
+                </a>
+              );
+            }
             return (
               <Link
                 key={l.href}
