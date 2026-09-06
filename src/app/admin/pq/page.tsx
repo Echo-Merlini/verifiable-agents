@@ -44,8 +44,11 @@ export default function PqAdminPage() {
       });
       const j = await r.json();
       if (!r.ok) throw new Error(j?.error || `HTTP ${r.status}`);
-      setAnchorMsg({ ok: true, text: `Anchored epoch ${j.anchor_epoch ?? "?"} · ${j.count ?? "?"} bindings · root ${short(j.root)} · tx ${short(j.anchor_tx)}` });
-      await loadEpoch();
+      // The POST body names epoch/tx differently than the GET, which showed as "?"/"—" in the
+      // toast. Source the summary from the stable GET shape (also refreshes the card).
+      let g: any = j;
+      try { g = await (await fetch(`${getGatewayUrl()}/pq/anchor-epoch`)).json(); setEpoch(g); } catch { await loadEpoch(); }
+      setAnchorMsg({ ok: true, text: `Anchored epoch ${g.anchor_epoch ?? g.id ?? "?"} · ${g.count ?? "?"} bindings · root ${short(g.root)} · tx ${short(g.anchor_tx)}` });
     } catch (e: any) {
       setAnchorMsg({ ok: false, text: String(e?.message || e) });
     } finally {
