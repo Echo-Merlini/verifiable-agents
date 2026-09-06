@@ -15,7 +15,9 @@ const GW = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 const short = (h?: string) => (h ? h.slice(0, 6) + "…" + h.slice(-4) : "—");
 
 type Agent = { registry: string; agent_id: string | number; name?: string; image?: string };
-type Binding = { pq_pubkey?: string; owner_authorization?: unknown; anchor?: unknown };
+type Binding = { pq_pubkey?: string; owner_authorization?: { in_force_key_epoch?: number } | null; anchor?: { root?: string; anchor_tx?: string; chain_id?: number } | null };
+type AnchorEpoch = { anchor_epoch?: number; anchor_tx?: string; chain_id?: number };
+const chainName = (id?: number) => (id === 84532 ? "Base Sepolia" : id ? `chain ${id}` : "—");
 
 export default function MyAgents() {
   const [mounted, setMounted] = useState(false);
@@ -24,6 +26,13 @@ export default function MyAgents() {
   const { open } = useWalletModal();
   const [agents, setAgents] = useState<Agent[] | null>(null);
   const [bindings, setBindings] = useState<Record<string, Binding>>({});
+  // fleet-wide anchor epoch (the Merkle batch on-chain) — a DIFFERENT axis from each agent's key epoch.
+  const [anchorEpoch, setAnchorEpoch] = useState<AnchorEpoch | null>(null);
+
+  useEffect(() => {
+    fetch(`${GW}/pq/anchor-epoch`).then((r) => r.json())
+      .then((d) => setAnchorEpoch(d && d.anchor_epoch != null ? d : null)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!address) { setAgents(null); return; }
@@ -69,6 +78,7 @@ export default function MyAgents() {
               const b = bindings[key];
               const authorized = !!(b && b.owner_authorization);
               const anchored = !!(b && b.anchor);
+              const keyEpoch = b ? (b.owner_authorization?.in_force_key_epoch ?? 0) : "—";
               return (
                 <div key={key} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
                   <div className="flex items-center gap-3">
@@ -85,9 +95,22 @@ export default function MyAgents() {
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px]">
-                    <span className="inline-flex items-center gap-1 text-gb-muted"><Anchor className="h-3 w-3" /> {anchored ? <span className="text-emerald-300/80">binding anchored</span> : "binding not yet anchored"}</span>
+                    <span className="inline-flex items-center gap-1 text-gb-muted" title="Per-agent key generation. Increments only when THIS agent rotates its key.">
+                      <KeyRound className="h-3 w-3" /> key epoch {keyEpoch}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-gb-muted" title="Fleet-wide Merkle batch recorded on-chain. Increments every anchoring run — separate from key epoch.">
+                      <Anchor className="h-3 w-3" /> {anchored
+                        ? <span className="text-emerald-300/80">anchored · anchor epoch {anchorEpoch?.anchor_epoch ?? "?"} · {chainName(anchorEpoch?.chain_id ?? b?.anchor?.chain_id)}</span>
+                        : <span>not yet anchored · pending next batch</span>}
+                    </span>
                     <span className="inline-flex items-center gap-1 text-gb-muted"><ShieldCheck className="h-3 w-3" /> {authorized ? <span className="text-emerald-300/80">owner-authorized</span> : "not authorized"}</span>
                   </div>
+                  {anchored && (anchorEpoch?.anchor_tx || b?.anchor?.anchor_tx) && (
+                    <a href={`https://sepolia.basescan.org/tx/${anchorEpoch?.anchor_tx || b?.anchor?.anchor_tx}`} target="_blank" rel="noreferrer"
+                      className="mt-1 inline-flex items-center gap-1 font-mono text-[10px] text-brassLight/70 hover:text-brassLight">
+                      anchor tx {short(anchorEpoch?.anchor_tx || b?.anchor?.anchor_tx)} <ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
 
                   {b && !authorized && (
                     <div className="-mt-1"><PqAuthorize registry={a.registry} tokenId={String(a.agent_id)} /></div>
