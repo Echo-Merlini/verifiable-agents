@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard, Database, Globe, Wallet, HardDrive,
-  Sparkles, Key, Rocket, Settings, LogOut, Loader2, Bot, ChevronDown, Zap, Plug, ShieldCheck, FileCheck2, Network, Users, Coins, Store, Gauge,
+  Sparkles, Key, Rocket, Settings, LogOut, Loader2, Bot, ChevronDown, Zap, Plug, ShieldCheck, FileCheck2, Network, Users, Coins, Store, Gauge, KeyRound,
 } from "lucide-react";
 import type { GatewayEnvKey } from "@/hooks/useGatewayEnv";
 
@@ -27,6 +27,7 @@ const nav = [
       { href: "/admin/mcps",       label: "MCPs",      icon: Plug },
       { href: "/admin/approvals",    label: "Approvals",   icon: ShieldCheck },
       { href: "/admin/attestations", label: "Attestations", icon: FileCheck2 },
+      { href: "/admin/pq",           label: "Post-Quantum", icon: KeyRound },
       { href: "/admin/router",       label: "Gateway / Router", icon: Network },
       { href: "/admin/settlement",   label: "Settlement",        icon: Coins },
       { href: "/admin/marketplace",  label: "Marketplace",       icon: Store },
