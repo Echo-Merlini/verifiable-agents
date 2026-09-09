@@ -11,7 +11,7 @@ const MAINNET_SUBGRAPH =
   "https://api.studio.thegraph.com/query/1756895/recomputable-agents-anchor/v0.0.1";
 const BASE_SUBGRAPH =
   process.env.ANCHOR_SUBGRAPH_BASE_URL ||
-  "https://api.studio.thegraph.com/query/1756895/recomputable-agents-anchor-base/v0.0.1";
+  "https://api.studio.thegraph.com/query/1756895/recomputable-agents-anchor-base/v0.0.2";
 
 // An identical input is anchored by many txs (each re-run calls record() again with the same
 // digest), so we fetch ALL anchors for the digest — the client confirms the commitment is indexed
