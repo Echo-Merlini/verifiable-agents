@@ -32,18 +32,18 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
   };
 
   // Keep the button out of the tab order and off screen readers until it is real.
-  if (!mounted) return <span className={`inline-block h-7 w-7 ${className}`} aria-hidden />;
+  if (!mounted) return <span className={`inline-block h-6 w-6 ${className}`} aria-hidden />;
 
   return (
     <button
       onClick={toggle}
       aria-label={light ? "Switch to dark" : "Switch to light"}
       title={light ? "Switch to dark" : "Switch to light"}
-      className={`group inline-flex h-7 w-7 items-center justify-center rounded-full border border-gb-border
+      className={`group inline-flex h-6 w-6 items-center justify-center rounded-full border border-gb-border
                   text-gb-faint transition-colors hover:border-brassLight/50 hover:text-brassLight ${className}`}
     >
       <span className="transition-transform duration-500 group-hover:rotate-180">
-        {light ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
+        {light ? <Moon className="h-3 w-3" /> : <Sun className="h-3 w-3" />}
       </span>
     </button>
   );

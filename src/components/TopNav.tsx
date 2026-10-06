@@ -52,7 +52,7 @@ export function TopNav() {
           <VerticeMark size={26} spin />
           Recomputable Agents
         </Link>
-        <nav className="flex flex-wrap items-center gap-x-5 gap-y-1">
+        <nav className="flex flex-wrap items-center gap-x-4 gap-y-1">
           {LINKS.map((l) => {
             const active = path === l.href;
             return (
@@ -108,9 +108,6 @@ export function TopNav() {
             )}
           </div>
 
-          {/* Light/dark — sits beside Connect, as asked. */}
-          <ThemeToggle />
-
           {/* Wallet — connect once, stay connected while navigating between services */}
           <span className="hidden h-4 w-px bg-white/12 sm:inline-block" aria-hidden />
           {!mounted ? null : !address ? (
@@ -139,6 +136,9 @@ export function TopNav() {
               </button>
             </div>
           )}
+
+          {/* Light/dark — far right, after the wallet. */}
+          <ThemeToggle className="shrink-0" />
         </nav>
       </div>
     </header>
