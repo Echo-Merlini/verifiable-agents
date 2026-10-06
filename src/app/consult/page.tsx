@@ -27,11 +27,13 @@ const TOKENURI_ABI = [{
 type OwnedAgent = { registry: string; agent_id: string; name: string; image: string; description?: string };
 type Pricing = { consultPrice?: string; completionWindow?: number; consultTools?: string[]; consultEnabled?: boolean };
 
-// An RKB agent's minted toolset lives in its on-chain tokenURI metadata (mcps[]).
-async function fetchAgentMcps(agentId: string): Promise<string[]> {
+// An agent's minted toolset lives in its on-chain tokenURI metadata (mcps[]).
+// Read from the agent's OWN registry — agents are held across several registries, and
+// reading them all from the genesis address returns another token's metadata or reverts.
+async function fetchAgentMcps(registry: string, agentId: string): Promise<string[]> {
   try {
     let uri = (await pub.readContract({
-      address: RKB as `0x${string}`, abi: TOKENURI_ABI, functionName: "tokenURI", args: [BigInt(agentId)],
+      address: registry as `0x${string}`, abi: TOKENURI_ABI, functionName: "tokenURI", args: [BigInt(agentId)],
     })) as string;
     if (uri.startsWith("ipfs://")) uri = "https://ipfs.io/ipfs/" + uri.slice(7);
     const r = await fetch(uri, { signal: AbortSignal.timeout(6000) });
@@ -97,11 +99,17 @@ function ConsultInner() {
 
   const disconnectWallet = () => { localStorage.removeItem(TOKEN_KEY); setToken(null); disconnect(); setMyAgents([]); setAi(0); };
 
-  // Owned RKB agents (the connection persists across pages).
+  // Every agent this wallet owns, in any registry (the connection persists across pages).
+  // Filtering to the genesis registry hid agents the wallet actually holds, so they could not
+  // be offered for consultation at all. Genesis first, so the primary bots still lead.
   useEffect(() => {
     if (!address) { setMyAgents([]); return; }
     fetch(`${GATEWAY_URL}/agent/owned/${address}`).then((r) => (r.ok ? r.json() : []))
-      .then((all: OwnedAgent[]) => { setMyAgents((all || []).filter((a) => a.registry.toLowerCase() === RKB)); setAi(0); })
+      .then((all: OwnedAgent[]) => {
+        setMyAgents([...(all || [])].sort((a, b) =>
+          (a.registry.toLowerCase() === RKB ? 0 : 1) - (b.registry.toLowerCase() === RKB ? 0 : 1)));
+        setAi(0);
+      })
       .catch(() => setMyAgents([]));
   }, [address]);
 
@@ -114,8 +122,8 @@ function ConsultInner() {
     setLoadingCfg(true); setSaved(false); setErr(null);
     (async () => {
       const [ids, card] = await Promise.all([
-        fetchAgentMcps(active.agent_id),
-        fetch(`${GATEWAY_URL}/.well-known/agent/${RKB}/${active.agent_id}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetchAgentMcps(active.registry, active.agent_id),
+        fetch(`${GATEWAY_URL}/.well-known/agent/${active.registry}/${active.agent_id}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
       ]);
       setMinted(buildCardsFromIds(ids));
       const p: Pricing = card?.pricing ?? {};
@@ -146,7 +154,7 @@ function ConsultInner() {
         consult_tools: chosenTools,
         consult_enabled: publish,
       };
-      const r = await fetch(`${GATEWAY_URL}/agent/${RKB}/${active.agent_id}`, {
+      const r = await fetch(`${GATEWAY_URL}/agent/${active.registry}/${active.agent_id}`, {
         method: "PATCH",
         headers: { "content-type": "application/json", Authorization: `Bearer ${t}` },
         body: JSON.stringify(body),
@@ -221,7 +229,7 @@ function ConsultInner() {
                 <img src={active!.image} alt={active!.name} className="w-16 h-16 rounded-2xl object-cover border border-white/10 shrink-0" style={{ imageRendering: "pixelated" }} />
                 <div className="flex-1 min-w-0">
                   <h1 className="font-display font-medium text-paper text-lg leading-tight truncate">{active!.name}</h1>
-                  <p className="text-[11px] text-paper/40 font-mono mt-0.5">#{active!.agent_id} · RKB</p>
+                  <p className="text-[11px] text-paper/40 font-mono mt-0.5">#{active!.agent_id} · {active!.registry.toLowerCase() === RKB ? "RKB" : `${active!.registry.slice(0, 6)}…${active!.registry.slice(-4)}`}</p>
                   <span className={`inline-flex items-center gap-1 mt-1.5 text-[10px] font-mono px-2 py-0.5 rounded-full ${published ? "bg-emerald-400/15 text-emerald-300" : "bg-white/5 text-paper/40"}`}>
                     <Rocket className="w-2.5 h-2.5" /> {published ? "Listed on A2A" : "Not listed"}
                   </span>
