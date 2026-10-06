@@ -154,7 +154,13 @@ export default function DemoPage() {
   }, [address, myAgents.length, token]);
 
   const active = myAgents.length ? myAgents[ai] : null;          // an owned agent, or null → default
+  // Two different questions, and conflating them is what broke the carousel:
+  //   isOwned  — is the viewer driving one of their own agents? (controls, sign-in, counter)
+  //   isRkb    — is THIS agent a genesis one? (labelling only)
+  //   hasRkb   — does the wallet hold any genesis agent at all? (the "mint one" notice)
+  const isOwned = !!active;
   const isRkb = !!active && active.registry.toLowerCase() === RKB;
+  const hasRkb = myAgents.some((a) => a.registry.toLowerCase() === RKB);
 
   const featured = active
     ? { registry: active.registry, agentId: active.agent_id, name: active.name || `Bot #${active.agent_id}`, image: active.image,
@@ -230,7 +236,7 @@ export default function DemoPage() {
       <TopNav />
       <div className="max-w-5xl mx-auto px-6 md:px-10 py-8">
         {/* /demo-specific context — sign in to drive your agents + configure. Nav + wallet are in TopNav. */}
-        {address && isRkb && (
+        {address && isOwned && (
           <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1">
             <Link href="/consult" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">Configure</Link>
             {token ? (
@@ -245,7 +251,7 @@ export default function DemoPage() {
           </div>
         )}
 
-        {address && !isRkb && (
+        {address && !hasRkb && (
           <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-[12px] text-gb-muted">
             No Recompute Kit Bots in this wallet yet — <Link href="/mint" className="text-brassLight hover:text-brass">mint one</Link> and it appears here.
           </div>
@@ -259,17 +265,17 @@ export default function DemoPage() {
             style={{ imageRendering: "pixelated" }} />
           <div className="min-w-0 flex-1">
             <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">
-              Live agent · {featured.by}{isRkb && myAgents.length > 1 ? ` · ${ai + 1} of ${myAgents.length}` : ""}
+              Live agent · {featured.by}{isOwned && myAgents.length > 1 ? ` · ${ai + 1} of ${myAgents.length}` : ""}
             </p>
             <div className="mt-1 flex items-center gap-3">
-              {isRkb && myAgents.length > 1 && (
+              {isOwned && myAgents.length > 1 && (
                 <button onClick={() => cycle(-1)} aria-label="Previous agent"
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
                   <ChevronLeft className="h-6 w-6" />
                 </button>
               )}
               <h1 className="font-display font-medium tracking-tightest text-4xl sm:text-5xl truncate">{featured.name}</h1>
-              {isRkb && myAgents.length > 1 && (
+              {isOwned && myAgents.length > 1 && (
                 <button onClick={() => cycle(1)} aria-label="Next agent"
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
                   <ChevronRight className="h-6 w-6" />
@@ -296,7 +302,7 @@ export default function DemoPage() {
             key={`${featured.registry}-${featured.agentId}`}
             registry={featured.registry}
             agentId={featured.agentId}
-            {...(isRkb ? { ownerAddress: address, authToken: token ?? undefined } : {})}
+            {...(isOwned ? { ownerAddress: address, authToken: token ?? undefined } : {})}
             onReady={(send) => { sendRef.current = send; }}
             onExchange={(query, reply) => setLastExchange({ query, reply })}
           />
@@ -304,13 +310,13 @@ export default function DemoPage() {
 
         {/* MCP selectors */}
         <p className="mt-8 font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">
-          {isRkb ? "Its tools — chosen at mint" : "Its tools — hover to learn, click to watch it run"}
+          {isOwned ? "Its tools — chosen at mint" : "Its tools — hover to learn, click to watch it run"}
         </p>
         <p className="mt-1 text-[11px] text-brassLight/80">
           Press a capability to put the agent to work — it runs the tool live, and every action is attested on-chain and independently recomputable.
         </p>
         {cards.length === 0 ? (
-          <p className="mt-3 text-[12px] text-gb-faint">{isRkb ? "This agent was minted with no tools selected." : "Loading tools…"}</p>
+          <p className="mt-3 text-[12px] text-gb-faint">{isOwned ? "This agent was minted with no tools selected." : "Loading tools…"}</p>
         ) : (
           <div className="relative mt-3">
             {/* left / right arrows — rotate through the loadout, 3–4 cards visible at a time */}
