@@ -153,7 +153,7 @@ export function AgentMarketSection() {
                   <div key={l.id.toString()} className="liquid-glass flex flex-col rounded-2xl p-4 ring-1 ring-brassLight/30">
                     <div className="flex items-center gap-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      {imageFor(l.nft, l.tokenId) ? <img src={imageFor(l.nft, l.tokenId)} alt="" className="h-12 w-12 rounded-xl object-cover ring-1 ring-white/10" /> : <div className="h-12 w-12 rounded-xl bg-white/5 ring-1 ring-white/10" />}
+                      {imageFor(l.nft, l.tokenId) ? <img src={imageFor(l.nft, l.tokenId)} alt="" className="h-12 w-12 rounded-xl object-cover ring-1 ring-hairline/10" /> : <div className="h-12 w-12 rounded-xl bg-elevate/5 ring-1 ring-hairline/10" />}
                       <div className="min-w-0">
                         <p className="truncate font-display font-medium text-paper">{nameFor(l.nft, l.tokenId)}</p>
                         <p className="font-mono text-[11px] text-gb-faint">#{l.tokenId}{mine && " · yours"}</p>
@@ -167,7 +167,7 @@ export function AgentMarketSection() {
                       {mine ? (
                         <div className="flex items-center gap-1.5">
                           <button onClick={() => { setPriceFor(editing ? null : `L${l.id}`); setPriceInput(formatEther(l.price)); }} disabled={!!busy}
-                            title="Reprice" className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-gb-muted hover:text-paper disabled:opacity-40"><Pencil className="h-3.5 w-3.5" /></button>
+                            title="Reprice" className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-hairline/10 bg-elevate/5 text-gb-muted hover:text-paper disabled:opacity-40"><Pencil className="h-3.5 w-3.5" /></button>
                           <button onClick={() => doCancel(l)} disabled={!!busy}
                             className="inline-flex items-center gap-1 rounded-lg border border-red-400/40 bg-red-400/10 px-2.5 py-1.5 text-[11px] text-red-300 hover:bg-red-400/20 disabled:opacity-40">
                             {busy === `cancel:${l.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <X className="h-3.5 w-3.5" />} Cancel
@@ -183,7 +183,7 @@ export function AgentMarketSection() {
                     {editing && (
                       <div className="mt-2 flex items-center gap-1.5">
                         <input value={priceInput} onChange={(e) => setPriceInput(e.target.value)} inputMode="decimal" placeholder="ETH"
-                          className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-1.5 text-sm text-paper focus:border-brassLight/50 focus:outline-none" />
+                          className="w-full rounded-lg bg-elevate/5 border border-hairline/10 px-3 py-1.5 text-sm text-paper focus:border-brassLight/50 focus:outline-none" />
                         <button onClick={() => doSetPrice(l)} disabled={!!busy}
                           className="inline-flex items-center gap-1 rounded-lg bg-brass px-3 py-1.5 text-[11px] font-medium text-deepink hover:bg-brassLight disabled:opacity-40">
                           {busy === `price:${l.id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />} Set
@@ -219,14 +219,14 @@ export function AgentMarketSection() {
               return (
                 <div key={`${a.registry}:${a.agent_id}`} className="liquid-glass flex w-64 shrink-0 flex-col rounded-2xl border border-brassLight/25 p-4">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {a.image ? <img src={ipfsHttp(a.image)} alt={a.name} className="aspect-square w-full rounded-xl object-cover ring-1 ring-white/10" /> : <div className="aspect-square w-full rounded-xl bg-white/5 ring-1 ring-white/10" />}
+                  {a.image ? <img src={ipfsHttp(a.image)} alt={a.name} className="aspect-square w-full rounded-xl object-cover ring-1 ring-hairline/10" /> : <div className="aspect-square w-full rounded-xl bg-elevate/5 ring-1 ring-hairline/10" />}
                   <p className="mt-3 truncate font-display font-medium text-paper">{a.name || `Agent #${a.agent_id}`}</p>
                   <p className="font-mono text-[11px] text-gb-faint">#{a.agent_id}</p>
                   {agentMarketConfigured ? (
                     editing ? (
                       <div className="mt-3 flex items-center gap-1.5">
                         <input value={priceInput} onChange={(e) => setPriceInput(e.target.value)} inputMode="decimal" placeholder="Price in ETH" autoFocus
-                          className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-1.5 text-sm text-paper focus:border-brassLight/50 focus:outline-none" />
+                          className="w-full rounded-lg bg-elevate/5 border border-hairline/10 px-3 py-1.5 text-sm text-paper focus:border-brassLight/50 focus:outline-none" />
                         <button onClick={() => doList(a)} disabled={!!busy}
                           className="inline-flex items-center gap-1 rounded-lg bg-brass px-3 py-1.5 text-[11px] font-medium text-deepink hover:bg-brassLight disabled:opacity-40">
                           {busy === `list:${a.agent_id}` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Tag className="h-3.5 w-3.5" />} List
@@ -234,12 +234,12 @@ export function AgentMarketSection() {
                       </div>
                     ) : (
                       <button onClick={() => { setPriceFor(`O${a.registry}:${a.agent_id}`); setPriceInput(""); setErr(null); }} disabled={!!busy}
-                        className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-brassLight/40 bg-white/5 px-3 py-2 text-[12px] text-brassLight hover:border-brassLight/70 disabled:opacity-40">
+                        className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-brassLight/40 bg-elevate/5 px-3 py-2 text-[12px] text-brassLight hover:border-brassLight/70 disabled:opacity-40">
                         <Tag className="h-3.5 w-3.5" /> List for sale
                       </button>
                     )
                   ) : (
-                    <a href="/demo" className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[12px] text-gb-muted hover:text-paper">
+                    <a href="/demo" className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-hairline/10 bg-elevate/5 px-3 py-2 text-[12px] text-gb-muted hover:text-paper">
                       <ShieldCheck className="h-3.5 w-3.5" /> Drive it
                     </a>
                   )}
@@ -250,7 +250,7 @@ export function AgentMarketSection() {
             {myListings.map((l) => (
               <div key={`mine-${l.id}`} className="liquid-glass flex w-64 shrink-0 flex-col rounded-2xl border border-brassLight/40 bg-brass/[0.05] p-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {imageFor(l.nft, l.tokenId) ? <img src={imageFor(l.nft, l.tokenId)} alt="" className="aspect-square w-full rounded-xl object-cover ring-1 ring-brassLight/30" /> : <div className="aspect-square w-full rounded-xl bg-white/5 ring-1 ring-brassLight/30" />}
+                {imageFor(l.nft, l.tokenId) ? <img src={imageFor(l.nft, l.tokenId)} alt="" className="aspect-square w-full rounded-xl object-cover ring-1 ring-brassLight/30" /> : <div className="aspect-square w-full rounded-xl bg-elevate/5 ring-1 ring-brassLight/30" />}
                 <p className="mt-3 truncate font-display font-medium text-paper">{nameFor(l.nft, l.tokenId)}</p>
                 <p className="font-mono text-[11px] text-brassLight/80">Listed · {formatEther(l.price)} ETH</p>
                 <button onClick={() => doCancel(l)} disabled={!!busy}

@@ -140,7 +140,7 @@ export function EnclaveQuoteEvidence({ onResult }: { onResult?: (r: EnclaveSumma
           {running && !tampered ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />} Recompute the enclave chain
         </button>
         {ran && (
-          <button onClick={() => recompute(!tampered)} disabled={running} className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-[12px] text-paper/70 hover:border-white/30 disabled:opacity-50">
+          <button onClick={() => recompute(!tampered)} disabled={running} className="inline-flex items-center gap-1.5 rounded-full border border-hairline/15 px-3 py-1.5 text-[12px] text-paper/70 hover:border-hairline/30 disabled:opacity-50">
             {tampered ? <><RotateCcw className="h-3.5 w-3.5" /> restore</> : <><Wand2 className="h-3.5 w-3.5" /> tamper the response</>}
           </button>
         )}

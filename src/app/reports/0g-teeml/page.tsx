@@ -70,7 +70,7 @@ export default function ZeroGTeemlReport() {
         </div>
 
         {/* CTA → sales funnel */}
-        <div className="mt-14 rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+        <div className="mt-14 rounded-3xl border border-hairline/10 bg-elevate/[0.02] p-6 md:p-8">
           <p className="font-display text-lg text-paper">Want a recomputable audit report like this for your project?</p>
           <p className="mt-2 text-[13px] text-gb-muted max-w-xl">Independent, signed, and re-derivable by anyone — not a PDF you have to trust. This is the deliverable format for a Vértice audit.</p>
           <a href="https://verticecriativo.pt/review-gate" className="mt-5 inline-flex items-center gap-1.5 text-sm text-brassLight hover:text-paper transition-colors">

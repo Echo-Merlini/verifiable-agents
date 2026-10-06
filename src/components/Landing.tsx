@@ -102,7 +102,7 @@ export function Landing() {
               <ShieldCheck className="w-4 h-4" /> Verify a real action
             </Link>
             <Link href="/demo"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-paper/80 hover:border-brassLight/40 hover:text-paper transition-colors">
+              className="inline-flex items-center gap-2 rounded-full border border-hairline/15 px-6 py-3 text-sm text-paper/80 hover:border-brassLight/40 hover:text-paper transition-colors">
               Talk to a live agent <ArrowRight className="w-4 h-4" />
             </Link>
             <VoicePlayer label="Hear the why · 2:59" />
@@ -134,7 +134,7 @@ export function Landing() {
                 {...(c.external ? { target: "_blank", rel: "noreferrer" } : {})}
                 className="group liquid-glass rounded-3xl p-5 transition-all duration-200 hover:-translate-y-1 hover:border-brassLight/40 hover:shadow-[0_12px_28px_-14px_rgba(198,160,90,0.4)] motion-reduce:transform-none motion-reduce:transition-none">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/5 border border-white/10">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-elevate/5 border border-hairline/10">
                     <c.icon className="w-5 h-5 text-brassLight" />
                   </span>
                   <div className="flex-1">
@@ -159,7 +159,7 @@ export function Landing() {
         {/* ─── The story ─────────────────────────────────────────────── */}
 
         {/* Problem */}
-        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
+        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
           <div className="story-reveal">
             <Eyebrow>The problem</Eyebrow>
             <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">AI agents are black boxes.</h2>
@@ -172,7 +172,7 @@ export function Landing() {
         </section>
 
         {/* Origin */}
-        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
+        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
           <div className="story-reveal">
             <Eyebrow>Origin · April 2026</Eyebrow>
             <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">It started with one comment.</h2>
@@ -187,11 +187,11 @@ export function Landing() {
         </section>
 
         {/* The group */}
-        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
+        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
           <div className="story-reveal">
             <Eyebrow>The question found people</Eyebrow>
             <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">Every answer became a primitive.</h2>
-            <div className="mt-8 flex flex-col border-l border-white/10 max-w-2xl">
+            <div className="mt-8 flex flex-col border-l border-hairline/10 max-w-2xl">
               {STEPS.map((s, i) => (
                 <div key={i} className="relative pl-6 py-2.5">
                   <span className="absolute -left-[4px] top-[1.15rem] w-[7px] h-[7px] rounded-full bg-brass" aria-hidden="true" />
@@ -211,16 +211,16 @@ export function Landing() {
         </section>
 
         {/* Thesis — recompute ledger */}
-        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
+        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
           <div className="story-reveal">
             <Eyebrow>The thesis</Eyebrow>
             <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">Verify by recomputing. Not by trusting.</h2>
             <p className="mt-6 font-serif text-xl leading-relaxed text-paper/90 max-w-2xl">
               Every agent action is wrapped in a chain of custody anyone can re-derive from public data. Five checks — no server, no oracle:
             </p>
-            <div className="mt-8 font-mono text-sm border-t border-white/10 max-w-3xl">
+            <div className="mt-8 font-mono text-sm border-t border-hairline/10 max-w-3xl">
               {CHECKS.map((c, i) => (
-                <div key={i} className="chkrow grid grid-cols-[1.1fr_auto] sm:grid-cols-[1fr_1.3fr_1.4fr_auto] gap-3 sm:gap-6 items-center py-3 border-b border-white/8">
+                <div key={i} className="chkrow grid grid-cols-[1.1fr_auto] sm:grid-cols-[1fr_1.3fr_1.4fr_auto] gap-3 sm:gap-6 items-center py-3 border-b border-hairline/8">
                   <span className="text-paper">{c.lbl}</span>
                   <span className="hidden sm:block text-gb-faint">{c.op}</span>
                   <span className="hidden sm:block text-gb-muted tracking-tight truncate">{c.hash}</span>
@@ -233,7 +233,7 @@ export function Landing() {
         </section>
 
         {/* Toolbox */}
-        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
+        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
           <div className="story-reveal">
             <Eyebrow>It doesn&apos;t just talk — it acts</Eyebrow>
             <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">Non-custodial. Recomputable.</h2>
@@ -259,7 +259,7 @@ export function Landing() {
         </section>
 
         {/* Developer community */}
-        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
+        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
           <div className="story-reveal liquid-glass rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8">
             <div className="flex-1 min-w-0">
               <Eyebrow>Build it with us</Eyebrow>
@@ -277,7 +277,7 @@ export function Landing() {
             </div>
             <a href="https://t.me/+yMiNs57dySEzMzZh" target="_blank" rel="noreferrer"
               title="Scan to join the developer group"
-              className="shrink-0 self-center rounded-2xl bg-white p-2.5 shadow-lg ring-1 ring-white/10 transition-transform hover:-translate-y-1 motion-reduce:transform-none">
+              className="shrink-0 self-center rounded-2xl bg-white p-2.5 shadow-lg ring-1 ring-hairline/10 transition-transform hover:-translate-y-1 motion-reduce:transform-none">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/telegram-devs-qr.png" alt="QR code — join the developer Telegram group" className="h-36 w-36 sm:h-40 sm:w-40" />
             </a>
@@ -285,7 +285,7 @@ export function Landing() {
         </section>
 
         {/* Close */}
-        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-white/8">
+        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
           <div className="story-reveal">
             <Eyebrow>From a single WYRIWE to this</Eyebrow>
             <h2 className="font-display font-medium tracking-tightest text-4xl sm:text-6xl leading-[0.98]">
@@ -297,7 +297,7 @@ export function Landing() {
                 <ShieldCheck className="w-4 h-4" /> Recompute a real action
               </Link>
               <Link href="/demo"
-                className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm text-paper/80 hover:border-brassLight/40 hover:text-paper transition-colors">
+                className="inline-flex items-center gap-2 rounded-full border border-hairline/15 px-6 py-3 text-sm text-paper/80 hover:border-brassLight/40 hover:text-paper transition-colors">
                 Watch an agent act <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -305,7 +305,7 @@ export function Landing() {
         </section>
 
         {/* Footer */}
-        <footer className="mt-20 border-t border-white/8 py-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <footer className="mt-20 border-t border-hairline/8 py-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="font-mono text-[11px] text-gb-muted space-y-1">
             <p>
               Five ERCs + two ENSIPs, composed ·{" "}

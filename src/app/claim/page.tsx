@@ -87,11 +87,11 @@ function LabelInput({
   status: "idle" | "checking" | "available" | "taken" | "invalid";
 }) {
   const borderColor = {
-    idle:      "border-white/10 focus-within:border-white/20",
-    checking:  "border-white/20",
+    idle:      "border-hairline/10 focus-within:border-hairline/20",
+    checking:  "border-hairline/20",
     available: "border-green-500/50 focus-within:border-green-500/70",
     taken:     "border-red-500/40  focus-within:border-red-500/60",
-    invalid:   "border-white/10 focus-within:border-white/20",
+    invalid:   "border-hairline/10 focus-within:border-hairline/20",
   }[status];
 
   return (

@@ -260,7 +260,7 @@ export default function ApprovalsPage() {
                     let txData: { tool?: string } = {};
                     try { txData = JSON.parse(a.tx_data); } catch {}
                     return (
-                      <tr key={a.id} className="hover:bg-white/[0.02] transition-colors">
+                      <tr key={a.id} className="hover:bg-elevate/[0.02] transition-colors">
                         <td className="px-5 py-3">
                           {a.status === "approved" ? (
                             <span className="flex items-center gap-1.5 text-xs text-green-400"><CheckCircle2 className="w-3.5 h-3.5" /> Approved</span>

@@ -118,11 +118,11 @@ function PublishSection({
           <p className="font-mono text-[10px] text-paper/50 break-all">{result.cid}</p>
         </div>
         {countdown > 0 ? (
-          <div className="flex items-center gap-3 py-2.5 px-4 rounded-xl bg-white/5 border border-white/10">
+          <div className="flex items-center gap-3 py-2.5 px-4 rounded-xl bg-elevate/5 border border-hairline/10">
             <Loader2 className="w-4 h-4 animate-spin text-paper/40 shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-xs text-paper/60">Propagating to eth.limo…</p>
-              <div className="mt-1.5 h-1 rounded-full bg-white/10 overflow-hidden">
+              <div className="mt-1.5 h-1 rounded-full bg-elevate/10 overflow-hidden">
                 <div
                   className="h-full bg-emerald-400/60 rounded-full transition-all duration-1000"
                   style={{ width: `${((PROPAGATION_SECS - countdown) / PROPAGATION_SECS) * 100}%` }}
@@ -135,7 +135,7 @@ function PublishSection({
           <div className="flex gap-2">
             <a
               href={result.profileUrl} target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 text-xs py-2.5 rounded-xl bg-white/8 hover:bg-white/12 border border-white/10 text-paper transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 text-xs py-2.5 rounded-xl bg-elevate/8 hover:bg-elevate/12 border border-hairline/10 text-paper transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5" /> Open profile
             </a>
@@ -305,12 +305,12 @@ export default function ProfileEditPage() {
         {mounted && (
           isConnected && address ? (
             <button onClick={() => disconnect()}
-              className="bg-white/5 border border-white/10 rounded-full px-4 py-2 text-xs text-paper/60 hover:text-paper/80 transition-colors font-mono">
+              className="bg-elevate/5 border border-hairline/10 rounded-full px-4 py-2 text-xs text-paper/60 hover:text-paper/80 transition-colors font-mono">
               {shortAddr(address)}
             </button>
           ) : (
             <button onClick={() => open()}
-              className="bg-white/8 border border-white/15 rounded-full px-4 py-2 flex items-center gap-2 text-xs font-medium text-paper">
+              className="bg-elevate/8 border border-hairline/15 rounded-full px-4 py-2 flex items-center gap-2 text-xs font-medium text-paper">
               <Wallet className="w-3 h-3" /> Connect
             </button>
           )
@@ -320,7 +320,7 @@ export default function ProfileEditPage() {
       <div className="relative z-10 flex-1 flex flex-col lg:flex-row pt-16">
 
         {/* ── Left: Editor ── */}
-        <div className="w-full lg:w-[52%] p-4 lg:p-8 flex flex-col gap-6 lg:max-h-screen lg:overflow-y-auto bg-black [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-white/20 [&::-webkit-scrollbar-thumb]:rounded-full">
+        <div className="w-full lg:w-[52%] p-4 lg:p-8 flex flex-col gap-6 lg:max-h-screen lg:overflow-y-auto bg-black [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-elevate/20 [&::-webkit-scrollbar-thumb]:rounded-full">
           <div>
             <h1 className="text-2xl font-medium text-paper tracking-tight">Edit Profile</h1>
             {claimedName && (
@@ -329,7 +329,7 @@ export default function ProfileEditPage() {
           </div>
 
           {!mounted ? null : !isConnected ? (
-            <div className="bg-white/3 border border-white/8 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
+            <div className="bg-elevate/3 border border-hairline/8 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
               <Wallet className="w-8 h-8 text-paper/20" />
               <p className="text-paper/50 text-sm">Connect the wallet that owns your subdomain</p>
               <button onClick={() => open()}
@@ -339,7 +339,7 @@ export default function ProfileEditPage() {
             </div>
 
           ) : !label ? (
-            <div className="bg-white/3 border border-white/8 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
+            <div className="bg-elevate/3 border border-hairline/8 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
               <p className="text-paper/50 text-sm">This wallet hasn't claimed a subdomain yet</p>
               <a href="/claim"
                 className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-amber-300 text-sm transition-colors">
@@ -348,10 +348,10 @@ export default function ProfileEditPage() {
             </div>
 
           ) : !token ? (
-            <div className="bg-white/3 border border-white/8 rounded-2xl p-6 flex flex-col gap-4">
+            <div className="bg-elevate/3 border border-hairline/8 rounded-2xl p-6 flex flex-col gap-4">
               <p className="text-paper/60 text-sm">Sign in to edit your profile for <span className="font-mono text-paper/80">{claimedName}</span></p>
               <button onClick={doLogin} disabled={loginLoading}
-                className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white/8 hover:bg-white/12 border border-white/15 text-paper text-sm transition-colors disabled:opacity-50">
+                className="flex items-center justify-center gap-2 py-3 rounded-xl bg-elevate/8 hover:bg-elevate/12 border border-hairline/15 text-paper text-sm transition-colors disabled:opacity-50">
                 {loginLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wallet className="w-4 h-4" />}
                 Sign in with wallet
               </button>
@@ -385,7 +385,7 @@ export default function ProfileEditPage() {
             <p className="text-xs text-paper/40 uppercase tracking-widest">Preview</p>
             <p className="text-[10px] text-paper/25">Updates as you type</p>
           </div>
-          <div className="flex-1 rounded-2xl border border-white/8 overflow-hidden bg-black">
+          <div className="flex-1 rounded-2xl border border-hairline/8 overflow-hidden bg-black">
             {previewSrcdoc ? (
               <iframe
                 srcDoc={previewSrcdoc}
@@ -421,7 +421,7 @@ export default function ProfileEditPage() {
         <div className="lg:hidden fixed bottom-4 right-4 z-30">
           <button
             onClick={() => setShowPreview(p => !p)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-black/80 border border-white/20 text-xs text-paper backdrop-blur-sm"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-black/80 border border-hairline/20 text-xs text-paper backdrop-blur-sm"
           >
             {showPreview ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
             {showPreview ? "Hide" : "Preview"}

@@ -61,7 +61,7 @@ export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUr
       {open && (
         <div className="absolute top-12 right-0 w-64 liquid-glass-strong rounded-3xl p-3 shadow-2xl flex flex-col gap-0.5">
           {/* Wallet — connect / disconnect */}
-          <div className="px-1 pb-2 mb-1 border-b border-white/8">
+          <div className="px-1 pb-2 mb-1 border-b border-hairline/8">
             {address ? (
               <div className="flex items-center justify-between gap-2 px-2 py-1">
                 <span className="font-mono text-[11px] text-paper/60">{address.slice(0, 6)}…{address.slice(-4)}</span>
@@ -72,7 +72,7 @@ export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUr
               </div>
             ) : (
               <button onClick={connectWallet}
-                className="w-full inline-flex items-center justify-center gap-1.5 rounded-2xl bg-white/8 hover:bg-white/12 py-2 text-xs text-paper/80 transition-colors">
+                className="w-full inline-flex items-center justify-center gap-1.5 rounded-2xl bg-elevate/8 hover:bg-elevate/12 py-2 text-xs text-paper/80 transition-colors">
                 <Wallet className="w-3.5 h-3.5" /> Connect wallet
               </button>
             )}
@@ -87,12 +87,12 @@ export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUr
                 onClick={() => setOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-colors group ${
                   isCurrent
-                    ? "bg-white/10 text-paper"
-                    : "text-paper/60 hover:bg-white/8 hover:text-paper"
+                    ? "bg-elevate/10 text-paper"
+                    : "text-paper/60 hover:bg-elevate/8 hover:text-paper"
                 }`}
               >
                 <div className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                  isCurrent ? "bg-amber-500/30" : "bg-white/8 group-hover:bg-white/12"
+                  isCurrent ? "bg-amber-500/30" : "bg-elevate/8 group-hover:bg-elevate/12"
                 }`}>
                   <Icon className={`w-3.5 h-3.5 ${isCurrent ? "text-amber-300" : "text-paper/50 group-hover:text-paper/80"}`} />
                 </div>

@@ -341,11 +341,11 @@ export default function MintAgentPage() {
               {/* preset arrows — only when there's more than one preset, and not while an upload is in play */}
               {!custom && BOT_VARIANTS.length > 1 && (<>
                 <button onClick={() => cycle(-1)} aria-label="Previous"
-                  className="absolute left-6 top-[calc(50%-1.75rem)] -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-white/10 hover:bg-black/70 transition-colors">
+                  className="absolute left-6 top-[calc(50%-1.75rem)] -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-hairline/10 hover:bg-black/70 transition-colors">
                   <ChevronLeft className="h-5 w-5" />
                 </button>
                 <button onClick={() => cycle(1)} aria-label="Next"
-                  className="absolute right-6 top-[calc(50%-1.75rem)] -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-white/10 hover:bg-black/70 transition-colors">
+                  className="absolute right-6 top-[calc(50%-1.75rem)] -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 border border-hairline/10 hover:bg-black/70 transition-colors">
                   <ChevronRight className="h-5 w-5" />
                 </button>
               </>)}
@@ -365,12 +365,12 @@ export default function MintAgentPage() {
               <div className="mt-3 flex items-center justify-center">
                 {custom ? (
                   <button onClick={clearImage} disabled={busy}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/5 px-3 py-1.5 text-[11px] text-gb-muted hover:text-paper hover:border-white/25 transition-colors disabled:opacity-50">
+                    className="inline-flex items-center gap-1.5 rounded-full border border-hairline/12 bg-elevate/5 px-3 py-1.5 text-[11px] text-gb-muted hover:text-paper hover:border-hairline/25 transition-colors disabled:opacity-50">
                     <X className="h-3.5 w-3.5" /> Remove · use the default
                   </button>
                 ) : (
                   <button onClick={() => fileRef.current?.click()} disabled={busy}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-brassLight/40 bg-white/5 px-3 py-1.5 text-[11px] text-brassLight hover:border-brassLight/70 transition-colors disabled:opacity-50">
+                    className="inline-flex items-center gap-1.5 rounded-full border border-brassLight/40 bg-elevate/5 px-3 py-1.5 text-[11px] text-brassLight hover:border-brassLight/70 transition-colors disabled:opacity-50">
                     <Upload className="h-3.5 w-3.5" /> Upload your own image
                   </button>
                 )}
@@ -385,7 +385,7 @@ export default function MintAgentPage() {
               <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted">Agent name</span>
               <input value={name} onChange={(e) => setName(e.target.value)} disabled={busy}
                 placeholder="e.g. Wizgob Advisor"
-                className="mt-1.5 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-paper placeholder:text-gb-faint focus:border-brassLight/50 focus:outline-none disabled:opacity-50" />
+                className="mt-1.5 w-full rounded-xl bg-elevate/5 border border-hairline/10 px-4 py-3 text-paper placeholder:text-gb-faint focus:border-brassLight/50 focus:outline-none disabled:opacity-50" />
             </label>
 
             {/* 3 — personality (auto-assigned, re-rollable) */}
@@ -397,7 +397,7 @@ export default function MintAgentPage() {
                   <Dices className="h-3.5 w-3.5" /> re-roll
                 </button>
               </div>
-              <div className="mt-1.5 rounded-xl bg-white/5 border border-brassLight/30 px-4 py-3">
+              <div className="mt-1.5 rounded-xl bg-elevate/5 border border-brassLight/30 px-4 py-3">
                 <p className="font-display font-medium text-paper">{PERSONALITIES[persona].name}</p>
                 <p className="mt-0.5 text-[12px] text-gb-muted">{PERSONALITIES[persona].blurb}</p>
               </div>
@@ -412,7 +412,7 @@ export default function MintAgentPage() {
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   {premium.filter((m) => equipped.has(m.slug)).map((m) => (
                     <button key={m.slug} onClick={() => toggleEquip(m.slug)} disabled={busy} title={`Un-equip ${m.label}`}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 border border-brassLight/40 hover:border-red-400/50 transition-colors disabled:opacity-50">
+                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-elevate/5 border border-brassLight/40 hover:border-red-400/50 transition-colors disabled:opacity-50">
                       <McpLogo card={{ id: m.slug, label: m.label, logo: m.logo, icon: m.icon, fill: m.fill } as any} className="h-5 w-5" fill />
                     </button>
                   ))}
@@ -441,7 +441,7 @@ export default function MintAgentPage() {
                             className={`mt-2 inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[11px] transition-colors disabled:opacity-40 ${
                               st === "done" ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
                               : st === "error" ? "border-red-400/50 bg-red-400/10 text-red-300"
-                              : on ? "border-brassLight/60 bg-brass/15 text-brassLight" : "border-white/10 bg-white/5 text-gb-muted hover:text-paper"}`}>
+                              : on ? "border-brassLight/60 bg-brass/15 text-brassLight" : "border-hairline/10 bg-elevate/5 text-gb-muted hover:text-paper"}`}>
                             {st === "done" ? <><Check className="h-3 w-3" /> Equipped</>
                               : st === "error" ? <><AlertCircle className="h-3 w-3" /> Skipped</>
                               : on ? <><Check className="h-3 w-3" /> Added · {equipEth(m.price)}</>
@@ -454,7 +454,7 @@ export default function MintAgentPage() {
                     {/* arrows + position dots (brass dot = equipped) */}
                     <div className="mt-2 flex items-center justify-center gap-3">
                       <button onClick={() => cycleMcp(-1)} aria-label="Previous capability"
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-elevate/5 border border-hairline/10 hover:bg-elevate/10 transition-colors">
                         <ChevronLeft className="h-4 w-4" />
                       </button>
                       <div className="flex items-center gap-1.5">
@@ -465,7 +465,7 @@ export default function MintAgentPage() {
                         ))}
                       </div>
                       <button onClick={() => cycleMcp(1)} aria-label="Next capability"
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                        className="flex h-8 w-8 items-center justify-center rounded-full bg-elevate/5 border border-hairline/10 hover:bg-elevate/10 transition-colors">
                         <ChevronRight className="h-4 w-4" />
                       </button>
                     </div>
@@ -486,7 +486,7 @@ export default function MintAgentPage() {
                     const live = !!m.contract;
                     const st = equipState[m.slug];
                     return (
-                      <div key={m.slug} className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors ${on ? "border-brassLight/50 bg-brass/[0.06]" : "border-white/10 bg-white/5"}`}>
+                      <div key={m.slug} className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors ${on ? "border-brassLight/50 bg-brass/[0.06]" : "border-hairline/10 bg-elevate/5"}`}>
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-black/30 ring-1 ring-brassLight/40">
                           <McpLogo card={{ id: m.slug, label: m.label, logo: m.logo, icon: m.icon, fill: m.fill } as any} className="h-5 w-5" fill />
                         </span>
@@ -500,7 +500,7 @@ export default function MintAgentPage() {
                           className={`shrink-0 inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-[11px] transition-colors disabled:opacity-40 ${
                             st === "done" ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
                             : st === "error" ? "border-red-400/50 bg-red-400/10 text-red-300"
-                            : on ? "border-brassLight/60 bg-brass/15 text-brassLight" : "border-white/10 bg-white/5 text-gb-muted hover:text-paper"}`}>
+                            : on ? "border-brassLight/60 bg-brass/15 text-brassLight" : "border-hairline/10 bg-elevate/5 text-gb-muted hover:text-paper"}`}>
                           {st === "done" ? <><Check className="h-3 w-3" /> Equipped</>
                             : st === "error" ? <><AlertCircle className="h-3 w-3" /> Skipped</>
                             : on ? <><Check className="h-3 w-3" /> Added</>

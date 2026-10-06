@@ -36,7 +36,7 @@ export default function LedgerPage() {
           <a href="/verify" className="text-brassLight/80 hover:text-brassLight"> /verify</a>. No trust required.
         </p>
 
-        <div className="mt-6 rounded-lg border border-white/10 bg-black/40 p-3">
+        <div className="mt-6 rounded-lg border border-hairline/10 bg-black/40 p-3">
           <div className="flex items-center gap-1.5 text-[11px] text-gb-muted"><Terminal className="h-3.5 w-3.5 text-brassLight/70" /> verify any receipt below</div>
           <pre className="mt-1.5 overflow-x-auto font-mono text-[11px] text-emerald-300/90"><code>{`pip install recompute-kit-verify\nrecompute-verify receipt.json   # → verified-good`}</code></pre>
         </div>
@@ -46,12 +46,12 @@ export default function LedgerPage() {
           {err && <p className="text-[13px] text-amber-300/80">Couldn&apos;t reach the gateway ledger right now — that&apos;s &quot;couldn&apos;t check&quot;, not a failure. Retry shortly.</p>}
           {entries?.length === 0 && <p className="text-[13px] text-gb-muted">No attested actions yet.</p>}
           {entries?.map((e) => (
-            <div key={e.inputHash} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+            <div key={e.inputHash} className="rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-400/15 text-emerald-300"><Check className="h-3.5 w-3.5" /></span>
                   <span className="font-display text-[15px] text-paper">agent <span className="text-paper/50">#{e.agentId}</span></span>
-                  <span className="rounded-md border border-white/10 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-paper/50">{e.actionType}</span>
+                  <span className="rounded-md border border-hairline/10 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-paper/50">{e.actionType}</span>
                   <span className="rounded-md border border-emerald-400/30 bg-emerald-400/[0.06] px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-emerald-300/80">{e.verdict}</span>
                 </div>
                 <span className="font-mono text-[10px] text-paper/40">{new Date(e.timestamp * 1000).toISOString().slice(0, 10)}</span>

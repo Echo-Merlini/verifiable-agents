@@ -92,7 +92,7 @@ export default function ConformancePage() {
         {/* 01 — drop the endpoint */}
         <Step n="01" t="Drop your MCP endpoint">
           <div className="flex flex-wrap gap-2">
-            <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-white/15 bg-deepink/50 px-3">
+            <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-hairline/15 bg-deepink/50 px-3">
               <Search className="h-4 w-4 shrink-0 text-paper/40" />
               <input value={endpoint} onChange={(e) => setEndpoint(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && submit()} placeholder="https://your-mcp.example/mcp"
@@ -120,7 +120,7 @@ export default function ConformancePage() {
                     <button key={m.slug} onClick={() => submit(m.endpoint!)} disabled={phase === "grading"}
                       title={m.endpoint!}
                       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-[11px] transition disabled:opacity-50 ${
-                        endpoint === m.endpoint ? "border-brassLight/60 bg-brassLight/10 text-paper" : "border-white/12 bg-deepink/50 text-paper/70 hover:border-white/25 hover:text-paper"}`}>
+                        endpoint === m.endpoint ? "border-brassLight/60 bg-brassLight/10 text-paper" : "border-hairline/12 bg-deepink/50 text-paper/70 hover:border-hairline/25 hover:text-paper"}`}>
                       <span className={`h-1.5 w-1.5 rounded-full ${isRec ? "bg-emerald-400" : "bg-brassLight"}`} />
                       {m.name}
                       <span className="text-paper/35">{r}/{a ?? "·"}</span>
@@ -136,7 +136,7 @@ export default function ConformancePage() {
         {/* 02 — detect + grade */}
         {phase !== "idle" && (
           <Step n="02" t="Detect & grade — re-derive each tool from the rules">
-            <div className="rounded-xl border border-white/10 bg-deepink/50 p-4">
+            <div className="rounded-xl border border-hairline/10 bg-deepink/50 p-4">
               {phase === "grading" && <div className="flex items-center gap-2 text-paper/50"><Loader2 className="h-4 w-4 animate-spin" /> introspecting {hostOf(endpoint)} + recomputing…</div>}
               {phase === "done" && result?.error && <div className="text-[13px] text-red-300">{result.error}</div>}
               {phase === "done" && !result?.error && (
@@ -180,17 +180,17 @@ export default function ConformancePage() {
               <div className="rounded-2xl border border-emerald-400/25 bg-gradient-to-b from-ink to-deepink p-5" style={{ boxShadow: "0 20px 50px -30px rgba(76,190,147,.35)" }}>
                 <div className="mb-3 font-mono text-[10.5px] uppercase tracking-[0.15em] text-paper/40">Now in the marketplace</div>
                 <div className="flex items-center gap-3.5">
-                  <div className="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-ink font-mono text-[11px] font-semibold text-brassLight">{hostOf(endpoint).slice(0, 3).toUpperCase()}</div>
+                  <div className="grid h-11 w-11 place-items-center rounded-xl border border-hairline/10 bg-ink font-mono text-[11px] font-semibold text-brassLight">{hostOf(endpoint).slice(0, 3).toUpperCase()}</div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 font-semibold">{labelOf(endpoint)}<VerificationBadge status="recomputable" /></div>
                     <div className="mt-1.5 flex flex-wrap gap-1.5">
                       <span className={tagPillClass("Community", "sm")}>Community</span>
-                      <span className="rounded-full border border-white/10 bg-white/[0.02] px-2 py-[2px] text-[10.5px] text-paper/55">{result?.recomputable} recomputable tools</span>
+                      <span className="rounded-full border border-hairline/10 bg-elevate/[0.02] px-2 py-[2px] text-[10.5px] text-paper/55">{result?.recomputable} recomputable tools</span>
                     </div>
                   </div>
                   <Link href="/marketplace" className="inline-flex shrink-0 items-center gap-1 font-mono text-[11px] uppercase tracking-wide text-brassLight/80 hover:text-brassLight">view <ArrowRight className="h-3 w-3" /></Link>
                 </div>
-                <div className="mt-4 border-t border-white/[0.06] pt-3 font-mono text-[11px] text-paper/45">graded against public rules · {result?.recomputable}/{result?.recomputable} tools reproduced · re-run it yourself</div>
+                <div className="mt-4 border-t border-hairline/[0.06] pt-3 font-mono text-[11px] text-paper/45">graded against public rules · {result?.recomputable}/{result?.recomputable} tools reproduced · re-run it yourself</div>
               </div>
             )}
             {!listed && (
@@ -201,7 +201,7 @@ export default function ConformancePage() {
               </div>
             )}
             {result?.receipt && (
-              <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-deepink/50 p-4">
+              <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-hairline/10 bg-deepink/50 p-4">
                 <button onClick={() => downloadReceipt(result.receipt, listed)}
                   className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-brassLight/40 bg-brassLight/10 px-4 py-2.5 font-display text-[13px] font-semibold text-brassLight transition hover:bg-brassLight/20">
                   <Download className="h-4 w-4" /> Download receipt
@@ -216,7 +216,7 @@ export default function ConformancePage() {
         )}
 
         {/* the recipe registry note */}
-        <div className="mt-9 rounded-xl border border-white/[0.06] bg-white/[0.015] p-4 text-[13px] text-paper/60">
+        <div className="mt-9 rounded-xl border border-hairline/[0.06] bg-elevate/[0.015] p-4 text-[13px] text-paper/60">
           <span className="font-semibold text-paper">The registry is the moat.</span> A tool is
           <span className="text-emerald-300"> Recomputable</span> only if the recompute-kit can independently derive its
           output from public rules (EIP-137 namehash, resolver ABI, keccak…). Every recipe we add makes one more slice of

@@ -85,7 +85,7 @@ export default function AdminGenesisPage() {
         ) : (
           <div className="space-y-6">
             {/* status */}
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm grid grid-cols-2 gap-2">
+            <div className="rounded-xl border border-hairline/10 bg-elevate/[0.03] p-4 text-sm grid grid-cols-2 gap-2">
               <Stat label="Phase" value={GENESIS_PHASE_LABEL[Number(phase ?? 0)]} />
               <Stat label="Supply" value={`${totalSupply ?? 0n}${maxSupply && (maxSupply as bigint) > 0n ? ` / ${maxSupply}` : " / ∞"}`} />
               <Stat label="Public price" value={publicPrice !== undefined ? `${formatEther(publicPrice as bigint)} ETH` : "…"} />
@@ -100,7 +100,7 @@ export default function AdminGenesisPage() {
                   <button key={p} disabled={!!busy}
                     onClick={() => write(`setPhase ${p}`, "setPhase", [GENESIS_PHASE[p]])}
                     className={`flex-1 py-2 rounded-lg text-sm ${
-                      Number(phase ?? 0) === GENESIS_PHASE[p] ? "bg-amber-600" : "bg-white/10 hover:bg-white/15"}`}>
+                      Number(phase ?? 0) === GENESIS_PHASE[p] ? "bg-amber-600" : "bg-elevate/10 hover:bg-elevate/15"}`}>
                     {p}
                   </button>
                 ))}
@@ -124,7 +124,7 @@ export default function AdminGenesisPage() {
             {/* allowlist root */}
             <Section title="Allowlist root">
               <button disabled={!!busy} onClick={syncRootFromGateway}
-                className="w-full py-2 rounded-lg bg-white/10 hover:bg-white/15 text-sm">
+                className="w-full py-2 rounded-lg bg-elevate/10 hover:bg-elevate/15 text-sm">
                 {busy === "setAllowlistRoot" ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Sync root from gateway allowlist"}
               </button>
               <p className="text-xs text-paper/40 mt-1">
@@ -162,7 +162,7 @@ function Row({ input, setInput, placeholder, onClick, busy, label }: {
   return (
     <div className="flex gap-2">
       <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={placeholder}
-        className="flex-1 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm outline-none focus:border-amber-400/50" />
+        className="flex-1 rounded-lg border border-hairline/10 bg-elevate/[0.03] px-3 py-2 text-sm outline-none focus:border-amber-400/50" />
       <button disabled={busy} onClick={onClick}
         className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-sm disabled:opacity-40">
         {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : label}

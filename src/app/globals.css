@@ -22,6 +22,9 @@
   :root {
     --radius: 1rem;
 
+    --c-elevate:    255 255 255;   /* lift a surface: white on dark */
+    --c-hairline:   255 255 255;   /* draw an edge: white on dark */
+
     --c-ink:        23 25 31;      /* #17191F */
     --c-deepink:    12 13 17;      /* #0C0D11 */
     --c-slate:      92 97 109;     /* #5C616D */
@@ -52,6 +55,9 @@
   }
 
   [data-theme="light"] {
+    --c-elevate:    23 25 31;      /* lift a surface: ink on light */
+    --c-hairline:   23 25 31;      /* draw an edge: ink on light */
+
     --c-ink:        246 246 248;
     --c-deepink:    255 255 255;
     --c-slate:      110 116 128;
@@ -132,37 +138,24 @@
     border-color: rgb(var(--c-gb-border));
   }
 
-  /* ── white/N surfaces ────────────────────────────────────────────────────
-     These are the single biggest cause of light looking unfinished: on a dark
-     ground border-white/10 is a hairline and bg-white/5 is a raised panel, but
-     over white both are nothing at all. The /mint "All capabilities" rows lost
-     their box entirely this way — border-white/10 + bg-white/5 on white.
+  /* The white/N overrides that used to live here are gone: those utilities are now
+     bg-elevate/N and border-hairline/N, which carry the theme in the token itself.
+     bg-black/N below is still a raw utility and still needs the scoped rule. */
 
-     They are elevation, not the colour white, so in light they become the same
-     neutral border and surface tokens the palette already defines. Doing it by
-     class covers all ~300 call sites at once; the alternative is a codemod to
-     semantic names, which is the better end state but a much larger diff. */
-  [data-theme="light"] .border-white\/30,
-  [data-theme="light"] .border-white\/15,
-  [data-theme="light"] .border-white\/12,
-  [data-theme="light"] .border-white\/10,
-  [data-theme="light"] .border-white\/8,
-  [data-theme="light"] .border-white\/\[0\.06\],
-  [data-theme="light"] .ring-white\/10 {
-    border-color: rgb(var(--c-gb-border));
-  }
-  [data-theme="light"] .ring-white\/10 { --tw-ring-color: rgb(var(--c-gb-border)); }
-
-  [data-theme="light"] .bg-white\/15,
-  [data-theme="light"] .bg-white\/10,
-  [data-theme="light"] .bg-white\/8,
-  [data-theme="light"] .bg-white\/5,
-  [data-theme="light"] .bg-white\/4,
-  [data-theme="light"] .bg-white\/\[0\.02\],
-  [data-theme="light"] .bg-white\/\[0\.03\],
-  [data-theme="light"] .bg-white\/\[0\.04\] {
-    background-color: rgb(var(--c-gb-surface));
-  }
+  /* ── status text on its own tint ──────────────────────────────────────────
+     The 200/300 shades are tuned to sit on a dark ground. On a light one they
+     land on their own 10-20% tint — pale on pale. The /console confidence pill
+     was text-amber-200 on bg-amber-400/10 and read as grey on grey.
+     Darker shades of the same hue keep the semantics and regain the contrast. */
+  [data-theme="light"] .text-amber-200,
+  [data-theme="light"] .text-amber-300  { color: rgb(146 94 24); }
+  [data-theme="light"] .text-emerald-200,
+  [data-theme="light"] .text-emerald-300 { color: rgb(4 108 78); }
+  [data-theme="light"] .text-red-200,
+  [data-theme="light"] .text-red-300     { color: rgb(159 36 36); }
+  [data-theme="light"] .text-zinc-500,
+  [data-theme="light"] .text-zinc-400    { color: rgb(var(--c-gb-muted)); }
+  [data-theme="light"] .text-zinc-600    { color: rgb(var(--c-gb-faint)); }
 
   /* Logo chips sat on bg-black/30: a grey blob once the page is white. */
   [data-theme="light"] .bg-black\/30,

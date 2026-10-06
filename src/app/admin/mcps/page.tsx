@@ -343,7 +343,7 @@ export default function McpsPage() {
               </thead>
               <tbody className="divide-y divide-gb-border">
                 {servers.map(s => (
-                  <tr key={s.id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={s.id} className="hover:bg-elevate/[0.02] transition-colors">
                     <td className="px-5 py-3">
                       <p className="text-xs font-medium text-slate-200">{s.name}</p>
                       {s.description && <p className="text-xs text-gb-muted mt-0.5 truncate max-w-[200px]">{s.description}</p>}

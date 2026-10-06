@@ -21,6 +21,15 @@ const config: Config = {
       // var(--x) holding a hex, Tailwind cannot compose <alpha-value> and every one
       // of those silently loses its transparency. rgb(... / <alpha-value>) keeps them.
       colors: {
+        // Elevation, not colour. On a dark ground you lift a surface with white at a
+        // low alpha and draw a hairline the same way; on a light ground the identical
+        // role wants ink. Keeping the ALPHA and swapping only the channel means the
+        // compositing is unchanged — bg-elevate/5 in dark is byte-for-byte bg-white/5,
+        // because --c-elevate is 255 255 255 there. Replacing these with solid colours
+        // instead would shift every nested panel, since the blend depends on what is behind.
+        elevate:    "rgb(var(--c-elevate) / <alpha-value>)",
+        hairline:   "rgb(var(--c-hairline) / <alpha-value>)",
+
         // Vértice brand palette
         ink:        "rgb(var(--c-ink) / <alpha-value>)",
         deepink:    "rgb(var(--c-deepink) / <alpha-value>)",

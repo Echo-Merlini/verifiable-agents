@@ -93,7 +93,7 @@ function EndpointRow({ service, token }: { service: Service; token: string }) {
     ? "bg-amber-500/15 border-amber-500/30 text-amber-300"
     : service.name === "A2A"
     ? "bg-amber-500/15 border-amber-500/30 text-amber-300"
-    : "bg-white/5 border-white/10 text-paper/50";
+    : "bg-elevate/5 border-hairline/10 text-paper/50";
 
   return (
     <div className="liquid-glass rounded-2xl p-4 space-y-3">
@@ -118,7 +118,7 @@ function EndpointRow({ service, token }: { service: Service; token: string }) {
           </button>
         </div>
       </div>
-      <div className="flex items-center gap-2 bg-white/4 rounded-xl px-3 py-2">
+      <div className="flex items-center gap-2 bg-elevate/4 rounded-xl px-3 py-2">
         <Globe className="w-3.5 h-3.5 text-paper/25 shrink-0" />
         <span className="font-mono text-xs text-paper/60 truncate flex-1">{service.endpoint}</span>
         <CopyButton text={service.endpoint} />
@@ -163,7 +163,7 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
   return (
     <div className="space-y-4">
       <div className="liquid-glass-strong rounded-3xl p-5 flex gap-4">
-        <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0 bg-white/4">
+        <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0 bg-elevate/4">
           {agent.image ? (
             <img src={agent.image} alt={agent.name} className="w-full h-full object-cover" />
           ) : (
@@ -202,7 +202,7 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
               {shortAddr(agent.registry)}
             </span>
             <span className={`rounded-full px-2.5 py-1 text-[10px] border ${
-              agent.active ? "bg-green-500/10 border-green-500/30 text-green-400" : "bg-white/5 border-white/10 text-paper/30"
+              agent.active ? "bg-green-500/10 border-green-500/30 text-green-400" : "bg-elevate/5 border-hairline/10 text-paper/30"
             }`}>
               {agent.active ? "Active" : "Inactive"}
             </span>
@@ -263,7 +263,7 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
 
       <a
         href={`/consult/?registry=${agent.registry}&agentId=${agent.agent_id}`}
-        className="liquid-glass rounded-2xl px-4 py-3 flex items-center gap-2 hover:bg-white/5 transition-colors"
+        className="liquid-glass rounded-2xl px-4 py-3 flex items-center gap-2 hover:bg-elevate/5 transition-colors"
       >
         <Coins className="w-4 h-4 text-amber-300 shrink-0" />
         <span className="text-sm text-paper/70 flex-1">Consult this agent</span>
@@ -482,9 +482,9 @@ export default function UseAgentPage() {
                   <button
                     key={`${a.registry}-${a.agent_id}`}
                     onClick={() => setSelected(a)}
-                    className="w-full liquid-glass-strong rounded-2xl p-4 flex items-center gap-4 hover:bg-white/5 transition-colors text-left"
+                    className="w-full liquid-glass-strong rounded-2xl p-4 flex items-center gap-4 hover:bg-elevate/5 transition-colors text-left"
                   >
-                    <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-white/4">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-elevate/4">
                       {a.image ? (
                         <img src={a.image} alt={a.name} className="w-full h-full object-cover" />
                       ) : (

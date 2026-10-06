@@ -51,7 +51,7 @@ export default function AdminReputationPage() {
                   key={r}
                   onClick={() => setRef(r)}
                   className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm transition ${
-                    active ? "bg-white/[0.08] text-slate-100 ring-1 ring-brass/40" : "bg-white/[0.02] text-gb-muted ring-1 ring-white/[0.05] hover:bg-white/[0.05]"
+                    active ? "bg-elevate/[0.08] text-slate-100 ring-1 ring-brass/40" : "bg-elevate/[0.02] text-gb-muted ring-1 ring-hairline/[0.05] hover:bg-elevate/[0.05]"
                   }`}
                 >
                   <Bot className="h-3.5 w-3.5" /> {a.name || `#${a.agentId}`}

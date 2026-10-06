@@ -275,9 +275,9 @@ function ApprovalCard({
             {!!input.description && <p className="text-paper/80 font-medium leading-snug">{input.description as string}</p>}
             {(!!input.fromChain || !!input.toChain) && (
               <div className="flex items-center gap-2 py-0.5">
-                <span className="px-2 py-0.5 rounded-full bg-white/10 text-paper/70 text-[10px]">{input.fromChain as string}</span>
+                <span className="px-2 py-0.5 rounded-full bg-elevate/10 text-paper/70 text-[10px]">{input.fromChain as string}</span>
                 <span className="text-paper/40">→</span>
-                <span className="px-2 py-0.5 rounded-full bg-white/10 text-paper/70 text-[10px]">{input.toChain as string}</span>
+                <span className="px-2 py-0.5 rounded-full bg-elevate/10 text-paper/70 text-[10px]">{input.toChain as string}</span>
               </div>
             )}
             {(!!input.amountIn || !!input.amountOut) && (
@@ -300,7 +300,7 @@ function ApprovalCard({
             <div className="flex gap-3">
               {!!input.nftImage && (
                 <img src={input.nftImage as string} alt={input.nftName as string}
-                  className="w-16 h-16 rounded-xl object-cover shrink-0 border border-white/10" />
+                  className="w-16 h-16 rounded-xl object-cover shrink-0 border border-hairline/10" />
               )}
               <div className="min-w-0 flex flex-col justify-center">
                 <p className="text-paper/80 font-medium truncate">{input.nftName as string}</p>
@@ -429,7 +429,7 @@ function ApprovalCard({
           <div className="flex flex-wrap gap-1">
             {DECLINE_REASONS.map(r => (
               <button key={r.value} onClick={() => setReason(r.value)}
-                className={"text-[10px] px-2 py-0.5 rounded-full border transition-colors " + (reason === r.value ? "bg-red-500/20 border-red-500/40 text-red-300" : "border-white/10 text-paper/40 hover:text-paper/70")}>
+                className={"text-[10px] px-2 py-0.5 rounded-full border transition-colors " + (reason === r.value ? "bg-red-500/20 border-red-500/40 text-red-300" : "border-hairline/10 text-paper/40 hover:text-paper/70")}>
                 {r.label}
               </button>
             ))}
@@ -465,7 +465,7 @@ function ApprovalCard({
                 Confirm
               </button>
               <button onClick={() => setDeclining(false)} disabled={working}
-                className="px-3 py-1.5 rounded-xl border border-white/10 text-paper/40 hover:text-paper/70 transition-colors">
+                className="px-3 py-1.5 rounded-xl border border-hairline/10 text-paper/40 hover:text-paper/70 transition-colors">
                 Back
               </button>
             </>
@@ -533,10 +533,10 @@ function SuggestionCard({ s, onAccept, onDecline, disabled }: {
   s: Suggestion; onAccept: () => void; onDecline: () => void; disabled?: boolean;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-3 flex flex-col gap-2 text-xs">
+    <div className="rounded-2xl border border-hairline/10 bg-elevate/5 p-3 flex flex-col gap-2 text-xs">
       <div className="flex gap-3">
         {!!s.image && (
-          <img src={s.image} alt={s.name ?? ""} className="w-16 h-16 rounded-xl object-cover shrink-0 border border-white/10" />
+          <img src={s.image} alt={s.name ?? ""} className="w-16 h-16 rounded-xl object-cover shrink-0 border border-hairline/10" />
         )}
         <div className="min-w-0 flex flex-col justify-center">
           <p className="text-paper/80 font-medium truncate">{s.name ?? `#${s.token_id ?? "?"}`}</p>
@@ -773,7 +773,7 @@ export function AgentChat({
   const chatPath = `${chatBase}?registry=${registry}&agentId=${agentId}`;
 
   return (
-    <div className={"flex flex-col gap-2 " + (compact ? "pt-3 border-t border-white/8" : "h-full")}>
+    <div className={"flex flex-col gap-2 " + (compact ? "pt-3 border-t border-hairline/8" : "h-full")}>
       {/* Header row with expand link */}
       <div className="flex items-center justify-between">
         {compact && <span className="text-[10px] text-paper/25 uppercase tracking-widest">Chat</span>}
@@ -785,7 +785,7 @@ export function AgentChat({
       </div>
 
       {/* Messages */}
-      <div className={"flex flex-col gap-2 overflow-y-auto pb-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-white/20 [&::-webkit-scrollbar-thumb]:rounded-full " + (compact ? "max-h-52" : "flex-1 min-h-0")}
+      <div className={"flex flex-col gap-2 overflow-y-auto pb-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-elevate/20 [&::-webkit-scrollbar-thumb]:rounded-full " + (compact ? "max-h-52" : "flex-1 min-h-0")}
         style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,0.2) transparent" }}>
         {messages.length === 0 && (
           <p className="text-[11px] text-paper/25 text-center py-3">Say something…</p>
@@ -822,7 +822,7 @@ export function AgentChat({
               <div key={i} className="flex flex-col items-start gap-1.5 w-full">
                 {!!body && (
                   <div className="flex justify-start max-w-[85%]">
-                    <div className="px-3 py-2 rounded-2xl text-xs leading-relaxed bg-white/8 text-paper/70 rounded-bl-sm">
+                    <div className="px-3 py-2 rounded-2xl text-xs leading-relaxed bg-elevate/8 text-paper/70 rounded-bl-sm">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
@@ -860,11 +860,11 @@ export function AgentChat({
         })}
         {loading && messages[messages.length - 1]?.role !== "approval" && (
           <div className="flex justify-start">
-            <div className="bg-white/8 px-3 py-2.5 rounded-2xl rounded-bl-sm">
+            <div className="bg-elevate/8 px-3 py-2.5 rounded-2xl rounded-bl-sm">
               <div className="flex gap-1 items-center">
-                <span className="w-1.5 h-1.5 bg-white/30 rounded-full animate-bounce [animation-delay:0ms]" />
-                <span className="w-1.5 h-1.5 bg-white/30 rounded-full animate-bounce [animation-delay:150ms]" />
-                <span className="w-1.5 h-1.5 bg-white/30 rounded-full animate-bounce [animation-delay:300ms]" />
+                <span className="w-1.5 h-1.5 bg-elevate/30 rounded-full animate-bounce [animation-delay:0ms]" />
+                <span className="w-1.5 h-1.5 bg-elevate/30 rounded-full animate-bounce [animation-delay:150ms]" />
+                <span className="w-1.5 h-1.5 bg-elevate/30 rounded-full animate-bounce [animation-delay:300ms]" />
               </div>
             </div>
           </div>
@@ -894,7 +894,7 @@ export function AgentChat({
           onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
           placeholder="Message…"
           disabled={loading}
-          className="flex-1 bg-white/5 border border-white/10 focus:border-white/25 rounded-xl px-3 py-1.5 text-xs text-paper placeholder-white/20 outline-none transition-colors disabled:opacity-50"
+          className="flex-1 bg-elevate/5 border border-hairline/10 focus:border-hairline/25 rounded-xl px-3 py-1.5 text-xs text-paper placeholder-white/20 outline-none transition-colors disabled:opacity-50"
         />
         <button onClick={send} disabled={!input.trim() || loading}
           className="w-7 h-7 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 flex items-center justify-center disabled:opacity-30 transition-colors shrink-0">

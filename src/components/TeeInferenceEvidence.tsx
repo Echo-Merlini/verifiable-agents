@@ -110,7 +110,7 @@ export function TeeInferenceEvidence({ onResult }: { onResult?: (r: TeeSummary) 
     : <span className="text-[13px] leading-none">◑</span>;
 
   return (
-    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+    <div className="mt-4 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Cpu className="h-5 w-5 text-brassLight/80" />
@@ -136,7 +136,7 @@ export function TeeInferenceEvidence({ onResult }: { onResult?: (r: TeeSummary) 
         </button>
         {ran && (
           <button onClick={() => recompute(!tampered)} disabled={running}
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-[12px] text-paper/70 hover:border-white/30 disabled:opacity-50">
+            className="inline-flex items-center gap-1.5 rounded-full border border-hairline/15 px-3 py-1.5 text-[12px] text-paper/70 hover:border-hairline/30 disabled:opacity-50">
             {tampered ? <><RotateCcw className="h-3.5 w-3.5" /> restore</> : <><Wand2 className="h-3.5 w-3.5" /> tamper one byte</>}
           </button>
         )}

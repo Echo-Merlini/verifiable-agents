@@ -124,7 +124,7 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
       </div>
 
       {/* Equip flow — sits directly under the pinned tags/price cluster */}
-      <div className="mt-3 border-t border-white/[0.06] pt-3">
+      <div className="mt-3 border-t border-hairline/[0.06] pt-3">
         {txHash ? (
           <div className="flex items-center gap-2 text-sm text-emerald-300">
             <Check className="h-4 w-4" /> Attached to agent #{selected.tokenId}
@@ -136,7 +136,7 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
           <button
             onClick={() => setEquipping(true)}
             disabled={!live}
-            className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-brass/90 px-3 py-2 text-sm font-medium text-white transition enabled:hover:bg-brass disabled:cursor-not-allowed disabled:bg-white/[0.04] disabled:text-zinc-500"
+            className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-brass/90 px-3 py-2 text-sm font-medium text-white transition enabled:hover:bg-brass disabled:cursor-not-allowed disabled:bg-elevate/[0.04] disabled:text-zinc-500"
           >
             {live ? <><Sparkles className="h-4 w-4" /> Equip an agent</> : <><Lock className="h-4 w-4" /> Launching on mainnet</>}
           </button>
@@ -146,7 +146,7 @@ function CapabilityCard({ mcp, agents }: { mcp: PremiumMcp; agents: MarketAgent[
             <select
               value={agentRef}
               onChange={(e) => setAgentRef(e.target.value)}
-              className="w-full rounded-lg bg-black/30 px-3 py-2 text-sm text-zinc-200 ring-1 ring-white/[0.08] focus:outline-none focus:ring-brass/40"
+              className="w-full rounded-lg bg-black/30 px-3 py-2 text-sm text-zinc-200 ring-1 ring-hairline/[0.08] focus:outline-none focus:ring-brass/40"
             >
               {agents.map((a) => (
                 <option key={`${a.registry}:${a.agentId}`} value={`${a.registry}:${a.agentId}`}>

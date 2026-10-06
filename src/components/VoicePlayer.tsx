@@ -39,7 +39,7 @@ export default function VoicePlayer({
   const frac = dur ? t / dur : 0;
 
   return (
-    <div className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/[0.03] py-1.5 pl-1.5 pr-4">
+    <div className="inline-flex items-center gap-3 rounded-full border border-hairline/15 bg-elevate/[0.03] py-1.5 pl-1.5 pr-4">
       <audio
         ref={audioRef}
         src={src}

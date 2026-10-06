@@ -81,13 +81,13 @@ export default function MyAgents() {
               const anchored = !!(b && b.anchor);
               const keyEpoch = b ? (b.owner_authorization?.in_force_key_epoch ?? 0) : "—";
               return (
-                <div key={key} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                <div key={key} className="rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-4">
                   <div className="flex items-center gap-3">
                     {a.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={a.image} alt="" className="h-12 w-12 rounded-xl object-cover" onError={(e) => ((e.target as HTMLImageElement).style.display = "none")} />
                     ) : (
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5"><KeyRound className="h-5 w-5 text-brassLight/70" /></div>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-elevate/5"><KeyRound className="h-5 w-5 text-brassLight/70" /></div>
                     )}
                     <div className="min-w-0">
                       <p className="truncate font-display text-[15px] text-paper">{a.name || `Agent #${a.agent_id}`}</p>

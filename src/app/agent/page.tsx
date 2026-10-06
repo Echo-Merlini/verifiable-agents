@@ -104,8 +104,8 @@ function StepPill({
     <div className="flex items-center gap-2">
       <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
         done ? "bg-green-500/20 border border-green-500/40 text-green-400"
-             : active ? "bg-white/15 border border-white/30 text-paper"
-             : "bg-white/4 border border-white/10 text-paper/25"
+             : active ? "bg-elevate/15 border border-hairline/30 text-paper"
+             : "bg-elevate/4 border border-hairline/10 text-paper/25"
       }`}>
         {done ? <Check className="w-3.5 h-3.5" /> : number}
       </div>
@@ -164,7 +164,7 @@ function Field({
   label: string; value: string; onChange: (v: string) => void;
   placeholder?: string; textarea?: boolean;
 }) {
-  const cls = "w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl px-4 py-2.5 text-sm text-paper placeholder-white/20 outline-none transition-colors";
+  const cls = "w-full bg-black/40 border border-hairline/10 focus:border-hairline/30 rounded-xl px-4 py-2.5 text-sm text-paper placeholder-white/20 outline-none transition-colors";
   return (
     <div className="space-y-1.5">
       <label className="text-[10px] uppercase tracking-widest text-paper/40">{label}</label>
@@ -194,7 +194,7 @@ function EnsNameField({ address, value, onChange }: {
     return (
       <div className="space-y-1.5">
         <label className="text-[10px] uppercase tracking-widest text-paper/40">ENS Name (optional)</label>
-        <div className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl px-4 py-2.5">
+        <div className="flex items-center gap-2 bg-black/40 border border-hairline/10 rounded-xl px-4 py-2.5">
           <Loader2 className="w-3.5 h-3.5 text-paper/30 animate-spin" />
           <span className="text-sm text-paper/30">Detecting ENS names…</span>
         </div>
@@ -206,7 +206,7 @@ function EnsNameField({ address, value, onChange }: {
     return (
       <div className="space-y-1.5">
         <label className="text-[10px] uppercase tracking-widest text-paper/40">ENS Name (optional)</label>
-        <div className="flex items-center gap-2 bg-black/20 border border-white/6 rounded-xl px-4 py-2.5 opacity-50">
+        <div className="flex items-center gap-2 bg-black/20 border border-hairline/6 rounded-xl px-4 py-2.5 opacity-50">
           <Globe className="w-3.5 h-3.5 text-paper/20 shrink-0" />
           <span className="text-sm text-paper/30">No ENS names detected in this wallet</span>
         </div>
@@ -231,7 +231,7 @@ function EnsNameField({ address, value, onChange }: {
         <select
           value={value}
           onChange={e => onChange(e.target.value)}
-          className="w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl pl-10 pr-10 py-2.5 text-sm text-paper outline-none transition-colors appearance-none cursor-pointer"
+          className="w-full bg-black/40 border border-hairline/10 focus:border-hairline/30 rounded-xl pl-10 pr-10 py-2.5 text-sm text-paper outline-none transition-colors appearance-none cursor-pointer"
         >
           <option value="">— None —</option>
           {names.map(n => (
@@ -554,9 +554,9 @@ export default function AgentBridgePage() {
       )}
 
       {/* ── Nav ────────────────────────────────────────── */}
-      <div className="relative z-10 px-5 py-4 flex items-center justify-between border-b border-white/8">
+      <div className="relative z-10 px-5 py-4 flex items-center justify-between border-b border-hairline/8">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-elevate/10 flex items-center justify-center">
             <Bot className="w-4 h-4 text-paper/70" />
           </div>
           <div>
@@ -571,7 +571,7 @@ export default function AgentBridgePage() {
       {mounted && !isConnected && (
         <div className="relative z-10 flex flex-col items-center justify-center flex-1 min-h-[80vh] p-8 text-center">
           <div className="liquid-glass-strong rounded-3xl p-10 max-w-md w-full space-y-6">
-            <div className="w-16 h-16 rounded-3xl bg-white/8 border border-white/10 flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 rounded-3xl bg-elevate/8 border border-hairline/10 flex items-center justify-center mx-auto">
               <Bot className="w-7 h-7 text-paper/40" />
             </div>
             <div>
@@ -595,7 +595,7 @@ export default function AgentBridgePage() {
             >
               <Wallet className="w-4 h-4" />
               <span>Connect Wallet</span>
-              <div className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center">
+              <div className="w-6 h-6 rounded-full bg-elevate/15 flex items-center justify-center">
                 <ArrowRight className="w-3.5 h-3.5" />
               </div>
             </button>
@@ -608,11 +608,11 @@ export default function AgentBridgePage() {
         <div className="relative z-10 flex flex-col flex-1">
 
           {/* Step bar */}
-          <div className="px-5 py-4 flex items-center gap-4 border-b border-white/6">
+          <div className="px-5 py-4 flex items-center gap-4 border-b border-hairline/6">
             {STEPS.map((s, i) => (
               <div key={s.key} className="flex items-center gap-3">
                 <StepPill number={i + 1} label={s.label} active={step === s.key} done={i < stepIdx} />
-                {i < STEPS.length - 1 && <div className="w-8 h-px bg-white/10 hidden sm:block" />}
+                {i < STEPS.length - 1 && <div className="w-8 h-px bg-elevate/10 hidden sm:block" />}
               </div>
             ))}
           </div>
@@ -622,9 +622,9 @@ export default function AgentBridgePage() {
             <div className="flex flex-col lg:flex-row flex-1">
 
               {/* Left info panel */}
-              <div className="w-full lg:w-64 xl:w-72 shrink-0 p-5 lg:border-r border-white/8">
+              <div className="w-full lg:w-64 xl:w-72 shrink-0 p-5 lg:border-r border-hairline/8">
                 <div className="liquid-glass-strong rounded-3xl p-5 space-y-4">
-                  <div className="w-10 h-10 rounded-2xl bg-white/8 border border-white/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-2xl bg-elevate/8 border border-hairline/10 flex items-center justify-center">
                     <Bot className="w-5 h-5 text-paper/40" />
                   </div>
                   <div>
@@ -639,7 +639,7 @@ export default function AgentBridgePage() {
                       <button
                         onClick={() => setCollectionFilter("")}
                         className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors ${
-                          !collectionFilter ? "bg-white/10 text-paper" : "text-paper/50 hover:bg-white/5"
+                          !collectionFilter ? "bg-elevate/10 text-paper" : "text-paper/50 hover:bg-elevate/5"
                         }`}
                       >
                         All collections
@@ -649,7 +649,7 @@ export default function AgentBridgePage() {
                           key={c}
                           onClick={() => setCollectionFilter(c)}
                           className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors flex items-center justify-between gap-2 ${
-                            collectionFilter === c ? "bg-white/10 text-paper" : "text-paper/50 hover:bg-white/5"
+                            collectionFilter === c ? "bg-elevate/10 text-paper" : "text-paper/50 hover:bg-elevate/5"
                           }`}
                         >
                           <span className="truncate">{c}</span>
@@ -663,12 +663,12 @@ export default function AgentBridgePage() {
                     </div>
                   )}
                   {unownedCollections.length > 0 && (
-                    <div className="space-y-1 pt-3 border-t border-white/6">
+                    <div className="space-y-1 pt-3 border-t border-hairline/6">
                       <p className="text-[10px] uppercase tracking-widest text-paper/20 px-1">Also supported</p>
                       {unownedCollections.map(c => (
                         <div key={c.address} className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-paper/25">
                           <span className="text-xs truncate">{c.name}</span>
-                          <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded-full bg-white/4 text-paper/20 border border-white/6 whitespace-nowrap">no NFT</span>
+                          <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded-full bg-elevate/4 text-paper/20 border border-hairline/6 whitespace-nowrap">no NFT</span>
                         </div>
                       ))}
                     </div>
@@ -682,10 +682,10 @@ export default function AgentBridgePage() {
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                     {[...Array(10)].map((_, i) => (
                       <div key={i} className="liquid-glass rounded-2xl overflow-hidden">
-                        <div className="aspect-square bg-white/5 animate-pulse" />
+                        <div className="aspect-square bg-elevate/5 animate-pulse" />
                         <div className="p-3 space-y-1.5">
-                          <div className="h-3 w-3/4 rounded-full bg-white/5 animate-pulse" />
-                          <div className="h-2.5 w-1/2 rounded-full bg-white/4 animate-pulse" />
+                          <div className="h-3 w-3/4 rounded-full bg-elevate/5 animate-pulse" />
+                          <div className="h-2.5 w-1/2 rounded-full bg-elevate/4 animate-pulse" />
                         </div>
                       </div>
                     ))}
@@ -697,14 +697,14 @@ export default function AgentBridgePage() {
                   </div>
                 )}
                 {nftsSource === "onchain" && (
-                  <div className="rounded-2xl px-4 py-2 border border-white/8 bg-white/3 mb-4 flex items-center gap-2">
+                  <div className="rounded-2xl px-4 py-2 border border-hairline/8 bg-elevate/3 mb-4 flex items-center gap-2">
                     <span className="text-xs text-paper/30">Showing NFTs from onboarded collections · on-chain</span>
                   </div>
                 )}
                 {!nftsLoading && filtered.length === 0 && nonEnumerableCollections.length === 0 && (
                   <div className="space-y-8">
                     <div className="flex flex-col items-center justify-center py-12 gap-3 text-center">
-                      <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-2xl bg-elevate/5 border border-hairline/8 flex items-center justify-center">
                         <Bot className="w-5 h-5 text-paper/20" />
                       </div>
                       <p className="text-paper/30 text-sm">No supported NFTs in this wallet.</p>
@@ -717,7 +717,7 @@ export default function AgentBridgePage() {
                           {unownedCollections.map(c => (
                             <div key={c.address} className="liquid-glass rounded-2xl p-4 space-y-3">
                               <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-xl bg-white/6 flex items-center justify-center shrink-0">
+                                <div className="w-9 h-9 rounded-xl bg-elevate/6 flex items-center justify-center shrink-0">
                                   <Bot className="w-4 h-4 text-paper/25" />
                                 </div>
                                 <div className="min-w-0">
@@ -730,7 +730,7 @@ export default function AgentBridgePage() {
                                 href={`https://opensea.io/assets/ethereum/${c.address}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-white/4 hover:bg-white/8 transition-colors text-xs text-paper/40 hover:text-paper/70"
+                                className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-elevate/4 hover:bg-elevate/8 transition-colors text-xs text-paper/40 hover:text-paper/70"
                               >
                                 View on OpenSea <ArrowRight className="w-3 h-3" />
                               </a>
@@ -745,7 +745,7 @@ export default function AgentBridgePage() {
                 {!nftsLoading && nonEnumerableCollections.length > 0 && (
                   <div className="mb-4 space-y-2">
                     {nonEnumerableCollections.map(col => (
-                      <div key={col.contractAddress} className="rounded-2xl p-4 border border-white/8 bg-white/3">
+                      <div key={col.contractAddress} className="rounded-2xl p-4 border border-hairline/8 bg-elevate/3">
                         <p className="text-sm font-medium text-paper mb-1">{col.collectionName}</p>
                         <p className="text-xs text-paper/40 mb-3">This collection doesn't support automatic enumeration. Enter your token ID to continue.</p>
                         <div className="flex gap-2">
@@ -756,7 +756,7 @@ export default function AgentBridgePage() {
                             value={manualTokenId[col.contractAddress] || ""}
                             onChange={e => setManualTokenId(s => ({ ...s, [col.contractAddress]: e.target.value }))}
                             onKeyDown={e => e.key === "Enter" && handleManualLookup(col.contractAddress)}
-                            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-paper placeholder-white/20 focus:outline-none focus:border-white/20"
+                            className="flex-1 bg-elevate/5 border border-hairline/10 rounded-lg px-3 py-1.5 text-sm text-paper placeholder-white/20 focus:outline-none focus:border-hairline/20"
                           />
                           <button
                             onClick={() => handleManualLookup(col.contractAddress)}
@@ -779,9 +779,9 @@ export default function AgentBridgePage() {
                     <button
                       key={`${nft.contractAddress}-${nft.tokenId}`}
                       onClick={() => handleSelect(nft)}
-                      className="liquid-glass rounded-2xl overflow-hidden text-left hover:bg-white/8 hover:scale-[1.02] transition-all group"
+                      className="liquid-glass rounded-2xl overflow-hidden text-left hover:bg-elevate/8 hover:scale-[1.02] transition-all group"
                     >
-                      <div className="aspect-square bg-white/4 relative overflow-hidden">
+                      <div className="aspect-square bg-elevate/4 relative overflow-hidden">
                         {nft.image ? (
                           <img src={nft.image} alt={nft.name}
                             onError={(e) => handleImageError(e, nft.contractAddress, nft.tokenId)}
@@ -810,7 +810,7 @@ export default function AgentBridgePage() {
               {/* NFT preview */}
               <div className="w-full lg:w-72 xl:w-80 shrink-0">
                 <div className="liquid-glass-strong rounded-3xl overflow-hidden">
-                  <div className="aspect-square bg-white/4">
+                  <div className="aspect-square bg-elevate/4">
                     {selected.image ? (
                       <img src={selected.image} alt={selected.name}
                         onError={(e) => handleImageError(e, selected.contractAddress, selected.tokenId)}
@@ -850,7 +850,7 @@ export default function AgentBridgePage() {
                     placeholder="What does this agent do?" textarea />
                   <EnsNameField address={address} value={ensName} onChange={setEnsName} />
 
-                  <div className="h-px bg-white/8" />
+                  <div className="h-px bg-elevate/8" />
                   <p className="text-[10px] uppercase tracking-widest text-paper/30">AI Services</p>
                   <Field label="MCP Endpoint" value={mcpEndpoint} onChange={setMcpEndpoint}
                     placeholder="https://mcp.myagent.com/" />
@@ -865,14 +865,14 @@ export default function AgentBridgePage() {
 
                   {(personalities as any[]).length > 0 && (
                     <>
-                      <div className="h-px bg-white/8" />
+                      <div className="h-px bg-elevate/8" />
                       <p className="text-[10px] uppercase tracking-widest text-paper/30">AI Personality</p>
                       <div className="space-y-1.5">
                         <label className="text-[10px] uppercase tracking-widest text-paper/40">Personality</label>
                         <select
                           value={personalityId}
                           onChange={e => setPersonalityId(e.target.value)}
-                          className="w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl px-4 py-2.5 text-sm text-paper outline-none transition-colors appearance-none cursor-pointer"
+                          className="w-full bg-black/40 border border-hairline/10 focus:border-hairline/30 rounded-xl px-4 py-2.5 text-sm text-paper outline-none transition-colors appearance-none cursor-pointer"
                         >
                           <option value="">— No personality —</option>
                           {(personalities as any[]).map((p: any) => (
@@ -888,7 +888,7 @@ export default function AgentBridgePage() {
                             onChange={e => setCustomPrompt(e.target.value)}
                             rows={3}
                             placeholder="Leave blank to use the personality default system prompt"
-                            className="w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl px-4 py-2.5 text-sm text-paper placeholder-white/20 outline-none transition-colors resize-none font-mono"
+                            className="w-full bg-black/40 border border-hairline/10 focus:border-hairline/30 rounded-xl px-4 py-2.5 text-sm text-paper placeholder-white/20 outline-none transition-colors resize-none font-mono"
                           />
                         </div>
                       )}
@@ -947,7 +947,7 @@ export default function AgentBridgePage() {
                     <span>{mintPrice && mintPrice > BigInt(0)
                       ? `Mint for ${formatEther(mintPrice)} ETH`
                       : "Mint ERC-8004 Agent"}</span>
-                    <div className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-full bg-elevate/15 flex items-center justify-center">
                       <ArrowRight className="w-3.5 h-3.5" />
                     </div>
                   </button>
@@ -960,7 +960,7 @@ export default function AgentBridgePage() {
           {step === "minting" && (
             <div className="flex-1 flex items-center justify-center p-8">
               <div className="liquid-glass-strong rounded-3xl p-10 max-w-sm w-full text-center space-y-6">
-                <div className="w-16 h-16 mx-auto rounded-3xl bg-white/8 border border-white/10 flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto rounded-3xl bg-elevate/8 border border-hairline/10 flex items-center justify-center">
                   <Loader2 className="w-7 h-7 text-paper/50 animate-spin" />
                 </div>
                 <div>
@@ -1016,7 +1016,7 @@ export default function AgentBridgePage() {
                         onError={(e) => handleImageError(e, selected.contractAddress, selected.tokenId)}
                         className="w-14 h-14 rounded-2xl object-cover shrink-0" />
                     ) : (
-                      <div className="w-14 h-14 rounded-2xl bg-white/8 border border-white/10 flex items-center justify-center shrink-0">
+                      <div className="w-14 h-14 rounded-2xl bg-elevate/8 border border-hairline/10 flex items-center justify-center shrink-0">
                         <Bot className="w-6 h-6 text-paper/30" />
                       </div>
                     )}
@@ -1027,7 +1027,7 @@ export default function AgentBridgePage() {
                       </p>
                     </div>
                   </div>
-                  <div className="border-t border-white/8 px-4 py-3 space-y-1">
+                  <div className="border-t border-hairline/8 px-4 py-3 space-y-1">
                     <div className="flex items-center gap-2">
                       <Link2 className="w-3 h-3 text-paper/20 shrink-0" />
                       <span className="font-mono text-[10px] text-paper/30 truncate">

@@ -176,7 +176,7 @@ function ConsultInner() {
           <div className="flex items-center gap-4">
             <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
             <Link href="/verify" className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">Verify</Link>
-            <span className="w-px h-4 bg-white/12" aria-hidden />
+            <span className="w-px h-4 bg-elevate/12" aria-hidden />
             {!address ? (
               <button onClick={openWallet} className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/90 hover:text-brassLight">
                 <Wallet className="h-3.5 w-3.5" /> Connect
@@ -216,21 +216,21 @@ function ConsultInner() {
             {/* Agent selector */}
             <div className="liquid-glass rounded-3xl p-5">
               {myAgents.length > 1 && (
-                <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/8">
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-hairline/8">
                   <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-brassLight/80">Your agent · {ai + 1} of {myAgents.length}</span>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => cycle(-1)} aria-label="Previous agent" className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"><ChevronLeft className="w-4 h-4" /></button>
-                    <button onClick={() => cycle(1)} aria-label="Next agent" className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"><ChevronRight className="w-4 h-4" /></button>
+                    <button onClick={() => cycle(-1)} aria-label="Previous agent" className="flex h-8 w-8 items-center justify-center rounded-full bg-elevate/5 border border-hairline/10 hover:bg-elevate/10 transition-colors"><ChevronLeft className="w-4 h-4" /></button>
+                    <button onClick={() => cycle(1)} aria-label="Next agent" className="flex h-8 w-8 items-center justify-center rounded-full bg-elevate/5 border border-hairline/10 hover:bg-elevate/10 transition-colors"><ChevronRight className="w-4 h-4" /></button>
                   </div>
                 </div>
               )}
               <div className="flex gap-4 items-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={active!.image} alt={active!.name} className="w-16 h-16 rounded-2xl object-cover border border-white/10 shrink-0" style={{ imageRendering: "pixelated" }} />
+                <img src={active!.image} alt={active!.name} className="w-16 h-16 rounded-2xl object-cover border border-hairline/10 shrink-0" style={{ imageRendering: "pixelated" }} />
                 <div className="flex-1 min-w-0">
                   <h1 className="font-display font-medium text-paper text-lg leading-tight truncate">{active!.name}</h1>
                   <p className="text-[11px] text-paper/40 font-mono mt-0.5">#{active!.agent_id} · {active!.registry.toLowerCase() === RKB ? "RKB" : `${active!.registry.slice(0, 6)}…${active!.registry.slice(-4)}`}</p>
-                  <span className={`inline-flex items-center gap-1 mt-1.5 text-[10px] font-mono px-2 py-0.5 rounded-full ${published ? "bg-emerald-400/15 text-emerald-300" : "bg-white/5 text-paper/40"}`}>
+                  <span className={`inline-flex items-center gap-1 mt-1.5 text-[10px] font-mono px-2 py-0.5 rounded-full ${published ? "bg-emerald-400/15 text-emerald-300" : "bg-elevate/5 text-paper/40"}`}>
                     <Rocket className="w-2.5 h-2.5" /> {published ? "Listed on A2A" : "Not listed"}
                   </span>
                 </div>
@@ -253,12 +253,12 @@ function ConsultInner() {
                       <label className="flex-1 block">
                         <span className="text-[10px] uppercase tracking-widest text-paper/40">Consult price (ETH)</span>
                         <input type="number" step="0.0001" min="0" value={priceEth} onChange={(e) => setPriceEth(e.target.value)}
-                          className="mt-1 w-full rounded-xl bg-black/25 border border-white/10 px-3 py-2 text-sm font-mono text-paper outline-none focus:border-brassLight/50" />
+                          className="mt-1 w-full rounded-xl bg-black/25 border border-hairline/10 px-3 py-2 text-sm font-mono text-paper outline-none focus:border-brassLight/50" />
                       </label>
                       <label className="w-28 block">
                         <span className="text-[10px] uppercase tracking-widest text-paper/40">Deliver (h)</span>
                         <input type="number" step="1" min="1" value={windowH} onChange={(e) => setWindowH(Number(e.target.value))}
-                          className="mt-1 w-full rounded-xl bg-black/25 border border-white/10 px-3 py-2 text-sm font-mono text-paper outline-none focus:border-brassLight/50" />
+                          className="mt-1 w-full rounded-xl bg-black/25 border border-hairline/10 px-3 py-2 text-sm font-mono text-paper outline-none focus:border-brassLight/50" />
                       </label>
                     </div>
                   )}
@@ -279,8 +279,8 @@ function ConsultInner() {
                     <div className="space-y-1.5">
                       {minted.map((m) => (
                         <button key={m.id} onClick={() => setEnabledTools((a) => ({ ...a, [m.id]: !a[m.id] }))}
-                          className="w-full flex items-center gap-2.5 text-left liquid-glass rounded-xl px-3 py-2 hover:bg-white/5 transition-colors">
-                          <span className={`w-4 h-4 rounded border shrink-0 flex items-center justify-center ${enabledTools[m.id] ? "bg-brass/25 border-brassLight/50" : "border-white/20"}`}>
+                          className="w-full flex items-center gap-2.5 text-left liquid-glass rounded-xl px-3 py-2 hover:bg-elevate/5 transition-colors">
+                          <span className={`w-4 h-4 rounded border shrink-0 flex items-center justify-center ${enabledTools[m.id] ? "bg-brass/25 border-brassLight/50" : "border-hairline/20"}`}>
                             {enabledTools[m.id] && <Check className="w-3 h-3 text-brass" />}
                           </span>
                           <McpLogo card={m} className="h-5 w-5 shrink-0" />
@@ -297,7 +297,7 @@ function ConsultInner() {
                 {/* Save / Publish */}
                 <div className="flex gap-2">
                   <button onClick={() => save(published)} disabled={saving || signingIn}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl liquid-glass hover:bg-white/5 disabled:opacity-40 text-paper font-display font-medium transition-colors">
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl liquid-glass hover:bg-elevate/5 disabled:opacity-40 text-paper font-display font-medium transition-colors">
                     {saving && !published ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Save
                   </button>
                   <button onClick={() => save(true)} disabled={saving || signingIn || chosenTools.length === 0}

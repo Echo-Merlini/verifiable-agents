@@ -154,16 +154,16 @@ export default function AdminMarketplacePage() {
             })()}
             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
               <label className="text-[11px] text-gb-muted">Slug
-                <input value={slug} onChange={(e) => setSlug(e.target.value)} className="mt-1 w-full rounded-lg bg-black/30 px-2.5 py-1.5 font-mono text-sm text-slate-100 ring-1 ring-white/[0.08]" />
+                <input value={slug} onChange={(e) => setSlug(e.target.value)} className="mt-1 w-full rounded-lg bg-black/30 px-2.5 py-1.5 font-mono text-sm text-slate-100 ring-1 ring-hairline/[0.08]" />
               </label>
               <label className="text-[11px] text-gb-muted">Price (ETH)
-                <input value={priceEth} onChange={(e) => setPriceEth(e.target.value)} className="mt-1 w-full rounded-lg bg-black/30 px-2.5 py-1.5 font-mono text-sm text-slate-100 ring-1 ring-white/[0.08]" />
+                <input value={priceEth} onChange={(e) => setPriceEth(e.target.value)} className="mt-1 w-full rounded-lg bg-black/30 px-2.5 py-1.5 font-mono text-sm text-slate-100 ring-1 ring-hairline/[0.08]" />
               </label>
               <label className="text-[11px] text-gb-muted">payTo
-                <input value={payTo} onChange={(e) => setPayTo(e.target.value)} placeholder="0x…" className="mt-1 w-full rounded-lg bg-black/30 px-2.5 py-1.5 font-mono text-sm text-slate-100 ring-1 ring-white/[0.08]" />
+                <input value={payTo} onChange={(e) => setPayTo(e.target.value)} placeholder="0x…" className="mt-1 w-full rounded-lg bg-black/30 px-2.5 py-1.5 font-mono text-sm text-slate-100 ring-1 ring-hairline/[0.08]" />
               </label>
               <label className="text-[11px] text-gb-muted">Duration (days, 0 = perpetual)
-                <input value={durationDays} onChange={(e) => setDurationDays(e.target.value)} className="mt-1 w-full rounded-lg bg-black/30 px-2.5 py-1.5 font-mono text-sm text-slate-100 ring-1 ring-white/[0.08]" />
+                <input value={durationDays} onChange={(e) => setDurationDays(e.target.value)} className="mt-1 w-full rounded-lg bg-black/30 px-2.5 py-1.5 font-mono text-sm text-slate-100 ring-1 ring-hairline/[0.08]" />
               </label>
             </div>
             <label className="mt-2 flex items-center gap-2 text-xs text-gb-muted">

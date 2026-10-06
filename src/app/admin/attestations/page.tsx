@@ -383,7 +383,7 @@ export default function AttestationsPage() {
               </thead>
               <tbody className="divide-y divide-gb-border">
                 {pageRows.map(row => (
-                  <tr key={row.id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={row.id} className="hover:bg-elevate/[0.02] transition-colors">
                     <td className="px-4 py-2.5">
                       <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${ACTION_COLORS[row.action_type] ?? "text-gb-muted border-gb-border"}`}>
                         {row.action_type}

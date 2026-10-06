@@ -229,7 +229,7 @@ export default function TopupPage() {
                   value={ownerAddr}
                   onChange={e => setOwnerAddr(e.target.value)}
                   placeholder="0x… the wallet that holds your agents"
-                  className="w-full bg-black/25 border border-white/10 focus:border-brassLight/50 rounded-xl px-3 py-2.5 text-sm font-mono text-paper/90 placeholder-paper/20 outline-none transition-colors"
+                  className="w-full bg-black/25 border border-hairline/10 focus:border-brassLight/50 rounded-xl px-3 py-2.5 text-sm font-mono text-paper/90 placeholder-paper/20 outline-none transition-colors"
                 />
                 {walletBal !== null && (
                   <p className="text-[11px] text-paper/35 flex items-center gap-1.5">
@@ -254,7 +254,7 @@ export default function TopupPage() {
                     onChange={e => setEthInput(e.target.value)}
                     step="0.001"
                     min="0"
-                    className="w-full bg-black/25 border border-white/10 focus:border-brassLight/50 rounded-xl px-3 py-2.5 text-sm font-mono text-paper/90 placeholder-paper/20 outline-none transition-colors pr-16"
+                    className="w-full bg-black/25 border border-hairline/10 focus:border-brassLight/50 rounded-xl px-3 py-2.5 text-sm font-mono text-paper/90 placeholder-paper/20 outline-none transition-colors pr-16"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-paper/30">ETH</span>
                 </div>
@@ -265,7 +265,7 @@ export default function TopupPage() {
                       className={`text-[11px] rounded-full px-3 py-1 border transition-colors ${
                         ethInput === v
                           ? "border-brassLight/40 bg-brass/10 text-brassLight"
-                          : "border-white/10 text-paper/40 hover:border-white/25 hover:text-paper/60"
+                          : "border-hairline/10 text-paper/40 hover:border-hairline/25 hover:text-paper/60"
                       }`}>
                       {v}
                     </button>

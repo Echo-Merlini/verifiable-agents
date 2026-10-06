@@ -93,7 +93,7 @@ function GradientBg() {
                 desc: "Agents get offchain ENS subdomains, CCIP-Read resolution, and text records out of the box — compatible with any ENS-aware app.",
               },
             ].map(({ icon, title, desc }) => (
-              <div key={title} className="flex flex-col gap-2 p-4 rounded-2xl bg-white/[0.04] border border-white/6">
+              <div key={title} className="flex flex-col gap-2 p-4 rounded-2xl bg-elevate/[0.04] border border-hairline/6">
                 <span className="text-xl">{icon}</span>
                 <p className="text-xs font-semibold text-paper/80">{title}</p>
                 <p className="text-[11px] text-paper/40 leading-relaxed">{desc}</p>
@@ -163,7 +163,7 @@ function Field({ label, value, onChange, placeholder, mono, hint }: {
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full bg-white/[0.06] border border-white/10 focus:border-white/30 rounded-xl px-3 py-2.5 text-sm text-paper/90 placeholder-white/20 outline-none transition-colors ${mono ? "font-mono text-xs" : ""}`}
+        className={`w-full bg-elevate/[0.06] border border-hairline/10 focus:border-hairline/30 rounded-xl px-3 py-2.5 text-sm text-paper/90 placeholder-white/20 outline-none transition-colors ${mono ? "font-mono text-xs" : ""}`}
       />
       {hint && <p className="text-[10px] text-paper/30 leading-relaxed">{hint}</p>}
     </div>
@@ -334,7 +334,7 @@ export default function FactoryPage() {
               {/* Nav */}
               <nav className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-elevate/15 flex items-center justify-center">
                     <Factory className="w-4 h-4 text-paper/70" />
                   </div>
                   <span className="text-sm font-medium text-paper/80">Agent Registry Factory</span>
@@ -372,7 +372,7 @@ export default function FactoryPage() {
               </div>
 
               {/* Tech badges */}
-              <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/8">
+              <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-hairline/8">
                 {["ERC-8004", "ERC-721", "ERC-2981", "ENSIP-25", "Non-custodial"].map(b => (
                   <div key={b} className="liquid-glass rounded-full px-3 py-1 text-xs text-paper/60">{b}</div>
                 ))}
@@ -442,7 +442,7 @@ export default function FactoryPage() {
                 </button>
 
                 {showAdvanced && (
-                  <div className="flex flex-col gap-4 pt-1 border-t border-white/8">
+                  <div className="flex flex-col gap-4 pt-1 border-t border-hairline/8">
                     <Field label="Base Agent URI" value={baseAgentURI} onChange={setBaseAgentURI}
                       placeholder={GW_URL + "/"} hint="Gateway endpoint for agent metadata. Defaults to ENSub gateway." />
                     <Field label="Mint Price (ETH)" value={mintPriceEth} onChange={setMintPriceEth}

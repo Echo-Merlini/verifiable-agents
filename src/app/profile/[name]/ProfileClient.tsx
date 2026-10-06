@@ -129,7 +129,7 @@ function ServiceBadge({ name }: { name: string }) {
       <img src={entry.src} alt={upper} className="h-3 w-auto object-contain" />
     </span>
   );
-  return <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full border bg-white/8 border-white/10 text-paper/40">{upper}</span>;
+  return <span className="font-mono text-[9px] px-1.5 py-0.5 rounded-full border bg-elevate/8 border-hairline/10 text-paper/40">{upper}</span>;
 }
 
 function AgentCard({ agent, isOwner }: { agent: Agent; isOwner: boolean }) {
@@ -138,9 +138,9 @@ function AgentCard({ agent, isOwner }: { agent: Agent; isOwner: boolean }) {
       <div className="flex items-start justify-between">
         <div className="relative">
           {agent.image ? (
-            <img src={agent.image} alt={agent.name} className="w-12 h-12 rounded-2xl object-cover ring-1 ring-white/15" />
+            <img src={agent.image} alt={agent.name} className="w-12 h-12 rounded-2xl object-cover ring-1 ring-hairline/15" />
           ) : (
-            <div className="w-12 h-12 rounded-2xl bg-white/8 border border-white/10 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-elevate/8 border border-hairline/10 flex items-center justify-center">
               <Bot className="w-5 h-5 text-paper/40" />
             </div>
           )}
@@ -303,7 +303,7 @@ export default function ProfileClient({ name }: { name: string }) {
               {/* Nav */}
               <nav className="flex items-center justify-between mb-auto">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center overflow-hidden">
+                  <div className="w-8 h-8 rounded-full bg-elevate/15 flex items-center justify-center overflow-hidden">
                     {icon ? (
                       <img src={icon} alt="icon" className="w-6 h-6 object-contain" onError={e => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
                     ) : <Globe className="w-4 h-4 text-paper/70" />}
@@ -349,9 +349,9 @@ export default function ProfileClient({ name }: { name: string }) {
 
                 <div className="relative mb-6 w-fit">
                   {avatar ? (
-                    <img src={avatar} alt={ensName} className="w-20 h-20 rounded-full object-cover ring-1 ring-white/20" />
+                    <img src={avatar} alt={ensName} className="w-20 h-20 rounded-full object-cover ring-1 ring-hairline/20" />
                   ) : (
-                    <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center ring-1 ring-white/10">
+                    <div className="w-20 h-20 rounded-full bg-elevate/10 flex items-center justify-center ring-1 ring-hairline/10">
                       <Globe className="w-8 h-8 text-paper/40" />
                     </div>
                   )}
@@ -375,13 +375,13 @@ export default function ProfileClient({ name }: { name: string }) {
                     <a href={pfpButtonUrl} target="_blank" rel="noopener noreferrer"
                       className="liquid-glass-strong rounded-full px-6 py-3 flex items-center gap-3 text-sm font-medium text-paper hover:scale-105 active:scale-95 transition-transform">
                       <span>{pfpButtonLabel}</span>
-                      <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center"><ArrowRight className="w-4 h-4" /></div>
+                      <div className="w-7 h-7 rounded-full bg-elevate/15 flex items-center justify-center"><ArrowRight className="w-4 h-4" /></div>
                     </a>
                   ) : url ? (
                     <a href={url} target="_blank" rel="noopener noreferrer"
                       className="liquid-glass-strong rounded-full px-6 py-3 flex items-center gap-3 text-sm font-medium text-paper hover:scale-105 active:scale-95 transition-transform">
                       <span>Visit Site</span>
-                      <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center"><ArrowRight className="w-4 h-4" /></div>
+                      <div className="w-7 h-7 rounded-full bg-elevate/15 flex items-center justify-center"><ArrowRight className="w-4 h-4" /></div>
                     </a>
                   ) : null}
                   {pfpButton2Url && (
@@ -395,19 +395,19 @@ export default function ProfileClient({ name }: { name: string }) {
                 <div className="flex flex-wrap gap-2">
                   {twitterHandle && (
                     <a href={`https://x.com/${twitterHandle}`} target="_blank" rel="noopener noreferrer"
-                      className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/10 transition-colors">
+                      className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-elevate/10 transition-colors">
                       <IconX /><span className="text-xs text-paper/60">@{twitterHandle}</span>
                     </a>
                   )}
                   {githubHandle && (
                     <a href={`https://github.com/${githubHandle}`} target="_blank" rel="noopener noreferrer"
-                      className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/10 transition-colors">
+                      className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-elevate/10 transition-colors">
                       <IconGitHub /><span className="text-xs text-paper/60">{githubHandle}</span>
                     </a>
                   )}
                   {telegramHandle && (
                     <a href={`https://t.me/${telegramHandle}`} target="_blank" rel="noopener noreferrer"
-                      className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/10 transition-colors">
+                      className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-elevate/10 transition-colors">
                       <IconTelegram /><span className="text-xs text-paper/60">@{telegramHandle}</span>
                     </a>
                   )}
@@ -417,7 +417,7 @@ export default function ProfileClient({ name }: { name: string }) {
               {/* Footer */}
               <div className="mt-auto pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-white/10" />
+                  <div className="flex-1 h-px bg-elevate/10" />
                   {record?.address ? (
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-xs text-paper/40">{shortAddr(record.address)}</span>
@@ -430,7 +430,7 @@ export default function ProfileClient({ name }: { name: string }) {
                   ) : (
                     <span className="text-xs tracking-widest uppercase text-paper/30">{ENS_NAME}</span>
                   )}
-                  <div className="flex-1 h-px bg-white/10" />
+                  <div className="flex-1 h-px bg-elevate/10" />
                 </div>
               </div>
 
@@ -452,14 +452,14 @@ export default function ProfileClient({ name }: { name: string }) {
             {agents === null ? (
               <div className="flex flex-col gap-3">
                 <div className="liquid-glass rounded-3xl p-5 flex flex-col gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-white/5 animate-pulse" />
-                  <div className="h-3 w-2/3 rounded-full bg-white/5 animate-pulse" />
-                  <div className="h-2.5 w-full rounded-full bg-white/4 animate-pulse" />
+                  <div className="w-12 h-12 rounded-2xl bg-elevate/5 animate-pulse" />
+                  <div className="h-3 w-2/3 rounded-full bg-elevate/5 animate-pulse" />
+                  <div className="h-2.5 w-full rounded-full bg-elevate/4 animate-pulse" />
                 </div>
               </div>
             ) : agents.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 gap-3 text-center flex-1">
-                <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-elevate/5 border border-hairline/8 flex items-center justify-center">
                   <Bot className="w-5 h-5 text-paper/20" />
                 </div>
                 <p className="text-paper/25 text-sm">No agent registered yet</p>

@@ -91,7 +91,7 @@ function ChatInner() {
       <div className={`${cardClass} ${cardHeight}`}>
 
         {/* Card header */}
-        <div className="relative z-10 flex items-center gap-3 px-4 py-3 border-b border-white/8 shrink-0">
+        <div className="relative z-10 flex items-center gap-3 px-4 py-3 border-b border-hairline/8 shrink-0">
           <button
             onClick={() => { if (window.history.length > 1) { window.history.back(); } else { window.location.href = "/"; } }}
             className="text-paper/40 hover:text-paper/70 transition-colors shrink-0">
@@ -102,7 +102,7 @@ function ChatInner() {
             <Loader2 className="w-4 h-4 text-paper/30 animate-spin" />
           ) : agent ? (
             <div className="flex items-center gap-2.5 flex-1 min-w-0">
-              <div className="w-8 h-8 rounded-lg overflow-hidden bg-white/8 shrink-0">
+              <div className="w-8 h-8 rounded-lg overflow-hidden bg-elevate/8 shrink-0">
                 {(isDemoAgent ? DEMO_AGENT.image : agent.image) ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={isDemoAgent ? DEMO_AGENT.image : agent.image} alt={isDemoAgent ? DEMO_AGENT.name : agent.name} className="w-full h-full object-cover" style={{ imageRendering: "pixelated" }} />
@@ -133,7 +133,7 @@ function ChatInner() {
               </span>
             ) : (
               <button onClick={() => open()}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-white/8 hover:bg-white/12 text-paper/60 hover:text-paper transition-colors">
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-elevate/8 hover:bg-elevate/12 text-paper/60 hover:text-paper transition-colors">
                 <Wallet className="w-3 h-3" /> Connect
               </button>
             )}

@@ -40,7 +40,7 @@ export default function QuantumPage() {
         <div className="mt-8">
           <h2 className="flex items-center gap-2 font-display text-xl font-semibold"><GitCompareArrows className="h-5 w-5 text-brassLight" /> One profile, two NIST families</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gb-muted">
-            A post-quantum key-binding says <span className="text-paper/70">this classical key → this post-quantum key</span>, dual-signed and anchored. Below are two live bindings from two <span className="text-paper/70">different</span> NIST post-quantum families — <span className="text-paper/70">ML-DSA</span> (lattice) and <span className="text-paper/70">SLH-DSA</span> (hash-based) — landing on byte-compatible content-addresses through the same canonicalization alone. That&apos;s the interop proof: <code className="rounded bg-white/5 px-1 text-[11px]">{`{algorithm}`}</code> is a field, not a fork. Recompute either one in your browser.
+            A post-quantum key-binding says <span className="text-paper/70">this classical key → this post-quantum key</span>, dual-signed and anchored. Below are two live bindings from two <span className="text-paper/70">different</span> NIST post-quantum families — <span className="text-paper/70">ML-DSA</span> (lattice) and <span className="text-paper/70">SLH-DSA</span> (hash-based) — landing on byte-compatible content-addresses through the same canonicalization alone. That&apos;s the interop proof: <code className="rounded bg-elevate/5 px-1 text-[11px]">{`{algorithm}`}</code> is a field, not a fork. Recompute either one in your browser.
           </p>
           <p className="mt-2 max-w-2xl text-[12px] leading-relaxed text-gb-faint">
             To be exact about whose is whose: the <span className="text-paper/70">SLH-DSA</span> binding is <span className="text-paper/70">ours</span> — our gateway&apos;s KYA-L4 attestor identity; the <span className="text-paper/70">ML-DSA</span> one is <span className="text-paper/70">invinoveritas&apos;</span> independent implementation. &ldquo;Two families&rdquo; means two <span className="text-paper/70">independent implementations</span> converging on one profile — not two signatures on every agent.
@@ -74,7 +74,7 @@ export default function QuantumPage() {
         </div>
 
         {/* conformance + honest line */}
-        <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+        <div className="mt-8 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-4">
           <p className="text-[13px] text-gb-muted">
             Both bindings conform to one shared profile, <span className="text-paper">pq_key_binding.v0</span>, with each pinned as a golden vector anyone can reproduce cold —{" "}
             <a href="https://github.com/trustless-ai/recompute-kit/tree/main/conformance/pq-key-binding-v0" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-brassLight hover:text-brass">the conformance suite <ArrowRight className="h-3 w-3" /></a>
@@ -83,7 +83,7 @@ export default function QuantumPage() {
             We don&apos;t say &ldquo;quantum-proof.&rdquo; The claim is precise: the recompute layer&apos;s trust rests on hashes — the primitive that survives quantum — and here are two post-quantum bindings you can verify yourself. Authentication still uses today&apos;s signatures; the recompute layer doesn&apos;t need them to prove integrity.
           </p>
           <p className="mt-2 text-[11px] leading-relaxed text-gb-faint">
-            And precise about scope: the binding shown here is <span className="text-paper/70">our signing identity</span> — the L4 attestor, hash-based (SLH-DSA). Beyond it, <span className="text-paper/70">per-agent PQ is now live</span>: every agent has its own ML-DSA-65 key, epoch-anchored, signing a companion on <span className="text-paper/70">every</span> attestation, with an anchor-time cutoff enforcer whose rule you can reproduce against the pinned vectors (hit <code className="rounded bg-white/5 px-1 text-[11px]">/pq/agent/&lt;registry&gt;/&lt;id&gt;/enforce/selftest</code> on the gateway). Live enforcement runs in <span className="text-paper/70">shadow</span> — the verdict is recorded, not yet rejected — until companion coverage is proven, so nothing legitimate breaks in the meantime.
+            And precise about scope: the binding shown here is <span className="text-paper/70">our signing identity</span> — the L4 attestor, hash-based (SLH-DSA). Beyond it, <span className="text-paper/70">per-agent PQ is now live</span>: every agent has its own ML-DSA-65 key, epoch-anchored, signing a companion on <span className="text-paper/70">every</span> attestation, with an anchor-time cutoff enforcer whose rule you can reproduce against the pinned vectors (hit <code className="rounded bg-elevate/5 px-1 text-[11px]">/pq/agent/&lt;registry&gt;/&lt;id&gt;/enforce/selftest</code> on the gateway). Live enforcement runs in <span className="text-paper/70">shadow</span> — the verdict is recorded, not yet rejected — until companion coverage is proven, so nothing legitimate breaks in the meantime.
           </p>
           {/* What is NOT yet third-party verifiable. Stated because a reader cannot tell the difference
               between "we did not mention it" and "it is covered", and the second is what silence implies. */}
@@ -94,14 +94,14 @@ export default function QuantumPage() {
             minority of agents — the rest are gateway-attested, which is a weaker claim.{" "}
             <span className="text-paper/70">Rotation and revocation are owner-signed</span> and the gateway
             refuses any other signer, but those signatures were only persisted from 12 Aug 2026, so earlier
-            transitions read <code className="rounded bg-white/5 px-1 text-[11px]">null</code> — that evidence
+            transitions read <code className="rounded bg-elevate/5 px-1 text-[11px]">null</code> — that evidence
             was verified and then discarded, and is gone rather than withheld. And{" "}
             <span className="text-paper/70">which key governs an artifact</span> still resolves against a
             value the gateway holds; deriving it from the anchors instead is{" "}
             <a href="https://github.com/trustless-ai/pq-agent-binding/pull/1" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-brassLight hover:text-brass">proposed as v1 <ExternalLink className="h-3 w-3" /></a>{" "}
             and is not live.
           </p>
-          <p className="mt-3 border-t border-white/10 pt-3 text-[11px] leading-relaxed text-gb-faint">
+          <p className="mt-3 border-t border-hairline/10 pt-3 text-[11px] leading-relaxed text-gb-faint">
             No side trusts another&apos;s UI: the ML-DSA binding above <span className="text-paper/70">also recomputes independently on invinoveritas&apos; own origin</span> —{" "}
             <a href="https://api.babyblueviper.com/verify" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-brassLight hover:text-brass">api.babyblueviper.com/verify <ExternalLink className="h-3 w-3" /></a>. Two panels, two origins, same raw bytes.
           </p>
