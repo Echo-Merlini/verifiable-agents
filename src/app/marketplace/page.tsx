@@ -76,19 +76,6 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
           <div className="mt-1.5">
             <ReputationBadge rep={a.reputation} />
           </div>
-          {/* What it can do, at a glance — directly under the reputation pill, where the eye
-              already is. Deliberately small, unframed and dimmed: this reads as a description,
-              not a control. The framed loadout row lower down stays as the full statement. */}
-          {tools.length > 0 && (
-            <div className="mt-1.5 flex items-center gap-1">
-              {tools.map((t) => (
-                <span key={`hdr-${t.id}`} title={t.label} className="inline-flex h-4 w-4 items-center justify-center opacity-60">
-                  <McpLogo card={t as any} className="h-3.5 w-3.5" fill />
-                </span>
-              ))}
-              {extra > 0 && <span className="font-mono text-[10px] text-zinc-600">+{extra}</span>}
-            </div>
-          )}
         </div>
       </div>
 
