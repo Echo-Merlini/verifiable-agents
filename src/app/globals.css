@@ -6,9 +6,86 @@
 @tailwind utilities;
 
 @layer base {
-  :root { --radius: 1rem; }
-  body { background: #0C0D11; color: #F6F6F8; -webkit-font-smoothing: antialiased; }
-  ::selection { background: rgba(224, 162, 76, 0.25); }
+  /* ── Theme tokens ─────────────────────────────────────────────────────────
+     Space-separated RGB channels, consumed by tailwind.config.ts as
+     rgb(var(--c-x) / <alpha-value>) so opacity modifiers keep working.
+
+     DARK is the default and its values are byte-for-byte the hex the palette
+     used before this change, so this step is a pure refactor: the rendered
+     site must be identical. Anything that shifts is a bug in the mapping,
+     not a design decision.
+
+     LIGHT is a first pass and is deliberately incomplete — roughly half the
+     colour in the app does not go through these tokens yet (≈1,160 plain
+     white/black, 848 white/N alphas, 392 zinc/gray scales). Those are the
+     next step; until then light will have unreadable patches. */
+  :root {
+    --radius: 1rem;
+
+    --c-ink:        23 25 31;      /* #17191F */
+    --c-deepink:    12 13 17;      /* #0C0D11 */
+    --c-slate:      92 97 109;     /* #5C616D */
+    --c-brass:      161 94 30;     /* #A15E1E */
+    --c-brassLight: 224 162 76;    /* #E0A24C */
+    --c-paper:      246 246 248;   /* #F6F6F8 */
+
+    --c-face-1:     58 62 72;      /* #3A3E48 */
+    --c-face-2:     44 47 55;      /* #2C2F37 */
+    --c-face-3:     34 36 43;      /* #22242B */
+    --c-face-4:     25 27 33;      /* #191B21 */
+
+    --c-gb-bg:      12 13 17;
+    --c-gb-surface: 25 27 33;
+    --c-gb-border:  36 40 50;
+    --c-gb-borderL: 25 27 33;
+    --c-gb-input:   25 27 33;
+    --c-gb-muted:   92 97 109;
+    --c-gb-faint:   138 144 156;
+    --c-gb-accent:  224 162 76;
+    --c-gb-accentD: 161 94 30;
+
+    /* Surfaces the panels use, so .liquid-glass stops hardcoding hex. */
+    --s-panel:        25 27 33;
+    --s-panel-strong: 23 25 31;
+    --s-hairline:     246 246 248;  /* tinted by alpha at point of use */
+    --s-shadow:       0 0 0;
+  }
+
+  [data-theme="light"] {
+    --c-ink:        246 246 248;
+    --c-deepink:    255 255 255;
+    --c-slate:      110 116 128;
+    --c-brass:      140 80 24;      /* darkened: brass on white fails contrast */
+    --c-brassLight: 146 94 24;
+    --c-paper:      23 25 31;       /* "paper" is the FOREGROUND token — inverts */
+
+    --c-face-1:     226 228 233;
+    --c-face-2:     236 238 242;
+    --c-face-3:     243 244 247;
+    --c-face-4:     249 250 252;
+
+    --c-gb-bg:      255 255 255;
+    --c-gb-surface: 249 250 252;
+    --c-gb-border:  221 224 230;
+    --c-gb-borderL: 234 236 240;
+    --c-gb-input:   255 255 255;
+    --c-gb-muted:   96 102 114;
+    --c-gb-faint:   122 129 141;
+    --c-gb-accent:  146 94 24;
+    --c-gb-accentD: 120 72 18;
+
+    --s-panel:        249 250 252;
+    --s-panel-strong: 255 255 255;
+    --s-hairline:     23 25 31;
+    --s-shadow:       23 25 31;
+  }
+
+  body {
+    background: rgb(var(--c-gb-bg));
+    color: rgb(var(--c-paper));
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgb(var(--c-brassLight) / 0.25); }
 }
 
 @layer components {
@@ -16,16 +93,16 @@
      Replaces the kit's glassmorphism. The class name is kept so every existing
      .liquid-glass user across the app converts to the Vértice look for free. */
   .liquid-glass {
-    background: #191B21;
-    border: 1px solid rgba(246, 246, 248, 0.08);
-    box-shadow: inset 0 1px 0 rgba(224, 162, 76, 0.06);
+    background: rgb(var(--s-panel));
+    border: 1px solid rgb(var(--s-hairline) / 0.08);
+    box-shadow: inset 0 1px 0 rgb(var(--c-brassLight) / 0.06);
     position: relative;
     overflow: hidden;
   }
   .liquid-glass-strong {
-    background: #17191F;
-    border: 1px solid rgba(246, 246, 248, 0.10);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(224, 162, 76, 0.08);
+    background: rgb(var(--s-panel-strong));
+    border: 1px solid rgb(var(--s-hairline) / 0.10);
+    box-shadow: 0 8px 40px rgb(var(--s-shadow) / 0.35), inset 0 1px 0 rgb(var(--c-brassLight) / 0.08);
     position: relative;
     overflow: hidden;
   }
