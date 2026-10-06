@@ -89,6 +89,59 @@
 }
 
 @layer components {
+  /* ── Light-mode control corrections ──────────────────────────────────────
+     Every rule here is scoped to [data-theme="light"], so dark cannot change.
+     Reverting the theme is deleting this block.
+
+     These target the utility classes by attribute substring rather than
+     codemodding ~90 call sites: the same visual result, one reviewable place,
+     and no risk of a find-and-replace catching something it should not.
+     Scoped to button/a so a brass-filled badge or bar is left alone. */
+
+  /* Filled brass reads heavy on white. Outlined, with brass text — as asked. */
+  [data-theme="light"] button[class*="bg-brass"],
+  [data-theme="light"] a[class*="bg-brass"] {
+    background-color: transparent;
+    border: 1px solid rgb(var(--c-brass) / 0.45);
+    color: rgb(var(--c-brass));
+  }
+  [data-theme="light"] button[class*="bg-brass"]:hover,
+  [data-theme="light"] a[class*="bg-brass"]:hover {
+    background-color: rgb(var(--c-brass) / 0.08);
+    border-color: rgb(var(--c-brass) / 0.7);
+  }
+  /* The icon inside inherits — otherwise it stays white on a now-transparent button. */
+  [data-theme="light"] button[class*="bg-brass"] svg,
+  [data-theme="light"] a[class*="bg-brass"] svg { color: rgb(var(--c-brass)); }
+
+  /* Inputs were bg-white/5 + border-white/10: an invisible box with an invisible
+     border and an invisible placeholder once the page turned white. */
+  [data-theme="light"] input,
+  [data-theme="light"] textarea {
+    background-color: rgb(var(--c-gb-input));
+    border-color: rgb(var(--c-gb-border));
+  }
+  [data-theme="light"] input::placeholder,
+  [data-theme="light"] textarea::placeholder { color: rgb(var(--c-gb-faint)); }
+  [data-theme="light"] input:focus,
+  [data-theme="light"] textarea:focus { border-color: rgb(var(--c-brass) / 0.55); }
+
+  /* The chat surface itself had no edge against a white page. */
+  [data-theme="light"] .liquid-glass,
+  [data-theme="light"] .liquid-glass-strong {
+    border-color: rgb(var(--c-gb-border));
+  }
+
+  /* Send button was bg-amber-500/20 + text-amber-300 — pale on pale. */
+  [data-theme="light"] button[class*="bg-amber-500/20"] {
+    background-color: rgb(var(--c-brass) / 0.12);
+    border: 1px solid rgb(var(--c-brass) / 0.35);
+  }
+  [data-theme="light"] button[class*="bg-amber-500/20"]:hover {
+    background-color: rgb(var(--c-brass) / 0.2);
+  }
+  [data-theme="light"] button[class*="bg-amber-500/20"] svg { color: rgb(var(--c-brass)); }
+
   /* ── Vértice flat matte panel ─────────────────────────
      Replaces the kit's glassmorphism. The class name is kept so every existing
      .liquid-glass user across the app converts to the Vértice look for free. */
