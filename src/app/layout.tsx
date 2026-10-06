@@ -54,6 +54,23 @@ const IS_STATIC = process.env.NEXT_PUBLIC_STATIC_EXPORT === "1";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${newsreader.variable} ${jetbrains.variable}`}>
+      {/* Theme switch, deliberately NOT a visible control yet.
+          Light is a first pass: roughly half the colour in the app still bypasses the
+          palette tokens, so parts of it wash out. Until that is fixed, light is reachable
+          only on purpose — ?theme=light to enter, ?theme=dark to leave — and the choice
+          persists so you can click around. Visitors who do not know the parameter never
+          see a half-themed site. Runs before paint, so there is no flash.
+          Wrapped in try/catch: a blocked localStorage must not take the page down. */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(function(){try{
+            var p=new URLSearchParams(location.search).get('theme');
+            if(p==='light'||p==='dark'){localStorage.setItem('vx-theme',p);}
+            var t=localStorage.getItem('vx-theme');
+            if(t==='light'){document.documentElement.setAttribute('data-theme','light');}
+          }catch(e){}})();`,
+        }}
+      />
       <body className="font-display">
         <Providers>
           {IS_STATIC && <SubdomainRouter />}
