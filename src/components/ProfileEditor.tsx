@@ -45,32 +45,32 @@ function NftPicker({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
       <div className="w-full max-w-lg bg-black/90 border border-white/10 rounded-2xl overflow-hidden">
         <div className="flex items-center justify-between px-4 py-3 border-b border-white/8">
-          <p className="text-sm font-medium text-white">Pick an NFT as avatar</p>
-          <button onClick={onClose} className="text-white/40 hover:text-white/70 transition-colors">
+          <p className="text-sm font-medium text-paper">Pick an NFT as avatar</p>
+          <button onClick={onClose} className="text-paper/40 hover:text-paper/70 transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
 
         <div className="px-4 py-3 border-b border-white/8">
           <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2">
-            <Search className="w-3.5 h-3.5 text-white/30 shrink-0" />
+            <Search className="w-3.5 h-3.5 text-paper/30 shrink-0" />
             <input
               value={query} onChange={e => setQuery(e.target.value)}
               placeholder="Search by name or collection…"
-              className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/25"
+              className="flex-1 bg-transparent text-sm text-paper outline-none placeholder:text-paper/25"
             />
           </div>
         </div>
 
         <div className="p-4 max-h-80 overflow-y-auto">
           {loading ? (
-            <div className="flex items-center justify-center py-10 gap-2 text-white/40">
+            <div className="flex items-center justify-center py-10 gap-2 text-paper/40">
               <Loader2 className="w-4 h-4 animate-spin" /> Loading NFTs…
             </div>
           ) : error ? (
             <p className="text-center text-red-400 text-sm py-8">{error}</p>
           ) : filtered.length === 0 ? (
-            <p className="text-center text-white/30 text-sm py-8">No NFTs found</p>
+            <p className="text-center text-paper/30 text-sm py-8">No NFTs found</p>
           ) : (
             <div className="grid grid-cols-3 gap-2">
               {filtered.map(nft => (
@@ -81,7 +81,7 @@ function NftPicker({
                 >
                   <img src={nft.image} alt={nft.name} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1.5">
-                    <p className="text-[9px] text-white leading-tight truncate w-full">{nft.name}</p>
+                    <p className="text-[9px] text-paper leading-tight truncate w-full">{nft.name}</p>
                   </div>
                 </button>
               ))}
@@ -90,7 +90,7 @@ function NftPicker({
         </div>
 
         <div className="px-4 pb-4">
-          <p className="text-[10px] text-white/25 text-center">
+          <p className="text-[10px] text-paper/25 text-center">
             Or paste any image URL in the Avatar field directly
           </p>
         </div>
@@ -110,10 +110,10 @@ function Section({ icon, title, children, defaultOpen = true }: {
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-4 py-3 bg-white/3 hover:bg-white/5 transition-colors"
       >
-        <div className="flex items-center gap-2 text-sm font-medium text-white/70">
+        <div className="flex items-center gap-2 text-sm font-medium text-paper/70">
           {icon}{title}
         </div>
-        {open ? <ChevronUp className="w-3.5 h-3.5 text-white/30" /> : <ChevronDown className="w-3.5 h-3.5 text-white/30" />}
+        {open ? <ChevronUp className="w-3.5 h-3.5 text-paper/30" /> : <ChevronDown className="w-3.5 h-3.5 text-paper/30" />}
       </button>
       {open && <div className="px-4 pb-4 pt-3 space-y-3">{children}</div>}
     </div>
@@ -124,9 +124,9 @@ function Section({ icon, title, children, defaultOpen = true }: {
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-[10px] uppercase tracking-widest text-white/40 mb-1 block">{label}</label>
+      <label className="text-[10px] uppercase tracking-widest text-paper/40 mb-1 block">{label}</label>
       {children}
-      {hint && <p className="text-[10px] text-white/25 mt-1">{hint}</p>}
+      {hint && <p className="text-[10px] text-paper/25 mt-1">{hint}</p>}
     </div>
   );
 }
@@ -140,7 +140,7 @@ function Input({ value, onChange, placeholder, type = "text" }: {
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 outline-none focus:border-white/30 transition-colors"
+      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-paper placeholder:text-paper/20 outline-none focus:border-white/30 transition-colors"
     />
   );
 }
@@ -154,7 +154,7 @@ function Textarea({ value, onChange, placeholder, rows = 3 }: {
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/20 outline-none focus:border-white/30 transition-colors resize-none"
+      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-paper placeholder:text-paper/20 outline-none focus:border-white/30 transition-colors resize-none"
     />
   );
 }
@@ -231,7 +231,7 @@ export function ProfileEditor({
               {ownerAddress && (
                 <button
                   onClick={() => setShowNftPicker(true)}
-                  className="shrink-0 px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white/60 hover:text-white hover:border-white/30 transition-colors whitespace-nowrap"
+                  className="shrink-0 px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-paper/60 hover:text-paper hover:border-white/30 transition-colors whitespace-nowrap"
                 >
                   Pick NFT
                 </button>
@@ -253,7 +253,7 @@ export function ProfileEditor({
           </Field>
           <Field label="Twitter / X">
             <div className="flex items-center gap-2">
-              <span className="text-white/40 text-sm">@</span>
+              <span className="text-paper/40 text-sm">@</span>
               <Input value={fields["com.twitter"] ?? ""} onChange={v => set("com.twitter", v)} placeholder="handle" />
             </div>
           </Field>
@@ -262,7 +262,7 @@ export function ProfileEditor({
           </Field>
           <Field label="Telegram">
             <div className="flex items-center gap-2">
-              <span className="text-white/40 text-sm">@</span>
+              <span className="text-paper/40 text-sm">@</span>
               <Input value={fields.telegram ?? ""} onChange={v => set("telegram", v)} placeholder="handle" />
             </div>
           </Field>
@@ -294,16 +294,16 @@ export function ProfileEditor({
           <button
             onClick={save}
             disabled={saving}
-            className="flex-1 bg-white/8 hover:bg-white/12 border border-white/15 rounded-xl py-3 flex items-center justify-center gap-2 text-sm text-white transition-colors disabled:opacity-50"
+            className="flex-1 bg-white/8 hover:bg-white/12 border border-white/15 rounded-xl py-3 flex items-center justify-center gap-2 text-sm text-paper transition-colors disabled:opacity-50"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : saved ? <Check className="w-4 h-4 text-green-400" /> : <Check className="w-4 h-4" />}
             {saved ? "Saved!" : "Save Records"}
           </button>
         </div>
         {saved && (
-          <p className="text-[10px] text-white/35 text-center -mt-2">
+          <p className="text-[10px] text-paper/35 text-center -mt-2">
             Records saved to gateway — visible at{" "}
-            <a href={`https://${claimedName}.limo`} target="_blank" rel="noopener noreferrer" className="underline hover:text-white/60">{claimedName}</a>
+            <a href={`https://${claimedName}.limo`} target="_blank" rel="noopener noreferrer" className="underline hover:text-paper/60">{claimedName}</a>
           </p>
         )}
       </div>

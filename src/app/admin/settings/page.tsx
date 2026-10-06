@@ -148,7 +148,7 @@ function RegistryCard({
       <div className="flex items-center justify-end gap-2 pt-1 border-t border-gb-border">
         {dirty && <span className="text-[11px] text-amber-500 flex-1">Unsaved changes</span>}
         <button onClick={save} disabled={saving || !dirty}
-          className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+          className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 text-paper text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
           {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
           {saving ? "Saving…" : "Save"}
         </button>
@@ -207,7 +207,7 @@ function AddRegistryForm({ token, onSaved }: { token: string; onSaved: () => voi
       <div className="flex justify-end gap-2 pt-1">
         <button onClick={() => setOpen(false)} className="text-xs text-gb-muted hover:text-gb-faint px-3 py-1.5 transition-colors">Cancel</button>
         <button onClick={save} disabled={saving || !address.trim()}
-          className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+          className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 text-paper text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
           {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
           {saving ? "Saving…" : "Add"}
         </button>
@@ -317,7 +317,7 @@ export default function SettingsPage() {
                   <span className={`w-2 h-2 rounded-full shrink-0 ${e.color}`} />
                   <span className="text-sm font-medium text-slate-100">{e.label}</span>
                   {envKey === key && (
-                    <span className="ml-auto text-[10px] bg-gb-accentD text-white px-1.5 py-0.5 rounded">
+                    <span className="ml-auto text-[10px] bg-gb-accentD text-paper px-1.5 py-0.5 rounded">
                       Active
                     </span>
                   )}

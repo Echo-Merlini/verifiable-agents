@@ -80,7 +80,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="bg-gb-surface border border-gb-border rounded-xl p-8 w-full max-w-sm space-y-5">
           <div className="text-center space-y-2">
             <div className="w-11 h-11 rounded-full bg-gb-accentD mx-auto flex items-center justify-center">
-              <Globe className="w-5 h-5 text-white" />
+              <Globe className="w-5 h-5 text-paper" />
             </div>
             <h1 className="text-lg font-bold text-slate-100 tracking-tight">Recomputable Agents · Admin</h1>
             <p className="text-gb-faint text-sm">Sign with your wallet to continue.</p>
@@ -105,7 +105,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <button
             onClick={handleLogin}
             disabled={loading}
-            className="w-full bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
+            className="w-full bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-paper font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             {loading ? "Signing…" : "Connect Wallet & Sign In"}

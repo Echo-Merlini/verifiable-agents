@@ -151,7 +151,7 @@ function ApiKeysSection({ token }: { token: string }) {
             <span />
           )}
           <button onClick={save} disabled={saving}
-            className="flex items-center gap-2 bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+            className="flex items-center gap-2 bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-paper text-sm font-medium px-4 py-2 rounded-lg transition-colors">
             {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : saved ? <Check className="w-3.5 h-3.5" /> : null}
             {saved ? "Saved" : "Save Keys"}
           </button>
@@ -255,7 +255,7 @@ function SkillForm({ initial, onSave, onCancel }: {
 
       <div className="flex gap-3">
         <button onClick={submit} disabled={saving || !form.name.trim() || inputSourcesInvalid || trustScopeInvalid}
-          className="flex items-center gap-2 bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+          className="flex items-center gap-2 bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-paper text-sm font-medium px-4 py-2 rounded-lg transition-colors">
           {saving && <Loader2 className="w-3.5 h-3.5 animate-spin" />} Save
         </button>
         <button onClick={onCancel} className="px-4 py-2 text-sm text-gb-faint hover:text-slate-100 transition-colors">Cancel</button>
@@ -310,7 +310,7 @@ function TestChat({ skill, token, onClose }: { skill: Skill; token: string; onCl
           <div key={i} className={`flex gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}>
             {m.role === "assistant" && <Bot className="w-4 h-4 text-gb-accent shrink-0 mt-0.5" />}
             <div className={`max-w-[80%] rounded-xl px-3 py-2 text-sm whitespace-pre-wrap ${
-              m.role === "user" ? "bg-gb-accentD text-white" : "bg-gb-input text-gb-faint"
+              m.role === "user" ? "bg-gb-accentD text-paper" : "bg-gb-input text-gb-faint"
             }`}>{m.content}</div>
             {m.role === "user" && <User className="w-4 h-4 text-gb-muted shrink-0 mt-0.5" />}
           </div>
@@ -329,7 +329,7 @@ function TestChat({ skill, token, onClose }: { skill: Skill; token: string; onCl
           className="flex-1 bg-gb-input border border-gb-border focus:border-gb-accent rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-zinc-600 outline-none transition-colors"
         />
         <button onClick={send} disabled={loading || !input.trim()}
-          className="bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-white px-3 py-2 rounded-lg transition-colors">
+          className="bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-paper px-3 py-2 rounded-lg transition-colors">
           <Send className="w-4 h-4" />
         </button>
       </div>
@@ -443,7 +443,7 @@ export default function AiPage() {
             <p className="text-xs text-gb-muted mt-0.5">Named agent configs — provider, model, system prompt, optional ENS identity</p>
           </div>
           <button onClick={() => { setAdding(true); setEditing(null); setTesting(null); }}
-            className="flex items-center gap-2 bg-gb-accentD hover:bg-gb-accent text-white text-sm font-medium px-3 py-2 rounded-lg transition-colors">
+            className="flex items-center gap-2 bg-gb-accentD hover:bg-gb-accent text-paper text-sm font-medium px-3 py-2 rounded-lg transition-colors">
             <Plus className="w-4 h-4" /> New Skill
           </button>
         </div>

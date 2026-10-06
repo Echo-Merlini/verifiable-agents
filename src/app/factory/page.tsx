@@ -61,11 +61,11 @@ function GradientBg() {
         <div className="liquid-glass-strong rounded-3xl p-6 lg:p-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div>
-              <p className="text-sm font-semibold text-white">Everything included in one deployment fee</p>
-              <p className="text-xs text-white/40 mt-0.5">No subscriptions, no hidden costs — one transaction and your registry is live.</p>
+              <p className="text-sm font-semibold text-paper">Everything included in one deployment fee</p>
+              <p className="text-xs text-paper/40 mt-0.5">No subscriptions, no hidden costs — one transaction and your registry is live.</p>
             </div>
             <div className="shrink-0 flex items-center gap-2 liquid-glass rounded-2xl px-4 py-2">
-              <span className="text-xs text-white/40">Full release price</span>
+              <span className="text-xs text-paper/40">Full release price</span>
               <span className="text-sm font-semibold text-amber-300">0.1 ETH</span>
               <span className="text-[10px] text-amber-400/80 border border-amber-400/20 rounded-full px-2 py-0.5 ml-1">Testing rate active</span>
             </div>
@@ -95,8 +95,8 @@ function GradientBg() {
             ].map(({ icon, title, desc }) => (
               <div key={title} className="flex flex-col gap-2 p-4 rounded-2xl bg-white/[0.04] border border-white/6">
                 <span className="text-xl">{icon}</span>
-                <p className="text-xs font-semibold text-white/80">{title}</p>
-                <p className="text-[11px] text-white/40 leading-relaxed">{desc}</p>
+                <p className="text-xs font-semibold text-paper/80">{title}</p>
+                <p className="text-[11px] text-paper/40 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -121,7 +121,7 @@ function ConnectButton() {
     return (
       <button
         onClick={() => disconnect()}
-        className="liquid-glass rounded-full px-4 py-2 flex items-center gap-2 text-xs text-white/70 hover:text-white transition-colors"
+        className="liquid-glass rounded-full px-4 py-2 flex items-center gap-2 text-xs text-paper/70 hover:text-paper transition-colors"
         title={address}
       >
         <span className="font-mono">{displayName}</span>
@@ -131,7 +131,7 @@ function ConnectButton() {
   return (
     <button
       onClick={() => open()}
-      className="liquid-glass-strong rounded-full px-4 py-2 flex items-center gap-2 text-xs font-medium text-white hover:scale-105 active:scale-95 transition-transform"
+      className="liquid-glass-strong rounded-full px-4 py-2 flex items-center gap-2 text-xs font-medium text-paper hover:scale-105 active:scale-95 transition-transform"
     >
       <Wallet className="w-3.5 h-3.5" />
       <span>Connect</span>
@@ -144,7 +144,7 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-      className="flex items-center gap-1 text-[10px] text-white/40 hover:text-white/70 transition-colors liquid-glass rounded-full px-2.5 py-1"
+      className="flex items-center gap-1 text-[10px] text-paper/40 hover:text-paper/70 transition-colors liquid-glass rounded-full px-2.5 py-1"
     >
       {copied ? <Check className="w-2.5 h-2.5 text-green-400" /> : <Copy className="w-2.5 h-2.5" />}
       {copied ? "Copied" : "Copy"}
@@ -158,14 +158,14 @@ function Field({ label, value, onChange, placeholder, mono, hint }: {
 }) {
   return (
     <div className="space-y-1">
-      <label className="text-[11px] font-medium text-white/50 uppercase tracking-wide">{label}</label>
+      <label className="text-[11px] font-medium text-paper/50 uppercase tracking-wide">{label}</label>
       <input
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`w-full bg-white/[0.06] border border-white/10 focus:border-white/30 rounded-xl px-3 py-2.5 text-sm text-white/90 placeholder-white/20 outline-none transition-colors ${mono ? "font-mono text-xs" : ""}`}
+        className={`w-full bg-white/[0.06] border border-white/10 focus:border-white/30 rounded-xl px-3 py-2.5 text-sm text-paper/90 placeholder-white/20 outline-none transition-colors ${mono ? "font-mono text-xs" : ""}`}
       />
-      {hint && <p className="text-[10px] text-white/30 leading-relaxed">{hint}</p>}
+      {hint && <p className="text-[10px] text-paper/30 leading-relaxed">{hint}</p>}
     </div>
   );
 }
@@ -289,10 +289,10 @@ export default function FactoryPage() {
 
       {/* Hero header */}
       <div className="relative z-10 w-full flex flex-col items-center justify-center pt-16 pb-10 px-6 text-center">
-        <h1 className="text-6xl lg:text-8xl font-medium tracking-[-0.05em] text-white leading-none mb-5">
-          factory<em className="font-serif not-italic text-white/60">.dinamic.eth</em>
+        <h1 className="text-6xl lg:text-8xl font-medium tracking-[-0.05em] text-paper leading-none mb-5">
+          factory<em className="font-serif not-italic text-paper/60">.dinamic.eth</em>
         </h1>
-        <p className="text-sm lg:text-base text-white/40 font-light max-w-lg leading-relaxed">
+        <p className="text-sm lg:text-base text-paper/40 font-light max-w-lg leading-relaxed">
           Deploy your own agent registry — permissionless, on-chain, fully yours.<br className="hidden sm:block" />
           Each NFT holder in your collection gets a unique AI agent identity.
         </p>
@@ -302,14 +302,14 @@ export default function FactoryPage() {
           <div className="mt-8 w-full liquid-glass-strong rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-8">
               <div className="text-left">
-                <p className="text-xs text-white/40 mb-0.5">Deployment fee</p>
-                <p className="text-xl font-semibold text-white">
+                <p className="text-xs text-paper/40 mb-0.5">Deployment fee</p>
+                <p className="text-xl font-semibold text-paper">
                   {feeEth !== null ? `${feeEth} ETH` : <Loader2 className="w-4 h-4 animate-spin inline" />}
                 </p>
               </div>
               <div className="text-left">
-                <p className="text-xs text-white/40 mb-0.5">AI credits included</p>
-                <p className="text-xl font-semibold text-white">
+                <p className="text-xs text-paper/40 mb-0.5">AI credits included</p>
+                <p className="text-xl font-semibold text-paper">
                   {credits !== null ? Number(credits).toLocaleString() : <Loader2 className="w-4 h-4 animate-spin inline" />}
                 </p>
               </div>
@@ -335,9 +335,9 @@ export default function FactoryPage() {
               <nav className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center">
-                    <Factory className="w-4 h-4 text-white/70" />
+                    <Factory className="w-4 h-4 text-paper/70" />
                   </div>
-                  <span className="text-sm font-medium text-white/80">Agent Registry Factory</span>
+                  <span className="text-sm font-medium text-paper/80">Agent Registry Factory</span>
                 </div>
                 <div className="hidden lg:block"><ConnectButton /></div>
               </nav>
@@ -364,8 +364,8 @@ export default function FactoryPage() {
                   <div key={title} className="flex gap-3">
                     <div className="mt-0.5 shrink-0">{icon}</div>
                     <div>
-                      <p className="text-sm font-medium text-white/80">{title}</p>
-                      <p className="text-xs text-white/40 mt-0.5 leading-relaxed">{desc}</p>
+                      <p className="text-sm font-medium text-paper/80">{title}</p>
+                      <p className="text-xs text-paper/40 mt-0.5 leading-relaxed">{desc}</p>
                     </div>
                   </div>
                 ))}
@@ -374,13 +374,13 @@ export default function FactoryPage() {
               {/* Tech badges */}
               <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-white/8">
                 {["ERC-8004", "ERC-721", "ERC-2981", "ENSIP-25", "Non-custodial"].map(b => (
-                  <div key={b} className="liquid-glass rounded-full px-3 py-1 text-xs text-white/60">{b}</div>
+                  <div key={b} className="liquid-glass rounded-full px-3 py-1 text-xs text-paper/60">{b}</div>
                 ))}
               </div>
 
               {/* Link to agents */}
               <a href="../agents/"
-                className="liquid-glass rounded-full px-4 py-2 flex items-center gap-2 text-xs text-white/50 hover:text-white transition-colors w-fit"
+                className="liquid-glass rounded-full px-4 py-2 flex items-center gap-2 text-xs text-paper/50 hover:text-paper transition-colors w-fit"
               >
                 Browse live agents
                 <ArrowRight className="w-3 h-3" />
@@ -398,11 +398,11 @@ export default function FactoryPage() {
             {notDeployed && (
               <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
                 <div className="w-14 h-14 rounded-2xl liquid-glass flex items-center justify-center">
-                  <Factory className="w-6 h-6 text-white/30" />
+                  <Factory className="w-6 h-6 text-paper/30" />
                 </div>
                 <div>
-                  <p className="text-base font-semibold text-white/70">Coming soon</p>
-                  <p className="text-xs text-white/30 mt-1">The factory contract is being deployed. Check back shortly.</p>
+                  <p className="text-base font-semibold text-paper/70">Coming soon</p>
+                  <p className="text-xs text-paper/30 mt-1">The factory contract is being deployed. Check back shortly.</p>
                 </div>
               </div>
             )}
@@ -411,8 +411,8 @@ export default function FactoryPage() {
             {!notDeployed && !deployedRegistry && (
               <>
                 <div>
-                  <p className="text-base font-semibold text-white mb-1">Deploy Your Registry</p>
-                  <p className="text-xs text-white/40 leading-relaxed">
+                  <p className="text-base font-semibold text-paper mb-1">Deploy Your Registry</p>
+                  <p className="text-xs text-paper/40 leading-relaxed">
                     Link your NFT collection to an on-chain agent registry. Ownership is verified at mint — nothing is locked.
                   </p>
                 </div>
@@ -435,7 +435,7 @@ export default function FactoryPage() {
                 {/* Advanced toggle */}
                 <button
                   onClick={() => setShowAdvanced(p => !p)}
-                  className="flex items-center gap-1.5 text-xs text-white/35 hover:text-white/60 transition-colors w-fit"
+                  className="flex items-center gap-1.5 text-xs text-paper/35 hover:text-paper/60 transition-colors w-fit"
                 >
                   {showAdvanced ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                   Advanced settings
@@ -468,21 +468,21 @@ export default function FactoryPage() {
                 {!isConnected ? (
                   <button
                     onClick={() => open()}
-                    className="liquid-glass-strong rounded-full px-6 py-3 flex items-center justify-center gap-2.5 text-sm font-medium text-white hover:scale-105 active:scale-95 transition-transform"
+                    className="liquid-glass-strong rounded-full px-6 py-3 flex items-center justify-center gap-2.5 text-sm font-medium text-paper hover:scale-105 active:scale-95 transition-transform"
                   >
                     <Wallet className="w-4 h-4" />
                     Connect Wallet to Deploy
                   </button>
                 ) : (
                   <div className="flex flex-col gap-3">
-                    <div className="flex items-center justify-between text-xs text-white/35">
+                    <div className="flex items-center justify-between text-xs text-paper/35">
                       <span>Connected: <span className="font-mono">{shortAddr(address!)}</span></span>
-                      <button onClick={() => disconnect()} className="hover:text-white/60 transition-colors">Disconnect</button>
+                      <button onClick={() => disconnect()} className="hover:text-paper/60 transition-colors">Disconnect</button>
                     </div>
                     <button
                       onClick={handleDeploy}
                       disabled={!canDeploy}
-                      className="liquid-glass-strong rounded-full px-6 py-3 flex items-center justify-center gap-2.5 text-sm font-medium text-white hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 transition-transform"
+                      className="liquid-glass-strong rounded-full px-6 py-3 flex items-center justify-center gap-2.5 text-sm font-medium text-paper hover:scale-105 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 transition-transform"
                     >
                       {deploying ? (
                         <><Loader2 className="w-4 h-4 animate-spin" />Deploying…</>
@@ -496,7 +496,7 @@ export default function FactoryPage() {
                   </div>
                 )}
 
-                <p className="text-[11px] text-white/20 text-center leading-relaxed">
+                <p className="text-[11px] text-paper/20 text-center leading-relaxed">
                   Deployment is permanent. You retain full ownership of the registry contract.
                 </p>
               </>
@@ -507,24 +507,24 @@ export default function FactoryPage() {
               <div className="flex flex-col items-center gap-6 py-8 text-center">
                 <CheckCircle2 className="w-10 h-10 text-green-400" />
                 <div>
-                  <p className="text-lg font-semibold text-white">Registry deployed!</p>
-                  <p className="text-xs text-white/40 mt-1">
+                  <p className="text-lg font-semibold text-paper">Registry deployed!</p>
+                  <p className="text-xs text-paper/40 mt-1">
                     {credits ? `${Number(credits).toLocaleString()} AI credits are on their way.` : "Credits will be credited shortly."}
                   </p>
                 </div>
                 <div className="w-full liquid-glass rounded-2xl px-4 py-3 flex items-center justify-between gap-3">
-                  <span className="text-xs font-mono text-white/70 truncate">{deployedRegistry}</span>
+                  <span className="text-xs font-mono text-paper/70 truncate">{deployedRegistry}</span>
                   <CopyButton text={deployedRegistry} />
                 </div>
                 <div className="flex items-center gap-4">
                   <a href="../agents/"
-                    className="liquid-glass-strong rounded-full px-5 py-2.5 flex items-center gap-2 text-sm font-medium text-white hover:scale-105 active:scale-95 transition-transform"
+                    className="liquid-glass-strong rounded-full px-5 py-2.5 flex items-center gap-2 text-sm font-medium text-paper hover:scale-105 active:scale-95 transition-transform"
                   >
                     <Rocket className="w-3.5 h-3.5" />
                     Browse agents
                   </a>
                   <a href={`https://etherscan.io/address/${deployedRegistry}`} target="_blank" rel="noreferrer"
-                    className="liquid-glass rounded-full px-4 py-2.5 flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors"
+                    className="liquid-glass rounded-full px-4 py-2.5 flex items-center gap-2 text-sm text-paper/50 hover:text-paper transition-colors"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                     Etherscan

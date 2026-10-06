@@ -77,7 +77,7 @@ function ConnectButton() {
     return (
       <button
         onClick={() => disconnect()}
-        className="liquid-glass rounded-full px-4 py-2 flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
+        className="liquid-glass rounded-full px-4 py-2 flex items-center gap-2 text-sm text-paper/70 hover:text-paper transition-colors"
       >
         <LiveDot />
         <span className="font-mono">{shortAddr(address)}</span>
@@ -88,7 +88,7 @@ function ConnectButton() {
   return (
     <button
       onClick={() => open()}
-      className="liquid-glass-strong rounded-full px-5 py-2.5 flex items-center gap-2 text-sm font-medium text-white hover:scale-105 active:scale-95 transition-transform"
+      className="liquid-glass-strong rounded-full px-5 py-2.5 flex items-center gap-2 text-sm font-medium text-paper hover:scale-105 active:scale-95 transition-transform"
     >
       <Wallet className="w-4 h-4" />
       <span>Connect Wallet</span>
@@ -104,12 +104,12 @@ function StepPill({
     <div className="flex items-center gap-2">
       <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
         done ? "bg-green-500/20 border border-green-500/40 text-green-400"
-             : active ? "bg-white/15 border border-white/30 text-white"
-             : "bg-white/4 border border-white/10 text-white/25"
+             : active ? "bg-white/15 border border-white/30 text-paper"
+             : "bg-white/4 border border-white/10 text-paper/25"
       }`}>
         {done ? <Check className="w-3.5 h-3.5" /> : number}
       </div>
-      <span className={`text-xs transition-colors hidden sm:block ${active ? "text-white/70" : "text-white/25"}`}>
+      <span className={`text-xs transition-colors hidden sm:block ${active ? "text-paper/70" : "text-paper/25"}`}>
         {label}
       </span>
     </div>
@@ -120,7 +120,7 @@ function StepPill({
 function CollectionStatusBanner({ status }: { status: ReturnType<typeof useCollectionRegistry> }) {
   if (status.state === "loading") {
     return (
-      <div className="liquid-glass rounded-2xl p-3 text-xs text-white/40 flex items-center gap-2">
+      <div className="liquid-glass rounded-2xl p-3 text-xs text-paper/40 flex items-center gap-2">
         <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />
         Checking collection registry…
       </div>
@@ -130,7 +130,7 @@ function CollectionStatusBanner({ status }: { status: ReturnType<typeof useColle
     return (
       <div className="rounded-2xl p-4 border border-red-500/20 bg-red-500/5">
         <p className="text-sm font-medium text-red-400">Collection not onboarded</p>
-        <p className="text-xs text-white/40 mt-1 leading-relaxed">
+        <p className="text-xs text-paper/40 mt-1 leading-relaxed">
           An admin needs to deploy an ERC-8004 registry for this collection first.
         </p>
       </div>
@@ -140,7 +140,7 @@ function CollectionStatusBanner({ status }: { status: ReturnType<typeof useColle
     return (
       <div className="rounded-2xl p-4 border border-amber-500/20 bg-amber-500/5">
         <p className="text-sm font-medium text-amber-400">Collection delisted</p>
-        <p className="text-xs text-white/40 mt-1 leading-relaxed">
+        <p className="text-xs text-paper/40 mt-1 leading-relaxed">
           This collection's registry exists on-chain but is no longer accepting new agents here.
         </p>
       </div>
@@ -148,8 +148,8 @@ function CollectionStatusBanner({ status }: { status: ReturnType<typeof useColle
   }
   return (
     <div className="liquid-glass rounded-2xl px-4 py-3 flex items-center justify-between">
-      <span className="text-[10px] uppercase tracking-widest text-white/40">Registry</span>
-      <span className="font-mono text-xs text-white/50">
+      <span className="text-[10px] uppercase tracking-widest text-paper/40">Registry</span>
+      <span className="font-mono text-xs text-paper/50">
         {status.registry.slice(0, 8)}…{status.registry.slice(-6)}
       </span>
       <LiveDot />
@@ -164,10 +164,10 @@ function Field({
   label: string; value: string; onChange: (v: string) => void;
   placeholder?: string; textarea?: boolean;
 }) {
-  const cls = "w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-colors";
+  const cls = "w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl px-4 py-2.5 text-sm text-paper placeholder-white/20 outline-none transition-colors";
   return (
     <div className="space-y-1.5">
-      <label className="text-[10px] uppercase tracking-widest text-white/40">{label}</label>
+      <label className="text-[10px] uppercase tracking-widest text-paper/40">{label}</label>
       {textarea ? (
         <textarea value={value} onChange={e => onChange(e.target.value)} rows={3}
           className={`${cls} resize-none`} placeholder={placeholder} />
@@ -193,10 +193,10 @@ function EnsNameField({ address, value, onChange }: {
   if (loading) {
     return (
       <div className="space-y-1.5">
-        <label className="text-[10px] uppercase tracking-widest text-white/40">ENS Name (optional)</label>
+        <label className="text-[10px] uppercase tracking-widest text-paper/40">ENS Name (optional)</label>
         <div className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl px-4 py-2.5">
-          <Loader2 className="w-3.5 h-3.5 text-white/30 animate-spin" />
-          <span className="text-sm text-white/30">Detecting ENS names…</span>
+          <Loader2 className="w-3.5 h-3.5 text-paper/30 animate-spin" />
+          <span className="text-sm text-paper/30">Detecting ENS names…</span>
         </div>
       </div>
     );
@@ -205,10 +205,10 @@ function EnsNameField({ address, value, onChange }: {
   if (names.length === 0) {
     return (
       <div className="space-y-1.5">
-        <label className="text-[10px] uppercase tracking-widest text-white/40">ENS Name (optional)</label>
+        <label className="text-[10px] uppercase tracking-widest text-paper/40">ENS Name (optional)</label>
         <div className="flex items-center gap-2 bg-black/20 border border-white/6 rounded-xl px-4 py-2.5 opacity-50">
-          <Globe className="w-3.5 h-3.5 text-white/20 shrink-0" />
-          <span className="text-sm text-white/30">No ENS names detected in this wallet</span>
+          <Globe className="w-3.5 h-3.5 text-paper/20 shrink-0" />
+          <span className="text-sm text-paper/30">No ENS names detected in this wallet</span>
         </div>
       </div>
     );
@@ -216,7 +216,7 @@ function EnsNameField({ address, value, onChange }: {
 
   return (
     <div className="space-y-1.5">
-      <label className="text-[10px] uppercase tracking-widest text-white/40">
+      <label className="text-[10px] uppercase tracking-widest text-paper/40">
         ENS Name (optional)
         <span className="ml-2 text-amber-400/60 normal-case tracking-normal">
           {names.length} found
@@ -226,12 +226,12 @@ function EnsNameField({ address, value, onChange }: {
         </span>
       </label>
       <div className="relative">
-        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30 pointer-events-none" />
-        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/30 pointer-events-none" />
+        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-paper/30 pointer-events-none" />
+        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-paper/30 pointer-events-none" />
         <select
           value={value}
           onChange={e => onChange(e.target.value)}
-          className="w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl pl-10 pr-10 py-2.5 text-sm text-white outline-none transition-colors appearance-none cursor-pointer"
+          className="w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl pl-10 pr-10 py-2.5 text-sm text-paper outline-none transition-colors appearance-none cursor-pointer"
         >
           <option value="">— None —</option>
           {names.map(n => (
@@ -242,7 +242,7 @@ function EnsNameField({ address, value, onChange }: {
         </select>
       </div>
       {value && (
-        <p className="text-[10px] text-white/30 flex items-center gap-1.5">
+        <p className="text-[10px] text-paper/30 flex items-center gap-1.5">
           <Check className="w-3 h-3 text-green-400" />
           ENSIP-25 bidirectional link will be set after minting
         </p>
@@ -557,11 +557,11 @@ export default function AgentBridgePage() {
       <div className="relative z-10 px-5 py-4 flex items-center justify-between border-b border-white/8">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-            <Bot className="w-4 h-4 text-white/70" />
+            <Bot className="w-4 h-4 text-paper/70" />
           </div>
           <div>
-            <span className="text-sm font-semibold text-white">ERC-8004 Bridge</span>
-            <span className="ml-2 text-[10px] text-white/30 font-mono">agent.dinamic.eth</span>
+            <span className="text-sm font-semibold text-paper">ERC-8004 Bridge</span>
+            <span className="ml-2 text-[10px] text-paper/30 font-mono">agent.dinamic.eth</span>
           </div>
         </div>
         <ConnectButton />
@@ -572,26 +572,26 @@ export default function AgentBridgePage() {
         <div className="relative z-10 flex flex-col items-center justify-center flex-1 min-h-[80vh] p-8 text-center">
           <div className="liquid-glass-strong rounded-3xl p-10 max-w-md w-full space-y-6">
             <div className="w-16 h-16 rounded-3xl bg-white/8 border border-white/10 flex items-center justify-center mx-auto">
-              <Bot className="w-7 h-7 text-white/40" />
+              <Bot className="w-7 h-7 text-paper/40" />
             </div>
             <div>
-              <h1 className="text-3xl font-medium tracking-[-0.05em] text-white mb-3">
+              <h1 className="text-3xl font-medium tracking-[-0.05em] text-paper mb-3">
                 Bridge Your NFT<br />
-                <em className="font-serif not-italic text-white/50">Into an Agent</em>
+                <em className="font-serif not-italic text-paper/50">Into an Agent</em>
               </h1>
-              <p className="text-sm text-white/40 leading-relaxed">
+              <p className="text-sm text-paper/40 leading-relaxed">
                 ERC-8004 lets you attach a trustless on-chain agent identity to any NFT you hold.
                 Connect your wallet to browse your collection.
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-2">
-              <span className="liquid-glass rounded-full px-3 py-1.5 text-xs text-white/60">ERC-8004</span>
-              <span className="liquid-glass rounded-full px-3 py-1.5 text-xs text-white/60">ENSIP-25</span>
-              <span className="liquid-glass rounded-full px-3 py-1.5 text-xs text-white/60">Non-custodial</span>
+              <span className="liquid-glass rounded-full px-3 py-1.5 text-xs text-paper/60">ERC-8004</span>
+              <span className="liquid-glass rounded-full px-3 py-1.5 text-xs text-paper/60">ENSIP-25</span>
+              <span className="liquid-glass rounded-full px-3 py-1.5 text-xs text-paper/60">Non-custodial</span>
             </div>
             <button
               onClick={() => open()}
-              className="w-full liquid-glass-strong rounded-full py-3 flex items-center justify-center gap-3 text-sm font-medium text-white hover:scale-105 active:scale-95 transition-transform"
+              className="w-full liquid-glass-strong rounded-full py-3 flex items-center justify-center gap-3 text-sm font-medium text-paper hover:scale-105 active:scale-95 transition-transform"
             >
               <Wallet className="w-4 h-4" />
               <span>Connect Wallet</span>
@@ -625,21 +625,21 @@ export default function AgentBridgePage() {
               <div className="w-full lg:w-64 xl:w-72 shrink-0 p-5 lg:border-r border-white/8">
                 <div className="liquid-glass-strong rounded-3xl p-5 space-y-4">
                   <div className="w-10 h-10 rounded-2xl bg-white/8 border border-white/10 flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-white/40" />
+                    <Bot className="w-5 h-5 text-paper/40" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-white mb-1">Select an NFT</p>
-                    <p className="text-xs text-white/40 leading-relaxed">
+                    <p className="text-sm font-medium text-paper mb-1">Select an NFT</p>
+                    <p className="text-xs text-paper/40 leading-relaxed">
                       Pick an NFT from an onboarded collection. Ownership is verified live — nothing is locked or transferred.
                     </p>
                   </div>
                   {collections.length > 1 && (
                     <div className="space-y-1.5">
-                      <p className="text-[10px] uppercase tracking-widest text-white/30">Filter</p>
+                      <p className="text-[10px] uppercase tracking-widest text-paper/30">Filter</p>
                       <button
                         onClick={() => setCollectionFilter("")}
                         className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors ${
-                          !collectionFilter ? "bg-white/10 text-white" : "text-white/50 hover:bg-white/5"
+                          !collectionFilter ? "bg-white/10 text-paper" : "text-paper/50 hover:bg-white/5"
                         }`}
                       >
                         All collections
@@ -649,7 +649,7 @@ export default function AgentBridgePage() {
                           key={c}
                           onClick={() => setCollectionFilter(c)}
                           className={`w-full text-left text-xs px-3 py-2 rounded-xl transition-colors flex items-center justify-between gap-2 ${
-                            collectionFilter === c ? "bg-white/10 text-white" : "text-white/50 hover:bg-white/5"
+                            collectionFilter === c ? "bg-white/10 text-paper" : "text-paper/50 hover:bg-white/5"
                           }`}
                         >
                           <span className="truncate">{c}</span>
@@ -664,11 +664,11 @@ export default function AgentBridgePage() {
                   )}
                   {unownedCollections.length > 0 && (
                     <div className="space-y-1 pt-3 border-t border-white/6">
-                      <p className="text-[10px] uppercase tracking-widest text-white/20 px-1">Also supported</p>
+                      <p className="text-[10px] uppercase tracking-widest text-paper/20 px-1">Also supported</p>
                       {unownedCollections.map(c => (
-                        <div key={c.address} className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-white/25">
+                        <div key={c.address} className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-paper/25">
                           <span className="text-xs truncate">{c.name}</span>
-                          <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded-full bg-white/4 text-white/20 border border-white/6 whitespace-nowrap">no NFT</span>
+                          <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded-full bg-white/4 text-paper/20 border border-white/6 whitespace-nowrap">no NFT</span>
                         </div>
                       ))}
                     </div>
@@ -698,39 +698,39 @@ export default function AgentBridgePage() {
                 )}
                 {nftsSource === "onchain" && (
                   <div className="rounded-2xl px-4 py-2 border border-white/8 bg-white/3 mb-4 flex items-center gap-2">
-                    <span className="text-xs text-white/30">Showing NFTs from onboarded collections · on-chain</span>
+                    <span className="text-xs text-paper/30">Showing NFTs from onboarded collections · on-chain</span>
                   </div>
                 )}
                 {!nftsLoading && filtered.length === 0 && nonEnumerableCollections.length === 0 && (
                   <div className="space-y-8">
                     <div className="flex flex-col items-center justify-center py-12 gap-3 text-center">
                       <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center">
-                        <Bot className="w-5 h-5 text-white/20" />
+                        <Bot className="w-5 h-5 text-paper/20" />
                       </div>
-                      <p className="text-white/30 text-sm">No supported NFTs in this wallet.</p>
-                      <p className="text-white/20 text-xs max-w-xs">Hold an NFT from one of the supported collections below, or switch to a wallet that does.</p>
+                      <p className="text-paper/30 text-sm">No supported NFTs in this wallet.</p>
+                      <p className="text-paper/20 text-xs max-w-xs">Hold an NFT from one of the supported collections below, or switch to a wallet that does.</p>
                     </div>
                     {unownedCollections.length > 0 && (
                       <div className="space-y-4">
-                        <p className="text-xs font-semibold text-white/30 uppercase tracking-widest">Supported Collections</p>
+                        <p className="text-xs font-semibold text-paper/30 uppercase tracking-widest">Supported Collections</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                           {unownedCollections.map(c => (
                             <div key={c.address} className="liquid-glass rounded-2xl p-4 space-y-3">
                               <div className="flex items-center gap-3">
                                 <div className="w-9 h-9 rounded-xl bg-white/6 flex items-center justify-center shrink-0">
-                                  <Bot className="w-4 h-4 text-white/25" />
+                                  <Bot className="w-4 h-4 text-paper/25" />
                                 </div>
                                 <div className="min-w-0">
-                                  <p className="text-sm font-medium text-white/70 truncate">{c.name}</p>
-                                  <p className="text-[10px] font-mono text-white/25">{c.address.slice(0,6)}…{c.address.slice(-4)}</p>
+                                  <p className="text-sm font-medium text-paper/70 truncate">{c.name}</p>
+                                  <p className="text-[10px] font-mono text-paper/25">{c.address.slice(0,6)}…{c.address.slice(-4)}</p>
                                 </div>
                               </div>
-                              <p className="text-xs text-white/25 leading-relaxed">Hold a token from this collection to bridge it as an ERC-8004 agent.</p>
+                              <p className="text-xs text-paper/25 leading-relaxed">Hold a token from this collection to bridge it as an ERC-8004 agent.</p>
                               <a
                                 href={`https://opensea.io/assets/ethereum/${c.address}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-white/4 hover:bg-white/8 transition-colors text-xs text-white/40 hover:text-white/70"
+                                className="flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-white/4 hover:bg-white/8 transition-colors text-xs text-paper/40 hover:text-paper/70"
                               >
                                 View on OpenSea <ArrowRight className="w-3 h-3" />
                               </a>
@@ -746,8 +746,8 @@ export default function AgentBridgePage() {
                   <div className="mb-4 space-y-2">
                     {nonEnumerableCollections.map(col => (
                       <div key={col.contractAddress} className="rounded-2xl p-4 border border-white/8 bg-white/3">
-                        <p className="text-sm font-medium text-white mb-1">{col.collectionName}</p>
-                        <p className="text-xs text-white/40 mb-3">This collection doesn't support automatic enumeration. Enter your token ID to continue.</p>
+                        <p className="text-sm font-medium text-paper mb-1">{col.collectionName}</p>
+                        <p className="text-xs text-paper/40 mb-3">This collection doesn't support automatic enumeration. Enter your token ID to continue.</p>
                         <div className="flex gap-2">
                           <input
                             type="number"
@@ -756,7 +756,7 @@ export default function AgentBridgePage() {
                             value={manualTokenId[col.contractAddress] || ""}
                             onChange={e => setManualTokenId(s => ({ ...s, [col.contractAddress]: e.target.value }))}
                             onKeyDown={e => e.key === "Enter" && handleManualLookup(col.contractAddress)}
-                            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-white/20"
+                            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-paper placeholder-white/20 focus:outline-none focus:border-white/20"
                           />
                           <button
                             onClick={() => handleManualLookup(col.contractAddress)}
@@ -788,13 +788,13 @@ export default function AgentBridgePage() {
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <Bot className="w-8 h-8 text-white/15" />
+                            <Bot className="w-8 h-8 text-paper/15" />
                           </div>
                         )}
                       </div>
                       <div className="p-3">
-                        <p className="text-sm font-medium text-white truncate">{nft.name}</p>
-                        <p className="text-xs text-white/40 truncate">{nft.collectionName}</p>
+                        <p className="text-sm font-medium text-paper truncate">{nft.name}</p>
+                        <p className="text-xs text-paper/40 truncate">{nft.collectionName}</p>
                       </div>
                     </button>
                   ))}
@@ -817,20 +817,20 @@ export default function AgentBridgePage() {
                         className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Bot className="w-12 h-12 text-white/15" />
+                        <Bot className="w-12 h-12 text-paper/15" />
                       </div>
                     )}
                   </div>
                   <div className="p-4 space-y-3">
                     <div>
-                      <p className="font-medium text-white">{selected.name}</p>
-                      <p className="text-xs text-white/40">{selected.collectionName}</p>
+                      <p className="font-medium text-paper">{selected.name}</p>
+                      <p className="text-xs text-paper/40">{selected.collectionName}</p>
                     </div>
                     <div className="flex gap-2 flex-wrap">
-                      <span className="liquid-glass rounded-full px-3 py-1 text-[10px] font-mono text-white/40">
+                      <span className="liquid-glass rounded-full px-3 py-1 text-[10px] font-mono text-paper/40">
                         {shortAddr(selected.contractAddress)}
                       </span>
-                      <span className="liquid-glass rounded-full px-3 py-1 text-[10px] text-white/40">
+                      <span className="liquid-glass rounded-full px-3 py-1 text-[10px] text-paper/40">
                         #{selected.tokenId}
                       </span>
                     </div>
@@ -843,7 +843,7 @@ export default function AgentBridgePage() {
                 <CollectionStatusBanner status={registryStatus} />
 
                 <div className="liquid-glass-strong rounded-3xl p-6 space-y-4">
-                  <p className="text-[10px] uppercase tracking-widest text-white/40">Agent Configuration</p>
+                  <p className="text-[10px] uppercase tracking-widest text-paper/40">Agent Configuration</p>
 
                   <Field label="Agent Name" value={agentName} onChange={setAgentName} placeholder="My Agent" />
                   <Field label="Description" value={agentDesc} onChange={setAgentDesc}
@@ -851,28 +851,28 @@ export default function AgentBridgePage() {
                   <EnsNameField address={address} value={ensName} onChange={setEnsName} />
 
                   <div className="h-px bg-white/8" />
-                  <p className="text-[10px] uppercase tracking-widest text-white/30">AI Services</p>
+                  <p className="text-[10px] uppercase tracking-widest text-paper/30">AI Services</p>
                   <Field label="MCP Endpoint" value={mcpEndpoint} onChange={setMcpEndpoint}
                     placeholder="https://mcp.myagent.com/" />
                   <Field label="A2A Endpoint" value={a2aEndpoint} onChange={setA2aEndpoint}
                     placeholder="https://a2a.myagent.com/" />
                   {registryConfig && (registryConfig.mcp_endpoint || registryConfig.a2a_endpoint) && (
-                    <p className="text-[10px] text-white/25">Pre-filled from registry defaults · edit to override per-agent</p>
+                    <p className="text-[10px] text-paper/25">Pre-filled from registry defaults · edit to override per-agent</p>
                   )}
                   {!registryConfig && (
-                    <p className="text-[10px] text-white/25 italic">Optional — add your own MCP / A2A endpoint after deploying a server</p>
+                    <p className="text-[10px] text-paper/25 italic">Optional — add your own MCP / A2A endpoint after deploying a server</p>
                   )}
 
                   {(personalities as any[]).length > 0 && (
                     <>
                       <div className="h-px bg-white/8" />
-                      <p className="text-[10px] uppercase tracking-widest text-white/30">AI Personality</p>
+                      <p className="text-[10px] uppercase tracking-widest text-paper/30">AI Personality</p>
                       <div className="space-y-1.5">
-                        <label className="text-[10px] uppercase tracking-widest text-white/40">Personality</label>
+                        <label className="text-[10px] uppercase tracking-widest text-paper/40">Personality</label>
                         <select
                           value={personalityId}
                           onChange={e => setPersonalityId(e.target.value)}
-                          className="w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl px-4 py-2.5 text-sm text-white outline-none transition-colors appearance-none cursor-pointer"
+                          className="w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl px-4 py-2.5 text-sm text-paper outline-none transition-colors appearance-none cursor-pointer"
                         >
                           <option value="">— No personality —</option>
                           {(personalities as any[]).map((p: any) => (
@@ -882,13 +882,13 @@ export default function AgentBridgePage() {
                       </div>
                       {personalityId && (
                         <div className="space-y-1.5">
-                          <label className="text-[10px] uppercase tracking-widest text-white/40">Custom Prompt Override</label>
+                          <label className="text-[10px] uppercase tracking-widest text-paper/40">Custom Prompt Override</label>
                           <textarea
                             value={customPrompt}
                             onChange={e => setCustomPrompt(e.target.value)}
                             rows={3}
                             placeholder="Leave blank to use the personality default system prompt"
-                            className="w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/20 outline-none transition-colors resize-none font-mono"
+                            className="w-full bg-black/40 border border-white/10 focus:border-white/30 rounded-xl px-4 py-2.5 text-sm text-paper placeholder-white/20 outline-none transition-colors resize-none font-mono"
                           />
                         </div>
                       )}
@@ -899,8 +899,8 @@ export default function AgentBridgePage() {
                 {/* Mint price */}
                 {registryStatus.state === "onboarded" && (
                   <div className="liquid-glass rounded-2xl px-4 py-3 flex items-center justify-between">
-                    <span className="text-[10px] uppercase tracking-widest text-white/40">Mint price</span>
-                    <span className="font-mono text-sm text-white">
+                    <span className="text-[10px] uppercase tracking-widest text-paper/40">Mint price</span>
+                    <span className="font-mono text-sm text-paper">
                       {mintPriceLoading || mintPrice === undefined ? "…"
                         : mintPrice === BigInt(0) ? "Free"
                         : `${formatEther(mintPrice)} ETH`}
@@ -911,10 +911,10 @@ export default function AgentBridgePage() {
                 {/* Preview JSON */}
                 {registryStatus.state === "onboarded" && (
                   <details className="liquid-glass rounded-2xl overflow-hidden">
-                    <summary className="px-4 py-3 text-[10px] uppercase tracking-widest text-white/30 cursor-pointer hover:text-white/50">
+                    <summary className="px-4 py-3 text-[10px] uppercase tracking-widest text-paper/30 cursor-pointer hover:text-paper/50">
                       Preview registration JSON
                     </summary>
-                    <pre className="px-4 pb-4 text-xs overflow-x-auto text-white/30">
+                    <pre className="px-4 pb-4 text-xs overflow-x-auto text-paper/30">
                       {JSON.stringify({
                         type: "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
                         name: agentName, description: agentDesc, image: selected.image,
@@ -935,14 +935,14 @@ export default function AgentBridgePage() {
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={() => { setStep("gallery"); setSelected(null); }}
-                    className="liquid-glass rounded-full px-6 py-3 text-sm text-white/70 hover:text-white transition-colors"
+                    className="liquid-glass rounded-full px-6 py-3 text-sm text-paper/70 hover:text-paper transition-colors"
                   >
                     Back
                   </button>
                   <button
                     onClick={handleMint}
                     disabled={!agentName || registryStatus.state !== "onboarded" || mintPriceLoading || mintPrice === undefined}
-                    className="flex-1 liquid-glass-strong rounded-full py-3 flex items-center justify-center gap-3 text-sm font-medium text-white disabled:opacity-30 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99] transition-transform"
+                    className="flex-1 liquid-glass-strong rounded-full py-3 flex items-center justify-center gap-3 text-sm font-medium text-paper disabled:opacity-30 disabled:cursor-not-allowed hover:scale-[1.01] active:scale-[0.99] transition-transform"
                   >
                     <span>{mintPrice && mintPrice > BigInt(0)
                       ? `Mint for ${formatEther(mintPrice)} ETH`
@@ -961,16 +961,16 @@ export default function AgentBridgePage() {
             <div className="flex-1 flex items-center justify-center p-8">
               <div className="liquid-glass-strong rounded-3xl p-10 max-w-sm w-full text-center space-y-6">
                 <div className="w-16 h-16 mx-auto rounded-3xl bg-white/8 border border-white/10 flex items-center justify-center">
-                  <Loader2 className="w-7 h-7 text-white/50 animate-spin" />
+                  <Loader2 className="w-7 h-7 text-paper/50 animate-spin" />
                 </div>
                 <div>
-                  <p className="text-base font-medium text-white">
+                  <p className="text-base font-medium text-paper">
                     {pinning && "Pinning metadata to IPFS…"}
                     {!pinning && mintPending && "Confirm in wallet…"}
                     {!pinning && mintConfirming && "Waiting for confirmation…"}
                     {!pinning && postingToGateway && "Registering with gateway…"}
                   </p>
-                  <p className="text-sm text-white/40 mt-2 leading-relaxed">
+                  <p className="text-sm text-paper/40 mt-2 leading-relaxed">
                     {pinning && "Uploading agent metadata to IPFS via Pinata."}
                     {!pinning && mintPending && "Your wallet will prompt you to sign the transaction."}
                     {!pinning && mintConfirming && "Transaction submitted — waiting for block confirmation."}
@@ -981,7 +981,7 @@ export default function AgentBridgePage() {
                   <div className="rounded-2xl p-4 border border-red-500/20 bg-red-500/5 text-left space-y-2">
                     <p className="text-red-400 text-sm">{mintError.message}</p>
                     <button onClick={() => setStep("configure")}
-                      className="text-xs text-white/40 hover:text-white/70 transition-colors underline underline-offset-2">
+                      className="text-xs text-paper/40 hover:text-paper/70 transition-colors underline underline-offset-2">
                       Go back and try again
                     </button>
                   </div>
@@ -1001,8 +1001,8 @@ export default function AgentBridgePage() {
                     <Check className="w-6 h-6 text-green-400" />
                   </div>
                   <div>
-                    <p className="text-lg font-medium text-white">Agent Registered!</p>
-                    <p className="text-sm text-white/40 mt-1">
+                    <p className="text-lg font-medium text-paper">Agent Registered!</p>
+                    <p className="text-sm text-paper/40 mt-1">
                       Agent #{mintedAgentId?.toString()} minted on-chain.
                     </p>
                   </div>
@@ -1017,26 +1017,26 @@ export default function AgentBridgePage() {
                         className="w-14 h-14 rounded-2xl object-cover shrink-0" />
                     ) : (
                       <div className="w-14 h-14 rounded-2xl bg-white/8 border border-white/10 flex items-center justify-center shrink-0">
-                        <Bot className="w-6 h-6 text-white/30" />
+                        <Bot className="w-6 h-6 text-paper/30" />
                       </div>
                     )}
                     <div className="min-w-0">
-                      <p className="font-medium text-white truncate">{agentName}</p>
-                      <p className="text-xs text-white/40">
+                      <p className="font-medium text-paper truncate">{agentName}</p>
+                      <p className="text-xs text-paper/40">
                         Agent #{mintedAgentId?.toString()} · {selected.collectionName}
                       </p>
                     </div>
                   </div>
                   <div className="border-t border-white/8 px-4 py-3 space-y-1">
                     <div className="flex items-center gap-2">
-                      <Link2 className="w-3 h-3 text-white/20 shrink-0" />
-                      <span className="font-mono text-[10px] text-white/30 truncate">
+                      <Link2 className="w-3 h-3 text-paper/20 shrink-0" />
+                      <span className="font-mono text-[10px] text-paper/30 truncate">
                         {shortAddr(selected.contractAddress)} #{selected.tokenId}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Globe className="w-3 h-3 text-white/20 shrink-0" />
-                      <span className="font-mono text-[10px] text-white/30 truncate">
+                      <Globe className="w-3 h-3 text-paper/20 shrink-0" />
+                      <span className="font-mono text-[10px] text-paper/30 truncate">
                         {buildAgentRegistry(REGISTRY_CHAIN_ID, mintedRegistry)}
                       </span>
                     </div>
@@ -1047,20 +1047,20 @@ export default function AgentBridgePage() {
                 {ensName && !ensLinked && (
                   <div className="liquid-glass rounded-3xl p-5 space-y-3">
                     <div className="flex items-center gap-2">
-                      <Globe className="w-4 h-4 text-white/50" />
-                      <p className="text-sm font-medium text-white">Link to ENS Name</p>
+                      <Globe className="w-4 h-4 text-paper/50" />
+                      <p className="text-sm font-medium text-paper">Link to ENS Name</p>
                     </div>
-                    <p className="text-xs text-white/40 leading-relaxed">
-                      Set the ENSIP-25 text record on <strong className="text-white/60">{ensName}</strong> to
+                    <p className="text-xs text-paper/40 leading-relaxed">
+                      Set the ENSIP-25 text record on <strong className="text-paper/60">{ensName}</strong> to
                       bidirectionally verify this agent is associated with your ENS name.
                     </p>
-                    <p className="font-mono text-[10px] text-white/20 break-all">
+                    <p className="font-mono text-[10px] text-paper/20 break-all">
                       {mintedAgentId ? buildEnsip25TextKey(REGISTRY_CHAIN_ID, mintedRegistry, mintedAgentId) : "…"}
                     </p>
                     <button
                       onClick={handleEnsLink}
                       disabled={ensPending || ensLinking}
-                      className="w-full liquid-glass-strong rounded-full py-3 text-sm font-medium text-white disabled:opacity-40 hover:scale-[1.01] transition-transform"
+                      className="w-full liquid-glass-strong rounded-full py-3 text-sm font-medium text-paper disabled:opacity-40 hover:scale-[1.01] transition-transform"
                     >
                       {ensPending ? "Confirm in wallet…" : "Set ENSIP-25 Text Record"}
                     </button>
@@ -1081,7 +1081,7 @@ export default function AgentBridgePage() {
                     </div>
                     <div>
                       <p className="text-sm text-green-400 font-medium">ENSIP-25 record set on {ensName}</p>
-                      <p className="text-xs text-white/30 mt-0.5">Bidirectional ENS ↔ agent link established.</p>
+                      <p className="text-xs text-paper/30 mt-0.5">Bidirectional ENS ↔ agent link established.</p>
                     </div>
                   </div>
                 )}
@@ -1095,7 +1095,7 @@ export default function AgentBridgePage() {
                       setEnsName(""); setMcpEndpoint(""); setA2aEndpoint("");
                       setEnsLinked(false); setEnsLinking(false);
                     }}
-                    className="flex-1 liquid-glass rounded-full py-3 text-sm text-white/70 hover:text-white transition-colors"
+                    className="flex-1 liquid-glass rounded-full py-3 text-sm text-paper/70 hover:text-paper transition-colors"
                   >
                     Bridge Another
                   </button>
@@ -1103,7 +1103,7 @@ export default function AgentBridgePage() {
                     <a
                       href={`${GATEWAY_URL}/agent/${mintedRegistry}/${mintedAgentId}`}
                       target="_blank" rel="noopener noreferrer"
-                      className="flex-1 liquid-glass rounded-full py-3 text-sm text-center text-white/70 hover:text-white transition-colors"
+                      className="flex-1 liquid-glass rounded-full py-3 text-sm text-center text-paper/70 hover:text-paper transition-colors"
                     >
                       View JSON
                     </a>

@@ -140,7 +140,7 @@ function ConnectButton() {
   if (isConnected && address) {
     return (
       <button onClick={() => disconnect()}
-        className="liquid-glass rounded-full px-4 py-2 flex items-center gap-2 text-xs text-white/70 hover:text-white transition-colors"
+        className="liquid-glass rounded-full px-4 py-2 flex items-center gap-2 text-xs text-paper/70 hover:text-paper transition-colors"
         title={address}>
         <span className="font-mono">{displayName}</span>
       </button>
@@ -148,7 +148,7 @@ function ConnectButton() {
   }
   return (
     <button onClick={() => open()}
-      className="liquid-glass-strong rounded-full px-4 py-2 flex items-center gap-2 text-xs font-medium text-white hover:scale-105 active:scale-95 transition-transform">
+      className="liquid-glass-strong rounded-full px-4 py-2 flex items-center gap-2 text-xs font-medium text-paper hover:scale-105 active:scale-95 transition-transform">
       <Wallet className="w-3.5 h-3.5" />
       <span>Connect</span>
     </button>
@@ -161,7 +161,7 @@ function CopyBtn({ text }: { text: string }) {
   return (
     <button
       onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-      className="p-1 rounded hover:bg-white/10 transition-colors text-white/50 hover:text-white/80"
+      className="p-1 rounded hover:bg-white/10 transition-colors text-paper/50 hover:text-paper/80"
     >
       {copied ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
     </button>
@@ -184,7 +184,7 @@ function ShareBtn() {
   return (
     <button
       onClick={share}
-      className="p-1 rounded hover:bg-white/10 transition-colors text-white/50 hover:text-white/80"
+      className="p-1 rounded hover:bg-white/10 transition-colors text-paper/50 hover:text-paper/80"
       title="Share profile"
     >
       {shared ? <Check className="w-3 h-3 text-green-400" /> : <Share2 className="w-3 h-3" />}
@@ -257,7 +257,7 @@ function RssFeed({ url }: { url: string }) {
 
   return (
     <div className="mt-6">
-      <p className="text-[10px] uppercase tracking-widest text-white/40 mb-3 flex items-center gap-1.5">
+      <p className="text-[10px] uppercase tracking-widest text-paper/40 mb-3 flex items-center gap-1.5">
         <Rss className="w-3 h-3" />{feedTitle || "Feed"}
       </p>
       <div className="space-y-1.5">
@@ -268,13 +268,13 @@ function RssFeed({ url }: { url: string }) {
               <img src={item.image} alt="" className="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-white/10" />
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-white/75 group-hover:text-white transition-colors line-clamp-2 leading-snug">{item.title}</p>
-              <p className="text-[10px] text-white/30 mt-0.5">
+              <p className="text-xs text-paper/75 group-hover:text-paper transition-colors line-clamp-2 leading-snug">{item.title}</p>
+              <p className="text-[10px] text-paper/30 mt-0.5">
                 {item.author && <span>{item.author} · </span>}
                 {item.date && new Date(item.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
               </p>
             </div>
-            <ArrowRight className="w-3 h-3 text-white/20 group-hover:text-white/50 shrink-0 transition-colors" />
+            <ArrowRight className="w-3 h-3 text-paper/20 group-hover:text-paper/50 shrink-0 transition-colors" />
           </a>
         ))}
       </div>
@@ -287,11 +287,11 @@ function DonatePill({ address }: { address: string }) {
   return (
     <button
       onClick={() => { navigator.clipboard.writeText(address); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-      className="liquid-glass rounded-full px-6 py-3 flex items-center gap-3 text-sm text-white/70 hover:text-white hover:scale-105 active:scale-95 transition-all"
+      className="liquid-glass rounded-full px-6 py-3 flex items-center gap-3 text-sm text-paper/70 hover:text-paper hover:scale-105 active:scale-95 transition-all"
     >
-      {copied ? <Check className="w-3.5 h-3.5 text-green-400 shrink-0" /> : <Copy className="w-3.5 h-3.5 shrink-0 text-white/40" />}
+      {copied ? <Check className="w-3.5 h-3.5 text-green-400 shrink-0" /> : <Copy className="w-3.5 h-3.5 shrink-0 text-paper/40" />}
       <span>{copied ? "Address copied!" : "Donate"}</span>
-      <span className="font-mono text-xs text-white/30">{address.slice(0, 6)}…{address.slice(-4)}</span>
+      <span className="font-mono text-xs text-paper/30">{address.slice(0, 6)}…{address.slice(-4)}</span>
     </button>
   );
 }
@@ -301,11 +301,11 @@ function StatCard({ icon: Icon, label, value }: { icon: any; label: string; valu
   return (
     <div className="liquid-glass rounded-2xl p-4 flex items-start gap-3">
       <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-        <Icon className="w-4 h-4 text-white/70" />
+        <Icon className="w-4 h-4 text-paper/70" />
       </div>
       <div>
-        <p className="text-[10px] uppercase tracking-widest text-white/50 mb-0.5">{label}</p>
-        <p className="text-sm text-white font-medium">{value}</p>
+        <p className="text-[10px] uppercase tracking-widest text-paper/50 mb-0.5">{label}</p>
+        <p className="text-sm text-paper font-medium">{value}</p>
       </div>
     </div>
   );
@@ -356,7 +356,7 @@ function UserJourney() {
 
   return (
     <div className="liquid-glass-strong rounded-[2.5rem] lg:flex-1 p-6 flex flex-col gap-0">
-      <p className="text-[10px] uppercase tracking-widest text-white/40 mb-5">Get Started</p>
+      <p className="text-[10px] uppercase tracking-widest text-paper/40 mb-5">Get Started</p>
       <div className="flex flex-col gap-0">
         {steps.map((step, i) => {
           const Icon = step.icon;
@@ -375,16 +375,16 @@ function UserJourney() {
               <div className={`liquid-glass rounded-3xl p-4 flex flex-col gap-3 mb-3 flex-1 min-w-0`}>
                 <div className="flex items-center gap-2">
                   <Icon className={`w-4 h-4 ${step.color}`} />
-                  <span className="text-sm font-medium text-white">{step.title}</span>
+                  <span className="text-sm font-medium text-paper">{step.title}</span>
                 </div>
-                <p className="text-xs text-white/50 leading-relaxed">{step.desc}</p>
+                <p className="text-xs text-paper/50 leading-relaxed">{step.desc}</p>
                 <div className="flex flex-wrap gap-2">
                   {step.actions.map(action => (
                     <Link key={action.href} href={action.href}
                       className={`rounded-full px-3 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 ${
                         action.primary
-                          ? "liquid-glass-strong text-white"
-                          : "liquid-glass text-white/60 hover:text-white"
+                          ? "liquid-glass-strong text-paper"
+                          : "liquid-glass text-paper/60 hover:text-paper"
                       }`}>
                       {action.label}
                       {action.primary && <ArrowRight className="w-3 h-3" />}
@@ -404,8 +404,8 @@ function UserJourney() {
 function RecordPill({ k, v }: { k: string; v: string }) {
   return (
     <div className="liquid-glass rounded-full px-4 py-1.5 flex items-center gap-2 text-xs">
-      <span className="text-white/50 uppercase tracking-wider">{k}</span>
-      <span className="text-white/80 truncate max-w-[140px]">{v}</span>
+      <span className="text-paper/50 uppercase tracking-wider">{k}</span>
+      <span className="text-paper/80 truncate max-w-[140px]">{v}</span>
     </div>
   );
 }
@@ -524,10 +524,10 @@ function ProfilePage() {
 
       {/* ── Hero header ────────────────────────────────── */}
       <div className="relative z-10 w-full flex flex-col items-center justify-center pt-16 pb-10 px-6 text-center">
-        <h1 className="text-6xl lg:text-8xl font-medium tracking-[-0.05em] text-white leading-none mb-5">
-          dinamic<em className="font-serif not-italic text-white/60">.eth</em>
+        <h1 className="text-6xl lg:text-8xl font-medium tracking-[-0.05em] text-paper leading-none mb-5">
+          dinamic<em className="font-serif not-italic text-paper/60">.eth</em>
         </h1>
-        <p className="text-sm lg:text-base text-white/40 font-light max-w-lg leading-relaxed">
+        <p className="text-sm lg:text-base text-paper/40 font-light max-w-lg leading-relaxed">
           {subtitle || <>Not a database. A trust-minimised routing layer —<br className="hidden sm:block" /> any ENS client resolves it, no platform permission required.</>}
         </p>
       </div>
@@ -567,7 +567,7 @@ function ProfilePage() {
               )}
               {mediaDesc && (
                 <div className="px-6 py-4 border-t border-white/8">
-                  <p className="text-sm text-white/50 leading-relaxed">{mediaDesc}</p>
+                  <p className="text-sm text-paper/50 leading-relaxed">{mediaDesc}</p>
                 </div>
               )}
             </div>
@@ -603,7 +603,7 @@ function ProfilePage() {
                     mediaVideoRef.current.volume = next ? mediaVolume : (mediaVolume || 1);
                     setMediaMuted(next);
                   }}
-                  className="w-8 h-8 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-sm border border-white/10 text-white/70 hover:text-white hover:bg-black/60 transition-all"
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-black/40 backdrop-blur-sm border border-white/10 text-paper/70 hover:text-paper hover:bg-black/60 transition-all"
                   title={mediaMuted ? "Unmute" : "Mute"}
                 >
                   {mediaMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
@@ -637,12 +637,12 @@ function ProfilePage() {
                   onError={(e) => { (e.currentTarget as HTMLImageElement).src = "./favicon.svg"; }}
                 />
               </div>
-              <span className="text-xl font-semibold tracking-tight text-white">ENS Kit</span>
+              <span className="text-xl font-semibold tracking-tight text-paper">ENS Kit</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="liquid-glass rounded-full px-4 py-2 flex items-center gap-2">
                 <LiveDot />
-                <span className="text-xs text-white/70 font-medium">Live</span>
+                <span className="text-xs text-paper/70 font-medium">Live</span>
               </div>
               <ConnectButton />
             </div>
@@ -659,39 +659,39 @@ function ProfilePage() {
                 </a>
               ) : (
                 <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center ring-1 ring-white/10">
-                  <Globe className="w-8 h-8 text-white/40" />
+                  <Globe className="w-8 h-8 text-paper/40" />
                 </div>
               )}
               {badge && (
-                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap liquid-glass rounded-full px-2 py-0.5 text-[10px] text-white/70">
+                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap liquid-glass rounded-full px-2 py-0.5 text-[10px] text-paper/70">
                   {badge}
                 </span>
               )}
             </div>
 
             {/* Name */}
-            <h2 className="text-5xl lg:text-7xl font-medium tracking-[-0.05em] text-white leading-none mb-4">
+            <h2 className="text-5xl lg:text-7xl font-medium tracking-[-0.05em] text-paper leading-none mb-4">
               {ENS_NAME.split(".").map((part, i) => (
                 <span key={i}>
-                  {i === 0 ? part : <><br /><em className="font-serif text-white/70 not-italic">.{part}</em></>}
+                  {i === 0 ? part : <><br /><em className="font-serif text-paper/70 not-italic">.{part}</em></>}
                 </span>
               ))}
             </h2>
 
-            <p className="text-white/60 text-base font-light max-w-sm mt-2 mb-8 leading-relaxed">{desc}</p>
+            <p className="text-paper/60 text-base font-light max-w-sm mt-2 mb-8 leading-relaxed">{desc}</p>
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-3 mb-8">
               {/* Primary: pfp_button → url → admin fallback */}
               {pfpButtonUrl ? (
                 <a href={pfpButtonUrl} target="_blank" rel="noopener noreferrer"
-                  className="liquid-glass-strong rounded-full px-6 py-3 flex items-center gap-3 text-sm font-medium text-white hover:scale-105 active:scale-95 transition-transform">
+                  className="liquid-glass-strong rounded-full px-6 py-3 flex items-center gap-3 text-sm font-medium text-paper hover:scale-105 active:scale-95 transition-transform">
                   <span>{pfpButtonLabel}</span>
                   <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center"><ArrowRight className="w-4 h-4" /></div>
                 </a>
               ) : url ? (
                 <a href={url} target="_blank" rel="noopener noreferrer"
-                  className="liquid-glass-strong rounded-full px-6 py-3 flex items-center gap-3 text-sm font-medium text-white hover:scale-105 active:scale-95 transition-transform">
+                  className="liquid-glass-strong rounded-full px-6 py-3 flex items-center gap-3 text-sm font-medium text-paper hover:scale-105 active:scale-95 transition-transform">
                   <span>Visit Site</span>
                   <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center"><ArrowRight className="w-4 h-4" /></div>
                 </a>
@@ -699,7 +699,7 @@ function ProfilePage() {
               {/* pfp_button_2 */}
               {pfpButton2Url && (
                 <a href={pfpButton2Url} target="_blank" rel="noopener noreferrer"
-                  className="liquid-glass rounded-full px-5 py-3 flex items-center gap-2 text-sm text-white/80 hover:scale-105 active:scale-95 transition-transform">
+                  className="liquid-glass rounded-full px-5 py-3 flex items-center gap-2 text-sm text-paper/80 hover:scale-105 active:scale-95 transition-transform">
                   <span>{pfpButton2Label}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </a>
@@ -708,8 +708,8 @@ function ProfilePage() {
               {agent && (
                 <a href={agent.startsWith("http") ? agent : "./agent/"}
                   target={agent.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer"
-                  className="liquid-glass rounded-full px-5 py-3 flex items-center gap-2 text-sm text-white/80 hover:scale-105 active:scale-95 transition-transform">
-                  <Bot className="w-4 h-4 text-white/50" />
+                  className="liquid-glass rounded-full px-5 py-3 flex items-center gap-2 text-sm text-paper/80 hover:scale-105 active:scale-95 transition-transform">
+                  <Bot className="w-4 h-4 text-paper/50" />
                   <span>{(!agent.startsWith("http") && agent.length < 30) ? agent : "Agent"}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </a>
@@ -720,7 +720,7 @@ function ProfilePage() {
                 return (
                   <a href={isPhone ? `tel:${cal.replace(/\s/g, "")}` : cal}
                     target={isPhone ? undefined : "_blank"} rel="noopener noreferrer"
-                    className="liquid-glass rounded-full px-5 py-3 text-sm text-white/80 hover:scale-105 active:scale-95 transition-transform">
+                    className="liquid-glass rounded-full px-5 py-3 text-sm text-paper/80 hover:scale-105 active:scale-95 transition-transform">
                     {isPhone ? "Call" : "Book a call"}
                   </a>
                 );
@@ -728,7 +728,7 @@ function ProfilePage() {
               {/* tip — send tip */}
               {tip && (
                 <a href={`ethereum:${tip}`}
-                  className="liquid-glass rounded-full px-5 py-3 text-sm text-white/80 hover:scale-105 active:scale-95 transition-transform">
+                  className="liquid-glass rounded-full px-5 py-3 text-sm text-paper/80 hover:scale-105 active:scale-95 transition-transform">
                   Send tip
                 </a>
               )}
@@ -737,35 +737,35 @@ function ProfilePage() {
 
             {/* Tags + Socials */}
             <div className="flex flex-wrap gap-2">
-              <div className="liquid-glass rounded-full px-4 py-1.5 text-xs text-white/80">CCIP Read</div>
-              <div className="liquid-glass rounded-full px-4 py-1.5 text-xs text-white/80">Offchain Resolver</div>
-              <div className="liquid-glass rounded-full px-4 py-1.5 text-xs text-white/80">Zero Gas Updates</div>
+              <div className="liquid-glass rounded-full px-4 py-1.5 text-xs text-paper/80">CCIP Read</div>
+              <div className="liquid-glass rounded-full px-4 py-1.5 text-xs text-paper/80">Offchain Resolver</div>
+              <div className="liquid-glass rounded-full px-4 py-1.5 text-xs text-paper/80">Zero Gas Updates</div>
               {twitterHandle && (
                 <a href={`https://x.com/${twitterHandle}`} target="_blank" rel="noopener noreferrer"
                   className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/10 transition-colors">
                   <IconX />
-                  <span className="text-xs text-white/60">@{twitterHandle}</span>
+                  <span className="text-xs text-paper/60">@{twitterHandle}</span>
                 </a>
               )}
               {githubHandle && (
                 <a href={`https://github.com/${githubHandle}`} target="_blank" rel="noopener noreferrer"
                   className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/10 transition-colors">
                   <IconGitHub />
-                  <span className="text-xs text-white/60">{githubHandle}</span>
+                  <span className="text-xs text-paper/60">{githubHandle}</span>
                 </a>
               )}
               {discordHandle && (
                 <a href={discord!.startsWith("http") ? discord! : `https://discord.gg/${discordHandle}`} target="_blank" rel="noopener noreferrer"
                   className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/10 transition-colors">
                   <IconDiscord />
-                  <span className="text-xs text-white/60">{discordHandle}</span>
+                  <span className="text-xs text-paper/60">{discordHandle}</span>
                 </a>
               )}
               {telegramHandle && (
                 <a href={`https://t.me/${telegramHandle}`} target="_blank" rel="noopener noreferrer"
                   className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 hover:bg-white/10 transition-colors">
                   <IconTelegram />
-                  <span className="text-xs text-white/60">@{telegramHandle}</span>
+                  <span className="text-xs text-paper/60">@{telegramHandle}</span>
                 </a>
               )}
             </div>
@@ -785,7 +785,7 @@ function ProfilePage() {
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-white/10" />
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs text-white/50">{shortAddr(record.address)}</span>
+                  <span className="font-mono text-xs text-paper/50">{shortAddr(record.address)}</span>
                   <CopyBtn text={record.address} />
                 </div>
                 <div className="flex-1 h-px bg-white/10" />
@@ -794,7 +794,7 @@ function ProfilePage() {
             ) : (
               <div className="flex items-center gap-3">
                 <div className="flex-1 h-px bg-white/10" />
-                <span className="text-xs tracking-widest uppercase text-white/30">Dynamic ENS</span>
+                <span className="text-xs tracking-widest uppercase text-paper/30">Dynamic ENS</span>
                 <div className="flex-1 h-px bg-white/10" />
                 <ShareBtn />
               </div>
@@ -807,11 +807,11 @@ function ProfilePage() {
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-[2.5rem] backdrop-blur-md bg-black/30">
               <button
                 onClick={() => open()}
-                className="liquid-glass-strong rounded-full px-8 py-4 flex items-center gap-3 text-base font-semibold text-white hover:scale-105 active:scale-95 transition-transform">
+                className="liquid-glass-strong rounded-full px-8 py-4 flex items-center gap-3 text-base font-semibold text-paper hover:scale-105 active:scale-95 transition-transform">
                 <Wallet className="w-5 h-5" />
                 <span>Connect Wallet</span>
               </button>
-              <p className="text-xs text-white/35 mt-3 tracking-wide">Connect to view your live ENS profile</p>
+              <p className="text-xs text-paper/35 mt-3 tracking-wide">Connect to view your live ENS profile</p>
             </div>
           )}
         </div>
@@ -824,9 +824,9 @@ function ProfilePage() {
         <div className="liquid-glass rounded-2xl px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <LiveDot />
-            <span className="text-xs text-white/60">Records resolving live from gateway</span>
+            <span className="text-xs text-paper/60">Records resolving live from gateway</span>
           </div>
-          <div className="liquid-glass rounded-full px-3 py-1.5 text-[10px] text-white/50 font-mono">
+          <div className="liquid-glass rounded-full px-3 py-1.5 text-[10px] text-paper/50 font-mono">
             {GW_URL.replace("https://", "")}
           </div>
         </div>
@@ -848,7 +848,7 @@ function ProfilePage() {
       <div className="relative z-10 w-full px-4 lg:px-6 pb-10 lg:pb-12">
         <div className="mb-6 flex items-center gap-3">
           <div className="flex-1 h-px bg-white/8" />
-          <span className="text-[10px] uppercase tracking-widest text-white/30">About ENS Kit</span>
+          <span className="text-[10px] uppercase tracking-widest text-paper/30">About ENS Kit</span>
           <div className="flex-1 h-px bg-white/8" />
         </div>
 
@@ -856,30 +856,30 @@ function ProfilePage() {
 
           <div className="liquid-glass-strong rounded-3xl p-6 flex flex-col gap-3">
             <div className="w-9 h-9 rounded-2xl bg-white/10 flex items-center justify-center">
-              <Zap className="w-4 h-4 text-white/70" />
+              <Zap className="w-4 h-4 text-paper/70" />
             </div>
-            <h3 className="text-sm font-medium text-white">Zero gas updates</h3>
-            <p className="text-xs text-white/50 leading-relaxed">
+            <h3 className="text-sm font-medium text-paper">Zero gas updates</h3>
+            <p className="text-xs text-paper/50 leading-relaxed">
               Change your address, bio, links, or background at any time — no wallet transaction, no fee, instant effect.
             </p>
           </div>
 
           <div className="liquid-glass-strong rounded-3xl p-6 flex flex-col gap-3">
             <div className="w-9 h-9 rounded-2xl bg-white/10 flex items-center justify-center">
-              <Globe className="w-4 h-4 text-white/70" />
+              <Globe className="w-4 h-4 text-paper/70" />
             </div>
-            <h3 className="text-sm font-medium text-white">Your .eth name, alive</h3>
-            <p className="text-xs text-white/50 leading-relaxed">
+            <h3 className="text-sm font-medium text-paper">Your .eth name, alive</h3>
+            <p className="text-xs text-paper/50 leading-relaxed">
               ENS names are usually static. This stack makes yours dynamic — a live profile any wallet or browser can resolve in real time.
             </p>
           </div>
 
           <div className="liquid-glass-strong rounded-3xl p-6 flex flex-col gap-3">
             <div className="w-9 h-9 rounded-2xl bg-white/10 flex items-center justify-center">
-              <Activity className="w-4 h-4 text-white/70" />
+              <Activity className="w-4 h-4 text-paper/70" />
             </div>
-            <h3 className="text-sm font-medium text-white">Build on top</h3>
-            <p className="text-xs text-white/50 leading-relaxed">
+            <h3 className="text-sm font-medium text-paper">Build on top</h3>
+            <p className="text-xs text-paper/50 leading-relaxed">
               A push API lets any backend update records automatically. CI pipeline, webhook, cron — your .eth name becomes a programmable config layer.
             </p>
           </div>
@@ -890,12 +890,12 @@ function ProfilePage() {
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.302 3.438 9.8 8.207 11.387.6.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.63-5.37-12-12-12z" />
               </svg>
             </div>
-            <h3 className="text-sm font-medium text-white">Open source</h3>
-            <p className="text-xs text-white/50 leading-relaxed">
+            <h3 className="text-sm font-medium text-paper">Open source</h3>
+            <p className="text-xs text-paper/50 leading-relaxed">
               Gateway, contract, and admin UI are fully open source and self-hostable. No vendor lock-in — you own the stack.
             </p>
             <a href="https://github.com/Echo-Merlini/ens-dynamic-kit" target="_blank" rel="noopener noreferrer"
-              className="mt-auto text-[10px] uppercase tracking-widest text-white/30 hover:text-white/60 transition-colors">
+              className="mt-auto text-[10px] uppercase tracking-widest text-paper/30 hover:text-paper/60 transition-colors">
               GitHub →
             </a>
           </div>
@@ -905,7 +905,7 @@ function ProfilePage() {
         {/* EIP explanation */}
         <div className="mt-6 mb-6 flex items-center gap-3">
           <div className="flex-1 h-px bg-white/8" />
-          <span className="text-[10px] uppercase tracking-widest text-white/30">Under the hood</span>
+          <span className="text-[10px] uppercase tracking-widest text-paper/30">Under the hood</span>
           <div className="flex-1 h-px bg-white/8" />
         </div>
 
@@ -913,14 +913,14 @@ function ProfilePage() {
 
           <div className="liquid-glass rounded-3xl p-6 flex flex-col gap-4">
             <div className="flex items-center gap-3">
-              <span className="font-mono text-[10px] px-2 py-1 rounded-full bg-white/8 text-white/40">EIP-3668</span>
-              <span className="font-mono text-[10px] px-2 py-1 rounded-full bg-white/8 text-white/40">ENSIP-10</span>
+              <span className="font-mono text-[10px] px-2 py-1 rounded-full bg-white/8 text-paper/40">EIP-3668</span>
+              <span className="font-mono text-[10px] px-2 py-1 rounded-full bg-white/8 text-paper/40">ENSIP-10</span>
             </div>
-            <h3 className="text-sm font-medium text-white">CCIP Read — Cross-Chain Interoperability Protocol</h3>
-            <p className="text-xs text-white/50 leading-relaxed">
-              When a wallet resolves your <span className="text-white/70">.eth</span> name, the on-chain resolver does not return data directly. Instead it reverts with an <span className="font-mono text-white/60">OffchainLookup</span> — a signed pointer to a gateway URL. The client fetches from that URL, receives a cryptographically signed response, and calls back into the contract to verify the signature. No trust is placed in the gateway: the contract only accepts responses signed by the registered signer key. ENSIP-10 extends this to wildcard subdomains — one resolver handles every name under your <span className="text-white/70">.eth</span>.
+            <h3 className="text-sm font-medium text-paper">CCIP Read — Cross-Chain Interoperability Protocol</h3>
+            <p className="text-xs text-paper/50 leading-relaxed">
+              When a wallet resolves your <span className="text-paper/70">.eth</span> name, the on-chain resolver does not return data directly. Instead it reverts with an <span className="font-mono text-paper/60">OffchainLookup</span> — a signed pointer to a gateway URL. The client fetches from that URL, receives a cryptographically signed response, and calls back into the contract to verify the signature. No trust is placed in the gateway: the contract only accepts responses signed by the registered signer key. ENSIP-10 extends this to wildcard subdomains — one resolver handles every name under your <span className="text-paper/70">.eth</span>.
             </p>
-            <div className="font-mono text-[10px] text-white/25 leading-relaxed border-l border-white/10 pl-3">
+            <div className="font-mono text-[10px] text-paper/25 leading-relaxed border-l border-white/10 pl-3">
               resolve(name) → OffchainLookup<br />
               GET /lookup/:sender/:data → signed response<br />
               resolveWithProof(response) → verify sig → return data
@@ -929,14 +929,14 @@ function ProfilePage() {
 
           <div className="liquid-glass rounded-3xl p-6 flex flex-col gap-4">
             <div className="flex items-center gap-3">
-              <span className="font-mono text-[10px] px-2 py-1 rounded-full bg-white/8 text-white/40">EIP-1577</span>
-              <span className="font-mono text-[10px] px-2 py-1 rounded-full bg-white/8 text-white/40">On-chain CID</span>
+              <span className="font-mono text-[10px] px-2 py-1 rounded-full bg-white/8 text-paper/40">EIP-1577</span>
+              <span className="font-mono text-[10px] px-2 py-1 rounded-full bg-white/8 text-paper/40">On-chain CID</span>
             </div>
-            <h3 className="text-sm font-medium text-white">Direct CID validation — Brave & native browser resolution</h3>
-            <p className="text-xs text-white/50 leading-relaxed">
-              Browsers like Brave resolve <span className="text-white/70">.eth</span> names by calling <span className="font-mono text-white/60">contenthash(bytes32)</span> directly on the resolver — they do not follow CCIP Read. The resolver stores a CID encoded as EIP-1577 (CIDv1 dag-pb) on-chain via <span className="font-mono text-white/60">setContenthash()</span>. This means the IPFS content hash is independently verifiable on-chain: anyone can call the contract and confirm the exact CID the name points to, with no trust in the gateway. Gas is paid once per content update, keeping the on-chain record as the single source of truth for browser-native resolution.
+            <h3 className="text-sm font-medium text-paper">Direct CID validation — Brave & native browser resolution</h3>
+            <p className="text-xs text-paper/50 leading-relaxed">
+              Browsers like Brave resolve <span className="text-paper/70">.eth</span> names by calling <span className="font-mono text-paper/60">contenthash(bytes32)</span> directly on the resolver — they do not follow CCIP Read. The resolver stores a CID encoded as EIP-1577 (CIDv1 dag-pb) on-chain via <span className="font-mono text-paper/60">setContenthash()</span>. This means the IPFS content hash is independently verifiable on-chain: anyone can call the contract and confirm the exact CID the name points to, with no trust in the gateway. Gas is paid once per content update, keeping the on-chain record as the single source of truth for browser-native resolution.
             </p>
-            <div className="font-mono text-[10px] text-white/25 leading-relaxed border-l border-white/10 pl-3">
+            <div className="font-mono text-[10px] text-paper/25 leading-relaxed border-l border-white/10 pl-3">
               contenthash(node) → EIP-1577 bytes<br />
               decode → CIDv1 (dag-pb, sha2-256)<br />
               Brave fetches ipfs://&lt;CID&gt; directly
@@ -948,18 +948,18 @@ function ProfilePage() {
         {/* ENS-KIT/1 Convention card */}
         <div className="mt-6 mb-6 flex items-center gap-3">
           <div className="flex-1 h-px bg-white/8" />
-          <span className="text-[10px] uppercase tracking-widest text-white/30">ENS-KIT/1 Convention Proposal</span>
+          <span className="text-[10px] uppercase tracking-widest text-paper/30">ENS-KIT/1 Convention Proposal</span>
           <div className="flex-1 h-px bg-white/8" />
         </div>
 
         <div className="flex items-start justify-between flex-wrap gap-3 mb-4">
           <div>
-            <h3 className="text-sm font-medium text-white mb-1">Text Record Extension Spec</h3>
-            <p className="text-xs text-white/40 max-w-md leading-relaxed">
+            <h3 className="text-sm font-medium text-paper mb-1">Text Record Extension Spec</h3>
+            <p className="text-xs text-paper/40 max-w-md leading-relaxed">
               A proposed convention for driving frontend UI directly from ENS text records. No custom resolver required — updates are instant, gasless, and require no redeployment.
             </p>
           </div>
-          <a href="/verify" className="shrink-0 font-mono text-[10px] px-3 py-1.5 rounded-full bg-white/8 text-white/40 hover:text-white/70 hover:bg-white/12 transition-colors">
+          <a href="/verify" className="shrink-0 font-mono text-[10px] px-3 py-1.5 rounded-full bg-white/8 text-paper/40 hover:text-paper/70 hover:bg-white/12 transition-colors">
             Draft · ENS-KIT/1 →
           </a>
         </div>
@@ -1021,7 +1021,7 @@ function ProfilePage() {
                     className={`font-mono text-[10px] px-2.5 py-1 rounded-full border ${
                       done
                         ? `${section.bg} ${section.color}`
-                        : "bg-white/4 border-white/10 text-white/25"
+                        : "bg-white/4 border-white/10 text-paper/25"
                     }`}
                   >
                     {key}

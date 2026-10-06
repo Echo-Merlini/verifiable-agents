@@ -53,7 +53,7 @@ export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUr
       <button
         onClick={() => setOpen(p => !p)}
         aria-label="Navigation menu"
-        className="w-9 h-9 rounded-full liquid-glass-strong flex items-center justify-center text-white/70 hover:text-white transition-colors hover:scale-105 active:scale-95"
+        className="w-9 h-9 rounded-full liquid-glass-strong flex items-center justify-center text-paper/70 hover:text-paper transition-colors hover:scale-105 active:scale-95"
       >
         {open ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
       </button>
@@ -64,20 +64,20 @@ export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUr
           <div className="px-1 pb-2 mb-1 border-b border-white/8">
             {address ? (
               <div className="flex items-center justify-between gap-2 px-2 py-1">
-                <span className="font-mono text-[11px] text-white/60">{address.slice(0, 6)}…{address.slice(-4)}</span>
+                <span className="font-mono text-[11px] text-paper/60">{address.slice(0, 6)}…{address.slice(-4)}</span>
                 <button onClick={disconnectWallet}
-                  className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wide text-white/40 hover:text-red-400 transition-colors">
+                  className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wide text-paper/40 hover:text-red-400 transition-colors">
                   <LogOut className="w-3 h-3" /> Disconnect
                 </button>
               </div>
             ) : (
               <button onClick={connectWallet}
-                className="w-full inline-flex items-center justify-center gap-1.5 rounded-2xl bg-white/8 hover:bg-white/12 py-2 text-xs text-white/80 transition-colors">
+                className="w-full inline-flex items-center justify-center gap-1.5 rounded-2xl bg-white/8 hover:bg-white/12 py-2 text-xs text-paper/80 transition-colors">
                 <Wallet className="w-3.5 h-3.5" /> Connect wallet
               </button>
             )}
           </div>
-          <p className="text-[10px] uppercase tracking-widest text-white/25 px-3 py-1.5">Navigate</p>
+          <p className="text-[10px] uppercase tracking-widest text-paper/25 px-3 py-1.5">Navigate</p>
           {LINKS.map(({ path, label, icon: Icon, desc }) => {
             const isCurrent = currentPath && path && path.includes(currentPath);
             return (
@@ -87,18 +87,18 @@ export function NavMenu({ currentPath, baseUrl }: { currentPath?: string; baseUr
                 onClick={() => setOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-colors group ${
                   isCurrent
-                    ? "bg-white/10 text-white"
-                    : "text-white/60 hover:bg-white/8 hover:text-white"
+                    ? "bg-white/10 text-paper"
+                    : "text-paper/60 hover:bg-white/8 hover:text-paper"
                 }`}
               >
                 <div className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                   isCurrent ? "bg-amber-500/30" : "bg-white/8 group-hover:bg-white/12"
                 }`}>
-                  <Icon className={`w-3.5 h-3.5 ${isCurrent ? "text-amber-300" : "text-white/50 group-hover:text-white/80"}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isCurrent ? "text-amber-300" : "text-paper/50 group-hover:text-paper/80"}`} />
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs font-medium leading-none mb-0.5">{label}</p>
-                  <p className="text-[10px] text-white/30 leading-none truncate">{desc}</p>
+                  <p className="text-[10px] text-paper/30 leading-none truncate">{desc}</p>
                 </div>
               </a>
             );
