@@ -429,7 +429,7 @@ function ApprovalCard({
           <div className="flex flex-wrap gap-1">
             {DECLINE_REASONS.map(r => (
               <button key={r.value} onClick={() => setReason(r.value)}
-                className={"text-[10px] px-2 py-0.5 rounded-full border transition-colors " + (reason === r.value ? "bg-red-500/20 border-red-500/40 text-red-300" : "border-white/10 text-white/40 hover:text-white/70")}>
+                className={"text-[10px] px-2 py-0.5 rounded-full border transition-colors " + (reason === r.value ? "bg-red-500/20 border-red-500/40 text-red-300" : "border-white/10 text-paper/40 hover:text-paper/70")}>
                 {r.label}
               </button>
             ))}
@@ -852,7 +852,7 @@ export function AgentChat({
           }
           return (
             <div key={i} className="flex justify-end">
-              <div className="max-w-[85%] px-3 py-2 rounded-2xl text-xs leading-relaxed bg-amber-500/20 text-white/80 rounded-br-sm">
+              <div className="max-w-[85%] px-3 py-2 rounded-2xl text-xs leading-relaxed bg-amber-500/20 text-paper/80 rounded-br-sm">
                 {m.text}
               </div>
             </div>

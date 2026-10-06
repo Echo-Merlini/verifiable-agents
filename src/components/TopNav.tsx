@@ -7,6 +7,7 @@ import { useAccount, useDisconnect } from "wagmi";
 import { ShieldCheck, ChevronDown, ExternalLink, Wallet, LogOut } from "lucide-react";
 import { VerticeMark } from "@/components/VerticeMark";
 import { useWalletModal } from "@/hooks/useWalletModal";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 // Lightweight top bar for the marketplace surfaces. The trust/proof surfaces are grouped under one
 // "Audit" dropdown (stack verify · MCP conformance · reports · review gate) so the header stays clean
@@ -106,6 +107,9 @@ export function TopNav() {
               </>
             )}
           </div>
+
+          {/* Light/dark — sits beside Connect, as asked. */}
+          <ThemeToggle />
 
           {/* Wallet — connect once, stay connected while navigating between services */}
           <span className="hidden h-4 w-px bg-white/12 sm:inline-block" aria-hidden />
