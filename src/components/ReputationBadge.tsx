@@ -20,7 +20,7 @@ export function ReputationBadge({ rep, className = "" }: { rep: Reputation | nul
   const incomplete = rep?.window === "incomplete";
 
   return (
-    <div className={`inline-flex items-center gap-2 rounded-full bg-black/25 px-2.5 py-1 ring-1 ${t.ring} ${className}`}>
+    <div className={`rep-pill inline-flex items-center gap-2 rounded-full bg-black/25 px-2.5 py-1 ring-1 ${t.ring} ${className}`}>
       {tone === "unrated" ? (
         <ShieldQuestion className={`h-3.5 w-3.5 ${t.text}`} />
       ) : (

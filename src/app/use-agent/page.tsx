@@ -138,7 +138,7 @@ function EndpointRow({ service, token }: { service: Service; token: string }) {
             <div className="flex gap-1 flex-wrap">
               {mcpClients.map(c => (
                 <button key={c.id} onClick={() => setMcpTab(c.id)}
-                  className={`rounded-full px-2 py-0.5 text-[9px] transition-colors ${mcpTab === c.id ? "bg-amber-500/30 text-amber-200 border border-amber-500/40" : "text-white/30 hover:text-white/50"}`}>
+                  className={`rounded-full px-2 py-0.5 text-[9px] transition-colors ${mcpTab === c.id ? "bg-amber-500/30 text-amber-200 border border-amber-500/40" : "text-paper/30 hover:text-paper/50"}`}>
                   {c.id}
                 </button>
               ))}
@@ -202,7 +202,7 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
               {shortAddr(agent.registry)}
             </span>
             <span className={`rounded-full px-2.5 py-1 text-[10px] border ${
-              agent.active ? "bg-green-500/10 border-green-500/30 text-green-400" : "bg-white/5 border-white/10 text-white/30"
+              agent.active ? "bg-green-500/10 border-green-500/30 text-green-400" : "bg-white/5 border-white/10 text-paper/30"
             }`}>
               {agent.active ? "Active" : "Inactive"}
             </span>
