@@ -132,6 +132,45 @@
     border-color: rgb(var(--c-gb-border));
   }
 
+  /* ── white/N surfaces ────────────────────────────────────────────────────
+     These are the single biggest cause of light looking unfinished: on a dark
+     ground border-white/10 is a hairline and bg-white/5 is a raised panel, but
+     over white both are nothing at all. The /mint "All capabilities" rows lost
+     their box entirely this way — border-white/10 + bg-white/5 on white.
+
+     They are elevation, not the colour white, so in light they become the same
+     neutral border and surface tokens the palette already defines. Doing it by
+     class covers all ~300 call sites at once; the alternative is a codemod to
+     semantic names, which is the better end state but a much larger diff. */
+  [data-theme="light"] .border-white\/30,
+  [data-theme="light"] .border-white\/15,
+  [data-theme="light"] .border-white\/12,
+  [data-theme="light"] .border-white\/10,
+  [data-theme="light"] .border-white\/8,
+  [data-theme="light"] .border-white\/\[0\.06\],
+  [data-theme="light"] .ring-white\/10 {
+    border-color: rgb(var(--c-gb-border));
+  }
+  [data-theme="light"] .ring-white\/10 { --tw-ring-color: rgb(var(--c-gb-border)); }
+
+  [data-theme="light"] .bg-white\/15,
+  [data-theme="light"] .bg-white\/10,
+  [data-theme="light"] .bg-white\/8,
+  [data-theme="light"] .bg-white\/5,
+  [data-theme="light"] .bg-white\/4,
+  [data-theme="light"] .bg-white\/\[0\.02\],
+  [data-theme="light"] .bg-white\/\[0\.03\],
+  [data-theme="light"] .bg-white\/\[0\.04\] {
+    background-color: rgb(var(--c-gb-surface));
+  }
+
+  /* Logo chips sat on bg-black/30: a grey blob once the page is white. */
+  [data-theme="light"] .bg-black\/30,
+  [data-theme="light"] .bg-black\/25,
+  [data-theme="light"] .bg-black\/20 {
+    background-color: rgb(var(--c-face-3));
+  }
+
   /* bg-black/25 is a solid mid-grey once the page is white, so the reputation pill
      read as a heavy filled chip. Outlined in light, as the filled buttons are. */
   [data-theme="light"] .rep-pill {
