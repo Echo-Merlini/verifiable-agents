@@ -31,11 +31,13 @@ const TOKENURI_ABI = [{
 
 type OwnedAgent = { registry: string; agent_id: string; name: string; image: string; description?: string };
 
-// Read an RKB agent's selected tools straight from its on-chain tokenURI metadata.
-async function fetchAgentMcps(agentId: string): Promise<string[]> {
+// Read an agent's selected tools straight from its on-chain tokenURI metadata.
+// Reads the agent's OWN registry: reading every agent from RKB returns another token's
+// metadata, or reverts, for any agent held in a different collection.
+async function fetchAgentMcps(registry: string, agentId: string): Promise<string[]> {
   try {
     let uri = (await pub.readContract({
-      address: RKB as `0x${string}`, abi: TOKENURI_ABI, functionName: "tokenURI", args: [BigInt(agentId)],
+      address: registry as `0x${string}`, abi: TOKENURI_ABI, functionName: "tokenURI", args: [BigInt(agentId)],
     })) as string;
     if (uri.startsWith("ipfs://")) uri = "https://ipfs.io/ipfs/" + uri.slice(7);
     const r = await fetch(uri, { signal: AbortSignal.timeout(6000) });
@@ -128,7 +130,13 @@ export default function DemoPage() {
     }
     fetch(`${GW_URL}/agent/owned/${address}`).then((r) => (r.ok ? r.json() : []))
       .then((all: OwnedAgent[]) => {
-        setMyAgents((all || []).filter((a) => a.registry.toLowerCase() === RKB));
+        // Every agent this wallet holds, in any registry. Connecting a wallet should give you
+        // your agents; filtering to RKB dropped 8 of 9 for a wallet whose other agents were
+        // held in NFT-derived registries, with no indication any had been hidden.
+        // Genesis first, so the primary bots still lead the carousel.
+        const owned = [...(all || [])].sort((a, b) =>
+          (a.registry.toLowerCase() === RKB ? 0 : 1) - (b.registry.toLowerCase() === RKB ? 0 : 1));
+        setMyAgents(owned);
         setAi(0);
       })
       .catch(() => setMyAgents([]));
@@ -145,11 +153,13 @@ export default function DemoPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, myAgents.length, token]);
 
-  const active = myAgents.length ? myAgents[ai] : null;          // an RKB agent, or null → default
-  const isRkb = !!active;
+  const active = myAgents.length ? myAgents[ai] : null;          // an owned agent, or null → default
+  const isRkb = !!active && active.registry.toLowerCase() === RKB;
 
   const featured = active
-    ? { registry: RKB, agentId: active.agent_id, name: active.name || `Bot #${active.agent_id}`, image: active.image, by: "Recompute Kit Bots", sub: `#${active.agent_id} · RKB` }
+    ? { registry: active.registry, agentId: active.agent_id, name: active.name || `Bot #${active.agent_id}`, image: active.image,
+        by: isRkb ? "Recompute Kit Bots" : "Held by this wallet",
+        sub: isRkb ? `#${active.agent_id} · RKB` : `#${active.agent_id} · ${active.registry.slice(0, 6)}…${active.registry.slice(-4)}` }
     : { registry: DEMO_AGENT.registry, agentId: DEMO_AGENT.agentId, name: DEMO_AGENT.name, image: DEMO_AGENT.image, by: DEMO_AGENT.by, sub: DEMO_AGENT.ens };
 
   // Featured agent's recomputable reputation (escrow-settlement predicate) — shown as a pill under the name.
@@ -172,10 +182,11 @@ export default function DemoPage() {
     let cancelled = false;
     (async () => {
       const [ids, ents] = await Promise.all([
-        fetchAgentMcps(active.agent_id),
+        fetchAgentMcps(active.registry, active.agent_id),
         fetch(`${GW_URL}/marketplace/agents`).then((r) => (r.ok ? r.json() : []))
           .then((all: Array<{ registry?: string; agentId?: string; entitlements?: string[] }>) =>
-            (all || []).find((a) => String(a.agentId) === String(active.agent_id) && a.registry?.toLowerCase() === RKB)?.entitlements ?? [])
+            (all || []).find((a) => String(a.agentId) === String(active.agent_id)
+              && a.registry?.toLowerCase() === active.registry.toLowerCase())?.entitlements ?? [])
           .catch(() => [] as string[]),
       ]);
       if (cancelled) return;
