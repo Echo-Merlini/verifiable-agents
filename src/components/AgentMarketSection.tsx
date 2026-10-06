@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAccount, useChainId, usePublicClient, useSwitchChain, useWriteContract } from "wagmi";
 import { formatEther, parseEther, type Hex } from "viem";
-import { Tag, Wallet, Loader2, Check, X, ShoppingCart, Pencil, ExternalLink, ShieldCheck, Store } from "lucide-react";
+import { Tag, Wallet, Loader2, Check, X, ShoppingCart, Pencil, ExternalLink, ShieldCheck, Store, ChevronLeft, ChevronRight } from "lucide-react";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import {
   AGENT_MARKET_ABI, AGENT_MARKET_ADDRESS, AGENT_MARKET_CHAIN_ID, AGENT_MARKET_FEE_BPS,
@@ -29,6 +29,26 @@ export function AgentMarketSection() {
   const publicClient = usePublicClient();
 
   const [listings, setListings] = useState<Listing[]>([]);
+  // "Your agents" is a horizontal scroller with the scrollbar deliberately hidden, so with
+  // more agents than fit there was no way to reach the rest on a desktop without a
+  // horizontal-scroll gesture: no scrollbar, no arrows, no affordance at all.
+  // Arrows show only when the row actually overflows, and each end hides its own.
+  const railRef = useRef<HTMLDivElement | null>(null);
+  const [rail, setRail] = useState({ left: false, right: false });
+
+  const readRail = useCallback(() => {
+    const el = railRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    setRail({ left: el.scrollLeft > 4, right: el.scrollLeft < max - 4 });
+  }, []);
+
+  const nudgeRail = (dir: -1 | 1) => {
+    const el = railRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * 272, behavior: "smooth" });   // w-64 card + gap-4
+  };
+
   const [meta, setMeta] = useState<Record<string, Meta>>({});   // tokenId(lower nft) → name/image
   const [owned, setOwned] = useState<Owned[]>([]);
   const [busy, setBusy] = useState<string | null>(null);         // key of the action in flight
@@ -115,6 +135,16 @@ export function AgentMarketSection() {
   const listedTokens = new Set(myListings.map((l) => metaKey(l.nft, l.tokenId)));
   // Your agents you still hold (not currently escrowed/listed) → these can be listed.
   const listable = owned.filter((a) => !listedTokens.has(metaKey(a.registry, a.agent_id)));
+
+  // measure the "Your agents" rail once it has content, and on resize
+  useEffect(() => {
+    readRail();
+    const el = railRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(readRail);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [readRail, listable.length, myListings.length]);
 
   const nameFor = (nft: string, tokenId: string) => meta[metaKey(nft, tokenId)]?.name || `Agent #${tokenId}`;
   const imageFor = (nft: string, tokenId: string) => meta[metaKey(nft, tokenId)]?.image || "";
@@ -213,7 +243,21 @@ export function AgentMarketSection() {
         ) : listable.length === 0 && myListings.length === 0 ? (
           <p className="mt-2 text-[12px] text-gb-faint">No agents in this wallet yet — <a href="/mint" className="text-brassLight hover:text-brass">mint one</a> to trade it.</p>
         ) : (
-          <div className="mt-3 flex gap-4 overflow-x-auto pb-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="relative mt-3">
+            {rail.left && (
+              <button onClick={() => nudgeRail(-1)} aria-label="Previous agents"
+                className="absolute left-0 top-1/2 z-10 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-full border border-gb-border bg-gb-surface text-gb-faint shadow-sm transition-colors hover:border-brassLight/50 hover:text-brassLight">
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+            )}
+            {rail.right && (
+              <button onClick={() => nudgeRail(1)} aria-label="Next agents"
+                className="absolute right-0 top-1/2 z-10 -translate-y-1/2 inline-flex h-8 w-8 items-center justify-center rounded-full border border-gb-border bg-gb-surface text-gb-faint shadow-sm transition-colors hover:border-brassLight/50 hover:text-brassLight">
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            )}
+            <div ref={railRef} onScroll={readRail}
+              className="flex gap-4 overflow-x-auto pb-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {listable.map((a) => {
               const editing = priceFor === `O${a.registry}:${a.agent_id}`;
               return (
@@ -259,6 +303,7 @@ export function AgentMarketSection() {
                 </button>
               </div>
             ))}
+            </div>
           </div>
         )}
         {agentMarketConfigured && AGENT_MARKET_FEE_BPS > 0 && (address && (listable.length > 0 || myListings.length > 0)) && (
