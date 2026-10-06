@@ -13,26 +13,38 @@ const config: Config = {
         tightest: "-0.04em",
         tighter2: "-0.03em",
       },
+      // Every colour resolves through a CSS variable so a theme switch is one
+      // attribute on <html>, not a `dark:` variant on 2,490 call sites.
+      //
+      // The channels are space-separated RGB on purpose. 606 usages in src/ carry an
+      // opacity modifier (text-paper/70, border-gb-border/40, …); with a plain
+      // var(--x) holding a hex, Tailwind cannot compose <alpha-value> and every one
+      // of those silently loses its transparency. rgb(... / <alpha-value>) keeps them.
       colors: {
         // Vértice brand palette
-        ink:        "#17191F",
-        deepink:    "#0C0D11",
-        slate:      "#5C616D",
-        brass:      "#A15E1E",
-        brassLight: "#E0A24C",
-        paper:      "#F6F6F8",
-        face: { 1: "#3A3E48", 2: "#2C2F37", 3: "#22242B", 4: "#191B21" },
+        ink:        "rgb(var(--c-ink) / <alpha-value>)",
+        deepink:    "rgb(var(--c-deepink) / <alpha-value>)",
+        slate:      "rgb(var(--c-slate) / <alpha-value>)",
+        brass:      "rgb(var(--c-brass) / <alpha-value>)",
+        brassLight: "rgb(var(--c-brassLight) / <alpha-value>)",
+        paper:      "rgb(var(--c-paper) / <alpha-value>)",
+        face: {
+          1: "rgb(var(--c-face-1) / <alpha-value>)",
+          2: "rgb(var(--c-face-2) / <alpha-value>)",
+          3: "rgb(var(--c-face-3) / <alpha-value>)",
+          4: "rgb(var(--c-face-4) / <alpha-value>)",
+        },
         // Boiler Kit tokens remapped to Vértice — keeps every *-gb-* class working
         gb: {
-          bg:      "#0C0D11",   // deepink ground
-          surface: "#191B21",   // matte panel
-          border:  "#242832",   // hairline
-          borderL: "#191B21",
-          input:   "#191B21",
-          muted:   "#5C616D",   // slate
-          faint:   "#8A909C",
-          accent:  "#E0A24C",   // brassLight
-          accentD: "#A15E1E",   // brass
+          bg:      "rgb(var(--c-gb-bg) / <alpha-value>)",
+          surface: "rgb(var(--c-gb-surface) / <alpha-value>)",
+          border:  "rgb(var(--c-gb-border) / <alpha-value>)",
+          borderL: "rgb(var(--c-gb-borderL) / <alpha-value>)",
+          input:   "rgb(var(--c-gb-input) / <alpha-value>)",
+          muted:   "rgb(var(--c-gb-muted) / <alpha-value>)",
+          faint:   "rgb(var(--c-gb-faint) / <alpha-value>)",
+          accent:  "rgb(var(--c-gb-accent) / <alpha-value>)",
+          accentD: "rgb(var(--c-gb-accentD) / <alpha-value>)",
         },
       },
     },
