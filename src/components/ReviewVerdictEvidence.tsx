@@ -166,7 +166,7 @@ export function ReviewVerdictEvidence({ onResult }: { onResult?: (r: ReviewSumma
     : vSurface.tone === "red" ? "text-red-300" : "text-brassLight";
 
   return (
-    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+    <div className="mt-4 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <ScrollText className="h-5 w-5 text-brassLight/80" />
@@ -182,7 +182,7 @@ export function ReviewVerdictEvidence({ onResult }: { onResult?: (r: ReviewSumma
         <span className="text-paper/70"> re-hashed from its published source</span>. One lane stays honest-amber until ledger promotion.
       </p>
 
-      <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.02] p-3">
+      <div className="mt-3 rounded-xl border border-hairline/10 bg-elevate/[0.02] p-3">
         <div className="flex items-baseline gap-2">
           <span className={`font-display text-[15px] ${vt}`}>{v.verdict.replace(/_/g, " ")}</span>
           <span className="font-mono text-[11px] text-paper/50">confidence {v.confidence}</span>
@@ -214,7 +214,7 @@ export function ReviewVerdictEvidence({ onResult }: { onResult?: (r: ReviewSumma
         </button>
         {ran && (
           <button onClick={() => recompute(!tampered)} disabled={running}
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-[12px] text-paper/70 hover:border-white/30 disabled:opacity-50">
+            className="inline-flex items-center gap-1.5 rounded-full border border-hairline/15 px-3 py-1.5 text-[12px] text-paper/70 hover:border-hairline/30 disabled:opacity-50">
             {tampered ? <><RotateCcw className="h-3.5 w-3.5" /> restore</> : <><Wand2 className="h-3.5 w-3.5" /> tamper the verdict</>}
           </button>
         )}

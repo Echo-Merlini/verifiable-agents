@@ -28,10 +28,10 @@ export default function KitPage() {
         </p>
 
         {/* Install / verify */}
-        <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+        <div className="mt-8 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5">
           <div className="flex items-center gap-2 text-[12px] text-gb-muted"><Terminal className="h-4 w-4 text-brassLight/80" /> Verify a receipt offline — stdlib only, zero dependencies</div>
-          <pre className="mt-3 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 font-mono text-[12px] text-emerald-300/90"><code>{INSTALL}</code></pre>
-          <pre className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 font-mono text-[12px] text-paper/80"><code>{`recompute-verify receipt.json   # exit 0 = good, 1 = bad, 2 = unverifiable`}</code></pre>
+          <pre className="mt-3 overflow-x-auto rounded-lg border border-hairline/10 bg-black/40 p-3 font-mono text-[12px] text-emerald-300/90"><code>{INSTALL}</code></pre>
+          <pre className="mt-2 overflow-x-auto rounded-lg border border-hairline/10 bg-black/40 p-3 font-mono text-[12px] text-paper/80"><code>{`recompute-verify receipt.json   # exit 0 = good, 1 = bad, 2 = unverifiable`}</code></pre>
           <p className="mt-2 font-mono text-[10px] text-paper/35">on PyPI: <a href="https://pypi.org/project/recompute-kit-verify/" target="_blank" rel="noopener noreferrer" className="text-brassLight/60 hover:text-brassLight">pypi.org/project/recompute-kit-verify</a></p>
           <p className="mt-3 text-[11px] text-paper/40">It recomputes the receipt&apos;s <code className="text-paper/70">receipt_root</code> (<code className="text-paper/70">receiptos-c14n-v0</code>) and reads the capsule&apos;s conformance verdict verbatim — never inferring the verdict from the root match.</p>
         </div>
@@ -44,7 +44,7 @@ export default function KitPage() {
             <thead className="text-paper/40"><tr><th className="py-1 pr-4">status</th><th className="py-1 pr-4">exit</th><th className="py-1">meaning</th></tr></thead>
             <tbody>
               {TRI.map(([s, code, mean, color]) => (
-                <tr key={s} className="border-t border-white/8">
+                <tr key={s} className="border-t border-hairline/8">
                   <td className={`py-2 pr-4 ${color}`}>{s}</td>
                   <td className="py-2 pr-4 text-paper/50">{code}</td>
                   <td className="py-2 text-paper/70">{mean}</td>
@@ -69,7 +69,7 @@ export default function KitPage() {
           <a href="/conformance" className="inline-flex items-center gap-1 text-brassLight/80 hover:text-brassLight">recompute our MCPs live <ArrowRight className="h-3 w-3" /></a>
         </div>
 
-        <div className="mt-14 rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+        <div className="mt-14 rounded-3xl border border-hairline/10 bg-elevate/[0.02] p-6 md:p-8">
           <p className="font-display text-lg text-paper">Want your MCP or agent to ship recomputable receipts?</p>
           <p className="mt-2 text-[13px] text-gb-muted max-w-xl">Trust as a check, not a claim — the same layer, wired into your tools.</p>
           <a href="https://verticecriativo.pt/review-gate" className="mt-5 inline-flex items-center gap-1.5 text-sm text-brassLight hover:text-paper transition-colors">

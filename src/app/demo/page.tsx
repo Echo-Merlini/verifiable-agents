@@ -252,16 +252,16 @@ export default function DemoPage() {
         )}
 
         {address && !hasRkb && (
-          <div className="mt-6 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-[12px] text-gb-muted">
+          <div className="mt-6 rounded-xl border border-hairline/10 bg-elevate/5 px-4 py-2 text-[12px] text-gb-muted">
             No Recompute Kit Bots in this wallet yet — <Link href="/mint" className="text-brassLight hover:text-brass">mint one</Link> and it appears here.
           </div>
         )}
 
         {/* Agent header — avatar left of the title, in a brass-bordered card */}
-        <div className="mt-6 flex items-center gap-4 rounded-2xl border border-brassLight/30 bg-white/[0.02] p-4 sm:p-5">
+        <div className="mt-6 flex items-center gap-4 rounded-2xl border border-brassLight/30 bg-elevate/[0.02] p-4 sm:p-5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img key={featured.image} src={featured.image} alt={featured.name}
-            className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl border border-white/10 object-cover shrink-0"
+            className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl border border-hairline/10 object-cover shrink-0"
             style={{ imageRendering: "pixelated" }} />
           <div className="min-w-0 flex-1">
             <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">
@@ -270,14 +270,14 @@ export default function DemoPage() {
             <div className="mt-1 flex items-center gap-3">
               {isOwned && myAgents.length > 1 && (
                 <button onClick={() => cycle(-1)} aria-label="Previous agent"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-elevate/5 border border-hairline/10 hover:bg-elevate/10 transition-colors">
                   <ChevronLeft className="h-6 w-6" />
                 </button>
               )}
               <h1 className="font-display font-medium tracking-tightest text-4xl sm:text-5xl truncate">{featured.name}</h1>
               {isOwned && myAgents.length > 1 && (
                 <button onClick={() => cycle(1)} aria-label="Next agent"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-elevate/5 border border-hairline/10 hover:bg-elevate/10 transition-colors">
                   <ChevronRight className="h-6 w-6" />
                 </button>
               )}
@@ -285,7 +285,7 @@ export default function DemoPage() {
             <div className="mt-1.5 flex flex-wrap items-center gap-2">
               <p className="font-mono text-[11px] text-gb-faint truncate">{featured.sub}</p>
               {agentEns && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-0.5 text-[11px] text-paper/75" title="ENSIP-25 agent name — verify on /verify">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline/10 bg-elevate/[0.03] px-2.5 py-0.5 text-[11px] text-paper/75" title="ENSIP-25 agent name — verify on /verify">
                   <img src="/logos/ens.png" alt="ENS" className="h-3 w-auto" />
                   {agentEns}
                 </span>
@@ -341,14 +341,14 @@ export default function DemoPage() {
                 <button
                   onClick={() => trackRef.current?.scrollBy({ left: -320, behavior: "smooth" })}
                   aria-label="Previous tools"
-                  className="absolute -left-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-deepink/90 p-2 text-gb-muted shadow-lg backdrop-blur transition-colors hover:border-brassLight/50 hover:text-brassLight sm:flex"
+                  className="absolute -left-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-hairline/10 bg-deepink/90 p-2 text-gb-muted shadow-lg backdrop-blur transition-colors hover:border-brassLight/50 hover:text-brassLight sm:flex"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => trackRef.current?.scrollBy({ left: 320, behavior: "smooth" })}
                   aria-label="Next tools"
-                  className="absolute -right-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-deepink/90 p-2 text-gb-muted shadow-lg backdrop-blur transition-colors hover:border-brassLight/50 hover:text-brassLight sm:flex"
+                  className="absolute -right-3 top-1/2 z-20 hidden -translate-y-1/2 items-center justify-center rounded-full border border-hairline/10 bg-deepink/90 p-2 text-gb-muted shadow-lg backdrop-blur transition-colors hover:border-brassLight/50 hover:text-brassLight sm:flex"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -381,7 +381,7 @@ export default function DemoPage() {
                     onFocus={() => setHoverMcp(c)}
                     className="liquid-glass group/btn h-full w-full rounded-2xl p-4 text-left ring-1 ring-brassLight/30 transition-all duration-200 hover:-translate-y-1 hover:ring-brassLight/60 hover:shadow-[0_12px_28px_-14px_rgba(198,160,90,0.45)] motion-reduce:transform-none motion-reduce:transition-none"
                   >
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 border border-brass/25">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-elevate/5 border border-brass/25">
                       <McpLogo card={c} className="h-6 w-6" fill />
                     </span>
                     <p className="mt-3 pr-16 font-display font-medium text-paper flex items-center gap-1">
@@ -395,7 +395,7 @@ export default function DemoPage() {
             </div>
             {/* Fixed description — always present below the carousel, changes on hover
                 (steadier than a per-card tooltip that clips on the first card) */}
-            <div className="mt-1 min-h-[3.25rem] rounded-xl border border-brassLight/30 bg-white/[0.02] px-4 py-3">
+            <div className="mt-1 min-h-[3.25rem] rounded-xl border border-brassLight/30 bg-elevate/[0.02] px-4 py-3">
               {hoverMcp ? (
                 <p className="text-[12px] leading-relaxed text-gb-muted">
                   <span className="font-display font-medium text-paper">{hoverMcp.label}</span>
@@ -435,7 +435,7 @@ export default function DemoPage() {
             </div>
           </div>
         ) : (
-          <div className="mt-4 rounded-xl border border-white/8 p-4 text-sm text-gb-muted">
+          <div className="mt-4 rounded-xl border border-hairline/8 p-4 text-sm text-gb-muted">
             Every action this agent takes is attested on-chain. Send it a message or run a tool — then{" "}
             <span className="text-brassLight">recompute that exact action yourself</span>, input to on-chain anchor, all in your browser.
           </div>

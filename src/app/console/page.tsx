@@ -42,7 +42,7 @@ function ConsoleInner() {
       <div className="flex items-center gap-3">
         <Gauge className="h-6 w-6 text-brassLight" />
         <h1 className="font-display text-2xl font-bold sm:text-3xl">Console</h1>
-        <span className="rounded-full bg-white/[0.05] px-2.5 py-0.5 text-[11px] uppercase tracking-wider text-zinc-400 ring-1 ring-white/[0.06]">
+        <span className="rounded-full bg-elevate/[0.05] px-2.5 py-0.5 text-[11px] uppercase tracking-wider text-zinc-400 ring-1 ring-hairline/[0.06]">
           owner &amp; auditor
         </span>
       </div>
@@ -72,7 +72,7 @@ function ConsoleInner() {
                   key={ref}
                   onClick={() => setSelectedRef(ref)}
                   className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-left transition ${
-                    active ? "bg-white/[0.07] ring-1 ring-brass/40" : "bg-white/[0.02] ring-1 ring-white/[0.05] hover:bg-white/[0.05]"
+                    active ? "bg-elevate/[0.07] ring-1 ring-brass/40" : "bg-elevate/[0.02] ring-1 ring-hairline/[0.05] hover:bg-elevate/[0.05]"
                   }`}
                 >
                   <div className="h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-black/30">
@@ -97,7 +97,7 @@ function ConsoleInner() {
             {selected && (
               <>
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-black/30 ring-1 ring-white/[0.06]">
+                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-black/30 ring-1 ring-hairline/[0.06]">
                     {selected.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={selected.image} alt="" className="h-full w-full object-cover" />
@@ -161,7 +161,7 @@ function ConsoleInner() {
                 </div>
 
                 {/* Next deepening — per-action receipt feed (the /verify chain per action) */}
-                <div className="rounded-2xl border border-dashed border-white/[0.08] p-4 text-[11px] leading-relaxed text-zinc-500">
+                <div className="rounded-2xl border border-dashed border-hairline/[0.08] p-4 text-[11px] leading-relaxed text-zinc-500">
                   <span className="text-zinc-400">Next:</span> a per-action receipt feed — each action's
                   full attestation chain, recomputable inline the way <Link href="/verify" className="text-brassLight hover:underline">/verify</Link> does for the showcase run.
                 </div>

@@ -1172,7 +1172,7 @@ function BindingCell({ registry, agentId }: { registry: string; agentId: string 
   const color =
     v.status === "valid"   ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" :
     v.status === "invalid" ? "text-amber-300 bg-amber-500/10 border-amber-500/20" :
-                             "text-gb-muted bg-white/5 border-gb-border";
+                             "text-gb-muted bg-elevate/5 border-gb-border";
   const label = v.status === "valid" ? `live · ${v.matchedCase}` : v.status === "invalid" ? "not live" : "unverif.";
 
   const toggle = async (e: { stopPropagation: () => void }) => {
@@ -1275,9 +1275,9 @@ function AgentsTab() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {a.image ? (
-                        <img src={a.image} alt={a.name} className="w-9 h-9 rounded-lg object-cover bg-white/5" />
+                        <img src={a.image} alt={a.name} className="w-9 h-9 rounded-lg object-cover bg-elevate/5" />
                       ) : (
-                        <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center">
+                        <div className="w-9 h-9 rounded-lg bg-elevate/5 flex items-center justify-center">
                           <Bot className="w-4 h-4 text-paper/20" />
                         </div>
                       )}

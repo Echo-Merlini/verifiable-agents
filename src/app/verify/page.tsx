@@ -88,7 +88,7 @@ function ZeroGEvidence({ sc }: { sc: Showcase }) {
     } catch (e: unknown) { setState("err"); setMsg(e instanceof Error ? e.message : String(e)); }
   }
   return (
-    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+    <div className="mt-4 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <img src="/logos/0g.jpg" alt="0G" className="h-5 w-5 rounded-md object-cover" />
@@ -159,7 +159,7 @@ function GraphEvidence({ sc, query }: { sc: Showcase; query: string }) {
     } catch (e: unknown) { setState("err"); setMsg(e instanceof Error ? e.message : String(e)); }
   }
   return (
-    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+    <div className="mt-4 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <img src="/logos/thegraph.webp" alt="The Graph" className="h-5 w-5 rounded-full object-contain" />
@@ -209,7 +209,7 @@ function ZeroGChainEvidence({ sc, query }: { sc: Showcase; query: string }) {
     } catch (e: unknown) { setState("err"); setMsg(e instanceof Error ? e.message : String(e)); }
   }
   return (
-    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+    <div className="mt-4 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <img src="/logos/0g.jpg" alt="0G Chain" className="h-5 w-5 rounded-md object-cover" />
@@ -308,7 +308,7 @@ function IdentityBindingEvidence({ sc }: { sc: Showcase }) {
 
   const mesh = b.mesh;
   return (
-    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+    <div className="mt-4 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5">
       <div className="flex items-center gap-2">
         {b.ens_name
           ? <img src="/logos/ens.png" alt="ENS" className="h-4 w-auto" />
@@ -594,7 +594,7 @@ export default function VerifyPage() {
               ) : (<>
               {/* Swap the recompute perspective in-page — no round-trip to /demo (which clears the chat). */}
               <div className="mt-5">
-                <div className="inline-flex rounded-full border border-white/10 bg-black/20 p-1 text-[12px]" role="tablist" aria-label="Recompute perspective">
+                <div className="inline-flex rounded-full border border-hairline/10 bg-black/20 p-1 text-[12px]" role="tablist" aria-label="Recompute perspective">
                   {([["user", "User action"], ["agent", "Agent action"]] as const).map(([f, label]) => {
                     const on = (focus ?? "user") === f;
                     return (
@@ -626,7 +626,7 @@ export default function VerifyPage() {
                 onChange={(e) => (editingAgent ? setReply(e.target.value) : setQuery(e.target.value))}
                 rows={editingAgent ? 4 : 3}
                 spellCheck={false}
-                className={`mt-2 w-full rounded-xl border bg-black/20 px-4 py-3 text-sm font-mono outline-none transition-colors ${tampered ? "border-red-500/50 text-red-300" : "border-white/10 text-paper focus:border-brassLight/50"}`}
+                className={`mt-2 w-full rounded-xl border bg-black/20 px-4 py-3 text-sm font-mono outline-none transition-colors ${tampered ? "border-red-500/50 text-red-300" : "border-hairline/10 text-paper focus:border-brassLight/50"}`}
               />
               <p className="mt-1.5 text-[11px] text-gb-faint">Type in here to change the {editingAgent ? "agent's reply" : "input"} — or use <span className="text-brassLight/80">Tamper a byte</span> below. The committed hash on-chain doesn&apos;t move, so any change must break the match.</p>
 
@@ -656,7 +656,7 @@ export default function VerifyPage() {
                 <button
                   onClick={tamper}
                   disabled={running}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm text-paper/80 transition-colors hover:border-red-500/40 hover:text-red-300 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-full border border-hairline/15 px-5 py-3 text-sm text-paper/80 transition-colors hover:border-red-500/40 hover:text-red-300 disabled:opacity-50"
                 >
                   <Wand2 className="h-4 w-4" /> Tamper a byte
                 </button>
@@ -664,7 +664,7 @@ export default function VerifyPage() {
                 <button
                   onClick={restore}
                   disabled={running}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm text-paper/80 transition-colors hover:border-brassLight/40 hover:text-brassLight disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-full border border-hairline/15 px-5 py-3 text-sm text-paper/80 transition-colors hover:border-brassLight/40 hover:text-brassLight disabled:opacity-50"
                 >
                   <RotateCcw className="h-4 w-4" /> Restore original
                 </button>
@@ -743,7 +743,7 @@ export default function VerifyPage() {
                 {sc && <GraphEvidence sc={sc} query={query} />}
                 <PqKeyBindingEvidence />
                 {sc && ran && <RecomputeReceipt sc={sc} checks={checks} query={query} reply={reply} />}
-                <a href="/reports/0g-teeml" className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.02] p-4 hover:border-brassLight/30 transition-colors">
+                <a href="/reports/0g-teeml" className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-4 hover:border-brassLight/30 transition-colors">
                   <span className="text-[13px] text-gb-muted">Looking for the <span className="text-paper">0G TeeML</span> recompute — relay evidence + live enclave inference? It moved to its own audit report.</span>
                   <span className="shrink-0 inline-flex items-center gap-1.5 text-[12px] text-brassLight">Read the report <ArrowRight className="h-3.5 w-3.5" /></span>
                 </a>

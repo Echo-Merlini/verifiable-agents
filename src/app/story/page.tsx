@@ -45,7 +45,7 @@ export default function StoryPage() {
 
       <main className="mx-auto max-w-3xl px-6">
         {/* ── Hero ── */}
-        <header className="border-b border-white/10 py-16 sm:py-20">
+        <header className="border-b border-hairline/10 py-16 sm:py-20">
           <div className="flex items-center gap-4">
             <VerticeMark size={44} spin />
             <div className="leading-tight">
@@ -67,7 +67,7 @@ export default function StoryPage() {
         </header>
 
         {/* ── The engineer ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>The engineer</Eyebrow>
           <h2 className="mb-5 max-w-[22ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">Fifteen years of getting the signal right</h2>
           <p className="mb-4 max-w-[60ch] font-serif text-[18px] leading-relaxed text-paper/90">
@@ -86,7 +86,7 @@ export default function StoryPage() {
         </section>
 
         {/* ── The instinct ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>The instinct</Eyebrow>
           <h2 className="mb-5 max-w-[22ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">A tool built for himself — dinamic.eth</h2>
           <p className="max-w-[60ch] font-serif text-[18px] leading-relaxed text-paper/90">
@@ -100,7 +100,7 @@ export default function StoryPage() {
         </section>
 
         {/* ── The thesis ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>The thesis</Eyebrow>
           <h2 className="mb-5 max-w-[22ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">What you read is what you execute</h2>
           <p className="mb-4 max-w-[60ch] font-serif text-[18px] leading-relaxed text-paper/90">
@@ -123,7 +123,7 @@ export default function StoryPage() {
         </section>
 
         {/* ── The open house ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>The open house</Eyebrow>
           <h2 className="mb-5 max-w-[22ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">Built in the open, with a working group</h2>
           <p className="mb-6 max-w-[60ch] font-serif text-[18px] leading-relaxed text-paper/90">
@@ -135,7 +135,7 @@ export default function StoryPage() {
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
             {ORIGINALS.map((p) => (
-              <div key={p.h} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+              <div key={p.h} className="rounded-xl border border-hairline/10 bg-elevate/[0.02] p-4">
                 <div className="flex items-baseline justify-between gap-2">
                   <h3 className="text-[15px] font-semibold tracking-tight">{p.h}</h3>
                   <span className="shrink-0 font-mono text-[10.5px] text-brassLight">{p.hn}</span>
@@ -155,7 +155,7 @@ export default function StoryPage() {
         </section>
 
         {/* ── The company ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>The company</Eyebrow>
           <h2 className="mb-5 max-w-[22ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">Vértice Criativo — making the work legible</h2>
           <p className="mb-4 max-w-[60ch] font-serif text-[18px] leading-relaxed text-paper/90">
@@ -175,7 +175,7 @@ export default function StoryPage() {
         </section>
 
         {/* ── House style ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>The house style</Eyebrow>
           <h2 className="mb-5 max-w-[22ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">The bugs it hunts tell you what it is</h2>
           <p className="mb-4 max-w-[60ch] font-serif text-[18px] leading-relaxed text-paper/90">
@@ -198,7 +198,7 @@ export default function StoryPage() {
         </section>
 
         {/* ── Today ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>Today</Eyebrow>
           <h2 className="mb-5 max-w-[22ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">Live, in production, opening real doors</h2>
           <p className="mb-4 max-w-[60ch] font-serif text-[18px] leading-relaxed text-paper/90">
@@ -214,9 +214,9 @@ export default function StoryPage() {
             court accepts. From a personal ENS kit to standards, compute and regulation — in a little over a year.
           </p>
 
-          <div className="border-t border-white/10">
+          <div className="border-t border-hairline/10">
             {TIMELINE.map((r) => (
-              <div key={r.d} className="grid grid-cols-[92px_1fr] gap-4 border-b border-white/[0.06] py-3.5">
+              <div key={r.d} className="grid grid-cols-[92px_1fr] gap-4 border-b border-hairline/[0.06] py-3.5">
                 <div className="font-mono text-[12px] text-brassLight">{r.d}</div>
                 <div className="text-[14.5px] leading-relaxed text-gb-muted">{r.e}</div>
               </div>
@@ -236,7 +236,7 @@ export default function StoryPage() {
           >
             See what Vértice offers →
           </a>
-          <div className="mt-8 border-t border-white/10 pt-6 font-mono text-[11.5px] leading-loose tracking-wide text-gb-muted">
+          <div className="mt-8 border-t border-hairline/10 pt-6 font-mono text-[11.5px] leading-loose tracking-wide text-gb-muted">
             <span className="text-paper/70">VÉRTICE CRIATIVO — UNIPESSOAL LDA</span> · NIPC 519525450 · Amadora, Portugal
             <br />
             contact@verticecriativo.pt · verticecriativo.pt · <span className="text-paper/70">Don't trust. Recompute.</span>

@@ -79,7 +79,7 @@ export function LicensedMcpAudit({ registry, agentId }: { registry: string; agen
           return <p className="mt-3 text-[11px] text-zinc-500">No premium capabilities invoked in the last {audit.rows.length} actions — nothing to gate.</p>;
         }
         return (
-          <ul className="mt-4 space-y-1.5 border-t border-white/[0.06] pt-3">
+          <ul className="mt-4 space-y-1.5 border-t border-hairline/[0.06] pt-3">
             {notable.slice(0, 8).map((r) => {
               const rv = VERDICT[r.verdict];
               return (
@@ -102,7 +102,7 @@ export function LicensedMcpAudit({ registry, agentId }: { registry: string; agen
         );
       })()}
 
-      <p className="mt-4 border-t border-white/[0.06] pt-3 font-mono text-[10px] leading-relaxed text-zinc-500">
+      <p className="mt-4 border-t border-hairline/[0.06] pt-3 font-mono text-[10px] leading-relaxed text-zinc-500">
         recompute: {audit.recompute.method}
         {audit.recompute.contract && (
           <> · <a href={`${explorer}/address/${audit.recompute.contract}`} target="_blank" rel="noreferrer" className="text-brassLight hover:underline">registry</a></>

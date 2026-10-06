@@ -66,7 +66,7 @@ export function AgentMarketAdmin() {
   };
 
   const Stat = ({ label, value }: { label: string; value: string }) => (
-    <div className="rounded-lg bg-white/[0.03] px-3 py-2 ring-1 ring-white/[0.06]">
+    <div className="rounded-lg bg-elevate/[0.03] px-3 py-2 ring-1 ring-hairline/[0.06]">
       <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-gb-faint">{label}</p>
       <p className="mt-0.5 font-display text-sm text-slate-100">{value}</p>
     </div>

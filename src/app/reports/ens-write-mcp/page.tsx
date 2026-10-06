@@ -24,10 +24,10 @@ function EnsCalldataRecompute() {
     calldata = encodeFunctionData({ abi: SETADDR_ABI, functionName: "setAddr", args: [node as `0x${string}`, addr as `0x${string}`] });
   } catch (e) { err = (e as Error).message; }
 
-  const input = "w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 font-mono text-[12px] text-paper placeholder-paper/30 outline-none focus:border-brassLight/50";
+  const input = "w-full rounded-lg border border-hairline/10 bg-elevate/[0.03] px-3 py-2 font-mono text-[12px] text-paper placeholder-paper/30 outline-none focus:border-brassLight/50";
 
   return (
-    <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+    <div className="mt-4 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5">
       <p className="text-[12px] text-gb-muted">
         <span className="text-paper">Recompute the calldata yourself.</span> This is the exact transaction the MCP must build for
         <code className="text-paper/70"> ens_set_addr</code>. Change the inputs — the derivation is public and deterministic, no MCP trusted.
@@ -37,7 +37,7 @@ function EnsCalldataRecompute() {
         <div><label className="font-mono text-[10px] uppercase tracking-wider text-paper/40">addr</label><input value={addr} onChange={(e) => setAddr(e.target.value)} className={input} /></div>
       </div>
       <div className="mt-3 space-y-2 font-mono text-[11px]">
-        <div className="rounded-lg border border-white/8 bg-white/[0.02] p-3">
+        <div className="rounded-lg border border-hairline/8 bg-elevate/[0.02] p-3">
           <p className="text-paper/40">namehash(name) · EIP-137</p>
           <p className="mt-1 break-all text-brassLight/90">{node || "—"}</p>
         </div>
@@ -97,9 +97,9 @@ export default function EnsWriteReport() {
           <table className="w-full text-left font-mono text-[11px]">
             <thead className="text-paper/40"><tr><th className="py-1 pr-4">tool</th><th className="py-1 pr-4">function</th><th className="py-1">basis</th></tr></thead>
             <tbody className="text-paper/80">
-              <tr className="border-t border-white/8"><td className="py-1.5 pr-4">ens_set_addr</td><td className="py-1.5 pr-4">setAddr(node, addr)</td><td className="py-1.5 text-emerald-300/80">recomputed · byte-identical</td></tr>
-              <tr className="border-t border-white/8"><td className="py-1.5 pr-4">ens_set_text</td><td className="py-1.5 pr-4">setText(node, key, value)</td><td className="py-1.5 text-emerald-300/80">recomputed · byte-identical</td></tr>
-              <tr className="border-t border-white/8"><td className="py-1.5 pr-4">ens_set_primary</td><td className="py-1.5 pr-4">setName(name)</td><td className="py-1.5 text-emerald-300/80">recomputed · byte-identical</td></tr>
+              <tr className="border-t border-hairline/8"><td className="py-1.5 pr-4">ens_set_addr</td><td className="py-1.5 pr-4">setAddr(node, addr)</td><td className="py-1.5 text-emerald-300/80">recomputed · byte-identical</td></tr>
+              <tr className="border-t border-hairline/8"><td className="py-1.5 pr-4">ens_set_text</td><td className="py-1.5 pr-4">setText(node, key, value)</td><td className="py-1.5 text-emerald-300/80">recomputed · byte-identical</td></tr>
+              <tr className="border-t border-hairline/8"><td className="py-1.5 pr-4">ens_set_primary</td><td className="py-1.5 pr-4">setName(name)</td><td className="py-1.5 text-emerald-300/80">recomputed · byte-identical</td></tr>
             </tbody>
           </table>
         </div>
@@ -113,7 +113,7 @@ export default function EnsWriteReport() {
           <a href="https://recomputekit-ai.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brassLight/80 hover:text-brassLight">recompute-kit <ExternalLink className="h-3 w-3" /></a>
         </div>
 
-        <div className="mt-14 rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+        <div className="mt-14 rounded-3xl border border-hairline/10 bg-elevate/[0.02] p-6 md:p-8">
           <p className="font-display text-lg text-paper">Want a recomputable audit report like this for your MCP or agent?</p>
           <p className="mt-2 text-[13px] text-gb-muted max-w-xl">Independent, signed, and re-derivable by anyone — the deliverable format for a Vértice audit.</p>
           <a href="https://verticecriativo.pt/review-gate" className="mt-5 inline-flex items-center gap-1.5 text-sm text-brassLight hover:text-paper transition-colors">

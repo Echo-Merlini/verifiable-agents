@@ -10,7 +10,7 @@
     --brass:#976820; --brass2:#b6893a; --line:rgba(28,24,17,0.15); --line2:rgba(28,24,17,0.08);
     --good:#2f7d55;
   }
-  @media (prefers-color-scheme:dark){:root{
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
     --paper:#13110c; --panel:#1b1710; --ink:#ece5d5; --muted:#a49a86; --faint:#756c5b;
     --brass:#d59c46; --brass2:#b6893a; --line:rgba(236,229,213,0.14); --line2:rgba(236,229,213,0.07);
     --good:#6cc191;
@@ -78,6 +78,11 @@
   footer .sp{flex:1;}
   @media(max-width:480px){h1{font-size:44px;}}
 </style>
+<script>(function(){try{
+  var p=new URLSearchParams(location.search).get('theme');
+  if(p==='light'||p==='dark'){localStorage.setItem('vx-theme',p);}
+  if(localStorage.getItem('vx-theme')==='light'){document.documentElement.setAttribute('data-theme','light');}
+}catch(e){}})();</script>
 </head><body>
 
 <header><div class="wrap">

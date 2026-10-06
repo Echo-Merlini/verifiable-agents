@@ -103,7 +103,7 @@ export function PqLifecycle({ registry, tokenId }: { registry: string; tokenId: 
   const busy = phase === "working";
 
   return (
-    <div className="mt-3 border-t border-white/10 pt-3">
+    <div className="mt-3 border-t border-hairline/10 pt-3">
       <button
         onClick={() => setOpen((v) => !v)}
         className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-gb-faint hover:text-gb-muted"

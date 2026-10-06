@@ -81,7 +81,7 @@ export function ReputationBreakdown({ rep }: { rep: Reputation | null | undefine
       )}
 
       {/* Axis honesty + recompute provenance */}
-      <div className="mt-4 space-y-2 border-t border-white/[0.06] pt-4 text-[11px] leading-relaxed text-zinc-500">
+      <div className="mt-4 space-y-2 border-t border-hairline/[0.06] pt-4 text-[11px] leading-relaxed text-zinc-500">
         <p>
           <span className="text-zinc-400">Axis:</span> delivery-vs-verdict. “Delivered” means the consult was
           returned <em>and the escrow released</em> — settlement, not a quality judgment. <span className="text-zinc-400">Stale</span> jobs

@@ -43,16 +43,16 @@ function NftPicker({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="w-full max-w-lg bg-black/90 border border-white/10 rounded-2xl overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/8">
+      <div className="w-full max-w-lg bg-black/90 border border-hairline/10 rounded-2xl overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-hairline/8">
           <p className="text-sm font-medium text-paper">Pick an NFT as avatar</p>
           <button onClick={onClose} className="text-paper/40 hover:text-paper/70 transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="px-4 py-3 border-b border-white/8">
-          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2">
+        <div className="px-4 py-3 border-b border-hairline/8">
+          <div className="flex items-center gap-2 bg-elevate/5 border border-hairline/10 rounded-xl px-3 py-2">
             <Search className="w-3.5 h-3.5 text-paper/30 shrink-0" />
             <input
               value={query} onChange={e => setQuery(e.target.value)}
@@ -77,7 +77,7 @@ function NftPicker({
                 <button
                   key={`${nft.contractAddress}-${nft.tokenId}`}
                   onClick={() => { onSelect(nft.image); onClose(); }}
-                  className="group relative aspect-square rounded-xl overflow-hidden border border-white/10 hover:border-amber-400/50 transition-colors"
+                  className="group relative aspect-square rounded-xl overflow-hidden border border-hairline/10 hover:border-amber-400/50 transition-colors"
                 >
                   <img src={nft.image} alt={nft.name} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-1.5">
@@ -105,10 +105,10 @@ function Section({ icon, title, children, defaultOpen = true }: {
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border border-white/8 rounded-2xl overflow-hidden">
+    <div className="border border-hairline/8 rounded-2xl overflow-hidden">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-white/3 hover:bg-white/5 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 bg-elevate/3 hover:bg-elevate/5 transition-colors"
       >
         <div className="flex items-center gap-2 text-sm font-medium text-paper/70">
           {icon}{title}
@@ -140,7 +140,7 @@ function Input({ value, onChange, placeholder, type = "text" }: {
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-paper placeholder:text-paper/20 outline-none focus:border-white/30 transition-colors"
+      className="w-full bg-elevate/5 border border-hairline/10 rounded-xl px-4 py-2.5 text-sm text-paper placeholder:text-paper/20 outline-none focus:border-hairline/30 transition-colors"
     />
   );
 }
@@ -154,7 +154,7 @@ function Textarea({ value, onChange, placeholder, rows = 3 }: {
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-paper placeholder:text-paper/20 outline-none focus:border-white/30 transition-colors resize-none"
+      className="w-full bg-elevate/5 border border-hairline/10 rounded-xl px-4 py-2.5 text-sm text-paper placeholder:text-paper/20 outline-none focus:border-hairline/30 transition-colors resize-none"
     />
   );
 }
@@ -231,14 +231,14 @@ export function ProfileEditor({
               {ownerAddress && (
                 <button
                   onClick={() => setShowNftPicker(true)}
-                  className="shrink-0 px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-paper/60 hover:text-paper hover:border-white/30 transition-colors whitespace-nowrap"
+                  className="shrink-0 px-3 py-2 bg-elevate/5 border border-hairline/10 rounded-xl text-xs text-paper/60 hover:text-paper hover:border-hairline/30 transition-colors whitespace-nowrap"
                 >
                   Pick NFT
                 </button>
               )}
             </div>
             {fields.avatar && (
-              <img src={fields.avatar} alt="preview" className="w-14 h-14 rounded-full object-cover mt-2 border border-white/10" />
+              <img src={fields.avatar} alt="preview" className="w-14 h-14 rounded-full object-cover mt-2 border border-hairline/10" />
             )}
           </Field>
           <Field label="Badge text" hint="Small label shown below avatar (e.g. 'Pixel Goblin #42')">
@@ -294,7 +294,7 @@ export function ProfileEditor({
           <button
             onClick={save}
             disabled={saving}
-            className="flex-1 bg-white/8 hover:bg-white/12 border border-white/15 rounded-xl py-3 flex items-center justify-center gap-2 text-sm text-paper transition-colors disabled:opacity-50"
+            className="flex-1 bg-elevate/8 hover:bg-elevate/12 border border-hairline/15 rounded-xl py-3 flex items-center justify-center gap-2 text-sm text-paper transition-colors disabled:opacity-50"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : saved ? <Check className="w-4 h-4 text-green-400" /> : <Check className="w-4 h-4" />}
             {saved ? "Saved!" : "Save Records"}

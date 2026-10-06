@@ -30,7 +30,7 @@ export default function ReportsIndex() {
         <div className="mt-10 space-y-3">
           {REPORTS.map((r) => (
             <Link key={r.href} href={r.href}
-              className="group flex items-start justify-between gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5 transition-colors hover:border-brassLight/30">
+              className="group flex items-start justify-between gap-4 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5 transition-colors hover:border-brassLight/30">
               <div className="flex gap-4">
                 <ScrollText className="mt-0.5 h-5 w-5 shrink-0 text-brassLight/80" />
                 <div>

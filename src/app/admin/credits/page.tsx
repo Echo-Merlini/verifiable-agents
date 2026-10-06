@@ -473,7 +473,7 @@ export default function CreditsPage() {
               </thead>
               <tbody className="divide-y divide-gb-border">
                 {wallets.map(w => (
-                  <tr key={w.owner_address} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={w.owner_address} className="hover:bg-elevate/[0.02] transition-colors">
                     <td className="px-5 py-3 font-mono text-xs text-slate-300">
                       <div className="flex items-center gap-1.5">
                         {shortAddr(w.owner_address)}
@@ -527,7 +527,7 @@ export default function CreditsPage() {
               </thead>
               <tbody className="divide-y divide-gb-border">
                 {registries.map((reg) => (
-                  <tr key={reg.registry_address} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={reg.registry_address} className="hover:bg-elevate/[0.02] transition-colors">
                     <td className="px-5 py-3 font-mono text-xs text-slate-300">
                       <div className="flex items-center gap-1.5">
                         {shortAddr(reg.registry_address)}

@@ -80,7 +80,7 @@ export default function BusinessPage() {
 
       <main className="mx-auto max-w-4xl px-6">
         {/* ── Hero ── */}
-        <header className="border-b border-white/10 py-16 sm:py-20">
+        <header className="border-b border-hairline/10 py-16 sm:py-20">
           <div className="flex items-center gap-4">
             <VerticeMark size={44} spin />
             <div className="leading-tight">
@@ -107,7 +107,7 @@ export default function BusinessPage() {
         </header>
 
         {/* ── The product ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>The product</Eyebrow>
           <h2 className="mb-4 max-w-[20ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">Proof that travels with the output</h2>
           <p className="mb-4 max-w-[64ch] text-[16.5px] leading-relaxed text-gb-muted">
@@ -127,7 +127,7 @@ export default function BusinessPage() {
           </p>
           <div className="mt-7 grid gap-4 sm:grid-cols-3">
             {LAYERS.map((l) => (
-              <div key={l.h} className={`relative rounded-xl border p-5 ${l.core ? "border-brassLight/60 bg-white/[0.04]" : "border-white/10 bg-white/[0.02]"}`}>
+              <div key={l.h} className={`relative rounded-xl border p-5 ${l.core ? "border-brassLight/60 bg-elevate/[0.04]" : "border-hairline/10 bg-elevate/[0.02]"}`}>
                 {l.core && <span className="absolute right-4 top-4 rounded bg-brassLight/15 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-brassLight">core</span>}
                 <div className="font-mono text-[11px] uppercase tracking-wider text-gb-muted">{l.k}</div>
                 <h3 className="mb-2 mt-2 text-[17px] font-semibold tracking-tight">{l.h}</h3>
@@ -138,7 +138,7 @@ export default function BusinessPage() {
         </section>
 
         {/* ── Application model ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>Application model</Eyebrow>
           <h2 className="mb-4 max-w-[20ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">How a client adopts it</h2>
           <p className="mb-2 max-w-[64ch] text-[16.5px] leading-relaxed text-gb-muted">
@@ -146,9 +146,9 @@ export default function BusinessPage() {
             <strong className="font-semibold text-paper"> on infrastructure the client owns</strong> (self-hosted)
             or hosted by Vértice — keys stay non-custodial either way. Each step is a real deliverable, not a demo.
           </p>
-          <div className="mt-6 border-t border-white/10">
+          <div className="mt-6 border-t border-hairline/10">
             {LADDER.map((r) => (
-              <div key={r.no} className="grid grid-cols-1 gap-x-6 gap-y-1 border-b border-white/10 py-5 sm:grid-cols-[44px_220px_1fr]">
+              <div key={r.no} className="grid grid-cols-1 gap-x-6 gap-y-1 border-b border-hairline/10 py-5 sm:grid-cols-[44px_220px_1fr]">
                 <div className="font-mono text-[13px] text-brassLight">{r.no}</div>
                 <div className="text-[17px] font-semibold tracking-tight">{r.name}</div>
                 <div className="text-[15px] leading-relaxed text-gb-muted">{r.desc}</div>
@@ -158,7 +158,7 @@ export default function BusinessPage() {
         </section>
 
         {/* ── Components ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>Product list</Eyebrow>
           <h2 className="mb-4 max-w-[20ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">The components</h2>
           <p className="max-w-[64ch] text-[16.5px] leading-relaxed text-gb-muted">
@@ -168,7 +168,7 @@ export default function BusinessPage() {
           </p>
           <div className="mt-7 grid gap-4 sm:grid-cols-2">
             {COMPONENTS.map((c) => (
-              <div key={c.h} className="flex flex-col gap-2 rounded-xl border border-white/10 bg-white/[0.02] p-5">
+              <div key={c.h} className="flex flex-col gap-2 rounded-xl border border-hairline/10 bg-elevate/[0.02] p-5">
                 <div className="flex items-baseline justify-between gap-3">
                   <h3 className="text-[16.5px] font-semibold tracking-tight">{c.h}</h3>
                   <span className="shrink-0 font-mono text-[10.5px] uppercase tracking-wider text-gb-muted">{c.tag}</span>
@@ -181,16 +181,16 @@ export default function BusinessPage() {
         </section>
 
         {/* ── Pricing ── */}
-        <section className="border-b border-white/[0.06] py-14">
+        <section className="border-b border-hairline/[0.06] py-14">
           <Eyebrow>Indicative pricing</Eyebrow>
           <h2 className="mb-5 max-w-[20ch] text-balance text-2xl font-semibold tracking-tight sm:text-3xl">What an engagement runs</h2>
-          <div className="mb-6 inline-flex items-center gap-2 rounded border border-white/10 px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wide text-gb-muted">
+          <div className="mb-6 inline-flex items-center gap-2 rounded border border-hairline/10 px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wide text-gb-muted">
             <span className="h-1.5 w-1.5 rounded-full bg-brassLight" /> Estimate — a scoping call sets the real number
           </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[560px] border-collapse text-[15px]">
               <thead>
-                <tr className="border-b border-white/10 text-left font-mono text-[12px] uppercase tracking-wide text-gb-muted">
+                <tr className="border-b border-hairline/10 text-left font-mono text-[12px] uppercase tracking-wide text-gb-muted">
                   <th className="pb-3 pr-4 font-semibold">Tier</th>
                   <th className="pb-3 pr-4 font-semibold">Scope</th>
                   <th className="pb-3 text-right font-semibold">Indicative</th>
@@ -198,7 +198,7 @@ export default function BusinessPage() {
               </thead>
               <tbody>
                 {TIERS.map((t) => (
-                  <tr key={t.no} className="border-b border-white/[0.06] align-top">
+                  <tr key={t.no} className="border-b border-hairline/[0.06] align-top">
                     <td className="py-4 pr-4"><span className="font-mono text-[12px] text-brassLight">{t.no}</span> <span className="font-semibold tracking-tight">{t.name}</span></td>
                     <td className="py-4 pr-4 text-[14px] leading-snug text-gb-muted">{t.scope}</td>
                     <td className="whitespace-nowrap py-4 text-right font-mono tabular-nums font-medium text-paper"><span className="text-gb-muted">€</span>{t.price}</td>
@@ -227,7 +227,7 @@ export default function BusinessPage() {
             ))}
           </ul>
 
-          <p className="mt-8 rounded-xl border border-white/10 bg-white/[0.03] px-6 py-5 font-serif text-[17px] italic leading-snug">
+          <p className="mt-8 rounded-xl border border-hairline/10 bg-elevate/[0.03] px-6 py-5 font-serif text-[17px] italic leading-snug">
             This is a genuinely rare skill set — verifiable compute, post-quantum crypto, on-chain anchoring
             and live standards work in one stack.{" "}
             <b className="font-display font-semibold not-italic text-brassLight">Price the outcome, not the hours.</b>
@@ -247,7 +247,7 @@ export default function BusinessPage() {
             typical scope, buyer profile and engagement model; the stack is self-hosted and free/open at its
             base, so cost tracks delivery effort and support, not licence fees.
           </p>
-          <div className="mt-8 border-t border-white/10 pt-6 font-mono text-[11.5px] leading-loose tracking-wide text-gb-muted">
+          <div className="mt-8 border-t border-hairline/10 pt-6 font-mono text-[11.5px] leading-loose tracking-wide text-gb-muted">
             <span className="text-paper/70">VÉRTICE CRIATIVO — UNIPESSOAL LDA</span> · NIPC 519525450 · Amadora, Portugal
             <br />
             contact@verticecriativo.pt · +351 967 836 438 · verticecriativo.pt · <span className="text-paper/70">Don't trust. Recompute.</span>

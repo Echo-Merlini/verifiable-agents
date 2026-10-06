@@ -46,7 +46,7 @@ export function TopNav() {
   const { open: openWallet } = useWalletModal();
 
   return (
-    <header className="relative border-b border-white/[0.06]">
+    <header className="relative border-b border-hairline/[0.06]">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-5 gap-y-2 px-4 py-4 sm:px-6">
         <Link href="/demo" className="inline-flex items-center gap-2.5 font-display font-medium tracking-tight text-paper">
           <VerticeMark size={26} spin />
@@ -85,11 +85,11 @@ export function TopNav() {
             {open && (
               <>
                 <button className="fixed inset-0 z-10 cursor-default" aria-label="close menu" onClick={() => setOpen(false)} />
-                <div className="absolute right-0 z-20 mt-3 w-64 rounded-2xl border border-white/10 bg-deepink/95 p-2 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)] backdrop-blur">
+                <div className="absolute right-0 z-20 mt-3 w-64 rounded-2xl border border-hairline/10 bg-deepink/95 p-2 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)] backdrop-blur">
                   {AUDIT.map((a) =>
                     a.external ? (
                       <a key={a.href} href={a.href} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}
-                        className="flex items-start gap-2 rounded-xl px-3 py-2.5 hover:bg-white/[0.04]">
+                        className="flex items-start gap-2 rounded-xl px-3 py-2.5 hover:bg-elevate/[0.04]">
                         <div>
                           <p className="flex items-center gap-1 text-[13px] text-paper">{a.label} <ExternalLink className="h-3 w-3 text-gb-muted" /></p>
                           <p className="text-[11px] text-gb-muted">{a.desc}</p>
@@ -97,7 +97,7 @@ export function TopNav() {
                       </a>
                     ) : (
                       <Link key={a.href} href={a.href} onClick={() => setOpen(false)}
-                        className="block rounded-xl px-3 py-2.5 hover:bg-white/[0.04]">
+                        className="block rounded-xl px-3 py-2.5 hover:bg-elevate/[0.04]">
                         <p className="text-[13px] text-paper">{a.label}</p>
                         <p className="text-[11px] text-gb-muted">{a.desc}</p>
                       </Link>
@@ -109,7 +109,7 @@ export function TopNav() {
           </div>
 
           {/* Wallet — connect once, stay connected while navigating between services */}
-          <span className="hidden h-4 w-px bg-white/12 sm:inline-block" aria-hidden />
+          <span className="hidden h-4 w-px bg-elevate/12 sm:inline-block" aria-hidden />
           {!mounted ? null : !address ? (
             <button
               onClick={openWallet}
@@ -122,9 +122,13 @@ export function TopNav() {
               <button
                 onClick={openWallet}
                 title="Wallet · account"
-                className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-emerald-400/80 transition-colors hover:text-emerald-300"
+                className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-emerald-400/80 transition-colors hover:text-emerald-300"
               >
-                <Wallet className="h-3.5 w-3.5" /> {address.slice(0, 6)}…{address.slice(-4)}
+                {/* ~10 chars of wide-tracked mono is far wider than the word "Connect",
+                    which is why only the CONNECTED header wrapped to two lines. Below xl
+                    it collapses to the icon; the title still names the account. */}
+                <Wallet className="h-3.5 w-3.5 shrink-0" />
+                <span className="hidden xl:inline">{address.slice(0, 6)}…{address.slice(-4)}</span>
               </button>
               <button
                 onClick={() => disconnect()}

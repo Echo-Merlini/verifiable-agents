@@ -60,7 +60,7 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
     <div className="liquid-glass flex flex-col rounded-2xl border border-brassLight/30 p-4">
       {/* Identity row */}
       <div className="flex items-start gap-3">
-        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-black/30 ring-1 ring-white/[0.06]">
+        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-black/30 ring-1 ring-hairline/[0.06]">
           {a.image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={a.image} alt={a.name} className="h-full w-full object-cover" />
@@ -111,7 +111,7 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
       </div>
 
       {/* Actions bar */}
-      <div className="mt-3 flex items-center gap-2 border-t border-white/[0.06] pt-3">
+      <div className="mt-3 flex items-center gap-2 border-t border-hairline/[0.06] pt-3">
         <Link
           href={`/A2A?agent=${encodeURIComponent(agentRef)}`}
           className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-brass/90 px-3 py-2 text-sm font-medium text-white transition hover:bg-brass"
@@ -120,7 +120,7 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
         </Link>
         <Link
           href={`/console?agent=${encodeURIComponent(agentRef)}`}
-          className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-white/[0.04] px-3 py-2 text-sm font-medium text-zinc-300 ring-1 ring-white/[0.06] transition hover:bg-white/[0.07]"
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-elevate/[0.04] px-3 py-2 text-sm font-medium text-zinc-300 ring-1 ring-hairline/[0.06] transition hover:bg-elevate/[0.07]"
         >
           <ClipboardCheck className="h-4 w-4" /> Audit
         </Link>
@@ -129,7 +129,7 @@ function AgentCard({ a, premium }: { a: MarketAgent; premium: Map<string, Premiu
           target="_blank"
           rel="noreferrer"
           title="Collect this agent (ERC-721)"
-          className="inline-flex items-center justify-center rounded-lg bg-white/[0.04] px-2.5 py-2 text-zinc-400 ring-1 ring-white/[0.06] transition hover:bg-white/[0.07]"
+          className="inline-flex items-center justify-center rounded-lg bg-elevate/[0.04] px-2.5 py-2 text-zinc-400 ring-1 ring-hairline/[0.06] transition hover:bg-elevate/[0.07]"
         >
           <ExternalLink className="h-4 w-4" />
         </a>
@@ -167,7 +167,7 @@ export default function MarketplacePage() {
       </p>
 
       {/* Legend — what the shields and tags on each card mean */}
-      <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-2.5 text-[11px] text-zinc-500">
+      <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-xl border border-hairline/[0.06] bg-elevate/[0.02] px-4 py-2.5 text-[11px] text-zinc-500">
         <span className="font-medium uppercase tracking-wider text-zinc-400">What the marks mean</span>
         <span className="inline-flex items-center gap-1.5" title="Reproduced end-to-end from golden vectors, no human in the loop">
           <ShieldCheck className="h-3.5 w-3.5 text-zinc-500" />

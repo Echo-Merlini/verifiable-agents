@@ -104,7 +104,7 @@ export function PqKeyBindingEvidence({
   }
 
   return (
-    <div className="mt-4 rounded-2xl border border-brassLight/25 bg-white/[0.02] p-4">
+    <div className="mt-4 rounded-2xl border border-brassLight/25 bg-elevate/[0.02] p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="flex items-center gap-1.5 font-display font-medium text-paper"><KeyRound className="h-4 w-4 text-brassLight" /> {title}</p>

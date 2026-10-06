@@ -56,7 +56,7 @@ export default function SetRecordPage() {
         <p className="mt-2 text-[13px] text-gb-muted">
           Writes the agent-registration record to <span className="text-paper/80">{NAME}</span>&apos;s <span className="text-paper/80">active</span> resolver, so it&apos;s readable by standard ENS resolution. Non-custodial — your own wallet signs, and you must own {NAME}.
         </p>
-        <div className="mt-5 space-y-1 rounded-2xl border border-white/10 bg-white/[0.02] p-5 font-mono text-[11px]">
+        <div className="mt-5 space-y-1 rounded-2xl border border-hairline/10 bg-elevate/[0.02] p-5 font-mono text-[11px]">
           <div><span className="text-paper/40">name </span><span className="text-paper/80">{NAME}</span></div>
           <div><span className="text-paper/40">resolver </span><span className="break-all text-paper/80">{RESOLVER}</span></div>
           <div><span className="text-paper/40">key </span><span className="break-all text-paper/80">{KEY}</span></div>

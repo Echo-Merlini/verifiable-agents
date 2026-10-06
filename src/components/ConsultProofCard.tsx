@@ -40,7 +40,7 @@ export function ConsultProofCard({ jobId, gatewayUrl, onClose }: { jobId: string
 
   if (!proof) {
     return (
-      <div className="rounded-xl border border-white/[0.06] bg-black/20 px-4 py-3 flex items-center gap-2 text-[11px] text-paper/45">
+      <div className="rounded-xl border border-hairline/[0.06] bg-black/20 px-4 py-3 flex items-center gap-2 text-[11px] text-paper/45">
         <Loader2 className="w-3.5 h-3.5 animate-spin text-brass shrink-0" /> Waiting for delivery — the escrow releases on-chain the moment the agent delivers.
       </div>
     );
@@ -84,7 +84,7 @@ export function ConsultProofCard({ jobId, gatewayUrl, onClose }: { jobId: string
         <a href="/verify" className="flex-1 text-center rounded-lg bg-brass/20 border border-brassLight/40 px-3 py-2 text-[11px] font-medium text-paper hover:bg-brass/30 transition-colors inline-flex items-center justify-center gap-1">
           <ShieldCheck className="w-3.5 h-3.5" /> Verify by recompute
         </a>
-        <button onClick={onClose} className="rounded-lg border border-white/10 px-3 py-2 text-[11px] text-paper/60 hover:bg-white/5 transition-colors inline-flex items-center gap-1">
+        <button onClick={onClose} className="rounded-lg border border-hairline/10 px-3 py-2 text-[11px] text-paper/60 hover:bg-elevate/5 transition-colors inline-flex items-center gap-1">
           <X className="w-3.5 h-3.5" /> Close
         </button>
       </div>
