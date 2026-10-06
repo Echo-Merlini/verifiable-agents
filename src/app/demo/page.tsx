@@ -291,6 +291,22 @@ export default function DemoPage() {
                 </span>
               )}
               <ReputationBadge rep={rep} />
+              {/* What this agent can do, at a glance — right after the reputation pill, where
+                  the eye already is. Small, dimmed and unframed on purpose: a description, not
+                  a control. The pressable tool cards further down stay the way to run them. */}
+              {cards.length > 0 && (
+                <span className="inline-flex items-center gap-1 pl-0.5">
+                  {cards.slice(0, 6).map((c) => (
+                    <span key={`pill-${c.id}`} title={c.label}
+                      className="inline-flex h-4 w-4 items-center justify-center opacity-60">
+                      <McpLogo card={c} className="h-3.5 w-3.5" fill />
+                    </span>
+                  ))}
+                  {cards.length > 6 && (
+                    <span className="font-mono text-[10px] text-gb-faint">+{cards.length - 6}</span>
+                  )}
+                </span>
+              )}
             </div>
           </div>
         </div>
