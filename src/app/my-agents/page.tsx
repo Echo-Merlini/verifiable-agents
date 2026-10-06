@@ -5,6 +5,7 @@ import { useAccount } from "wagmi";
 import { Wallet, Loader2, ShieldCheck, Anchor, ExternalLink, KeyRound } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
 import { PqAuthorize } from "@/components/PqAuthorize";
+import { AgentTools } from "@/components/AgentTools";
 import { PqLifecycle } from "@/components/PqLifecycle";
 import { useWalletModal } from "@/hooks/useWalletModal";
 
@@ -123,6 +124,10 @@ export default function MyAgents() {
                     className="mt-3 inline-flex items-center gap-1 text-[11px] text-brassLight/80 hover:text-brassLight">
                     recompute the PQ binding <ExternalLink className="h-3 w-3" />
                   </a>
+
+                  {/* What this agent can actually do: tokenURI-baked tools plus bought
+                      entitlements, and what it is missing with a route to buy it. */}
+                  <AgentTools registry={a.registry} tokenId={String(a.agent_id)} />
 
                   {/* Rotate / revoke / terminate — all owner-signed, no admin, no gas. Collapsed by
                       default: this is recovery machinery, not everyday use. */}
