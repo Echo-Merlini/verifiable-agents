@@ -285,7 +285,7 @@ function RecordCard({
               <button
                 onClick={save}
                 disabled={saving || !dirty}
-                className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+                className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 text-paper text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
               >
                 {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                 {saving ? "Saving…" : "Save"}
@@ -345,7 +345,7 @@ function AddRecordForm({ token, onSaved }: { token: string; onSaved: () => void 
         <button
           onClick={save}
           disabled={saving || !name.trim()}
-          className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+          className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 text-paper text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
         >
           {saving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
           {saving ? "Saving…" : "Add"}
@@ -395,7 +395,7 @@ function LivePreview() {
         <button
           onClick={preview}
           disabled={loading}
-          className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-paper text-sm font-medium px-4 py-2 rounded-lg transition-colors"
         >
           {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Eye className="w-4 h-4" />}
           {loading ? "Loading…" : "Preview"}
@@ -679,7 +679,7 @@ function IpfsPanel({ token, records, walletClient }: { token: string; records: G
                 <button
                   onClick={saveJwt}
                   disabled={!pinatJwt.trim()}
-                  className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 text-white text-sm font-medium px-3 py-2 rounded-lg transition-colors shrink-0"
+                  className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-40 text-paper text-sm font-medium px-3 py-2 rounded-lg transition-colors shrink-0"
                 >
                   <Check className="w-4 h-4" /> Save
                 </button>
@@ -858,7 +858,7 @@ export default function EnsPage() {
             onClick={() => setTab(t)}
             className={`flex-1 py-1.5 rounded-lg text-sm font-medium transition-colors capitalize ${
               tab === t
-                ? "bg-gb-accent text-white"
+                ? "bg-gb-accent text-paper"
                 : "text-gb-muted hover:text-gb-faint"
             }`}
           >
@@ -978,7 +978,7 @@ export default function EnsPage() {
                           <button
                             disabled={!walletClient || st.loading}
                             onClick={() => setProfileOnchain(r.name)}
-                            className="shrink-0 text-xs px-3 py-1.5 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white disabled:opacity-40 transition-colors"
+                            className="shrink-0 text-xs px-3 py-1.5 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper disabled:opacity-40 transition-colors"
                           >{st.loading ? "…" : "Set On-chain"}</button>
                         )}
                       </div>
@@ -994,7 +994,7 @@ export default function EnsPage() {
                     }
                     setSettingAllProfiles(false);
                   }}
-                  className="w-full py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs font-medium disabled:opacity-40 transition-colors"
+                  className="w-full py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs font-medium disabled:opacity-40 transition-colors"
                 >{settingAllProfiles ? "Setting…" : `Set All Profiles On-chain (${profileRecords.length} txs)`}</button>
               </>
             )}
@@ -1010,7 +1010,7 @@ export default function EnsPage() {
           <code className="text-amber-300 text-sm font-mono flex-1 break-all">{RESOLVER_CONTRACT}</code>
           <button
             onClick={copyResolver}
-            className="flex items-center gap-2 bg-gb-accentD hover:bg-gb-accent px-3 py-1.5 rounded-lg text-sm text-white transition-colors shrink-0"
+            className="flex items-center gap-2 bg-gb-accentD hover:bg-gb-accent px-3 py-1.5 rounded-lg text-sm text-paper transition-colors shrink-0"
           >
             {copiedResolver ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
             {copiedResolver ? "Copied!" : "Copy"}

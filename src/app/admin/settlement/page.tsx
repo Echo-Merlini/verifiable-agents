@@ -181,7 +181,7 @@ function PlatformFeePanel() {
           </label>
           <div className="flex items-center gap-3">
             <button onClick={save} disabled={saving}
-              className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors">
+              className="flex items-center gap-1.5 bg-gb-accentD hover:bg-gb-accent disabled:opacity-50 text-paper text-xs font-medium px-4 py-2 rounded-lg transition-colors">
               {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />} Save fee
             </button>
             {saved && <span className="text-xs text-green-400">saved</span>}

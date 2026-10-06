@@ -177,7 +177,7 @@ export default function McpsPage() {
         </div>
         <button
           onClick={openNew}
-          className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white transition-colors"
+          className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper transition-colors"
         >
           <Plus className="w-3.5 h-3.5" />
           Add Server
@@ -279,7 +279,7 @@ export default function McpsPage() {
                   .map((t) => (
                     <span key={t} className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full border bg-amber-500/15 border-amber-500/40 text-amber-300">
                       {t}
-                      <button type="button" onClick={() => toggleTag(t)} className="hover:text-white"><X className="w-2.5 h-2.5" /></button>
+                      <button type="button" onClick={() => toggleTag(t)} className="hover:text-paper"><X className="w-2.5 h-2.5" /></button>
                     </span>
                   ))}
               </div>
@@ -303,7 +303,7 @@ export default function McpsPage() {
             <button
               onClick={save}
               disabled={working || !form.name || !form.url}
-              className="flex items-center gap-1.5 text-xs px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white disabled:opacity-40 transition-colors"
+              className="flex items-center gap-1.5 text-xs px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper disabled:opacity-40 transition-colors"
             >
               {working ? <Loader2 className="w-3 h-3 animate-spin" /> : editingId ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
               {editingId ? "Save changes" : "Add"}

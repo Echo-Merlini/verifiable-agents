@@ -51,7 +51,7 @@ function Step({ n, title, status, children }: { n: number; title: string; status
       <div className="flex flex-col items-center">
         <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
           status === "done" ? "bg-green-600 text-white" :
-          status === "active" ? "bg-gb-accentD text-white" :
+          status === "active" ? "bg-gb-accentD text-paper" :
           "bg-gb-input text-gb-muted"
         }`}>
           {status === "done" ? <Check className="w-3.5 h-3.5" /> : n}
@@ -320,7 +320,7 @@ forge script script/DeployConsultEscrow.s.sol --rpc-url mainnet --broadcast --ve
         <button
           onClick={doTransfer}
           disabled={busy || !facadeAddr || !factoryForXfer || !walletClient}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs disabled:opacity-40 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs disabled:opacity-40 transition-colors"
         >
           {busy && step === "transfer" ? <ArrowRight className="w-3.5 h-3.5 animate-pulse" /> : <ArrowRight className="w-3.5 h-3.5" />}
           Transfer Ownership to Facade
@@ -334,7 +334,7 @@ forge script script/DeployConsultEscrow.s.sol --rpc-url mainnet --broadcast --ve
         <button
           onClick={doAccept}
           disabled={busy || !facadeAddr || !walletClient}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs disabled:opacity-40 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs disabled:opacity-40 transition-colors"
         >
           {busy && step === "accept" ? <CheckCircle2 className="w-3.5 h-3.5 animate-pulse" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
           Accept Factory Ownership
@@ -352,7 +352,7 @@ forge script script/DeployConsultEscrow.s.sol --rpc-url mainnet --broadcast --ve
                 placeholder="0.02"
                 className="flex-1 bg-gb-input border border-gb-border focus:border-gb-accent rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-zinc-600 outline-none transition-colors" />
               <button onClick={doSetFee} disabled={busy || !facadeAddr || !walletClient}
-                className="px-3 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs disabled:opacity-40 transition-colors">
+                className="px-3 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs disabled:opacity-40 transition-colors">
                 Set
               </button>
             </div>
@@ -364,7 +364,7 @@ forge script script/DeployConsultEscrow.s.sol --rpc-url mainnet --broadcast --ve
                 placeholder="10000"
                 className="flex-1 bg-gb-input border border-gb-border focus:border-gb-accent rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-zinc-600 outline-none transition-colors" />
               <button onClick={doSetCredits} disabled={busy || !facadeAddr || !walletClient}
-                className="px-3 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs disabled:opacity-40 transition-colors">
+                className="px-3 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs disabled:opacity-40 transition-colors">
                 Set
               </button>
             </div>
@@ -380,7 +380,7 @@ forge script script/DeployConsultEscrow.s.sol --rpc-url mainnet --broadcast --ve
               className="flex-1 bg-gb-input border border-gb-border focus:border-gb-accent rounded-lg px-3 py-2 text-sm font-mono text-slate-100 placeholder-zinc-600 outline-none transition-colors"
             />
             <button onClick={doWithdraw} disabled={busy || !facadeAddr || !withdrawTo || !walletClient}
-              className="px-3 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs disabled:opacity-40 transition-colors whitespace-nowrap">
+              className="px-3 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs disabled:opacity-40 transition-colors whitespace-nowrap">
               Withdraw All
             </button>
           </div>

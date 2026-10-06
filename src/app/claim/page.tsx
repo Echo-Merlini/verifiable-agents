@@ -100,14 +100,14 @@ function LabelInput({
         value={value}
         onChange={(e) => onChange(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
         placeholder="yourname"
-        className="flex-1 bg-transparent text-white text-xl font-mono outline-none placeholder:text-white/20"
+        className="flex-1 bg-transparent text-paper text-xl font-mono outline-none placeholder:text-paper/20"
         spellCheck={false}
         autoComplete="off"
         maxLength={64}
       />
-      <span className="text-white/30 text-base shrink-0">.{PARENT_NAME}</span>
+      <span className="text-paper/30 text-base shrink-0">.{PARENT_NAME}</span>
       <div className="shrink-0 w-5 h-5 flex items-center justify-center">
-        {status === "checking"  && <Loader2 className="w-4 h-4 text-white/40 animate-spin" />}
+        {status === "checking"  && <Loader2 className="w-4 h-4 text-paper/40 animate-spin" />}
         {status === "available" && <Check className="w-4 h-4 text-green-400" />}
         {status === "taken"     && <X className="w-4 h-4 text-red-400" />}
       </div>
@@ -271,16 +271,16 @@ export default function ClaimPage() {
 
       {/* Header bar */}
       <div className="fixed top-0 left-0 right-0 z-20 flex justify-between items-center px-6 py-4">
-        <a href="/" className="text-white/40 hover:text-white/70 text-sm transition-colors">{PARENT_NAME}</a>
+        <a href="/" className="text-paper/40 hover:text-paper/70 text-sm transition-colors">{PARENT_NAME}</a>
         {mounted && (
           isConnected && address ? (
             <button onClick={() => disconnect()}
-              className="liquid-glass rounded-full px-4 py-2 text-xs text-white/60 hover:text-white/80 transition-colors font-mono">
+              className="liquid-glass rounded-full px-4 py-2 text-xs text-paper/60 hover:text-paper/80 transition-colors font-mono">
               {shortAddr(address)}
             </button>
           ) : (
             <button onClick={() => open()}
-              className="liquid-glass-strong rounded-full px-4 py-2 flex items-center gap-2 text-xs font-medium text-white">
+              className="liquid-glass-strong rounded-full px-4 py-2 flex items-center gap-2 text-xs font-medium text-paper">
               <Wallet className="w-3 h-3" /> Connect
             </button>
           )
@@ -293,10 +293,10 @@ export default function ClaimPage() {
 
           {/* Title */}
           <div className="text-center">
-            <h1 className="text-2xl font-medium text-white tracking-tight">
-              Claim your <span className="text-white/50">.{PARENT_NAME}</span>
+            <h1 className="text-2xl font-medium text-paper tracking-tight">
+              Claim your <span className="text-paper/50">.{PARENT_NAME}</span>
             </h1>
-            <p className="text-white/40 text-sm mt-2">
+            <p className="text-paper/40 text-sm mt-2">
               One subdomain per wallet — resolves via CCIP Read, no gas for records
             </p>
           </div>
@@ -306,19 +306,19 @@ export default function ClaimPage() {
             <ProfileEditor token={claimToken} claimedName={claimedName} ownerAddress={address ?? ""} />
           ) : confirmed && loginLoading ? (
             <div className="flex flex-col items-center gap-3 py-6">
-              <Loader2 className="w-8 h-8 text-white/40 animate-spin" />
-              <p className="text-white/50 text-sm">Signing in…</p>
+              <Loader2 className="w-8 h-8 text-paper/40 animate-spin" />
+              <p className="text-paper/50 text-sm">Signing in…</p>
               {loginErr && <p className="text-red-400 text-xs">{loginErr}</p>}
             </div>
           ) : confirmed ? (
             <div className="flex flex-col items-center gap-3 py-6">
               <CheckCircle2 className="w-10 h-10 text-green-400" />
-              <p className="text-white font-medium">Claimed!</p>
-              <p className="text-white/50 text-sm">{claimedName}</p>
+              <p className="text-paper font-medium">Claimed!</p>
+              <p className="text-paper/50 text-sm">{claimedName}</p>
               <button
                 onClick={doExistingLogin}
                 disabled={loginLoading}
-                className="liquid-glass-strong rounded-xl px-6 py-3 flex items-center gap-2 text-sm text-white hover:scale-[1.02] active:scale-[0.98] transition-transform disabled:opacity-50"
+                className="liquid-glass-strong rounded-xl px-6 py-3 flex items-center gap-2 text-sm text-paper hover:scale-[1.02] active:scale-[0.98] transition-transform disabled:opacity-50"
               >
                 {loginLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings className="w-4 h-4" />}
                 {loginLoading ? "Signing in…" : "Set up your profile"}
@@ -332,12 +332,12 @@ export default function ClaimPage() {
           ) : mounted && existingClaim ? (
             <div className="flex flex-col items-center gap-4 py-4 text-center">
               <CheckCircle2 className="w-10 h-10 text-amber-400" />
-              <p className="text-white font-medium">You already own</p>
-              <p className="text-white/70 font-mono text-lg">{existingClaim}.{PARENT_NAME}</p>
+              <p className="text-paper font-medium">You already own</p>
+              <p className="text-paper/70 font-mono text-lg">{existingClaim}.{PARENT_NAME}</p>
               <button
                 onClick={doExistingLogin}
                 disabled={loginLoading}
-                className="liquid-glass-strong rounded-xl px-6 py-3 flex items-center gap-2 text-sm text-white hover:scale-[1.02] active:scale-[0.98] transition-transform disabled:opacity-50"
+                className="liquid-glass-strong rounded-xl px-6 py-3 flex items-center gap-2 text-sm text-paper hover:scale-[1.02] active:scale-[0.98] transition-transform disabled:opacity-50"
               >
                 {loginLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Settings className="w-4 h-4" />}
                 Sign in to manage records
@@ -354,7 +354,7 @@ export default function ClaimPage() {
               <p className={`text-xs min-h-[1rem] transition-colors ${
                 status === "available" ? "text-green-400" :
                 status === "taken"     ? "text-red-400" :
-                "text-white/30"
+                "text-paper/30"
               }`}>
                 {statusMsg[status]}
               </p>
@@ -368,13 +368,13 @@ export default function ClaimPage() {
 
               {/* Action — only render after mount to avoid hydration mismatch */}
               {!mounted ? (
-                <button disabled className="w-full liquid-glass-strong rounded-2xl py-4 flex items-center justify-center gap-2 text-sm font-medium text-white opacity-0">
+                <button disabled className="w-full liquid-glass-strong rounded-2xl py-4 flex items-center justify-center gap-2 text-sm font-medium text-paper opacity-0">
                   <Wallet className="w-4 h-4" /> Connect wallet to claim
                 </button>
               ) : !isConnected ? (
                 <button
                   onClick={() => open()}
-                  className="w-full liquid-glass-strong rounded-2xl py-4 flex items-center justify-center gap-2 text-sm font-medium text-white hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                  className="w-full liquid-glass-strong rounded-2xl py-4 flex items-center justify-center gap-2 text-sm font-medium text-paper hover:scale-[1.02] active:scale-[0.98] transition-transform"
                 >
                   <Wallet className="w-4 h-4" /> Connect wallet to claim
                 </button>
@@ -382,7 +382,7 @@ export default function ClaimPage() {
                 <button
                   onClick={doClaim}
                   disabled={status !== "available" || writePending || txLoading || mineChecking || !!existingClaim}
-                  className="w-full liquid-glass-strong rounded-2xl py-4 flex items-center justify-center gap-2 text-sm font-medium text-white hover:scale-[1.02] active:scale-[0.98] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
+                  className="w-full liquid-glass-strong rounded-2xl py-4 flex items-center justify-center gap-2 text-sm font-medium text-paper hover:scale-[1.02] active:scale-[0.98] transition-transform disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100"
                 >
                   {mineChecking
                     ? <><Loader2 className="w-4 h-4 animate-spin" /> Checking wallet…</>
@@ -393,7 +393,7 @@ export default function ClaimPage() {
                 </button>
               )}
 
-              <p className="text-white/20 text-xs text-center">
+              <p className="text-paper/20 text-xs text-center">
                 One claim per wallet · gas required for the claim tx only
               </p>
             </>

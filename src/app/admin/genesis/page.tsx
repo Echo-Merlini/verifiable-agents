@@ -68,13 +68,13 @@ export default function AdminGenesisPage() {
   if (!mounted) return <div className="min-h-screen bg-black" />;
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen bg-black text-paper p-6">
       <div className="max-w-xl mx-auto">
         <div className="flex items-center gap-2 mb-1">
           <Sparkles className="w-5 h-5 text-amber-300" />
           <h1 className="text-xl font-semibold">Genesis registry — controls</h1>
         </div>
-        <p className="text-xs text-white/40 mb-6">
+        <p className="text-xs text-paper/40 mb-6">
           {ready ? registry : "NEXT_PUBLIC_GENESIS_REGISTRY_ADDRESS not set"} · chain {GENESIS_CHAIN_ID}
         </p>
 
@@ -127,12 +127,12 @@ export default function AdminGenesisPage() {
                 className="w-full py-2 rounded-lg bg-white/10 hover:bg-white/15 text-sm">
                 {busy === "setAllowlistRoot" ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Sync root from gateway allowlist"}
               </button>
-              <p className="text-xs text-white/40 mt-1">
+              <p className="text-xs text-paper/40 mt-1">
                 Reads the current list from the gateway (GENESIS_ALLOWLIST / data/genesis-allowlist.json) and pins its Merkle root on-chain.
               </p>
             </Section>
 
-            {msg && <p className="text-xs text-white/60 break-all">{msg}</p>}
+            {msg && <p className="text-xs text-paper/60 break-all">{msg}</p>}
           </div>
         )}
       </div>
@@ -143,7 +143,7 @@ export default function AdminGenesisPage() {
 function Stat({ label, value, full }: { label: string; value: string; full?: boolean }) {
   return (
     <div className={full ? "col-span-2" : ""}>
-      <div className="text-white/40 text-xs">{label}</div>
+      <div className="text-paper/40 text-xs">{label}</div>
       <div className="font-medium">{value}</div>
     </div>
   );
@@ -151,7 +151,7 @@ function Stat({ label, value, full }: { label: string; value: string; full?: boo
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-xs font-medium text-white/60 mb-2 uppercase tracking-wide">{title}</h2>
+      <h2 className="text-xs font-medium text-paper/60 mb-2 uppercase tracking-wide">{title}</h2>
       <div className="space-y-2">{children}</div>
     </div>
   );

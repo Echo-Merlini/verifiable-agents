@@ -203,7 +203,7 @@ function ContractActions({ registry }: { registry: Address }) {
           <button
             onClick={sendMintPrice}
             disabled={busy || !mintPriceEth}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs disabled:opacity-40 transition-colors"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs disabled:opacity-40 transition-colors"
           >
             {busy && activeAction === "mintPrice" ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
             {confirming && activeAction === "mintPrice" ? "Confirming…" : "Set Price"}
@@ -238,7 +238,7 @@ function ContractActions({ registry }: { registry: Address }) {
         <button
           onClick={sendRoyalty}
           disabled={busy || !royaltyBpsPct || !royaltyReceiver}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs disabled:opacity-40 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs disabled:opacity-40 transition-colors"
         >
           {busy && activeAction === "royalty" ? <Loader2 className="w-3 h-3 animate-spin" /> : <ArrowRightLeft className="w-3 h-3" />}
           {confirming && activeAction === "royalty" ? "Confirming…" : "Set Royalty"}
@@ -710,7 +710,7 @@ function PersonalityFormCard({
         <button
           onClick={onSave}
           disabled={saving || !form.name.trim()}
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs disabled:opacity-40 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs disabled:opacity-40 transition-colors"
         >
           {saving && <Loader2 className="w-3 h-3 animate-spin" />}
           {isNew ? "Create" : "Save"}
@@ -732,7 +732,7 @@ function ConfigField({ label, value, setValue, placeholder, onClick, busy }: {
       <div className="flex gap-2">
         <input value={value} onChange={e => setValue(e.target.value)} placeholder={placeholder}
           className="flex-1 bg-gb-input border border-gb-border focus:border-gb-accent rounded-lg px-2.5 py-1.5 text-xs text-slate-100 placeholder-gb-muted outline-none" />
-        <button disabled={busy} onClick={onClick} className="px-3 py-1.5 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs disabled:opacity-40">
+        <button disabled={busy} onClick={onClick} className="px-3 py-1.5 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs disabled:opacity-40">
           {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Set"}
         </button>
       </div>
@@ -857,7 +857,7 @@ function GenesisCollectionCard({ token }: { token: string }) {
             <div className="flex gap-2">
               {(["Closed", "Allowlist", "Public"] as const).map(p => (
                 <button key={p} disabled={!!busy} onClick={() => run(`setPhase ${p}`, "setPhase", [GENESIS_PHASE[p]])}
-                  className={`flex-1 py-1.5 rounded-lg text-xs transition-colors ${phaseNum === GENESIS_PHASE[p] ? "bg-gb-accentD text-white" : "border border-gb-border text-gb-muted hover:text-slate-100"}`}>{p}</button>
+                  className={`flex-1 py-1.5 rounded-lg text-xs transition-colors ${phaseNum === GENESIS_PHASE[p] ? "bg-gb-accentD text-paper" : "border border-gb-border text-gb-muted hover:text-slate-100"}`}>{p}</button>
               ))}
             </div>
           </div>
@@ -890,7 +890,7 @@ function GenesisCollectionCard({ token }: { token: string }) {
             <div className="flex items-center justify-between gap-3 mt-1.5">
               <p className="text-[10px] text-gb-muted">Platform guardrails are <span className="text-amber-300/80">also enforced at the backend</span> on every genesis agent — they apply even if an owner sets a custom personality.</p>
               <button disabled={baseSaving || !baseLoaded} onClick={saveBasePersonality}
-                className="px-3 py-1.5 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-xs disabled:opacity-40 shrink-0 inline-flex items-center gap-1.5">
+                className="px-3 py-1.5 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-xs disabled:opacity-40 shrink-0 inline-flex items-center gap-1.5">
                 {baseSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}Save personality
               </button>
             </div>
@@ -977,7 +977,7 @@ function CollectionsTab({ token }: { token: string }) {
           <button
             onClick={() => setShowForm(v => !v)}
             disabled={!factoryDeployed}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm bg-gb-accentD hover:bg-gb-accent text-white transition-colors disabled:opacity-40"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm bg-gb-accentD hover:bg-gb-accent text-paper transition-colors disabled:opacity-40"
           >
             <Plus className="w-4 h-4" />
             Onboard Collection
@@ -1029,7 +1029,7 @@ function CollectionsTab({ token }: { token: string }) {
             <button
               onClick={handleDeploy}
               disabled={!form.sourceCollection || !form.name || !form.symbol || isPending || confirming}
-              className="flex items-center gap-2 px-5 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-white text-sm disabled:opacity-40 transition-colors"
+              className="flex items-center gap-2 px-5 py-2 rounded-lg bg-gb-accentD hover:bg-gb-accent text-paper text-sm disabled:opacity-40 transition-colors"
             >
               {(isPending || confirming) && <Loader2 className="w-4 h-4 animate-spin" />}
               {isPending ? "Confirm in wallet…" : confirming ? "Confirming…" : "Deploy Registry"}
@@ -1278,7 +1278,7 @@ function AgentsTab() {
                         <img src={a.image} alt={a.name} className="w-9 h-9 rounded-lg object-cover bg-white/5" />
                       ) : (
                         <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center">
-                          <Bot className="w-4 h-4 text-white/20" />
+                          <Bot className="w-4 h-4 text-paper/20" />
                         </div>
                       )}
                       <div>

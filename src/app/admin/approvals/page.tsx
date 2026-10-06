@@ -208,7 +208,7 @@ export default function ApprovalsPage() {
 
       <div className="flex gap-1 bg-gb-surface border border-gb-border rounded-lg p-1 w-fit">
         <button onClick={() => setTab("pending")}
-          className={"flex items-center gap-1.5 text-xs px-4 py-1.5 rounded-md transition-colors " + (tab === "pending" ? "bg-gb-accentD text-white" : "text-gb-muted hover:text-slate-300")}>
+          className={"flex items-center gap-1.5 text-xs px-4 py-1.5 rounded-md transition-colors " + (tab === "pending" ? "bg-gb-accentD text-paper" : "text-gb-muted hover:text-slate-300")}>
           <Clock className="w-3.5 h-3.5" />
           Pending
           {pending.length > 0 && (
@@ -216,7 +216,7 @@ export default function ApprovalsPage() {
           )}
         </button>
         <button onClick={() => setTab("history")}
-          className={"text-xs px-4 py-1.5 rounded-md transition-colors " + (tab === "history" ? "bg-gb-accentD text-white" : "text-gb-muted hover:text-slate-300")}>
+          className={"text-xs px-4 py-1.5 rounded-md transition-colors " + (tab === "history" ? "bg-gb-accentD text-paper" : "text-gb-muted hover:text-slate-300")}>
           History
         </button>
       </div>

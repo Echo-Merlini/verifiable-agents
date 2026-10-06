@@ -29,7 +29,7 @@ export default function LogsPage() {
   useEffect(() => { load(); }, [token]);
 
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-paper">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">CCIP Lookup Logs</h1>
@@ -38,7 +38,7 @@ export default function LogsPage() {
         <button
           onClick={load}
           disabled={loading}
-          className="flex items-center gap-2 border border-gray-700 hover:border-gray-500 px-4 py-2 rounded-lg text-sm text-gray-400 hover:text-white"
+          className="flex items-center gap-2 border border-gray-700 hover:border-gray-500 px-4 py-2 rounded-lg text-sm text-gray-400 hover:text-paper"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
           Refresh

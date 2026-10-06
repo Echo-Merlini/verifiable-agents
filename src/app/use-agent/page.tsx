@@ -52,7 +52,7 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-1.5 text-[10px] text-white/40 hover:text-white/70 transition-colors liquid-glass rounded-full px-2.5 py-1"
+      className="flex items-center gap-1.5 text-[10px] text-paper/40 hover:text-paper/70 transition-colors liquid-glass rounded-full px-2.5 py-1"
     >
       {copied ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
       {copied ? "Copied!" : (label ?? "Copy")}
@@ -93,7 +93,7 @@ function EndpointRow({ service, token }: { service: Service; token: string }) {
     ? "bg-amber-500/15 border-amber-500/30 text-amber-300"
     : service.name === "A2A"
     ? "bg-amber-500/15 border-amber-500/30 text-amber-300"
-    : "bg-white/5 border-white/10 text-white/50";
+    : "bg-white/5 border-white/10 text-paper/50";
 
   return (
     <div className="liquid-glass rounded-2xl p-4 space-y-3">
@@ -103,7 +103,7 @@ function EndpointRow({ service, token }: { service: Service; token: string }) {
             {service.name}
           </span>
           {service.version && (
-            <span className="text-[10px] text-white/25 font-mono">{service.version}</span>
+            <span className="text-[10px] text-paper/25 font-mono">{service.version}</span>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -112,29 +112,29 @@ function EndpointRow({ service, token }: { service: Service; token: string }) {
           <button
             onClick={testConnection}
             disabled={status === "testing"}
-            className="text-[10px] text-white/40 hover:text-white/70 transition-colors liquid-glass rounded-full px-2.5 py-1 disabled:opacity-40"
+            className="text-[10px] text-paper/40 hover:text-paper/70 transition-colors liquid-glass rounded-full px-2.5 py-1 disabled:opacity-40"
           >
             {status === "testing" ? <Loader2 className="w-3 h-3 animate-spin" /> : "Test"}
           </button>
         </div>
       </div>
       <div className="flex items-center gap-2 bg-white/4 rounded-xl px-3 py-2">
-        <Globe className="w-3.5 h-3.5 text-white/25 shrink-0" />
-        <span className="font-mono text-xs text-white/60 truncate flex-1">{service.endpoint}</span>
+        <Globe className="w-3.5 h-3.5 text-paper/25 shrink-0" />
+        <span className="font-mono text-xs text-paper/60 truncate flex-1">{service.endpoint}</span>
         <CopyButton text={service.endpoint} />
         <a
           href={service.endpoint}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-white/30 hover:text-white/60 transition-colors"
+          className="text-paper/30 hover:text-paper/60 transition-colors"
         >
           <ExternalLink className="w-3.5 h-3.5" />
         </a>
       </div>
             {service.name === "MCP" && (
-        <div className="bg-black/30 rounded-xl p-3 text-[10px] text-white/40 space-y-2">
+        <div className="bg-black/30 rounded-xl p-3 text-[10px] text-paper/40 space-y-2">
           <div className="flex items-center justify-between">
-            <p className="text-white/25 text-[9px] uppercase tracking-widest">Connect · MCP Client</p>
+            <p className="text-paper/25 text-[9px] uppercase tracking-widest">Connect · MCP Client</p>
             <div className="flex gap-1 flex-wrap">
               {mcpClients.map(c => (
                 <button key={c.id} onClick={() => setMcpTab(c.id)}
@@ -144,8 +144,8 @@ function EndpointRow({ service, token }: { service: Service; token: string }) {
               ))}
             </div>
           </div>
-          <p className="font-mono text-white/20 text-[9px]">{activeMcp.file}</p>
-          <pre className="font-mono text-[10px] text-white/40 whitespace-pre-wrap break-all leading-relaxed">{activeMcp.snippet}</pre>
+          <p className="font-mono text-paper/20 text-[9px]">{activeMcp.file}</p>
+          <pre className="font-mono text-[10px] text-paper/40 whitespace-pre-wrap break-all leading-relaxed">{activeMcp.snippet}</pre>
         </div>
       )}
     </div>
@@ -168,14 +168,14 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
             <img src={agent.image} alt={agent.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <Bot className="w-6 h-6 text-white/20" />
+              <Bot className="w-6 h-6 text-paper/20" />
             </div>
           )}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <h2 className="font-semibold text-white text-lg leading-tight">{agent.name}</h2>
+              <h2 className="font-semibold text-paper text-lg leading-tight">{agent.name}</h2>
               {ensService && (
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <Link2 className="w-3 h-3 text-green-400" />
@@ -185,20 +185,20 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
             </div>
             <Link
               href="/demo"
-              className="liquid-glass rounded-full p-2 text-white/40 hover:text-white/70 transition-colors shrink-0"
+              className="liquid-glass rounded-full p-2 text-paper/40 hover:text-paper/70 transition-colors shrink-0"
               title="Edit in My Agents"
             >
               <Pencil className="w-3.5 h-3.5" />
             </Link>
           </div>
           {agent.description && (
-            <p className="text-sm text-white/50 mt-1.5 line-clamp-2">{agent.description}</p>
+            <p className="text-sm text-paper/50 mt-1.5 line-clamp-2">{agent.description}</p>
           )}
           <div className="flex gap-2 flex-wrap mt-2.5">
-            <span className="liquid-glass rounded-full px-2.5 py-1 text-[10px] font-mono text-white/30">
+            <span className="liquid-glass rounded-full px-2.5 py-1 text-[10px] font-mono text-paper/30">
               #{agent.agent_id}
             </span>
-            <span className="liquid-glass rounded-full px-2.5 py-1 text-[10px] font-mono text-white/30">
+            <span className="liquid-glass rounded-full px-2.5 py-1 text-[10px] font-mono text-paper/30">
               {shortAddr(agent.registry)}
             </span>
             <span className={`rounded-full px-2.5 py-1 text-[10px] border ${
@@ -212,13 +212,13 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
 
       {hasServices ? (
         <div className="space-y-3">
-          <p className="text-[10px] uppercase tracking-widest text-white/30 px-1">AI Services</p>
+          <p className="text-[10px] uppercase tracking-widest text-paper/30 px-1">AI Services</p>
           {mcpService && <EndpointRow service={mcpService} token={token} />}
           {a2aService && <EndpointRow service={a2aService} token={token} />}
         </div>
       ) : (
         <div className="liquid-glass rounded-2xl p-4 text-center">
-          <p className="text-sm text-white/40">No AI services configured yet.</p>
+          <p className="text-sm text-paper/40">No AI services configured yet.</p>
           <Link href="/demo" className="text-xs text-amber-400 hover:text-amber-300 mt-1 inline-block">
             Add MCP / A2A endpoints in My Agents →
           </Link>
@@ -229,33 +229,33 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Zap className="w-3.5 h-3.5 text-yellow-400" />
-            <p className="text-[10px] uppercase tracking-widest text-white/40">Bearer Token</p>
-            <span className="text-[10px] text-white/20">· valid 24 h</span>
+            <p className="text-[10px] uppercase tracking-widest text-paper/40">Bearer Token</p>
+            <span className="text-[10px] text-paper/20">· valid 24 h</span>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setTokenVisible(v => !v)}
-              className="text-[10px] text-white/40 hover:text-white/70 liquid-glass rounded-full px-2.5 py-1 transition-colors"
+              className="text-[10px] text-paper/40 hover:text-paper/70 liquid-glass rounded-full px-2.5 py-1 transition-colors"
             >
               {tokenVisible ? "Hide" : "Reveal"}
             </button>
             <CopyButton text={token} label="Copy token" />
           </div>
         </div>
-        <div className="bg-black/30 rounded-xl px-3 py-2 font-mono text-[10px] text-white/40 break-all">
+        <div className="bg-black/30 rounded-xl px-3 py-2 font-mono text-[10px] text-paper/40 break-all">
           {tokenVisible ? token : "••••••••••••••••••••••••••••••••••••••••"}
         </div>
-        <p className="text-[10px] text-white/20">
-          Pass as <span className="font-mono text-white/30">Authorization: Bearer &lt;token&gt;</span> to authenticate with MCP / A2A endpoints.
+        <p className="text-[10px] text-paper/20">
+          Pass as <span className="font-mono text-paper/30">Authorization: Bearer &lt;token&gt;</span> to authenticate with MCP / A2A endpoints.
         </p>
       </div>
 
       {agentUri && (
         <div className="liquid-glass rounded-2xl px-4 py-3 flex items-center gap-2">
-          <Globe className="w-3.5 h-3.5 text-white/25 shrink-0" />
-          <span className="font-mono text-[10px] text-white/40 truncate flex-1">{agentUri}</span>
+          <Globe className="w-3.5 h-3.5 text-paper/25 shrink-0" />
+          <span className="font-mono text-[10px] text-paper/40 truncate flex-1">{agentUri}</span>
           <CopyButton text={agentUri} label="Copy URI" />
-          <a href={agentUri} target="_blank" rel="noopener noreferrer" className="text-white/25 hover:text-white/50 transition-colors">
+          <a href={agentUri} target="_blank" rel="noopener noreferrer" className="text-paper/25 hover:text-paper/50 transition-colors">
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </div>
@@ -266,8 +266,8 @@ function AgentCard({ agent, token }: { agent: AgentRecord; token: string }) {
         className="liquid-glass rounded-2xl px-4 py-3 flex items-center gap-2 hover:bg-white/5 transition-colors"
       >
         <Coins className="w-4 h-4 text-amber-300 shrink-0" />
-        <span className="text-sm text-white/70 flex-1">Consult this agent</span>
-        <span className="text-[10px] text-white/30">pay-per-task escrow</span>
+        <span className="text-sm text-paper/70 flex-1">Consult this agent</span>
+        <span className="text-[10px] text-paper/30">pay-per-task escrow</span>
       </a>
     </div>
   );
@@ -380,17 +380,17 @@ export default function UseAgentPage() {
 
       <nav className="relative z-10 flex items-center justify-between px-5 py-4">
         <div className="flex items-center gap-3">
-          <Link href="/agents" className="text-white/40 hover:text-white/70 transition-colors text-sm">
+          <Link href="/agents" className="text-paper/40 hover:text-paper/70 transition-colors text-sm">
             ← Agents
           </Link>
-          <span className="text-white/20">·</span>
-          <span className="text-sm font-semibold text-white/80">Use Your Agent</span>
+          <span className="text-paper/20">·</span>
+          <span className="text-sm font-semibold text-paper/80">Use Your Agent</span>
         </div>
         <div className="flex items-center gap-2">
           {ownerToken && (
             <button
               onClick={handleSignOut}
-              className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 text-xs text-white/50 hover:text-white/80 transition-colors"
+              className="liquid-glass rounded-full px-3 py-1.5 flex items-center gap-1.5 text-xs text-paper/50 hover:text-paper/80 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
               Sign out
@@ -399,14 +399,14 @@ export default function UseAgentPage() {
           {isConnected && address ? (
             <button
               onClick={() => disconnect()}
-              className="liquid-glass rounded-full px-4 py-2 text-sm text-white/60 hover:text-white transition-colors font-mono"
+              className="liquid-glass rounded-full px-4 py-2 text-sm text-paper/60 hover:text-paper transition-colors font-mono"
             >
               {shortAddr(address)}
             </button>
           ) : (
             <button
               onClick={() => open()}
-              className="liquid-glass-strong rounded-full px-5 py-2.5 flex items-center gap-2 text-sm font-medium text-white hover:scale-105 active:scale-95 transition-transform"
+              className="liquid-glass-strong rounded-full px-5 py-2.5 flex items-center gap-2 text-sm font-medium text-paper hover:scale-105 active:scale-95 transition-transform"
             >
               <Wallet className="w-4 h-4" />
               Connect Wallet
@@ -418,14 +418,14 @@ export default function UseAgentPage() {
       <main className="relative z-10 flex-1 max-w-2xl mx-auto w-full px-4 py-8 space-y-8">
         {!isConnected && (
           <div className="liquid-glass-strong rounded-3xl p-10 text-center space-y-4">
-            <Bot className="w-12 h-12 text-white/20 mx-auto" />
-            <h1 className="text-2xl font-semibold text-white">Use Your Agent</h1>
-            <p className="text-white/50 text-sm max-w-xs mx-auto">
+            <Bot className="w-12 h-12 text-paper/20 mx-auto" />
+            <h1 className="text-2xl font-semibold text-paper">Use Your Agent</h1>
+            <p className="text-paper/50 text-sm max-w-xs mx-auto">
               Connect your wallet to authenticate as an ERC-8004 agent owner and access AI services.
             </p>
             <button
               onClick={() => open()}
-              className="liquid-glass-strong rounded-full px-6 py-3 flex items-center gap-2 text-sm font-medium text-white mx-auto hover:scale-105 active:scale-95 transition-transform"
+              className="liquid-glass-strong rounded-full px-6 py-3 flex items-center gap-2 text-sm font-medium text-paper mx-auto hover:scale-105 active:scale-95 transition-transform"
             >
               <Wallet className="w-4 h-4" />
               Connect Wallet
@@ -436,14 +436,14 @@ export default function UseAgentPage() {
         {isConnected && !ownerToken && (
           <div className="liquid-glass-strong rounded-3xl p-10 text-center space-y-4">
             <Zap className="w-12 h-12 text-yellow-400/60 mx-auto" />
-            <h1 className="text-2xl font-semibold text-white">Sign In as Agent Owner</h1>
-            <p className="text-white/50 text-sm max-w-xs mx-auto">
+            <h1 className="text-2xl font-semibold text-paper">Sign In as Agent Owner</h1>
+            <p className="text-paper/50 text-sm max-w-xs mx-auto">
               Sign a message to prove ownership of your agent NFT and get a session token for MCP / A2A access.
             </p>
             <button
               onClick={handleSignIn}
               disabled={signingIn}
-              className="liquid-glass-strong rounded-full px-6 py-3 flex items-center gap-2 text-sm font-medium text-white mx-auto hover:scale-105 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed"
+              className="liquid-glass-strong rounded-full px-6 py-3 flex items-center gap-2 text-sm font-medium text-paper mx-auto hover:scale-105 active:scale-95 transition-transform disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {signingIn ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
               {signingIn ? "Signing…" : "Sign in with Wallet"}
@@ -458,17 +458,17 @@ export default function UseAgentPage() {
           <>
             {loading && (
               <div className="flex justify-center py-12">
-                <Loader2 className="w-6 h-6 animate-spin text-white/30" />
+                <Loader2 className="w-6 h-6 animate-spin text-paper/30" />
               </div>
             )}
 
             {!loading && agents.length === 0 && (
               <div className="liquid-glass-strong rounded-3xl p-10 text-center space-y-4">
-                <Bot className="w-12 h-12 text-white/20 mx-auto" />
-                <p className="text-white/50">No agents found for this wallet.</p>
+                <Bot className="w-12 h-12 text-paper/20 mx-auto" />
+                <p className="text-paper/50">No agents found for this wallet.</p>
                 <Link
                   href="/agent"
-                  className="liquid-glass-strong rounded-full px-6 py-3 inline-flex items-center gap-2 text-sm font-medium text-white hover:scale-105 transition-transform"
+                  className="liquid-glass-strong rounded-full px-6 py-3 inline-flex items-center gap-2 text-sm font-medium text-paper hover:scale-105 transition-transform"
                 >
                   Mint your first agent →
                 </Link>
@@ -477,7 +477,7 @@ export default function UseAgentPage() {
 
             {!loading && agents.length > 1 && !selected && (
               <div className="space-y-3">
-                <p className="text-[10px] uppercase tracking-widest text-white/40 px-1">Select an Agent</p>
+                <p className="text-[10px] uppercase tracking-widest text-paper/40 px-1">Select an Agent</p>
                 {agents.map(a => (
                   <button
                     key={`${a.registry}-${a.agent_id}`}
@@ -488,12 +488,12 @@ export default function UseAgentPage() {
                       {a.image ? (
                         <img src={a.image} alt={a.name} className="w-full h-full object-cover" />
                       ) : (
-                        <Bot className="w-5 h-5 text-white/20 m-3.5" />
+                        <Bot className="w-5 h-5 text-paper/20 m-3.5" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-white truncate">{a.name}</p>
-                      <p className="text-xs text-white/40 font-mono">#{a.agent_id} · {shortAddr(a.registry)}</p>
+                      <p className="font-medium text-paper truncate">{a.name}</p>
+                      <p className="text-xs text-paper/40 font-mono">#{a.agent_id} · {shortAddr(a.registry)}</p>
                     </div>
                     <div className="flex gap-1 shrink-0">
                       {a.services.find(s => s.name === "MCP") && (
@@ -513,7 +513,7 @@ export default function UseAgentPage() {
                 {agents.length > 1 && (
                   <button
                     onClick={() => setSelected(null)}
-                    className="text-xs text-white/40 hover:text-white/70 transition-colors"
+                    className="text-xs text-paper/40 hover:text-paper/70 transition-colors"
                   >
                     ← All agents
                   </button>

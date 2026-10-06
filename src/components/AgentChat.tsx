@@ -249,22 +249,22 @@ function ApprovalCard({
         {/* ── Swap card ─────────────────────────────────────── */}
         {cardType === "swap" && (
           <>
-            {!!input.description && <p className="text-white/80 font-medium leading-snug">{input.description as string}</p>}
+            {!!input.description && <p className="text-paper/80 font-medium leading-snug">{input.description as string}</p>}
             {(!!input.amountIn || !!input.amountOut) && (
               <div className="flex items-center gap-2 py-1">
-                <span className="text-xl font-bold text-white">{input.amountIn as string}</span>
-                <span className="text-white/40 text-lg">→</span>
-                <span className="text-xl font-bold text-white">{input.amountOut as string}</span>
+                <span className="text-xl font-bold text-paper">{input.amountIn as string}</span>
+                <span className="text-paper/40 text-lg">→</span>
+                <span className="text-xl font-bold text-paper">{input.amountOut as string}</span>
               </div>
             )}
-            <div className="flex items-center gap-3 text-[10px] text-white/40 flex-wrap">
+            <div className="flex items-center gap-3 text-[10px] text-paper/40 flex-wrap">
               {!!input.dex && <span>via {input.dex as string}</span>}
               {!!input.gasCostUsd && <span>Gas ~{input.gasCostUsd as string}</span>}
               {chainName        && <span>{chainName}</span>}
             </div>
             <div>
-              <span className="text-white/30 uppercase tracking-wide text-[10px]">Contract</span>
-              <p className="font-mono text-white/30 mt-0.5 truncate text-[10px]">{input.to as string}</p>
+              <span className="text-paper/30 uppercase tracking-wide text-[10px]">Contract</span>
+              <p className="font-mono text-paper/30 mt-0.5 truncate text-[10px]">{input.to as string}</p>
             </div>
           </>
         )}
@@ -272,22 +272,22 @@ function ApprovalCard({
         {/* ── Bridge card ───────────────────────────────────── */}
         {cardType === "bridge" && (
           <>
-            {!!input.description && <p className="text-white/80 font-medium leading-snug">{input.description as string}</p>}
+            {!!input.description && <p className="text-paper/80 font-medium leading-snug">{input.description as string}</p>}
             {(!!input.fromChain || !!input.toChain) && (
               <div className="flex items-center gap-2 py-0.5">
-                <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/70 text-[10px]">{input.fromChain as string}</span>
-                <span className="text-white/40">→</span>
-                <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/70 text-[10px]">{input.toChain as string}</span>
+                <span className="px-2 py-0.5 rounded-full bg-white/10 text-paper/70 text-[10px]">{input.fromChain as string}</span>
+                <span className="text-paper/40">→</span>
+                <span className="px-2 py-0.5 rounded-full bg-white/10 text-paper/70 text-[10px]">{input.toChain as string}</span>
               </div>
             )}
             {(!!input.amountIn || !!input.amountOut) && (
               <div className="flex items-center gap-2">
-                <span className="text-xl font-bold text-white">{input.amountIn as string}</span>
-                <span className="text-white/40 text-lg">→</span>
-                <span className="text-xl font-bold text-white">{input.amountOut as string}</span>
+                <span className="text-xl font-bold text-paper">{input.amountIn as string}</span>
+                <span className="text-paper/40 text-lg">→</span>
+                <span className="text-xl font-bold text-paper">{input.amountOut as string}</span>
               </div>
             )}
-            <div className="flex items-center gap-3 text-[10px] text-white/40 flex-wrap">
+            <div className="flex items-center gap-3 text-[10px] text-paper/40 flex-wrap">
               {!!input.dex && <span>via {input.dex as string}</span>}
               {!!input.gasCostUsd && <span>Fees ~{input.gasCostUsd as string}</span>}
             </div>
@@ -303,20 +303,20 @@ function ApprovalCard({
                   className="w-16 h-16 rounded-xl object-cover shrink-0 border border-white/10" />
               )}
               <div className="min-w-0 flex flex-col justify-center">
-                <p className="text-white/80 font-medium truncate">{input.nftName as string}</p>
-                {!!input.nftCollection && <p className="text-white/40 text-[10px] truncate">{input.nftCollection as string}</p>}
-                {!!input.nftFloorPrice && <p className="text-white/30 text-[10px] mt-0.5">Floor: {input.nftFloorPrice as string}</p>}
+                <p className="text-paper/80 font-medium truncate">{input.nftName as string}</p>
+                {!!input.nftCollection && <p className="text-paper/40 text-[10px] truncate">{input.nftCollection as string}</p>}
+                {!!input.nftFloorPrice && <p className="text-paper/30 text-[10px] mt-0.5">Floor: {input.nftFloorPrice as string}</p>}
               </div>
             </div>
             {valueEth && valueEth !== "0" && (
               <div className="flex items-baseline gap-1.5 py-0.5">
-                <span className="text-2xl font-bold text-white">{valueEth}</span>
-                <span className="text-sm text-white/50">ETH</span>
+                <span className="text-2xl font-bold text-paper">{valueEth}</span>
+                <span className="text-sm text-paper/50">ETH</span>
               </div>
             )}
             <div>
-              <span className="text-white/30 uppercase tracking-wide text-[10px]">Seaport contract</span>
-              <p className="font-mono text-white/30 mt-0.5 truncate text-[10px]">{input.to as string}</p>
+              <span className="text-paper/30 uppercase tracking-wide text-[10px]">Seaport contract</span>
+              <p className="font-mono text-paper/30 mt-0.5 truncate text-[10px]">{input.to as string}</p>
             </div>
           </>
         )}
@@ -326,31 +326,31 @@ function ApprovalCard({
           <>
             <div className="flex items-center gap-1.5 text-amber-300/80 font-medium">
               <span>Step 1 of 2</span>
-              <span className="text-white/20">·</span>
-              <span className="text-white/50 font-normal text-[10px]">Token approval before swap</span>
+              <span className="text-paper/20">·</span>
+              <span className="text-paper/50 font-normal text-[10px]">Token approval before swap</span>
             </div>
-            {!!input.description && <p className="text-white/70 leading-snug">{input.description as string}</p>}
+            {!!input.description && <p className="text-paper/70 leading-snug">{input.description as string}</p>}
             <div className="rounded-lg bg-black/20 p-2.5 space-y-1.5 text-[11px]">
               {!!input.tokenIn && (
                 <div className="flex justify-between">
-                  <span className="text-white/40">Token</span>
-                  <span className="text-white/80 font-medium">{input.tokenIn as string}</span>
+                  <span className="text-paper/40">Token</span>
+                  <span className="text-paper/80 font-medium">{input.tokenIn as string}</span>
                 </div>
               )}
               {!!input.amountIn && (
                 <div className="flex justify-between">
-                  <span className="text-white/40">Amount</span>
-                  <span className="text-white/70">{input.amountIn as string}</span>
+                  <span className="text-paper/40">Amount</span>
+                  <span className="text-paper/70">{input.amountIn as string}</span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-white/40">Spender</span>
-                <span className="text-white/70">
+                <span className="text-paper/40">Spender</span>
+                <span className="text-paper/70">
                   {(input.spenderName as string) || `${(input.spender as string || input.to as string || "").slice(0,8)}…`}
                 </span>
               </div>
             </div>
-            <p className="text-white/25 text-[10px] leading-relaxed">
+            <p className="text-paper/25 text-[10px] leading-relaxed">
               This only grants spending permission — no funds move yet. The swap transaction follows next.
             </p>
           </>
@@ -359,17 +359,17 @@ function ApprovalCard({
         {/* ── Generic tx fallback ───────────────────────────── */}
         {cardType === "tx" && (
           <>
-            {!!input.description && <p className="text-white/80 font-medium leading-snug">{input.description as string}</p>}
+            {!!input.description && <p className="text-paper/80 font-medium leading-snug">{input.description as string}</p>}
             {valueEth && valueEth !== "0" && (
               <div className="flex items-baseline gap-1.5 py-1">
-                <span className="text-2xl font-bold text-white">{valueEth}</span>
-                <span className="text-sm text-white/50">ETH</span>
-                {chainName && <span className="text-[10px] text-white/30 ml-1">on {chainName}</span>}
+                <span className="text-2xl font-bold text-paper">{valueEth}</span>
+                <span className="text-sm text-paper/50">ETH</span>
+                {chainName && <span className="text-[10px] text-paper/30 ml-1">on {chainName}</span>}
               </div>
             )}
             <div>
-              <span className="text-white/30 uppercase tracking-wide text-[10px]">Contract</span>
-              <p className="font-mono text-white/30 mt-0.5 truncate text-[10px]">{input.to as string}</p>
+              <span className="text-paper/30 uppercase tracking-wide text-[10px]">Contract</span>
+              <p className="font-mono text-paper/30 mt-0.5 truncate text-[10px]">{input.to as string}</p>
             </div>
           </>
         )}
@@ -378,15 +378,15 @@ function ApprovalCard({
         {/* ── Limit order card ─────────────────────────────────── */}
         {(cardType === "limit_order" || cardType === "permit") && (
           <>
-            {!!input.description && <p className="text-white/80 font-medium leading-snug">{input.description as string}</p>}
+            {!!input.description && <p className="text-paper/80 font-medium leading-snug">{input.description as string}</p>}
             {(!!input.amountIn || !!input.amountOut) && (
               <div className="flex items-center gap-2 py-1">
-                <span className="text-xl font-bold text-white">{input.amountIn as string}</span>
-                <span className="text-white/40 text-lg">→</span>
-                <span className="text-xl font-bold text-white">{input.amountOut as string}</span>
+                <span className="text-xl font-bold text-paper">{input.amountIn as string}</span>
+                <span className="text-paper/40 text-lg">→</span>
+                <span className="text-xl font-bold text-paper">{input.amountOut as string}</span>
               </div>
             )}
-            <div className="flex items-center gap-3 text-[10px] text-white/40 flex-wrap">
+            <div className="flex items-center gap-3 text-[10px] text-paper/40 flex-wrap">
               {!!input.dex    && <span>via {input.dex as string}</span>}
               {!!input.expiry && <span>Expires: {input.expiry as string}</span>}
             </div>
@@ -399,13 +399,13 @@ function ApprovalCard({
         {cardType === "generic" && (
           <>
             <div>
-              <span className="text-white/40 uppercase tracking-wide text-[10px]">Tool</span>
+              <span className="text-paper/40 uppercase tracking-wide text-[10px]">Tool</span>
               <p className="font-mono text-amber-300 mt-0.5">{tool}</p>
             </div>
             {Object.keys(input).length > 0 && (
               <div>
-                <span className="text-white/40 uppercase tracking-wide text-[10px]">Parameters</span>
-                <pre className="mt-0.5 bg-black/30 rounded-lg p-2 text-[10px] text-white/50 overflow-auto max-h-24 font-mono whitespace-pre-wrap">{JSON.stringify(input, null, 2)}</pre>
+                <span className="text-paper/40 uppercase tracking-wide text-[10px]">Parameters</span>
+                <pre className="mt-0.5 bg-black/30 rounded-lg p-2 text-[10px] text-paper/50 overflow-auto max-h-24 font-mono whitespace-pre-wrap">{JSON.stringify(input, null, 2)}</pre>
               </div>
             )}
           </>
@@ -414,8 +414,8 @@ function ApprovalCard({
         {/* ── Shared footer fields ──────────────────────────── */}
         {riskSummary && (
           <div>
-            <span className="text-white/40 uppercase tracking-wide text-[10px]">Risk</span>
-            <p className="text-white/60 mt-0.5 leading-relaxed">{riskSummary}</p>
+            <span className="text-paper/40 uppercase tracking-wide text-[10px]">Risk</span>
+            <p className="text-paper/60 mt-0.5 leading-relaxed">{riskSummary}</p>
           </div>
         )}
         {submittedTx && (
@@ -423,7 +423,7 @@ function ApprovalCard({
             Tx: {submittedTx.slice(0,10)}…{submittedTx.slice(-8)} — check Etherscan
           </p>
         )}
-        {working && workingStep && <p className="text-[10px] text-white/40 italic">{workingStep}</p>}
+        {working && workingStep && <p className="text-[10px] text-paper/40 italic">{workingStep}</p>}
         {error && <p className="text-red-400 text-[10px]">{error}</p>}
         {declining && (
           <div className="flex flex-wrap gap-1">
@@ -465,13 +465,13 @@ function ApprovalCard({
                 Confirm
               </button>
               <button onClick={() => setDeclining(false)} disabled={working}
-                className="px-3 py-1.5 rounded-xl border border-white/10 text-white/40 hover:text-white/70 transition-colors">
+                className="px-3 py-1.5 rounded-xl border border-white/10 text-paper/40 hover:text-paper/70 transition-colors">
                 Back
               </button>
             </>
           )}
         </div>
-        <p className="text-[10px] text-white/20">
+        <p className="text-[10px] text-paper/20">
           {isTx ? "MetaMask opens twice: ① send the transaction, ② sign approval. Gas fees are extra." : isSignTyped ? "Sign the order with your wallet. No gas needed — signature only." : "Sign with your wallet to confirm this decision."}
         </p>
       </div>
@@ -539,17 +539,17 @@ function SuggestionCard({ s, onAccept, onDecline, disabled }: {
           <img src={s.image} alt={s.name ?? ""} className="w-16 h-16 rounded-xl object-cover shrink-0 border border-white/10" />
         )}
         <div className="min-w-0 flex flex-col justify-center">
-          <p className="text-white/80 font-medium truncate">{s.name ?? `#${s.token_id ?? "?"}`}</p>
-          {!!s.collection && <p className="text-white/40 text-[10px] truncate">{s.collection}</p>}
+          <p className="text-paper/80 font-medium truncate">{s.name ?? `#${s.token_id ?? "?"}`}</p>
+          {!!s.collection && <p className="text-paper/40 text-[10px] truncate">{s.collection}</p>}
           {s.price_eth != null && s.price_eth !== "" && (
-            <p className="text-white/80 mt-0.5"><span className="text-lg font-bold">{s.price_eth}</span> <span className="text-white/40 text-[10px]">ETH</span></p>
+            <p className="text-paper/80 mt-0.5"><span className="text-lg font-bold">{s.price_eth}</span> <span className="text-paper/40 text-[10px]">ETH</span></p>
           )}
         </div>
       </div>
       {!!s.traits?.length && (
         <div className="flex flex-wrap gap-1">
           {s.traits.slice(0, 4).map((t, i) => (
-            <span key={i} className="text-[9px] px-1.5 py-0.5 rounded-md bg-black/20 text-white/40">{t.type}: {String(t.value)}</span>
+            <span key={i} className="text-[9px] px-1.5 py-0.5 rounded-md bg-black/20 text-paper/40">{t.type}: {String(t.value)}</span>
           ))}
         </div>
       )}
@@ -572,7 +572,7 @@ function SuggestionGallery({ items, onAccept, disabled }: {
 }) {
   const [dismissed, setDismissed] = useState<Set<number>>(new Set());
   const visible = items.map((it, idx) => ({ it, idx })).filter(({ idx }) => !dismissed.has(idx));
-  if (!visible.length) return <p className="text-[10px] text-white/25 mt-1">No suggestions left — ask for more.</p>;
+  if (!visible.length) return <p className="text-[10px] text-paper/25 mt-1">No suggestions left — ask for more.</p>;
   return (
     <div className="flex flex-col gap-2 mt-1.5 w-full">
       {visible.map(({ it, idx }) => (
@@ -776,9 +776,9 @@ export function AgentChat({
     <div className={"flex flex-col gap-2 " + (compact ? "pt-3 border-t border-white/8" : "h-full")}>
       {/* Header row with expand link */}
       <div className="flex items-center justify-between">
-        {compact && <span className="text-[10px] text-white/25 uppercase tracking-widest">Chat</span>}
+        {compact && <span className="text-[10px] text-paper/25 uppercase tracking-widest">Chat</span>}
         <a href={chatPath}
-          className={"flex items-center gap-1 text-[10px] text-white/30 hover:text-amber-300 transition-colors " + (compact ? "" : "ml-auto")}>
+          className={"flex items-center gap-1 text-[10px] text-paper/30 hover:text-amber-300 transition-colors " + (compact ? "" : "ml-auto")}>
           <Maximize2 className="w-3 h-3" />
           {compact ? "Full chat" : ""}
         </a>
@@ -788,7 +788,7 @@ export function AgentChat({
       <div className={"flex flex-col gap-2 overflow-y-auto pb-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-white/20 [&::-webkit-scrollbar-thumb]:rounded-full " + (compact ? "max-h-52" : "flex-1 min-h-0")}
         style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(255,255,255,0.2) transparent" }}>
         {messages.length === 0 && (
-          <p className="text-[11px] text-white/25 text-center py-3">Say something…</p>
+          <p className="text-[11px] text-paper/25 text-center py-3">Say something…</p>
         )}
         {messages.map((m, i) => {
           if (m.role === "approval") {
@@ -822,21 +822,21 @@ export function AgentChat({
               <div key={i} className="flex flex-col items-start gap-1.5 w-full">
                 {!!body && (
                   <div className="flex justify-start max-w-[85%]">
-                    <div className="px-3 py-2 rounded-2xl text-xs leading-relaxed bg-white/8 text-white/70 rounded-bl-sm">
+                    <div className="px-3 py-2 rounded-2xl text-xs leading-relaxed bg-white/8 text-paper/70 rounded-bl-sm">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
                           p:      ({children}) => <p className="mb-1 last:mb-0">{children}</p>,
                           code:   ({inline, children}: any) => inline
                             ? <code className="bg-black/40 rounded px-1 font-mono text-amber-300">{children}</code>
-                            : <pre className="bg-black/40 rounded-lg p-2 mt-1 mb-1 overflow-auto font-mono text-[10px] text-white/70 whitespace-pre-wrap"><code>{children}</code></pre>,
+                            : <pre className="bg-black/40 rounded-lg p-2 mt-1 mb-1 overflow-auto font-mono text-[10px] text-paper/70 whitespace-pre-wrap"><code>{children}</code></pre>,
                           a:      ({href, children}) => <a href={href} target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:text-amber-300 underline">{children}</a>,
                           ul:     ({children}) => <ul className="list-disc list-inside mb-1 space-y-0.5">{children}</ul>,
                           ol:     ({children}) => <ol className="list-decimal list-inside mb-1 space-y-0.5">{children}</ol>,
-                          strong: ({children}) => <strong className="text-white/90 font-semibold">{children}</strong>,
-                          h1: ({children}) => <p className="font-semibold text-white/80 mb-1">{children}</p>,
-                          h2: ({children}) => <p className="font-semibold text-white/80 mb-1">{children}</p>,
-                          h3: ({children}) => <p className="font-medium text-white/70 mb-0.5">{children}</p>,
+                          strong: ({children}) => <strong className="text-paper/90 font-semibold">{children}</strong>,
+                          h1: ({children}) => <p className="font-semibold text-paper/80 mb-1">{children}</p>,
+                          h2: ({children}) => <p className="font-semibold text-paper/80 mb-1">{children}</p>,
+                          h3: ({children}) => <p className="font-medium text-paper/70 mb-0.5">{children}</p>,
                         }}
                       >{body}</ReactMarkdown>
                     </div>
@@ -894,7 +894,7 @@ export function AgentChat({
           onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
           placeholder="Message…"
           disabled={loading}
-          className="flex-1 bg-white/5 border border-white/10 focus:border-white/25 rounded-xl px-3 py-1.5 text-xs text-white placeholder-white/20 outline-none transition-colors disabled:opacity-50"
+          className="flex-1 bg-white/5 border border-white/10 focus:border-white/25 rounded-xl px-3 py-1.5 text-xs text-paper placeholder-white/20 outline-none transition-colors disabled:opacity-50"
         />
         <button onClick={send} disabled={!input.trim() || loading}
           className="w-7 h-7 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 flex items-center justify-center disabled:opacity-30 transition-colors shrink-0">

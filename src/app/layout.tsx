@@ -1,3 +1,4 @@
+import { ThemeApply } from "@/components/ThemeApply";
 import type { Metadata } from "next";
 import { Providers } from "./providers";
 import { SubdomainRouter } from "./subdomain-router";
@@ -53,7 +54,12 @@ const IS_STATIC = process.env.NEXT_PUBLIC_STATIC_EXPORT === "1";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${newsreader.variable} ${jetbrains.variable}`}>
+    // suppressHydrationWarning: the theme script below sets data-theme on <html> before
+    // paint. Without this, hydration compares <html> against the server markup — which has
+    // no data-theme — and strips the attribute, so light flashes and snaps back to dark.
+    <html lang="en" suppressHydrationWarning className={`${spaceGrotesk.variable} ${newsreader.variable} ${jetbrains.variable}`}>
+      <body className="font-display">
+        <ThemeApply />
       {/* Theme switch, deliberately NOT a visible control yet.
           Light is a first pass: roughly half the colour in the app still bypasses the
           palette tokens, so parts of it wash out. Until that is fixed, light is reachable
@@ -71,7 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }catch(e){}})();`,
         }}
       />
-      <body className="font-display">
+
         <Providers>
           {IS_STATIC && <SubdomainRouter />}
           <BrandFavicon />
