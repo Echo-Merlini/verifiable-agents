@@ -5,6 +5,7 @@ import { ChevronDown, ExternalLink, Loader2, Check, Plus } from "lucide-react";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
 import { MCP_CONFIG, MCP_ORDER, ENTITLEMENT_SLUG_TO_CARD_ID } from "@/lib/mcps";
+import { fetchIpfs } from "@/lib/ipfs";
 
 // The tools an agent actually holds come from two independent places, and a card that
 // showed only one of them would be wrong in a way nobody could see:
@@ -25,11 +26,10 @@ const TOKENURI_ABI = [{
 // registries and reading them all from the genesis address returns another token's metadata.
 async function bakedTools(registry: string, tokenId: string): Promise<string[]> {
   try {
-    let uri = (await pub.readContract({
+    const uri = (await pub.readContract({
       address: registry as `0x${string}`, abi: TOKENURI_ABI, functionName: "tokenURI", args: [BigInt(tokenId)],
     })) as string;
-    if (uri.startsWith("ipfs://")) uri = "https://ipfs.io/ipfs/" + uri.slice(7);
-    const j = await (await fetch(uri, { signal: AbortSignal.timeout(6000) })).json();
+    const j = await (await fetchIpfs(uri)).json();
     return Array.isArray(j.mcps) ? j.mcps : [];
   } catch { return []; }
 }

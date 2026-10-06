@@ -16,6 +16,7 @@ import { useWalletModal } from "@/hooks/useWalletModal";
 import { getAgentAuthNonce, verifyAgentOwner } from "@/lib/api";
 import { tagPillClass, fetchReputation, type Reputation } from "@/lib/marketplace";
 import { ReputationBadge } from "@/components/ReputationBadge";
+import { fetchIpfs } from "@/lib/ipfs";
 
 const TOKEN_KEY = "ens-kit-admin-token";
 
@@ -36,12 +37,10 @@ type OwnedAgent = { registry: string; agent_id: string; name: string; image: str
 // metadata, or reverts, for any agent held in a different collection.
 async function fetchAgentMcps(registry: string, agentId: string): Promise<string[]> {
   try {
-    let uri = (await pub.readContract({
+    const uri = (await pub.readContract({
       address: registry as `0x${string}`, abi: TOKENURI_ABI, functionName: "tokenURI", args: [BigInt(agentId)],
     })) as string;
-    if (uri.startsWith("ipfs://")) uri = "https://ipfs.io/ipfs/" + uri.slice(7);
-    const r = await fetch(uri, { signal: AbortSignal.timeout(6000) });
-    const j = await r.json();
+    const j = await (await fetchIpfs(uri)).json();
     return Array.isArray(j.mcps) ? j.mcps : [];
   } catch { return []; }
 }

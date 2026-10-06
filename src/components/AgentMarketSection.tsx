@@ -9,9 +9,9 @@ import {
   AGENT_MARKET_ABI, AGENT_MARKET_ADDRESS, AGENT_MARKET_CHAIN_ID, AGENT_MARKET_FEE_BPS,
   ERC721_APPROVE_ABI, agentMarketConfigured, fetchActiveListings, explorerTx, type Listing,
 } from "@/lib/agentMarketEscrow";
+import { ipfsHttp } from "@/lib/ipfs";
 
 const GW = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
-const ipfsHttp = (u: string) => (u?.startsWith("ipfs://") ? "https://ipfs.io/ipfs/" + u.slice(7) : u);
 
 type Owned = { registry: string; agent_id: string; name: string; image: string };
 type Meta = { name: string; image: string };
@@ -76,6 +76,18 @@ export function AgentMarketSection() {
   const ensureChain = async () => { if (chainId !== AGENT_MARKET_CHAIN_ID) await switchChainAsync({ chainId: AGENT_MARKET_CHAIN_ID }); };
   const wait = async (hash: Hex) => { if (publicClient) await publicClient.waitForTransactionReceipt({ hash }); };
 
+  // viem reports ANY failure in the write path as "the contract function … reverted",
+  // including the case where the node never simulated it at all. MetaMask's Infura endpoint
+  // answering `eth_sendRawTransaction: Internal error` is a failed BROADCAST, not a revert,
+  // and saying "reverted" sends you hunting a contract bug that isn't there — that happened
+  // on mainnet listing agent #8, whose approve had in fact already landed.
+  const txErr = (e: any, fallback: string) => {
+    const raw = `${e?.shortMessage ?? ""} ${e?.message ?? ""} ${e?.details ?? ""}`;
+    if (/Internal error|eth_sendRawTransaction|JSON-RPC error/i.test(raw))
+      return "Your wallet's RPC failed to broadcast this (not a contract error) — retry, or switch RPC endpoint in your wallet.";
+    return e?.shortMessage || e?.message || fallback;
+  };
+
   const doBuy = async (l: Listing) => {
     if (!address) { openWallet(); return; }
     setErr(null); setBusy(`buy:${l.id}`);
@@ -84,7 +96,7 @@ export function AgentMarketSection() {
       const hash = await writeContractAsync({ address: AGENT_MARKET_ADDRESS as Hex, abi: AGENT_MARKET_ABI,
         functionName: "buy", args: [l.id], value: l.price, chainId: AGENT_MARKET_CHAIN_ID });
       await wait(hash); await load(); if (address) ownedOf(address).then(setOwned);
-    } catch (e: any) { setErr(e?.shortMessage || e?.message || "Purchase failed"); }
+    } catch (e: any) { setErr(txErr(e, "Purchase failed")); }
     finally { setBusy(null); }
   };
 
@@ -94,15 +106,28 @@ export function AgentMarketSection() {
     try {
       await ensureChain();
       const priceWei = parseEther(priceInput as `${number}`);
-      // 1. approve the escrow for this token, 2. list
-      const ah = await writeContractAsync({ address: a.registry as Hex, abi: ERC721_APPROVE_ABI,
-        functionName: "approve", args: [AGENT_MARKET_ADDRESS as Hex, BigInt(a.agent_id)], chainId: AGENT_MARKET_CHAIN_ID });
-      await wait(ah);
+      const tokenId = BigInt(a.agent_id);
+
+      // 1. approve the escrow for this token — only if it isn't approved already. Re-sending
+      // it burns gas for a no-op and hands the wallet's RPC another chance to fail the
+      // broadcast on a step that had nothing to do. On a failed-looking first attempt the
+      // approve may well have landed, so read the chain instead of assuming it didn't.
+      const approved = await publicClient?.readContract({
+        address: a.registry as Hex, abi: ERC721_APPROVE_ABI,
+        functionName: "getApproved", args: [tokenId],
+      }).catch(() => null);
+      if (String(approved ?? "").toLowerCase() !== AGENT_MARKET_ADDRESS.toLowerCase()) {
+        const ah = await writeContractAsync({ address: a.registry as Hex, abi: ERC721_APPROVE_ABI,
+          functionName: "approve", args: [AGENT_MARKET_ADDRESS as Hex, tokenId], chainId: AGENT_MARKET_CHAIN_ID });
+        await wait(ah);
+      }
+
+      // 2. list
       const lh = await writeContractAsync({ address: AGENT_MARKET_ADDRESS as Hex, abi: AGENT_MARKET_ABI,
-        functionName: "list", args: [a.registry as Hex, BigInt(a.agent_id), priceWei], chainId: AGENT_MARKET_CHAIN_ID });
+        functionName: "list", args: [a.registry as Hex, tokenId, priceWei], chainId: AGENT_MARKET_CHAIN_ID });
       await wait(lh);
       setPriceFor(null); setPriceInput(""); await load(); if (address) ownedOf(address).then(setOwned);
-    } catch (e: any) { setErr(e?.shortMessage || e?.message || "Listing failed"); }
+    } catch (e: any) { setErr(txErr(e, "Listing failed")); }
     finally { setBusy(null); }
   };
 
@@ -113,7 +138,7 @@ export function AgentMarketSection() {
       const hash = await writeContractAsync({ address: AGENT_MARKET_ADDRESS as Hex, abi: AGENT_MARKET_ABI,
         functionName: "cancel", args: [l.id], chainId: AGENT_MARKET_CHAIN_ID });
       await wait(hash); await load(); if (address) ownedOf(address).then(setOwned);
-    } catch (e: any) { setErr(e?.shortMessage || e?.message || "Cancel failed"); }
+    } catch (e: any) { setErr(txErr(e, "Cancel failed")); }
     finally { setBusy(null); }
   };
 
@@ -125,7 +150,7 @@ export function AgentMarketSection() {
       const hash = await writeContractAsync({ address: AGENT_MARKET_ADDRESS as Hex, abi: AGENT_MARKET_ABI,
         functionName: "setPrice", args: [l.id, parseEther(priceInput as `${number}`)], chainId: AGENT_MARKET_CHAIN_ID });
       await wait(hash); setPriceFor(null); setPriceInput(""); await load();
-    } catch (e: any) { setErr(e?.shortMessage || e?.message || "Reprice failed"); }
+    } catch (e: any) { setErr(txErr(e, "Reprice failed")); }
     finally { setBusy(null); }
   };
 

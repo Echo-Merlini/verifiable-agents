@@ -13,6 +13,7 @@ import { McpLogo } from "@/components/McpLogo";
 import { VerticeMark } from "@/components/VerticeMark";
 import { buildCardsFromIds, type McpCard } from "@/lib/mcps";
 import { getAgentAuthNonce, verifyAgentOwner } from "@/lib/api";
+import { fetchIpfs } from "@/lib/ipfs";
 
 const TOKEN_KEY = "ens-kit-admin-token";
 const RKB = (process.env.NEXT_PUBLIC_GENESIS_REGISTRY_ADDRESS || "0x8b5AF3A59f81c7e16617E8Eb824BC6FfB792A2C3").toLowerCase();
@@ -32,12 +33,10 @@ type Pricing = { consultPrice?: string; completionWindow?: number; consultTools?
 // reading them all from the genesis address returns another token's metadata or reverts.
 async function fetchAgentMcps(registry: string, agentId: string): Promise<string[]> {
   try {
-    let uri = (await pub.readContract({
+    const uri = (await pub.readContract({
       address: registry as `0x${string}`, abi: TOKENURI_ABI, functionName: "tokenURI", args: [BigInt(agentId)],
     })) as string;
-    if (uri.startsWith("ipfs://")) uri = "https://ipfs.io/ipfs/" + uri.slice(7);
-    const r = await fetch(uri, { signal: AbortSignal.timeout(6000) });
-    const j = await r.json();
+    const j = await (await fetchIpfs(uri)).json();
     return Array.isArray(j.mcps) ? j.mcps : [];
   } catch { return []; }
 }

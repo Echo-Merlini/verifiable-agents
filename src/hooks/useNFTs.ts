@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { type Address } from "viem";
 import { AGENT_FACTORY_ABI, FACTORY_ADDRESS, isZero } from "@/lib/erc8004";
+import { fetchIpfs, ipfsHttp } from "@/lib/ipfs";
 
 export interface NFTItem {
   contractAddress: string;
@@ -26,12 +27,8 @@ const ERC721_ABI = [
   { name: "name",                type: "function", inputs: [],                                      outputs: [{ type: "string"  }], stateMutability: "view" },
 ] as const;
 
-function normalizeURI(uri: string): string {
-  if (!uri) return "";
-  if (uri.startsWith("ipfs://")) return `https://ipfs.io/ipfs/${uri.slice(7)}`;
-  if (uri.startsWith("ar://"))   return `https://arweave.net/${uri.slice(5)}`;
-  return uri;
-}
+// ipfs:// and ar:// resolution (and the gateway fallback chain) live in @/lib/ipfs.
+const normalizeURI = ipfsHttp;
 
 async function fetchMetadata(rawURI: string): Promise<{ name?: string; image?: string; description?: string }> {
   try {
@@ -41,7 +38,7 @@ async function fetchMetadata(rawURI: string): Promise<{ name?: string; image?: s
       const b64 = uri.split(",")[1];
       return JSON.parse(atob(b64));
     }
-    const res = await fetch(uri, { signal: AbortSignal.timeout(8000) });
+    const res = await fetchIpfs(rawURI, 8000);
     return await res.json();
   } catch {
     return {};
