@@ -111,7 +111,7 @@ export function HeroVerify() {
         }
       `}</style>
 
-      <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-24">
         {/* ── left: the claim ───────────────────────────────────────────── */}
         <div className="min-w-0">
           {/* block-level flex, not inline-flex: inline-level here shares a line with the headline
@@ -129,7 +129,7 @@ export function HeroVerify() {
               <span
                 ref={markRef}
                 aria-hidden="true"
-                className="hv-markwrap pointer-events-none absolute left-full bottom-[-14px] ml-1.5 hidden aspect-square w-[clamp(150px,17vw,208px)] lg:block"
+                className="hv-markwrap pointer-events-none absolute left-full bottom-[-14px] ml-1.5 hidden aspect-square w-[clamp(120px,13vw,176px)] [@media(min-width:1100px)]:block"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/mark.webp" alt="" className="hv-mark h-full w-full object-contain drop-shadow-[0_14px_34px_rgba(0,0,0,0.62)]" />
