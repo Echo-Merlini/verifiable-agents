@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge, Network, Send, type LucideIcon } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
-import VoicePlayer from "@/components/VoicePlayer";
+import { HeroVerify } from "@/components/HeroVerify";
 
 type Entry = { href: string; icon: LucideIcon; label: string; tag: string; desc: string; external?: boolean };
 
@@ -85,30 +85,9 @@ export function Landing() {
         @media (prefers-reduced-motion:reduce){.story-reveal{opacity:1!important;transform:none!important}.chkrow .mk{transition:none}}
       `}</style>
 
-      <div className="max-w-5xl mx-auto px-6 md:px-10">
-        {/* Hero */}
-        <section className="pt-16 pb-14 sm:pt-24 sm:pb-20">
-          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80">ETHGlobal Lisbon · Recompute Kit</p>
-          <h1 className="mt-5 font-display font-medium tracking-tightest text-5xl sm:text-7xl leading-[0.95]">
-            Don&apos;t trust. <span className="brass-text">Recompute.</span>
-          </h1>
-          <p className="mt-6 text-gb-muted text-lg max-w-xl leading-relaxed">
-            Live, on-chain-anchored AI agents whose every action you can re-derive yourself —
-            in your own browser. Not <span className="text-paper">&ldquo;believe my agent.&rdquo;</span> Check it.
-          </p>
-          <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Link href="/verify"
-              className="inline-flex items-center gap-2 rounded-full bg-brass px-6 py-3 text-sm font-display font-medium text-deepink hover:bg-brassLight transition-colors">
-              <ShieldCheck className="w-4 h-4" /> Verify a real action
-            </Link>
-            <Link href="/demo"
-              className="inline-flex items-center gap-2 rounded-full border border-hairline/15 px-6 py-3 text-sm text-paper/80 hover:border-brassLight/40 hover:text-paper transition-colors">
-              Talk to a live agent <ArrowRight className="w-4 h-4" />
-            </Link>
-            <VoicePlayer label="Hear the why · 2:59" />
-          </div>
-        </section>
+      <HeroVerify />
 
+      <div className="max-w-5xl mx-auto px-6 md:px-10">
         {/* Entry cards — Verify leads (the thesis), the rest support */}
         <section className="pb-4">
           {/* Lead: Verify */}
