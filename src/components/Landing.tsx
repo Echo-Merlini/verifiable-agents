@@ -99,7 +99,7 @@ export function Landing() {
             {CARDS.map((c, i) => (
               <Link key={c.href} href={c.href}
                 {...(c.external ? { target: "_blank", rel: "noreferrer" } : {})}
-                className="tiltcard group liquid-glass rounded-3xl p-5 transition-all duration-200 hover:border-brassLight/40 hover:shadow-[0_12px_28px_-14px_rgba(198,160,90,0.4)] motion-reduce:transition-none"
+                className="tiltcard group liquid-glass rounded-3xl border-brassLight/20 p-5 transition-all duration-200 hover:border-brassLight/40 hover:shadow-[0_12px_28px_-14px_rgba(198,160,90,0.4)] motion-reduce:transition-none"
                 style={{ "--ry": ["7deg", "0deg", "-7deg"][i % 3] } as CSSProperties}>
                 <div className="flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-elevate/5 border border-hairline/10">
@@ -144,7 +144,7 @@ export function Landing() {
                 </div>
               ))}
             </div>
-            <p className="mt-8 font-serif text-lg text-gb-muted max-w-2xl">
+            <p className="mt-8 font-serif text-[17px] leading-relaxed text-gb-muted">
               Every tool call flows through the attestation pipeline. Each is an action you can <span className="text-paper font-medium">audit after the fact.</span>{" "}<Link href="/marketplace" className="inline-flex items-center gap-1 whitespace-nowrap text-brassLight underline-offset-4 hover:underline">+ MCPs <ArrowUpRight className="h-3.5 w-3.5" /></Link>
             </p>
           </div>
@@ -206,7 +206,7 @@ export function Landing() {
                 </div>
               ))}
             </div>
-            <p className="mt-8 font-serif text-lg text-gb-muted max-w-2xl">
+            <p className="mt-8 font-serif text-[17px] leading-relaxed text-gb-muted">
               Provenance → anchor → identity → source-binding → bounded actions → the Recompute Kit.
               <span className="text-paper font-medium"> AI primitives — a modular assembly.</span>
             </p>

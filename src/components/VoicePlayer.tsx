@@ -39,7 +39,7 @@ export default function VoicePlayer({
   const frac = dur ? t / dur : 0;
 
   return (
-    <div className="inline-flex items-center gap-3 rounded-full border border-hairline/15 bg-elevate/[0.03] py-1.5 pl-1.5 pr-4">
+    <div className="inline-flex h-[46px] items-center gap-3 rounded-full border border-hairline/15 bg-elevate/[0.03] pl-1.5 pr-4">
       <audio
         ref={audioRef}
         src={src}
@@ -86,7 +86,7 @@ export default function VoicePlayer({
               style={{
                 height: `${Math.round(p * 100)}%`,
                 minWidth: 1.5,
-                backgroundColor: on ? "#E0A24C" : "rgba(236,231,219,0.22)",
+                backgroundColor: on ? "#E0A24C" : "rgb(var(--c-hairline) / 0.25)",
               }}
             />
           );
