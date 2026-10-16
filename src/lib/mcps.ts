@@ -14,8 +14,12 @@
 // "Eth Global LX Agent '26" (RKB #5) — a cosmetic identity for the demo front door;
 // once a visitor connects, /demo swaps to their REAL RKB agents + collection.
 export const DEMO_AGENT = {
-  registry: "0xe0454dfa17a57a84c3e0e2dbfda5318cbbe91e2c",
-  agentId: "11",
+  // Was 0xe0454dfa… / 11 — the PIXEL GOBLINS registry, whose token 11 is "Bulla Goblin #16":
+  // metadata with no `mcps` field at all, so fetchAgentMcps returned [] and the featured agent
+  // held no tools. This is the Genesis registry and the token actually named
+  // "Eth Global LX Agent '26": 8 baked mcps plus 6 on-chain entitlements.
+  registry: "0x8b5AF3A59f81c7e16617E8Eb824BC6FfB792A2C3",
+  agentId: "5",
   name: "Eth Global LX Agent '26",
   ens: "ETH Global 2026 · Recompute Kit Bots",
   by: "Recompute Kit Bots",
