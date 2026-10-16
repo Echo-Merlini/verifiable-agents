@@ -15,7 +15,7 @@ const GW_URL      = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensu
 const ENS_NAME    = process.env.NEXT_PUBLIC_ENS_NAME    || "dinamic.eth";
 // On-origin PNG (1200x630). X/Twitter and most crawlers do NOT render SVG or fetch
 // IPFS gateways reliably — must be a raster on a fast host, hence a same-origin .png.
-const SHARE_IMAGE = "https://ai.verticecriativo.pt/og.png";
+const SHARE_IMAGE = "https://recomputableagents.com/og.png";
 
 export async function generateMetadata(): Promise<Metadata> {
   let description = `${ENS_NAME} — on-chain agent identities powered by ENS`;

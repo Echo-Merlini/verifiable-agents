@@ -36,7 +36,7 @@ const LADDER = [
 
 const COMPONENTS = [
   { h: "Recompute Kit", tag: "Core", p: "Recomputable receipts + on-chain anchoring. The primitive everything else builds on — re-derive any result from public data.", st: "Production · open primitive" },
-  { h: "Attested AI agents", tag: "Core", p: "Agents whose every action carries checkable provenance — EIP-712 signature, per-agent PQ companion signature, on-chain anchor.", st: "Live · ai.verticecriativo.pt" },
+  { h: "Attested AI agents", tag: "Core", p: "Agents whose every action carries checkable provenance — EIP-712 signature, per-agent PQ companion signature, on-chain anchor.", st: "Live · recomputableagents.com" },
   { h: "PQ key binding", tag: "Security", p: "Non-custodial post-quantum identity binding (ML-DSA + SLH-DSA) for agents and any wallet, independently recomputable via the ERC-8373 enforcer.", st: "Live · mainnet KYA-L4 · 29 agents" },
   { h: "Verification surfaces", tag: "Product", p: "The public proof pages a client or their auditor uses to recompute a claim themselves — the trust made visible.", st: "Live · /verify · /review · /quantum" },
   { h: "Primitives registry", tag: "Product", p: "The capability index that verifies itself — lists what's built, and re-derives any entry live (on-chain, endpoint or conformance). Drift fails a check; nothing on faith.", st: "Live · trustless-ai/primitives" },
@@ -119,7 +119,7 @@ export default function BusinessPage() {
           </p>
           <p className="max-w-[64ch] text-[16.5px] leading-relaxed text-gb-muted">
             It is <strong className="font-semibold text-paper">in production today</strong>, not a proposal:
-            agents emitting receipts at ai.verticecriativo.pt, a public no-auth verify endpoint at
+            agents emitting receipts at recomputableagents.com, a public no-auth verify endpoint at
             gateway.verticecriativo.pt, and even <strong className="font-semibold text-paper">the capability
             list itself is recomputable</strong> — hand our registry any entry and it re-derives it live
             (don't trust the list, recompute it). The open primitives are going through the Ethereum standards
