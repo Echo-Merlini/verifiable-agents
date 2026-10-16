@@ -11,40 +11,42 @@ const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], weight: ["300", "400", 
 const newsreader   = Newsreader({ subsets: ["latin"], style: ["normal", "italic"], weight: ["400", "500"], variable: "--font-newsreader", display: "swap" });
 const jetbrains    = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-jetbrains", display: "swap" });
 
-const GW_URL      = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
-const ENS_NAME    = process.env.NEXT_PUBLIC_ENS_NAME    || "dinamic.eth";
+// The product's own identity. Deliberately NOT derived from vertice.eth any more.
+//
+// This used to fetch the ENS text records of the COMPANY's name and use them as the page title and
+// description, so every share card of this product was headed "Vértice" and declared its canonical
+// URL as vertice.eth.limo — which serves a holding page. That is the same confusion the domain move
+// was meant to fix, one layer down: the address was the product's, the card still said the company.
+//
+// Env-overridable so a rename is a redeploy, not a code change.
+const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || "Recomputable Agents";
+const SITE_URL  = process.env.NEXT_PUBLIC_SITE_URL  || "https://recomputableagents.com";
+const SITE_DESC = process.env.NEXT_PUBLIC_SITE_DESC
+  || "You can have an agent that acts on-chain — and anyone can verify what it did.";
 // On-origin PNG (1200x630). X/Twitter and most crawlers do NOT render SVG or fetch
 // IPFS gateways reliably — must be a raster on a fast host, hence a same-origin .png.
-const SHARE_IMAGE = "https://recomputableagents.com/og.png";
+const SHARE_IMAGE = `${SITE_URL}/og.png`;
 
 export async function generateMetadata(): Promise<Metadata> {
-  let description = `${ENS_NAME} — on-chain agent identities powered by ENS`;
-  let displayName = ENS_NAME;
-
-  try {
-    const r = await fetch(`${GW_URL}/record/${encodeURIComponent(ENS_NAME)}`);
-    if (r.ok) {
-      const data = await r.json();
-      const tr   = (data.text_records || {}) as Record<string, string>;
-      description = tr.description || description;
-      displayName = tr.name        || displayName;
-    }
-  } catch {}
-
   return {
-    title:       displayName,
-    description,
+    // metadataBase makes every relative asset URL resolve against the product origin rather than
+    // whichever host served the request — ai. and demo. serve this same container.
+    metadataBase: new URL(SITE_URL),
+    title:       SITE_NAME,
+    description: SITE_DESC,
+    alternates:  { canonical: SITE_URL },
     openGraph: {
-      title:       displayName,
-      description,
-      url:         `https://${ENS_NAME}.limo`,
+      title:       SITE_NAME,
+      description: SITE_DESC,
+      url:         SITE_URL,
+      siteName:    SITE_NAME,
       type:        "website",
-      images: [{ url: SHARE_IMAGE, width: 1200, height: 630, alt: displayName }],
+      images: [{ url: SHARE_IMAGE, width: 1200, height: 630, alt: SITE_NAME }],
     },
     twitter: {
       card:        "summary_large_image",
-      title:       displayName,
-      description,
+      title:       SITE_NAME,
+      description: SITE_DESC,
       images:      [SHARE_IMAGE],
     },
   };
