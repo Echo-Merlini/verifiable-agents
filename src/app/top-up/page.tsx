@@ -8,7 +8,7 @@ import { useWalletModal } from "@/hooks/useWalletModal";
 import { parseEther, formatEther, type Address } from "viem";
 import { Zap, Wallet, CheckCircle2, AlertCircle, Loader2, ExternalLink, HelpCircle } from "lucide-react";
 import { useDisplayName } from "@/hooks/useDisplayName";
-import { NavMenu } from "@/components/NavMenu";
+import { TopNav } from "@/components/TopNav";
 
 const GW_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || "https://gateway.ensub.org";
 
@@ -117,9 +117,9 @@ export default function TopupPage() {
 
   return (
     <div className="relative min-h-screen bg-deepink text-paper flex flex-col">
-      <NavMenu currentPath="top-up" />
+      <TopNav />
 
-      <div className="relative z-10 flex flex-col items-center justify-start pt-16 pb-20 px-4 min-h-screen">
+      <div className="relative z-10 flex flex-col items-center justify-start pt-10 pb-20 px-4">
 
         <div className="w-full max-w-lg mb-8">
           <a href="/demo" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper transition-colors">← Live Agent</a>

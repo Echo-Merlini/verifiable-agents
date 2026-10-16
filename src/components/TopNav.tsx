@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAccount, useDisconnect } from "wagmi";
-import { ShieldCheck, ChevronDown, ExternalLink, Wallet, LogOut, Zap } from "lucide-react";
+import { ShieldCheck, ChevronDown, ExternalLink, Wallet, LogOut, Bot } from "lucide-react";
 import { AgentMark } from "@/components/AgentMark";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -16,11 +16,17 @@ const LINKS = [
   { href: "/", label: "Home" },
   { href: "/demo", label: "Live Agent", live: true },   // the agent that actually runs on the platform (route kept as /demo so external links don't break)
   { href: "/mint", label: "Mint" },
-  { href: "/my-agents", label: "My Agents" },
   { href: "/marketplace", label: "Marketplace" },
-  { href: "/A2A", label: "A2A" },
-  { href: "/console", label: "Console" },
   { href: "/business", label: "Business" },
+];
+
+// The owner-facing surfaces — everything you do with agents you already hold. Grouped like
+// AUDIT so the top row stays short; /top-up lives here because it had no entry point at all.
+const AGENTS = [
+  { href: "/my-agents", label: "My Agents", desc: "the agents this wallet holds" },
+  { href: "/A2A", label: "A2A", desc: "agent-to-agent jobs, escrowed" },
+  { href: "/console", label: "Console", desc: "cross-reference recompute matrix" },
+  { href: "/top-up", label: "Top up", desc: "add AI credits to your wallet" },
 ];
 
 const AUDIT = [
@@ -35,8 +41,9 @@ const AUDIT = [
 
 export function TopNav() {
   const path = usePathname();
-  const [open, setOpen] = useState(false);
-  const auditActive = AUDIT.some((a) => !a.external && path.startsWith(a.href));
+  const [menu, setMenu] = useState<"audit" | "agents" | null>(null);
+  const auditActive  = AUDIT.some((a) => !a.external && path.startsWith(a.href));
+  const agentsActive = AGENTS.some((a) => path.startsWith(a.href));
 
   // Wallet lives in the shared header so a connection carries across every service page.
   const [mounted, setMounted] = useState(false);
@@ -74,21 +81,50 @@ export function TopNav() {
             );
           })}
 
+          {/* My Agents dropdown — owner-facing surfaces, one entry in the top row */}
+          <div className="relative">
+            <button
+              onClick={() => setMenu((m) => (m === "agents" ? null : "agents"))}
+              className={`inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${agentsActive || menu === "agents" ? "text-paper" : "text-gb-muted hover:text-paper"}`}
+            >
+              <Bot className="h-3.5 w-3.5" /> My Agents <ChevronDown className={`h-3 w-3 transition-transform ${menu === "agents" ? "rotate-180" : ""}`} />
+            </button>
+            {menu === "agents" && (
+              <>
+                <button className="fixed inset-0 z-10 cursor-default" aria-label="close menu" onClick={() => setMenu(null)} />
+                <div className="absolute left-0 z-20 mt-3 w-64 rounded-2xl border border-hairline/10 bg-deepink/95 p-2 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)] backdrop-blur">
+                  {AGENTS.map((a) => (
+                    <Link
+                      key={a.href}
+                      /* carry the address so /top-up auto-fills, as the chat's credit link does */
+                      href={a.href === "/top-up" && address ? `/top-up/?address=${address}` : a.href}
+                      onClick={() => setMenu(null)}
+                      className="block rounded-xl px-3 py-2.5 hover:bg-elevate/[0.04]"
+                    >
+                      <p className="text-[13px] text-paper">{a.label}</p>
+                      <p className="text-[11px] text-gb-muted">{a.desc}</p>
+                    </Link>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
           {/* Audit dropdown */}
           <div className="relative">
             <button
-              onClick={() => setOpen((o) => !o)}
-              className={`inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${auditActive || open ? "text-brassLight" : "text-brassLight/80 hover:text-brassLight"}`}
+              onClick={() => setMenu((m) => (m === "audit" ? null : "audit"))}
+              className={`inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${auditActive || menu === "audit" ? "text-brassLight" : "text-brassLight/80 hover:text-brassLight"}`}
             >
-              <ShieldCheck className="h-3.5 w-3.5" /> Audit <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`} />
+              <ShieldCheck className="h-3.5 w-3.5" /> Audit <ChevronDown className={`h-3 w-3 transition-transform ${menu === "audit" ? "rotate-180" : ""}`} />
             </button>
-            {open && (
+            {menu === "audit" && (
               <>
-                <button className="fixed inset-0 z-10 cursor-default" aria-label="close menu" onClick={() => setOpen(false)} />
+                <button className="fixed inset-0 z-10 cursor-default" aria-label="close menu" onClick={() => setMenu(null)} />
                 <div className="absolute right-0 z-20 mt-3 w-64 rounded-2xl border border-hairline/10 bg-deepink/95 p-2 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.8)] backdrop-blur">
                   {AUDIT.map((a) =>
                     a.external ? (
-                      <a key={a.href} href={a.href} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}
+                      <a key={a.href} href={a.href} target="_blank" rel="noopener noreferrer" onClick={() => setMenu(null)}
                         className="flex items-start gap-2 rounded-xl px-3 py-2.5 hover:bg-elevate/[0.04]">
                         <div>
                           <p className="flex items-center gap-1 text-[13px] text-paper">{a.label} <ExternalLink className="h-3 w-3 text-gb-muted" /></p>
@@ -96,7 +132,7 @@ export function TopNav() {
                         </div>
                       </a>
                     ) : (
-                      <Link key={a.href} href={a.href} onClick={() => setOpen(false)}
+                      <Link key={a.href} href={a.href} onClick={() => setMenu(null)}
                         className="block rounded-xl px-3 py-2.5 hover:bg-elevate/[0.04]">
                         <p className="text-[13px] text-paper">{a.label}</p>
                         <p className="text-[11px] text-gb-muted">{a.desc}</p>
@@ -130,16 +166,6 @@ export function TopNav() {
                 <Wallet className="h-3.5 w-3.5 shrink-0" />
                 <span className="hidden xl:inline">{address.slice(0, 6)}…{address.slice(-4)}</span>
               </button>
-              {/* Top up — the only route to /top-up in the whole app. Connected-only, because
-                  credits are per-address and the page needs one to bill. */}
-              <Link
-                href={`/top-up/?address=${address}`}
-                title="Top up AI credits"
-                aria-label="Top up AI credits"
-                className="inline-flex items-center text-gb-muted transition-colors hover:text-brassLight"
-              >
-                <Zap className="h-3.5 w-3.5" />
-              </Link>
               <button
                 onClick={() => disconnect()}
                 title="Disconnect"
