@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAccount, useDisconnect } from "wagmi";
-import { ShieldCheck, ChevronDown, ExternalLink, Wallet, LogOut } from "lucide-react";
+import { ShieldCheck, ChevronDown, ExternalLink, Wallet, LogOut, Zap } from "lucide-react";
 import { AgentMark } from "@/components/AgentMark";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -130,6 +130,16 @@ export function TopNav() {
                 <Wallet className="h-3.5 w-3.5 shrink-0" />
                 <span className="hidden xl:inline">{address.slice(0, 6)}…{address.slice(-4)}</span>
               </button>
+              {/* Top up — the only route to /top-up in the whole app. Connected-only, because
+                  credits are per-address and the page needs one to bill. */}
+              <Link
+                href={`/top-up/?address=${address}`}
+                title="Top up AI credits"
+                aria-label="Top up AI credits"
+                className="inline-flex items-center text-gb-muted transition-colors hover:text-brassLight"
+              >
+                <Zap className="h-3.5 w-3.5" />
+              </Link>
               <button
                 onClick={() => disconnect()}
                 title="Disconnect"
