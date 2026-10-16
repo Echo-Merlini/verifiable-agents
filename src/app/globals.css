@@ -199,6 +199,44 @@
     overflow: hidden;
   }
 
+  /* Neumorphic header rail — header only.
+     The tabs used to float loose on the bar; they now sit in one softly raised
+     tray. Deliberately low contrast: two offset shadows and a hairline inner
+     highlight, no border. Light and dark need DIFFERENT highlights — on dark the
+     lift is white (--c-elevate), on light --c-elevate is ink, so the highlight
+     must be literal white or the raised edge reads as a smudge.
+     ⚠ Never give .neu-rail an overflow value: the dropdown panels are absolutely
+     positioned inside it and would be clipped. */
+  .neu-rail {
+    background: rgb(var(--s-panel) / 0.55);
+    border-radius: 9999px;
+    box-shadow:
+      -1px -1px 2px rgb(var(--c-elevate) / 0.05),
+       2px  3px 7px rgb(var(--s-shadow) / 0.45),
+       inset 0 1px 0 rgb(var(--c-brassLight) / 0.05);
+  }
+  [data-theme="light"] .neu-rail {
+    background: rgb(var(--s-panel) / 0.85);
+    box-shadow:
+      -1px -1px 2px rgb(255 255 255 / 0.95),
+       2px  3px 7px rgb(var(--s-shadow) / 0.10),
+       inset 0 1px 0 rgb(255 255 255 / 0.7);
+  }
+
+  /* The current tab reads as pressed into the rail, not painted on it. */
+  .neu-tab-active {
+    background: rgb(var(--s-shadow) / 0.22);
+    box-shadow:
+      inset 1px 2px 4px rgb(var(--s-shadow) / 0.5),
+      inset -1px -1px 2px rgb(var(--c-elevate) / 0.05);
+  }
+  [data-theme="light"] .neu-tab-active {
+    background: rgb(var(--s-shadow) / 0.05);
+    box-shadow:
+      inset 1px 2px 4px rgb(var(--s-shadow) / 0.13),
+      inset -1px -1px 2px rgb(255 255 255 / 0.95);
+  }
+
   /* Brass-gradient text for the wordmark / accents */
   .brass-text {
     background: linear-gradient(180deg, #E0A24C 0%, #A15E1E 100%);

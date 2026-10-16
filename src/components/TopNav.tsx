@@ -59,15 +59,18 @@ export function TopNav() {
           <AgentMark size={26} spin />
           Recomputable Agents
         </Link>
-        <nav className="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <nav className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          {/* The tabs share one raised tray so they read as a group. The wallet and the
+              theme toggle stay outside it — they are controls, not navigation. */}
+          <div className="neu-rail flex flex-wrap items-center gap-x-0.5 gap-y-0.5 px-1.5 py-1">
           {LINKS.map((l) => {
             const active = path === l.href;
             return (
               <Link
                 key={l.href}
                 href={l.href}
-                className={`inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${
-                  active ? "text-paper" : "text-gb-muted hover:text-paper"
+                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${
+                  active ? "neu-tab-active text-paper" : "text-gb-muted hover:text-paper"
                 }`}
               >
                 {"live" in l && (l as { live?: boolean }).live && (
@@ -85,7 +88,7 @@ export function TopNav() {
           <div className="relative">
             <button
               onClick={() => setMenu((m) => (m === "agents" ? null : "agents"))}
-              className={`inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${agentsActive || menu === "agents" ? "text-paper" : "text-gb-muted hover:text-paper"}`}
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${agentsActive || menu === "agents" ? "neu-tab-active text-paper" : "text-gb-muted hover:text-paper"}`}
             >
               <Bot className="h-3.5 w-3.5" /> My Agents <ChevronDown className={`h-3 w-3 transition-transform ${menu === "agents" ? "rotate-180" : ""}`} />
             </button>
@@ -114,7 +117,7 @@ export function TopNav() {
           <div className="relative">
             <button
               onClick={() => setMenu((m) => (m === "audit" ? null : "audit"))}
-              className={`inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${auditActive || menu === "audit" ? "text-brassLight" : "text-brassLight/80 hover:text-brassLight"}`}
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] transition-colors ${auditActive || menu === "audit" ? "neu-tab-active text-brassLight" : "text-brassLight/80 hover:text-brassLight"}`}
             >
               <ShieldCheck className="h-3.5 w-3.5" /> Audit <ChevronDown className={`h-3 w-3 transition-transform ${menu === "audit" ? "rotate-180" : ""}`} />
             </button>
@@ -142,6 +145,8 @@ export function TopNav() {
                 </div>
               </>
             )}
+          </div>
+
           </div>
 
           {/* Wallet — connect once, stay connected while navigating between services */}
