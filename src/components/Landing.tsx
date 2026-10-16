@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge, Network, Send, ChevronDown, type LucideIcon } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
 import { HeroVerify } from "@/components/HeroVerify";
+import { VerticeMark } from "@/components/VerticeMark";
 
 type Entry = { href: string; icon: LucideIcon; label: string; tag: string; desc: string; external?: boolean };
 
@@ -285,15 +286,40 @@ export function Landing() {
 
         {/* Footer */}
         <footer className="mt-20 border-t border-hairline/8 py-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="font-mono text-[11px] text-gb-muted space-y-1">
-            <p>
-              Five ERCs + two ENSIPs, composed ·{" "}
-              <span className="text-brassLight/80">8004 · 8299 · 8281 · 8275 · 8323 · ENSIP-7 · ENSIP-25</span>
-            </p>
-            <p>
-              Anchored, stored &amp; indexed across{" "}
-              <span className="text-brassLight/80">Ethereum · 0G · The Graph</span>
-            </p>
+          {/* Attribution to the COMPANY, not the product: this site is a Vértice Criativo
+              build. VerticeMark (not AgentMark) is the company's glyph, and the only one of
+              the two that can actually rotate — flat geometry reads the same from any angle. */}
+          <div className="flex items-start gap-3.5">
+            <a
+              href="https://verticecriativo.pt"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Vértice Criativo"
+              className="mt-0.5 shrink-0 opacity-80 transition-opacity hover:opacity-100"
+            >
+              <VerticeMark size={34} spin />
+            </a>
+            <div className="font-mono text-[11px] text-gb-muted space-y-1">
+              <p>
+                Created at{" "}
+                <a
+                  href="https://verticecriativo.pt"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-paper/90 transition-colors hover:text-brassLight"
+                >
+                  Vértice Criativo
+                </a>
+              </p>
+              <p>
+                Five ERCs + two ENSIPs, composed ·{" "}
+                <span className="text-brassLight/80">8004 · 8299 · 8281 · 8275 · 8323 · ENSIP-7 · ENSIP-25</span>
+              </p>
+              <p>
+                Anchored, stored &amp; indexed across{" "}
+                <span className="text-brassLight/80">Ethereum · 0G · The Graph</span>
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-6">
             <a href="/story"
