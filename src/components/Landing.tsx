@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, type CSSProperties } from "react";
 import Link from "next/link";
 import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge, Network, Send, type LucideIcon } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
@@ -9,8 +9,6 @@ import { HeroVerify } from "@/components/HeroVerify";
 type Entry = { href: string; icon: LucideIcon; label: string; tag: string; desc: string; external?: boolean };
 
 const CARDS: Entry[] = [
-  { href: "/verify", icon: ShieldCheck, label: "Verify", tag: "the thesis",
-    desc: "Recompute a real on-chain agent action in your own browser. Tamper a byte — the record breaks. Restore it — it passes." },
   { href: "/demo", icon: Bot, label: "Demo", tag: "a live agent",
     desc: "Talk to a live, source-bound agent — mint-verified, running the tools it was minted with. Every action is attested." },
   { href: "/marketplace", icon: Store, label: "Marketplace", tag: "the storefront",
@@ -25,8 +23,6 @@ const CARDS: Entry[] = [
     desc: "The CC0 home for this stack — decentralized AI infrastructure anyone can provide and anyone can use. Reference implementations, no license, no gatekeeper." },
 ];
 
-// Verify leads the band (it's the thesis); the rest are supporting surfaces.
-const [LEAD, ...REST] = CARDS;
 
 const CHECKS = [
   { lbl: "raw input",  op: "keccak(query)",         hash: "0x2469bae0…9fef30" },
@@ -83,6 +79,14 @@ export function Landing() {
         [data-reveal].is-in .chkrow .mk{color:#68C08C}
         [data-reveal].is-in .chkrow .mk::after{content:"✓"}
         @media (prefers-reduced-motion:reduce){.story-reveal{opacity:1!important;transform:none!important}.chkrow .mk{transition:none}}
+        /* Column-facing tilt: left column faces right, middle stays flat, right column faces left —
+           so the outer cards lean INTO the page. --ry is set per card from its grid index. */
+        .tiltcard{transform-style:preserve-3d;transform:rotateX(2deg) rotateY(var(--ry,0deg))}
+        .tiltcard:hover{transform:translateY(-4px) rotateX(2deg) rotateY(var(--ry,0deg))}
+        /* Only at lg, where the grid is actually 3 columns — below that the index no longer maps
+           to a visual column and a tilt would be arbitrary. */
+        @media (max-width:1023px){.tiltcard,.tiltcard:hover{transform:none}.tiltcard:hover{transform:translateY(-4px)}}
+        @media (prefers-reduced-motion:reduce){.tiltcard,.tiltcard:hover{transform:none}}
       `}</style>
 
       <HeroVerify />
@@ -90,28 +94,13 @@ export function Landing() {
       <div className="max-w-5xl mx-auto px-6 md:px-10">
         {/* Entry cards — Verify leads (the thesis), the rest support */}
         <section className="pb-4">
-          {/* Lead: Verify */}
-          <Link href={LEAD.href}
-            className="group relative flex flex-col overflow-hidden rounded-3xl border border-brassLight/30 bg-brass/[0.06] p-6 sm:flex-row sm:items-center sm:gap-6 sm:p-7 transition-all duration-200 hover:-translate-y-1 hover:border-brassLight/60 hover:shadow-[0_20px_44px_-20px_rgba(198,160,90,0.5)] motion-reduce:transform-none motion-reduce:transition-none">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-brassLight/30 bg-brass/15">
-              <LEAD.icon className="h-7 w-7 text-brassLight" />
-            </span>
-            <div className="mt-4 flex-1 sm:mt-0">
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-brassLight/80">{LEAD.tag}</p>
-              <p className="mt-1 flex items-center gap-2 font-display font-medium text-2xl text-paper sm:text-3xl">
-                {LEAD.label}
-                <ArrowUpRight className="h-5 w-5 text-brassLight/70 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </p>
-              <p className="mt-2 max-w-xl text-sm leading-relaxed text-paper/60 sm:text-[15px]">{LEAD.desc}</p>
-            </div>
-          </Link>
-
           {/* Supporting surfaces */}
-          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {REST.map((c) => (
+          <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:[perspective:1300px]">
+            {CARDS.map((c, i) => (
               <Link key={c.href} href={c.href}
                 {...(c.external ? { target: "_blank", rel: "noreferrer" } : {})}
-                className="group liquid-glass rounded-3xl p-5 transition-all duration-200 hover:-translate-y-1 hover:border-brassLight/40 hover:shadow-[0_12px_28px_-14px_rgba(198,160,90,0.4)] motion-reduce:transform-none motion-reduce:transition-none">
+                className="tiltcard group liquid-glass rounded-3xl p-5 transition-all duration-200 hover:border-brassLight/40 hover:shadow-[0_12px_28px_-14px_rgba(198,160,90,0.4)] motion-reduce:transition-none"
+                style={{ "--ry": ["7deg", "0deg", "-7deg"][i % 3] } as CSSProperties}>
                 <div className="flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-elevate/5 border border-hairline/10">
                     <c.icon className="w-5 h-5 text-brassLight" />
