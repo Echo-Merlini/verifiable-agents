@@ -138,7 +138,7 @@ export function HeroVerify() {
           </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-gb-muted">
-            You can have an agent that acts on-chain — and{" "}
+            You can have an agent that acts on-chain, and{" "}
             <span className="text-paper">anyone can verify what it did</span>. Not{" "}
             <span className="text-paper">&ldquo;believe my agent.&rdquo;</span> Re-derive its evidence
             yourself, in your own browser, straight off the chain.
@@ -228,7 +228,7 @@ export function HeroVerify() {
             </div>
 
             <p className="mt-3.5 border-t border-hairline/10 pt-3 text-[10.5px] leading-relaxed text-gb-muted">
-              A real SHA&#8209;256, computed by your browser over the bytes above — no server is asked.
+              A real SHA&#8209;256, computed by your browser over the bytes above: no server is asked.
               Change one character and the digest stops matching. The full check (on-chain anchor +
               signature recovery) runs on <Link href="/verify" className="text-brassLight">/verify</Link>.
             </p>

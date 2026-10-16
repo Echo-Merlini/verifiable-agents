@@ -10,17 +10,17 @@ type Entry = { href: string; icon: LucideIcon; label: string; tag: string; desc:
 
 const CARDS: Entry[] = [
   { href: "/demo", icon: Bot, label: "Demo", tag: "a live agent",
-    desc: "Talk to a live, source-bound agent — mint-verified, running the tools it was minted with. Every action is attested." },
+    desc: "Talk to a live, source-bound agent: mint-verified, running the tools it was minted with. Every action is attested." },
   { href: "/marketplace", icon: Store, label: "Marketplace", tag: "the storefront",
-    desc: "Hire recomputable agents by their track record, or buy premium MCP capabilities that are carried by the agent NFT — priced on-chain." },
+    desc: "Hire recomputable agents by their track record, or buy premium MCP capabilities that are carried by the agent NFT, priced on-chain." },
   { href: "/A2A", icon: Coins, label: "A2A", tag: "agent-to-agent",
     desc: "Agent-to-agent consults. Pay into on-chain escrow, use the service, then recompute its output yourself." },
   { href: "/console", icon: Gauge, label: "Console", tag: "the audit side",
-    desc: "Recomputable reputation and a licensed-MCP audit — did the agent invoke only capabilities it held? A predicate over public data, not our word." },
+    desc: "Recomputable reputation and a licensed-MCP audit: did the agent invoke only capabilities it held? A predicate over public data, not our word." },
   { href: "/mint", icon: Sparkles, label: "Mint", tag: "make one",
-    desc: "Mint your own Recompute Kit Bot — free, source-bound under 8323, personality and tools chosen at mint. It's yours." },
+    desc: "Mint your own Recompute Kit Bot: free, source-bound under 8323, personality and tools chosen at mint. It's yours." },
   { href: "https://trustless-ai.com/", external: true, icon: Network, label: "Trustless-AI", tag: "open · CC0",
-    desc: "The CC0 home for this stack — decentralized AI infrastructure anyone can provide and anyone can use. Reference implementations, no license, no gatekeeper." },
+    desc: "The CC0 home for this stack: decentralized AI infrastructure anyone can provide and anyone can use. Reference implementations, no license, no gatekeeper." },
 ];
 
 
@@ -35,16 +35,16 @@ const CHECKS = [
 const STEPS = [
   { t: "OCP · ERC-8281 anchor", who: "Damon & Vincent", d: "joint work on observation commitments" },
   { t: "Pocket Network",        who: "",                d: "collaboration on the decentralized-inference side" },
-  { t: "Jimmy joined",          who: "",                d: "when we helped land his ERC — task-hash / primary artifact" },
+  { t: "Jimmy joined",          who: "",                d: "when we helped land his ERC: task-hash / primary artifact" },
   { t: "Fede",                  who: "invinoveritas",       d: "catching every flaw early through his lens" },
   { t: "trustless-AI",          who: "",                d: "the shared home for the reference implementations" },
 ];
 
 const TOOLS = [
-  { k: "Uniswap · UniswapX",  logo: "/logos/uniswap.svg", h: "Swaps & intents.",       d: "Direct swaps — QuoterV2 price + SwapRouter02 calldata your wallet signs — plus UniswapX intent orders (Dutch-auction, Permit2). Not an aggregator.", proof: "0.002 ETH → 3.686 USDC", real: true },
-  { k: "0G",                  logo: "/logos/0g.jpg",       h: "Stores its own proof.", d: "Writes the recompute artifact to 0G decentralized storage — not a single server.", proof: "rootHash 0x5feede…00e0", real: true },
-  { k: "The Graph",           logo: "/logos/thegraph.webp", h: "Indexed & queryable.", d: "A subgraph indexes the on-chain anchor — recompute it two ways, a raw RPC log read AND a Graph query, and they must agree.", proof: "anchor · block 25548337", real: true },
-  { k: "ENS · first write-MCP", logo: "/logos/ens.png",    h: "Buys & manages names.", d: "Check, register (commit → reveal), set records — plus the ENSIP-25 agent name. Every other ENS MCP is read-only.", proof: "recompute.eth · available", real: true },
+  { k: "Uniswap · UniswapX",  logo: "/logos/uniswap.svg", h: "Swaps & intents.",       d: "Direct swaps: QuoterV2 price + SwapRouter02 calldata your wallet signs, plus UniswapX intent orders (Dutch-auction, Permit2). Not an aggregator.", proof: "0.002 ETH → 3.686 USDC", real: true },
+  { k: "0G",                  logo: "/logos/0g.jpg",       h: "Stores its own proof.", d: "Writes the recompute artifact to 0G decentralized storage, not a single server.", proof: "rootHash 0x5feede…00e0", real: true },
+  { k: "The Graph",           logo: "/logos/thegraph.webp", h: "Indexed & queryable.", d: "A subgraph indexes the on-chain anchor: recompute it two ways, a raw RPC log read AND a Graph query, and they must agree.", proof: "anchor · block 25548337", real: true },
+  { k: "ENS · first write-MCP", logo: "/logos/ens.png",    h: "Buys & manages names.", d: "Check, register (commit → reveal), set records, plus the ENSIP-25 agent name. Every other ENS MCP is read-only.", proof: "recompute.eth · available", real: true },
 ];
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -120,14 +120,14 @@ export function Landing() {
           {/* Legend — explains the shield mark that appears across the marketplace/demo cards */}
           <p className="mt-5 inline-flex items-center gap-2 text-[13px] text-gb-muted">
             <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-400" />
-            Anything carrying this mark is <span className="text-paper">fully recomputable</span> — re-derivable end-to-end from public data, no human in the loop.
+            Anything carrying this mark is <span className="text-paper">fully recomputable</span>: re-derivable end-to-end from public data, no human in the loop.
           </p>
         </section>
 
         {/* Toolbox */}
         <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
           <div className="story-reveal">
-            <Eyebrow>Its tools are MCPs — it doesn&apos;t just talk, it acts</Eyebrow>
+            <Eyebrow>Its tools are MCPs · it doesn&apos;t just talk, it acts</Eyebrow>
             <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">Non-custodial MCPs. Recomputable.</h2>
             <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {TOOLS.map((t, i) => (
@@ -167,7 +167,7 @@ export function Landing() {
             <Eyebrow>The problem</Eyebrow>
             <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">AI agents are black boxes.</h2>
             <p className="mt-6 font-serif text-xl sm:text-2xl leading-relaxed text-paper/90 max-w-2xl">
-              On-chain, you&apos;re asked to <span className="text-paper font-medium">trust</span> that an agent saw the input it claims — and did what it reports.
+              On-chain, you&apos;re asked to <span className="text-paper font-medium">trust</span> that an agent saw the input it claims, and did what it reports.
               A signature only proves <em>who</em> signed, never <em>that the computation was honest.</em>
             </p>
             <p className="mt-4 font-serif text-lg text-gb-muted">&ldquo;Trust me&rdquo; doesn&apos;t belong in a trust-minimized system.</p>
@@ -185,7 +185,7 @@ export function Landing() {
             <p className="mt-6 font-mono text-xs uppercase tracking-[0.15em] text-gb-faint">
               — on the ERC-8004 discussion → became <span className="text-brassLight">WYRIWE</span> · ethereum/ERCs #1810
             </p>
-            <p className="mt-4 font-serif text-lg text-gb-muted max-w-xl">What You Read Is What Executed. The seed — and the comment that found a community.</p>
+            <p className="mt-4 font-serif text-lg text-gb-muted max-w-xl">What You Read Is What Executed. The seed, and the comment that found a community.</p>
           </div>
         </section>
 
@@ -201,14 +201,14 @@ export function Landing() {
                   <p className="font-serif text-lg leading-relaxed text-gb-muted">
                     <span className="font-mono text-[0.95rem] font-semibold text-paper tracking-tight">{s.t}</span>
                     {s.who && <span className="font-mono text-sm text-brassLight"> · {s.who}</span>}
-                    {" — "}{s.d}
+                    {" · "}{s.d}
                   </p>
                 </div>
               ))}
             </div>
             <p className="mt-8 font-serif text-[17px] leading-relaxed text-gb-muted">
               Provenance → anchor → identity → source-binding → bounded actions → the Recompute Kit.
-              <span className="text-paper font-medium"> AI primitives — a modular assembly.</span>
+              <span className="text-paper font-medium"> AI primitives: a modular assembly.</span>
             </p>
           </div>
         </section>
@@ -219,7 +219,7 @@ export function Landing() {
             <Eyebrow>The thesis</Eyebrow>
             <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">Verify by recomputing. Not by trusting.</h2>
             <p className="mt-6 font-serif text-xl leading-relaxed text-paper/90 max-w-2xl">
-              Every agent action is wrapped in a chain of custody anyone can re-derive from public data. Five checks — no server, no oracle:
+              Every agent action is wrapped in a chain of custody anyone can re-derive from public data. Five checks, no server, no oracle:
             </p>
             <div className="mt-8 font-mono text-sm border-t border-hairline/10 max-w-3xl">
               {CHECKS.map((c, i) => (
@@ -231,7 +231,7 @@ export function Landing() {
                 </div>
               ))}
             </div>
-            <p className="mt-5 font-serif text-base text-gb-muted">A failed read shows <span className="text-brassLight">amber</span> — &ldquo;couldn&apos;t check.&rdquo; Honest ternary, never a false green.</p>
+            <p className="mt-5 font-serif text-base text-gb-muted">A failed read shows <span className="text-brassLight">amber</span>: &ldquo;couldn&apos;t check.&rdquo; Honest ternary, never a false green.</p>
           </div>
         </section>
 
@@ -258,7 +258,7 @@ export function Landing() {
               title="Scan to join the developer group"
               className="shrink-0 self-center rounded-2xl bg-white p-2.5 shadow-lg ring-1 ring-hairline/10 transition-transform hover:-translate-y-1 motion-reduce:transform-none">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/telegram-devs-qr.png" alt="QR code — join the developer Telegram group" className="h-36 w-36 sm:h-40 sm:w-40" />
+              <img src="/telegram-devs-qr.png" alt="QR code, join the developer Telegram group" className="h-36 w-36 sm:h-40 sm:w-40" />
             </a>
           </div>
         </section>
