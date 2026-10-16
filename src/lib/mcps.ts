@@ -87,7 +87,7 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     display: "Scam-victim recovery playbook (Forensics)",
   },
   "uniswap-mcp": {
-    label: "Uniswap", tagline: "Direct swaps", logo: "/logos/uniswap.webp", fill: true,
+    label: "Uniswap", tagline: "Direct swaps", logo: "/logos/uniswap.svg",
     blurb: "Uniswap v3, straight from the protocol — no aggregator. Prices swaps via the on-chain QuoterV2 (best fee tier auto-picked) and builds SwapRouter02 calldata your own wallet signs. Every swap is recomputable.",
     prompt: "Use your Uniswap tool to quote swapping 0.1 ETH into USDC on Uniswap (Ethereum, chainId 1) — price only, don't prepare a transaction.",
     display: "Quote 0.1 ETH → USDC (Uniswap)",
@@ -111,7 +111,7 @@ export const MCP_CONFIG: Record<string, McpConfig> = {
     display: "Read Uniswap data via The Graph (block-pinned · recomputable)",
   },
   "uniswapx-mcp": {
-    label: "UniswapX", tagline: "Best price → intent", logo: "/logos/uniswap.webp", fill: true,
+    label: "UniswapX", tagline: "Best price → intent", logo: "/logos/uniswap.svg",
     blurb: "UniswapX — the agent fetches the BEST price from the Uniswap Trading API, then packages it as a gasless, non-custodial Dutch-auction INTENT (EIP-712 + Permit2) that starts at the best price and decays to the floor; fillers execute it on-chain. The price is a live quote (attested); the order hash is deterministic and independently recomputable. Recompute the intent before a filler touches it.",
     prompt: "Use your UniswapX tool (uniswapx_quote) to get the best price to swap 0.1 WETH (inputAmount 100000000000000000, inputToken 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2) for USDC (outputToken 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48) on chainId 1, packaged as a UniswapX Dutch-auction intent. Show the best price, the decay floor, and the deterministic order hash — and explain the price is a live quote from the Uniswap Trading API (attested) while the order hash is byte-reproducible (recomputable via uniswapx_order_hash).",
     display: "Best price → UniswapX intent (Trading API)",
