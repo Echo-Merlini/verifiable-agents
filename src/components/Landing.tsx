@@ -124,6 +124,32 @@ export function Landing() {
           </p>
         </section>
 
+        {/* Toolbox */}
+        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
+          <div className="story-reveal">
+            <Eyebrow>Its tools are MCPs — it doesn&apos;t just talk, it acts</Eyebrow>
+            <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">Non-custodial MCPs. Recomputable.</h2>
+            <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {TOOLS.map((t, i) => (
+                <div key={i} className="liquid-glass rounded-2xl p-5 flex flex-col gap-2">
+                  <span className="inline-flex h-9 w-fit items-center justify-center self-start rounded-lg bg-white px-2.5 shadow-sm">
+                    <img src={t.logo} alt={t.k} className="h-4 w-auto max-w-[80px] object-contain" />
+                  </span>
+                  <span className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-brassLight">{t.k}</span>
+                  <h3 className="font-display font-medium text-lg text-paper">{t.h}</h3>
+                  <p className="font-serif text-sm leading-relaxed text-paper/55">{t.d}</p>
+                  <p className="mt-auto pt-2 font-mono text-[11px] text-gb-faint truncate">
+                    {t.proof} <span className="text-[#68C08C]">✓ real</span>
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-8 font-serif text-lg text-gb-muted max-w-2xl">
+              Every tool call flows through the attestation pipeline. Each is an action you can <span className="text-paper font-medium">audit after the fact.</span>
+            </p>
+          </div>
+        </section>
+
         {/* ─── The story ─────────────────────────────────────────────── */}
 
         {/* Problem */}
@@ -197,32 +223,6 @@ export function Landing() {
               ))}
             </div>
             <p className="mt-5 font-serif text-base text-gb-muted">A failed read shows <span className="text-brassLight">amber</span> — &ldquo;couldn&apos;t check.&rdquo; Honest ternary, never a false green.</p>
-          </div>
-        </section>
-
-        {/* Toolbox */}
-        <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
-          <div className="story-reveal">
-            <Eyebrow>It doesn&apos;t just talk — it acts</Eyebrow>
-            <h2 className="font-display font-medium tracking-tighter2 text-3xl sm:text-5xl leading-[1.04]">Non-custodial. Recomputable.</h2>
-            <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {TOOLS.map((t, i) => (
-                <div key={i} className="liquid-glass rounded-2xl p-5 flex flex-col gap-2">
-                  <span className="inline-flex h-9 w-fit items-center justify-center self-start rounded-lg bg-white px-2.5 shadow-sm">
-                    <img src={t.logo} alt={t.k} className="h-4 w-auto max-w-[80px] object-contain" />
-                  </span>
-                  <span className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-brassLight">{t.k}</span>
-                  <h3 className="font-display font-medium text-lg text-paper">{t.h}</h3>
-                  <p className="font-serif text-sm leading-relaxed text-paper/55">{t.d}</p>
-                  <p className="mt-auto pt-2 font-mono text-[11px] text-gb-faint truncate">
-                    {t.proof} <span className="text-[#68C08C]">✓ real</span>
-                  </p>
-                </div>
-              ))}
-            </div>
-            <p className="mt-8 font-serif text-lg text-gb-muted max-w-2xl">
-              Every tool call flows through the attestation pipeline. Each is an action you can <span className="text-paper font-medium">audit after the fact.</span>
-            </p>
           </div>
         </section>
 
