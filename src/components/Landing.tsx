@@ -2,7 +2,7 @@
 
 import { useEffect, type CSSProperties } from "react";
 import Link from "next/link";
-import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge, Network, Send, type LucideIcon } from "lucide-react";
+import { ShieldCheck, Bot, Coins, Sparkles, ArrowRight, ArrowUpRight, Store, Gauge, Network, Send, ChevronDown, type LucideIcon } from "lucide-react";
 import { TopNav } from "@/components/TopNav";
 import { HeroVerify } from "@/components/HeroVerify";
 
@@ -145,11 +145,20 @@ export function Landing() {
               ))}
             </div>
             <p className="mt-8 font-serif text-lg text-gb-muted max-w-2xl">
-              Every tool call flows through the attestation pipeline. Each is an action you can <span className="text-paper font-medium">audit after the fact.</span>
+              Every tool call flows through the attestation pipeline. Each is an action you can <span className="text-paper font-medium">audit after the fact.</span>{" "}<Link href="/marketplace" className="inline-flex items-center gap-1 whitespace-nowrap text-brassLight underline-offset-4 hover:underline">+ MCPs <ArrowUpRight className="h-3.5 w-3.5" /></Link>
             </p>
           </div>
         </section>
 
+        {/* The origin story, collapsed by default. It is the most interesting part of the page and
+            the least useful to a first-time visitor, who wants to know what this does. <details> so
+            it works with no JS and stays keyboard- and screen-reader-navigable. */}
+        <details className="group mt-20 border-t border-hairline/8 pt-10">
+          <summary className="flex cursor-pointer list-none items-center gap-3 font-mono text-[11px] uppercase tracking-[0.25em] text-brassLight/80 transition-colors hover:text-brassLight [&::-webkit-details-marker]:hidden">
+            <span aria-hidden="true" className="h-px w-6 bg-brass/50" />
+            How this came about
+            <ChevronDown aria-hidden="true" className="h-4 w-4 transition-transform duration-200 group-open:rotate-180 motion-reduce:transition-none" />
+          </summary>
         {/* ─── The story ─────────────────────────────────────────────── */}
 
         {/* Problem */}
@@ -225,6 +234,8 @@ export function Landing() {
             <p className="mt-5 font-serif text-base text-gb-muted">A failed read shows <span className="text-brassLight">amber</span> — &ldquo;couldn&apos;t check.&rdquo; Honest ternary, never a false green.</p>
           </div>
         </section>
+
+        </details>
 
         {/* Developer community */}
         <section data-reveal className="mt-20 pt-16 sm:pt-24 border-t border-hairline/8">
