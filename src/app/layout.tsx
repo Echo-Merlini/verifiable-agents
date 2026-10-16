@@ -3,13 +3,36 @@ import type { Metadata } from "next";
 import { Providers } from "./providers";
 import { SubdomainRouter } from "./subdomain-router";
 import { BrandFavicon } from "./brand-favicon";
-import { Space_Grotesk, Newsreader, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-// Vértice type trio — self-hosted by next/font at build (no external CDN).
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"], variable: "--font-space-grotesk", display: "swap" });
-const newsreader   = Newsreader({ subsets: ["latin"], style: ["normal", "italic"], weight: ["400", "500"], variable: "--font-newsreader", display: "swap" });
-const jetbrains    = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-jetbrains", display: "swap" });
+// Vértice type trio — vendored, NOT fetched. next/font/google self-hosts the files it serves, but
+// it resolves them from Google at BUILD time, so a flaky fetch fails the whole build: it did so
+// twice on 2026-10-16 with "Failed to find font override values for font `Newsreader`". A deploy
+// path should not depend on a third party being reachable, least of all on this site.
+//
+// Files are the official Google Fonts release (OFL-*.txt alongside), subset to the same `latin`
+// coverage next/font served, converted to woff2, and — for Newsreader — with the `opsz` axis
+// pinned to its default 18, which is the instance a wght-only request already resolved to. The
+// weight axis stays variable on all three, so every weight below still works.
+const spaceGrotesk = localFont({
+  src: [{ path: "./fonts/space-grotesk-latin-var.woff2", weight: "300 700", style: "normal" }],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
+const newsreader = localFont({
+  src: [
+    { path: "./fonts/newsreader-latin-var.woff2",        weight: "200 800", style: "normal" },
+    { path: "./fonts/newsreader-latin-var-italic.woff2", weight: "200 800", style: "italic" },
+  ],
+  variable: "--font-newsreader",
+  display: "swap",
+});
+const jetbrains = localFont({
+  src: [{ path: "./fonts/jetbrains-mono-latin-var.woff2", weight: "100 800", style: "normal" }],
+  variable: "--font-jetbrains",
+  display: "swap",
+});
 
 // The product's own identity. Deliberately NOT derived from vertice.eth any more.
 //
