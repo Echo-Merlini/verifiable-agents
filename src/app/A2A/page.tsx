@@ -11,7 +11,6 @@ import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
 import { ConsultProofCard } from "@/components/ConsultProofCard";
 import { ReputationBadge } from "@/components/ReputationBadge";
-import { VerticeMark } from "@/components/VerticeMark";
 import { TopNav } from "@/components/TopNav";
 import { fetchReputation, type Reputation } from "@/lib/marketplace";
 import { buildCardsFromIds } from "@/lib/mcps";

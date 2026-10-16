@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { TopNav } from "@/components/TopNav";
-import { VerticeMark } from "@/components/VerticeMark";
+import { AgentMark } from "@/components/AgentMark";
 
 export const metadata: Metadata = {
   title: "The story — Vértice Criativo",
@@ -47,7 +47,7 @@ export default function StoryPage() {
         {/* ── Hero ── */}
         <header className="border-b border-hairline/10 py-16 sm:py-20">
           <div className="flex items-center gap-4">
-            <VerticeMark size={44} spin />
+            <AgentMark size={44} spin />
             <div className="leading-tight">
               <div className="text-lg font-semibold tracking-tight">Vértice&nbsp;Criativo</div>
               <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-gb-muted">The story</div>

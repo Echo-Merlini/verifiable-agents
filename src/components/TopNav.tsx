@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAccount, useDisconnect } from "wagmi";
 import { ShieldCheck, ChevronDown, ExternalLink, Wallet, LogOut } from "lucide-react";
-import { VerticeMark } from "@/components/VerticeMark";
+import { AgentMark } from "@/components/AgentMark";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -49,7 +49,7 @@ export function TopNav() {
     <header className="relative border-b border-hairline/[0.06]">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-5 gap-y-2 px-4 py-4 sm:px-6">
         <Link href="/demo" className="inline-flex items-center gap-2.5 font-display font-medium tracking-tight text-paper">
-          <VerticeMark size={26} spin />
+          <AgentMark size={26} spin />
           Recomputable Agents
         </Link>
         <nav className="flex flex-wrap items-center gap-x-4 gap-y-1">

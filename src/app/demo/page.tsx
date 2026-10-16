@@ -9,7 +9,6 @@ import { ShieldCheck, ArrowUpRight, Wallet, ChevronLeft, ChevronRight, LogIn, Lo
 import { buildLiveRecord, stashLiveRecord } from "@/lib/liveRecord";
 import { AgentChat } from "@/components/AgentChat";
 import { McpLogo } from "@/components/McpLogo";
-import { VerticeMark } from "@/components/VerticeMark";
 import { TopNav } from "@/components/TopNav";
 import { buildMcpCards, buildCardsFromIds, ENTITLEMENT_SLUG_TO_CARD_ID, DEMO_AGENT, type McpCard, type PublicMcp } from "@/lib/mcps";
 import { useWalletModal } from "@/hooks/useWalletModal";

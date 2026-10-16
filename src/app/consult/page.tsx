@@ -10,7 +10,7 @@ import { Bot, Wallet, Loader2, Coins, ShieldCheck, Clock, Check, ChevronLeft, Ch
 import { GATEWAY_URL } from "@/lib/erc8004";
 import { useWalletModal } from "@/hooks/useWalletModal";
 import { McpLogo } from "@/components/McpLogo";
-import { VerticeMark } from "@/components/VerticeMark";
+import { AgentMark } from "@/components/AgentMark";
 import { buildCardsFromIds, type McpCard } from "@/lib/mcps";
 import { getAgentAuthNonce, verifyAgentOwner } from "@/lib/api";
 import { fetchIpfs } from "@/lib/ipfs";
@@ -171,7 +171,7 @@ function ConsultInner() {
       <div className="max-w-xl mx-auto px-6 py-8 space-y-4">
         {/* Top bar */}
         <div className="flex items-center justify-between gap-4">
-          <Link href="/demo" className="inline-flex items-center gap-2.5 font-display font-medium tracking-tight text-paper"><VerticeMark size={26} spin />Recomputable Agents</Link>
+          <Link href="/demo" className="inline-flex items-center gap-2.5 font-display font-medium tracking-tight text-paper"><AgentMark size={26} spin />Recomputable Agents</Link>
           <div className="flex items-center gap-4">
             <Link href="/A2A" className="font-mono text-[11px] uppercase tracking-[0.2em] text-gb-muted hover:text-paper">A2A</Link>
             <Link href="/verify" className="font-mono text-[11px] uppercase tracking-[0.2em] text-brassLight/80 hover:text-brassLight">Verify</Link>
