@@ -153,9 +153,23 @@
   [data-theme="light"] .text-emerald-300 { color: rgb(4 108 78); }
   [data-theme="light"] .text-red-200,
   [data-theme="light"] .text-red-300     { color: rgb(159 36 36); }
+  /* 300/200 are the EMPHASIS end of the ramp — near-primary text on a dark ground,
+     so on a light one they belong at full foreground, not at muted. Left out of the
+     block below, they stayed near-white: the marketplace Audit button and the
+     "Equip which agent" select both read as white on white. */
+  [data-theme="light"] .text-zinc-200,
+  [data-theme="light"] .text-zinc-300    { color: rgb(var(--c-paper)); }
   [data-theme="light"] .text-zinc-500,
   [data-theme="light"] .text-zinc-400    { color: rgb(var(--c-gb-muted)); }
   [data-theme="light"] .text-zinc-600    { color: rgb(var(--c-gb-faint)); }
+
+  /* A native <option> popup is drawn by the OS and inherits almost nothing from
+     the <select>, so the colour has to be stated on the option itself or the list
+     opens white-on-white even once the select reads correctly. */
+  [data-theme="light"] select option {
+    color: rgb(var(--c-paper));
+    background-color: rgb(var(--s-panel-strong));
+  }
 
   /* Logo chips sat on bg-black/30: a grey blob once the page is white. */
   [data-theme="light"] .bg-black\/30,
