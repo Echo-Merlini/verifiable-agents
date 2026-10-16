@@ -312,11 +312,15 @@ export default function DemoPage() {
         {/* Chat — remounts per agent so each has a fresh session. Sits above the tools:
             the conversation is the primary surface; the tools below are press-to-test. */}
         <div className="mt-8 liquid-glass rounded-2xl overflow-hidden h-[500px] p-4">
+          {/* Identity travels whichever agent is featured. The gateway derives the paying
+              wallet ONLY from this bearer token, so gating it on isOwned left a signed-in
+              viewer unable to spend their own credits on the public demo agent. */}
           <AgentChat
             key={`${featured.registry}-${featured.agentId}`}
             registry={featured.registry}
             agentId={featured.agentId}
-            {...(isOwned ? { ownerAddress: address, authToken: token ?? undefined } : {})}
+            ownerAddress={address}
+            authToken={token ?? undefined}
             onReady={(send) => { sendRef.current = send; }}
             onExchange={(query, reply) => setLastExchange({ query, reply })}
           />
